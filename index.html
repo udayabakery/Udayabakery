@@ -1704,6 +1704,7 @@ body.dark-mode #customOrderModal p { color:rgba(253,246,236,.6); }
         <button class="atab" onclick="switchTab('addprod')" id="at-addprod">➕ Add Product</button>
         <button class="atab" onclick="switchTab('cats')" id="at-cats">🏷️ Categories</button>
         <button class="atab" onclick="switchTab('orders')" id="at-orders">📋 Orders <span id="orderPendBadge" style="display:none;background:#EF4444;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-left:4px;"></span></button>
+        <button class="atab" onclick="switchTab('payments')" id="at-payments">💳 Payments</button>
         <button class="atab" onclick="switchTab('settings')" id="at-settings">⚙️ Settings</button>
         <button class="atab" onclick="switchTab('reports')" id="at-reports">📊 Reports</button>
         <button class="atab" onclick="switchTab('customers')" id="at-customers">👥 Customers</button>
@@ -4952,6 +4953,7 @@ function renderAdminTab(){
   else if(adminTab==='addprod'){ el.innerHTML = buildAddProdTab(); initAddProdForm(); }
   else if(adminTab==='cats') el.innerHTML = buildCatsTab();
   else if(adminTab==='orders') el.innerHTML = buildOrdersTab();
+  else if(adminTab==='payments') el.innerHTML = buildPaymentsTab();
   else if(adminTab==='settings') el.innerHTML = buildSettingsTab();
   else if(adminTab==='reports')   el.innerHTML = buildReportsTab();
   else if(adminTab==='customers') el.innerHTML = buildCustomersTab();
@@ -5727,11 +5729,12 @@ async function addCat(){
   }
 }
 async function delCat(id){
-  if(!confirm('Remove this category? Products in it won\'t be deleted.')) return;
-  CATS=CATS.filter(c=>c.id!==id);
-  await deleteCatFromDB(id);
-  renderCats(); renderAdminTab();
-  showToast('🗑 Category removed','ok');
+  ubConfirmDialog('Remove this category? Products in it won\'t be deleted.', async ()=>{
+    CATS=CATS.filter(c=>c.id!==id);
+    await deleteCatFromDB(id);
+    renderCats(); renderAdminTab();
+    showToast('🗑 Category removed','ok');
+  });
 }
 
 // ── ORDERS TAB ──
@@ -5856,10 +5859,29 @@ function buildOrderCard(o){
       <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:#E8B96A;padding:8px 0 0;border-top:1px solid rgba(200,146,58,.2);margin-top:6px;"><span>Total</span><span>₹${o.total}</span></div>
     </div>
     <!-- Action Buttons -->
+    <!-- Status Pipeline — ALL buttons always visible, active one highlighted -->
+    <div style="margin-bottom:12px;">
+      <div style="font-size:10px;color:rgba(253,246,236,.3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">📋 Update Status</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button onclick="setStatus('${o.id}','confirmed')"
+          style="flex:1;min-width:100px;padding:10px 8px;border-radius:10px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .2s;
+          ${o.status==='confirmed'?'background:rgba(74,222,128,.2);color:#4ADE80;border-color:rgba(74,222,128,.4);box-shadow:0 0 0 2px rgba(74,222,128,.15);':'background:rgba(255,255,255,.04);color:rgba(253,246,236,.5);border-color:rgba(255,255,255,.1);'}">
+          ✅ Confirmed${o.status==='confirmed'?' ◀':''}
+        </button>
+        <button onclick="setStatus('${o.id}','out_for_delivery')"
+          style="flex:1;min-width:100px;padding:10px 8px;border-radius:10px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .2s;
+          ${o.status==='out_for_delivery'?'background:rgba(59,130,246,.2);color:#93C5FD;border-color:rgba(59,130,246,.4);box-shadow:0 0 0 2px rgba(59,130,246,.15);':'background:rgba(255,255,255,.04);color:rgba(253,246,236,.5);border-color:rgba(255,255,255,.1);'}">
+          🛵 Out for Delivery${o.status==='out_for_delivery'?' ◀':''}
+        </button>
+        <button onclick="setStatus('${o.id}','delivered')"
+          style="flex:1;min-width:100px;padding:10px 8px;border-radius:10px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .2s;
+          ${o.status==='delivered'?'background:rgba(16,185,129,.2);color:#34D399;border-color:rgba(16,185,129,.4);box-shadow:0 0 0 2px rgba(16,185,129,.15);':'background:rgba(255,255,255,.04);color:rgba(253,246,236,.5);border-color:rgba(255,255,255,.1);'}">
+          🎉 Delivered${o.status==='delivered'?' ◀':''}
+        </button>
+      </div>
+    </div>
+    <!-- Other Actions -->
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-      ${o.status==='pending'?`<button class="abtn-edit" onclick="setStatus('${o.id}','confirmed')">✅ Confirm</button>`:''}
-      ${o.status==='confirmed'?`<button class="abtn-edit" onclick="setStatus('${o.id}','out_for_delivery')" style="background:rgba(59,130,246,.14);color:#93C5FD;border-color:rgba(59,130,246,.2);">🛵 Out for Delivery</button>`:''}
-      ${o.status==='out_for_delivery'?`<button class="abtn-edit" onclick="setStatus('${o.id}','delivered')" style="background:rgba(16,185,129,.14);color:#34D399;border-color:rgba(16,185,129,.2);">🎉 Mark Delivered</button>`:''}
       ${o.status!=='cancelled'&&o.status!=='delivered'?`<button class="abtn-del" onclick="setStatus('${o.id}','cancelled')">✕ Cancel</button>`:''}
       <button class="abtn-del" onclick="deleteOrder('${o.id}')" style="background:rgba(239,68,68,.18);color:#FCA5A5;border-color:rgba(239,68,68,.3);">🗑️ Delete</button>
       <a href="https://wa.me/91${(o.phone||'').replace(/\D/g,'')}?text=${encodeURIComponent('Hello '+o.name+'! 🎂\n\nYour Udaya Bakery order *'+o.id+'* status:\n\n*'+statusLabel(o.status)+'* ✅\n\nThank you for choosing Udaya Bakery! 🙏')}" target="_blank" style="background:rgba(37,211,102,.12);color:#25D366;border:1px solid rgba(37,211,102,.25);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:16px;">💬</span> WhatsApp</a>
@@ -5919,15 +5941,16 @@ function filterOrders(){
   }
 }
 async function deleteOrder(id){
-  if(!confirm('🗑️ Permanently delete this order? This cannot be undone.')) return;
-  try {
-    ORDERS.splice(ORDERS.findIndex(x=>x.id===id), 1);
-    if(db) await db.collection('orders').doc(id).delete();
-    renderAdminTab();
-    showToast('Order deleted','ok');
-  } catch(e){
-    showToast('Delete failed: '+e.message,'err');
-  }
+  ubConfirmDialog('🗑️ Delete this order permanently? This cannot be undone.', async ()=>{
+    try {
+      ORDERS.splice(ORDERS.findIndex(x=>x.id===id), 1);
+      if(db) await db.collection('orders').doc(id).delete();
+      renderAdminTab();
+      showToast('✅ Order deleted','ok');
+    } catch(e){
+      showToast('Delete failed: '+e.message,'err');
+    }
+  });
 }
 
 function setStatus(id, status){
@@ -5961,13 +5984,13 @@ function setStatus(id, status){
   }
 }
 function clearDelivered(){
-  if(!confirm('Remove all delivered orders from list?')) return;
-  const delivered = ORDERS.filter(o=>o.status==='delivered');
-  ORDERS = ORDERS.filter(o=>o.status!=='delivered');
-  renderAdminTab();
-  showToast('🗑 Cleared delivered orders','ok');
-  // Delete from Firebase in background
-  delivered.forEach(o=>{ try{ if(db) db.collection('orders').doc(o.id).delete().catch(e=>{}); }catch(e){} });
+  ubConfirmDialog('Remove all delivered orders from list?', ()=>{
+    const delivered = ORDERS.filter(o=>o.status==='delivered');
+    ORDERS = ORDERS.filter(o=>o.status!=='delivered');
+    renderAdminTab();
+    showToast('🗑 Cleared delivered orders','ok');
+    delivered.forEach(o=>{ try{ if(db) db.collection('orders').doc(o.id).delete().catch(e=>{}); }catch(e){} });
+  });
 }
 
 // ── SETTINGS TAB — see below ──
@@ -5978,11 +6001,12 @@ function exportData(){
   showToast('📤 Backup exported!','ok');
 }
 function resetOrders(){
-  if(!confirm('⚠️ Clear ALL orders permanently? This cannot be undone.')) return;
-  const toDelete = [...ORDERS];
-  ORDERS=[]; renderAdminTab();
-  showToast('🗑 All orders cleared','ok');
-  toDelete.forEach(o=>{ try{ if(db) db.collection('orders').doc(o.id).delete().catch(e=>{}); }catch(e){} });
+  ubConfirmDialog('⚠️ Clear ALL orders permanently? This cannot be undone.', ()=>{
+    const toDelete = [...ORDERS];
+    ORDERS=[]; renderAdminTab();
+    showToast('🗑 All orders cleared','ok');
+    toDelete.forEach(o=>{ try{ if(db) db.collection('orders').doc(o.id).delete().catch(e=>{}); }catch(e){} });
+  });
 }
 
 // ── CATEGORIES TAB ──
@@ -7146,26 +7170,32 @@ let _bulkSel=new Set();
 function ubToggleBulk(oid){
   if(_bulkSel.has(oid)) _bulkSel.delete(oid); else _bulkSel.add(oid);
   const bar=document.getElementById('ubBulkBar');
-  if(bar){ bar.style.display=_bulkSel.size>0?'flex':'none'; bar.querySelector('#ubBulkCount').textContent=_bulkSel.size+' selected'; }
+  if(bar){ bar.style.display=_bulkSel.size>0?'flex':'none'; const bc=bar.querySelector('#ubBulkCount'); if(bc) bc.textContent=_bulkSel.size+' selected'; }
   const cb=document.getElementById('ubcb-'+oid);
-  if(cb) cb.style.background=_bulkSel.has(oid)?'#C8923A':'rgba(255,255,255,.08)';
+  if(cb){
+    const selected=_bulkSel.has(oid);
+    cb.style.background=selected?'#C8923A':'rgba(255,255,255,.08)';
+    cb.style.borderColor=selected?'#C8923A':'rgba(200,146,58,.3)';
+    cb.innerHTML=selected?'<span style="color:#fff;font-size:14px;font-weight:900;line-height:1;">✓</span>':''
+  }
 }
 function ubBulkSetStatus(status){
   if(!_bulkSel.size){ showToast('Select at least one order','err'); return; }
   const label={'confirmed':'Confirmed','out_for_delivery':'Out for Delivery','delivered':'Delivered','cancelled':'Cancelled'}[status]||status;
-  if(!confirm(`Mark ${_bulkSel.size} order(s) as "${label}"?`)) return;
-  _bulkSel.forEach(oid=>{
-    const o=ORDERS.find(x=>x.id===oid);
-    if(o){
-      o.status=status;
-      try{ if(db) db.collection('orders').doc(oid).update({status, updatedAt: firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>{}); }catch(e){}
-    }
+  ubConfirmDialog(`Mark ${_bulkSel.size} order(s) as "${label}"?`, ()=>{
+    _bulkSel.forEach(oid=>{
+      const o=ORDERS.find(x=>x.id===oid);
+      if(o){
+        o.status=status;
+        try{ if(db) db.collection('orders').doc(oid).update({status, updatedAt: firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>{}); }catch(e){}
+      }
+    });
+    const count = _bulkSel.size;
+    _bulkSel.clear();
+    updateOrderBadge();
+    renderAdminTab();
+    showToast(`✅ ${count} orders updated to ${label}`,'ok');
   });
-  const count = _bulkSel.size;
-  _bulkSel.clear();
-  updateOrderBadge();
-  renderAdminTab();
-  showToast(`✅ ${count} orders updated to ${label}`,'ok');
 }
 
 // ═══════════════════════════════════════════════════════
@@ -7470,6 +7500,261 @@ async function removeCatImg(catId){
   } catch(e){
     showToast('❌ Could not remove image: '+(e.message||'Please try again'),'err');
   }
+}
+
+
+
+// ═══════════════════════════════════════════════════════
+//  💳 PAYMENTS TAB
+// ═══════════════════════════════════════════════════════
+function buildPaymentsTab(){
+  var rzpKey    = localStorage.getItem('ub_rzp_key_id') || '';
+  var rzpSecret = localStorage.getItem('ub_rzp_key_secret') || '';
+  var rzpMode   = localStorage.getItem('ub_rzp_mode') || 'test';
+  var rzpOn     = localStorage.getItem('ub_rzp_enabled') === '1';
+  var upiId     = localStorage.getItem('ub_upi_id') || '';
+  var upiOn     = localStorage.getItem('ub_upi_enabled') !== '0';
+  var codOn     = localStorage.getItem('ub_cod_enabled') !== '0';
+  var ppOn      = localStorage.getItem('ub_pp_enabled') !== '0';
+  var ppMid     = localStorage.getItem('ub_pp_mid') || '';
+  var ppSalt    = localStorage.getItem('ub_pp_salt') || '';
+  var ppIdx     = localStorage.getItem('ub_pp_salt_idx') || '1';
+
+  // Payment summary counts
+  var upiCount = ORDERS.filter(function(o){return o.payMethod==='phonepe'||o.payMethod==='upi';}).length;
+  var codCount = ORDERS.filter(function(o){return o.payMethod==='cod'||!o.payMethod;}).length;
+  var rzpCount = ORDERS.filter(function(o){return o.payMethod==='razorpay';}).length;
+  var upiAmt   = ORDERS.filter(function(o){return o.payMethod==='phonepe'||o.payMethod==='upi';}).reduce(function(s,o){return s+o.total;},0);
+  var codAmt   = ORDERS.filter(function(o){return o.payMethod==='cod'||!o.payMethod;}).reduce(function(s,o){return s+o.total;},0);
+  var rzpAmt   = ORDERS.filter(function(o){return o.payMethod==='razorpay';}).reduce(function(s,o){return s+o.total;},0);
+
+  var rzpModeTestStyle = rzpMode==='test'
+    ? 'background:rgba(251,191,36,.15);color:#FCD34D;border-color:rgba(251,191,36,.4);'
+    : 'background:rgba(255,255,255,.04);color:rgba(253,246,236,.4);border-color:rgba(255,255,255,.08);';
+  var rzpModeLiveStyle = rzpMode==='live'
+    ? 'background:rgba(74,222,128,.15);color:#4ADE80;border-color:rgba(74,222,128,.4);'
+    : 'background:rgba(255,255,255,.04);color:rgba(253,246,236,.4);border-color:rgba(255,255,255,.08);';
+  var rzpModeNote = rzpMode==='test'
+    ? '<div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:10px 14px;font-size:12px;color:#FCD34D;margin-bottom:12px;">&#129514; Test Mode — use test keys from Razorpay Dashboard. No real money charged.</div>'
+    : '<div style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:10px 14px;font-size:12px;color:#4ADE80;margin-bottom:12px;">&#128994; Live Mode — real payments are collected. Use your live API keys.</div>';
+  var upiStatus = upiId
+    ? '<div style="margin-top:10px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:8px 12px;font-size:12px;color:#4ADE80;">&#10003; Active: <strong>' + upiId + '</strong></div>'
+    : '<div style="margin-top:10px;font-size:12px;color:rgba(239,68,68,.7);">&#9888; No UPI ID set yet</div>';
+  var rzpStatus = rzpKey
+    ? '<div style="margin-top:6px;font-size:12px;color:#4ADE80;">&#10003; Key saved: ' + rzpKey.substring(0,18) + '...</div>'
+    : '';
+  var ppStatus = ppMid
+    ? '<div style="margin-top:6px;font-size:12px;color:#4ADE80;">&#10003; MID saved: ' + ppMid + '</div>'
+    : '';
+
+  return '<h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:6px;">&#128179; Payment Gateway</h2>'
+  + '<p style="font-size:13px;color:rgba(253,246,236,.4);margin-bottom:20px;">Configure how your customers pay. Enable one or more methods.</p>'
+
+  // ── Method Toggles ──
+  + '<div class="acard" style="margin-bottom:16px;">'
+  + '<h3>&#128280; Active Payment Methods</h3>'
+  + '<div class="asub">Choose which options customers see at checkout</div>'
+  + '<div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;">'
+
+  // COD
+  + '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 16px;">'
+  + '<div style="display:flex;align-items:center;gap:12px;"><span style="font-size:24px;">&#128181;</span>'
+  + '<div><div style="font-size:14px;font-weight:700;color:rgba(253,246,236,.9);">Cash on Delivery</div>'
+  + '<div style="font-size:11px;color:rgba(253,246,236,.4);">Customer pays when order arrives</div></div></div>'
+  + '<input type="checkbox" ' + (codOn?'checked':'') + ' onchange="ubSavePayToggle(\'cod\',this.checked)" style="width:22px;height:22px;accent-color:#C8923A;cursor:pointer;"></div>'
+
+  // UPI
+  + '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 16px;">'
+  + '<div style="display:flex;align-items:center;gap:12px;"><span style="font-size:24px;">&#128241;</span>'
+  + '<div><div style="font-size:14px;font-weight:700;color:rgba(253,246,236,.9);">UPI / QR Code</div>'
+  + '<div style="font-size:11px;color:rgba(253,246,236,.4);">GPay, PhonePe, Paytm, any UPI app</div></div></div>'
+  + '<input type="checkbox" ' + (upiOn?'checked':'') + ' onchange="ubSavePayToggle(\'upi\',this.checked)" style="width:22px;height:22px;accent-color:#C8923A;cursor:pointer;"></div>'
+
+  // Razorpay
+  + '<div style="display:flex;align-items:center;justify-content:space-between;background:' + (rzpOn?'rgba(99,102,241,.08)':'rgba(255,255,255,.03)') + ';border:1px solid ' + (rzpOn?'rgba(99,102,241,.3)':'rgba(255,255,255,.07)') + ';border-radius:12px;padding:14px 16px;">'
+  + '<div style="display:flex;align-items:center;gap:12px;"><span style="font-size:24px;">&#127974;</span>'
+  + '<div><div style="font-size:14px;font-weight:700;color:rgba(253,246,236,.9);">Razorpay <span style="font-size:10px;background:rgba(99,102,241,.25);color:#A5B4FC;border-radius:6px;padding:2px 7px;">RECOMMENDED</span></div>'
+  + '<div style="font-size:11px;color:rgba(253,246,236,.4);">Cards, UPI, Net Banking, EMI — all in one</div></div></div>'
+  + '<input type="checkbox" id="pay_rzp" ' + (rzpOn?'checked':'') + ' onchange="ubSavePayToggle(\'rzp\',this.checked);document.getElementById(\'rzp_section\').style.display=this.checked?\'block\':\'none\';" style="width:22px;height:22px;accent-color:#6366F1;cursor:pointer;"></div>'
+
+  // PhonePe
+  + '<div style="display:flex;align-items:center;justify-content:space-between;background:' + (ppOn?'rgba(91,45,142,.08)':'rgba(255,255,255,.03)') + ';border:1px solid ' + (ppOn?'rgba(91,45,142,.3)':'rgba(255,255,255,.07)') + ';border-radius:12px;padding:14px 16px;">'
+  + '<div style="display:flex;align-items:center;gap:12px;"><span style="font-size:24px;">&#128156;</span>'
+  + '<div><div style="font-size:14px;font-weight:700;color:rgba(253,246,236,.9);">PhonePe Business API</div>'
+  + '<div style="font-size:11px;color:rgba(253,246,236,.4);">Official PhonePe payment gateway</div></div></div>'
+  + '<input type="checkbox" id="pay_pp" ' + (ppOn?'checked':'') + ' onchange="ubSavePayToggle(\'pp\',this.checked);document.getElementById(\'pp_section\').style.display=this.checked?\'block\':\'none\';" style="width:22px;height:22px;accent-color:#5B2D8E;cursor:pointer;"></div>'
+
+  + '</div></div>'
+
+  // ── UPI Settings ──
+  + '<div class="acard" style="margin-bottom:16px;">'
+  + '<h3>&#128241; UPI / QR Code Settings</h3>'
+  + '<div class="asub">Customers scan a QR or tap to pay — no API key needed!</div>'
+  + '<div class="af-group" style="margin-top:14px;"><label>Your UPI ID <span style="font-size:10px;color:rgba(253,246,236,.4);">e.g. 9845406712@ybl</span></label>'
+  + '<input class="af-inp" id="s_upi_id" value="' + upiId.replace(/"/g,'&quot;') + '" placeholder="yourname@ybl"></div>'
+  + '<div style="background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.15);border-radius:10px;padding:10px 14px;font-size:12px;color:rgba(253,246,236,.5);margin-bottom:12px;">&#128161; Works instantly — customers see QR code + Pay button. Money goes directly to your bank.</div>'
+  + '<button class="abtn" onclick="saveUPISettings()">&#128190; Save UPI ID</button>'
+  + upiStatus
+  + '</div>'
+
+  // ── Razorpay ──
+  + '<div class="acard" style="margin-bottom:16px;" id="rzp_section">'
+  + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">'
+  + '<h3 style="margin:0;">&#127974; Razorpay API Keys</h3>'
+  + '<span style="font-size:10px;background:rgba(99,102,241,.2);color:#A5B4FC;border-radius:6px;padding:3px 8px;font-weight:700;">BEST FOR INDIA</span></div>'
+  + '<div class="asub">Cards, UPI, Net Banking, EMI, Wallets. Sign up free at <a href="https://razorpay.com" target="_blank" style="color:#E8B96A;">razorpay.com</a></div>'
+  + '<div style="display:flex;gap:8px;margin:14px 0;">'
+  + '<button onclick="ubSetRzpMode(\'test\')" style="flex:1;padding:10px;border-radius:10px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid;' + rzpModeTestStyle + '">&#129514; Test Mode</button>'
+  + '<button onclick="ubSetRzpMode(\'live\')" style="flex:1;padding:10px;border-radius:10px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid;' + rzpModeLiveStyle + '">&#128994; Live Mode</button>'
+  + '</div>'
+  + rzpModeNote
+  + '<div class="af-group"><label>Key ID <span style="font-size:10px;color:rgba(253,246,236,.4);">starts with rzp_test_ or rzp_live_</span></label>'
+  + '<input class="af-inp" id="rzp_key_id" value="' + rzpKey.replace(/"/g,'&quot;') + '" placeholder="rzp_test_xxxxxxxxxxxxxxxxxx" autocomplete="off"></div>'
+  + '<div class="af-group"><label>Key Secret <span style="font-size:10px;color:rgba(253,246,236,.4);">keep private — never share!</span></label>'
+  + '<div style="position:relative;"><input class="af-inp" type="password" id="rzp_key_secret" value="' + rzpSecret.replace(/"/g,'&quot;') + '" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="new-password" style="padding-right:70px;">'
+  + '<button onclick="var e=document.getElementById(\'rzp_key_secret\');e.type=e.type===\'password\'?\'text\':\'password\';" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(253,246,236,.5);font-size:11px;cursor:pointer;white-space:nowrap;">&#128065; Show</button></div></div>'
+  + '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;margin-bottom:14px;">'
+  + '<div style="font-size:12px;font-weight:700;color:rgba(253,246,236,.6);margin-bottom:8px;">&#128203; How to get Razorpay Keys:</div>'
+  + '<div style="font-size:12px;color:rgba(253,246,236,.45);line-height:1.9;">1. Go to <strong style="color:#E8B96A;">razorpay.com</strong> &#8594; Sign Up free<br>2. Dashboard &#8594; <strong style="color:#E8B96A;">Settings &#8594; API Keys</strong><br>3. Click <strong style="color:#E8B96A;">"Generate Test Key"</strong><br>4. Copy Key ID &amp; Key Secret here<br>5. After KYC approval &#8594; Generate Live Key</div>'
+  + '</div>'
+  + '<div style="display:flex;gap:10px;flex-wrap:wrap;">'
+  + '<button class="abtn" onclick="ubSaveRazorpay()">&#128190; Save Keys</button>'
+  + '<button onclick="ubTestRazorpay()" style="background:rgba(99,102,241,.15);color:#A5B4FC;border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:11px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">&#129514; Test Connection</button>'
+  + '</div>'
+  + '<div id="rzp_status" style="margin-top:10px;font-size:12px;">' + rzpStatus + '</div>'
+  + '</div>'
+
+  // ── PhonePe ──
+  + '<div class="acard" style="margin-bottom:16px;" id="pp_section">'
+  + '<h3>&#128156; PhonePe Business API</h3>'
+  + '<div class="asub">Official PhonePe gateway. Apply at <a href="https://business.phonepe.com" target="_blank" style="color:#E8B96A;">business.phonepe.com</a></div>'
+  + '<div class="af-group" style="margin-top:14px;"><label>Merchant ID (MID)</label>'
+  + '<input class="af-inp" id="pp_mid" value="' + ppMid.replace(/"/g,'&quot;') + '" placeholder="e.g. UDAYABAKERY123"></div>'
+  + '<div class="af-group"><label>Salt Key <span style="font-size:10px;color:rgba(253,246,236,.4);">from PhonePe dashboard</span></label>'
+  + '<div style="position:relative;"><input class="af-inp" type="password" id="pp_salt" value="' + ppSalt.replace(/"/g,'&quot;') + '" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" style="padding-right:70px;">'
+  + '<button onclick="var e=document.getElementById(\'pp_salt\');e.type=e.type===\'password\'?\'text\':\'password\';" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(253,246,236,.5);font-size:11px;cursor:pointer;white-space:nowrap;">&#128065; Show</button></div></div>'
+  + '<div class="af-group"><label>Salt Index <span style="font-size:10px;color:rgba(253,246,236,.4);">usually 1</span></label>'
+  + '<input class="af-inp" type="number" id="pp_salt_idx" value="' + ppIdx + '" min="1" max="4" style="width:100px;"></div>'
+  + '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;margin-bottom:14px;">'
+  + '<div style="font-size:12px;font-weight:700;color:rgba(253,246,236,.6);margin-bottom:8px;">&#128203; How to get PhonePe Keys:</div>'
+  + '<div style="font-size:12px;color:rgba(253,246,236,.45);line-height:1.9;">1. Go to <strong style="color:#E8B96A;">business.phonepe.com</strong> &#8594; Register<br>2. Complete KYC (GST / Aadhaar)<br>3. Dashboard &#8594; <strong style="color:#E8B96A;">API &amp; Plugins &#8594; Keys</strong><br>4. Copy MID, Salt Key, Salt Index here</div>'
+  + '</div>'
+  + '<button class="abtn" onclick="ubSavePhonePe()">&#128190; Save PhonePe Keys</button>'
+  + '<div id="pp_status" style="margin-top:10px;font-size:12px;">' + ppStatus + '</div>'
+  + '</div>'
+
+  // ── Payment Summary ──
+  + '<div class="acard" style="margin-bottom:16px;">'
+  + '<h3>&#128202; Payment Summary</h3>'
+  + '<div class="asub">How your customers have been paying</div>'
+  + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;">'
+  + '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px;text-align:center;">'
+  + '<div style="font-size:22px;margin-bottom:4px;">&#128241;</div>'
+  + '<div style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;">' + upiCount + '</div>'
+  + '<div style="font-size:11px;color:rgba(253,246,236,.4);">UPI Orders</div>'
+  + '<div style="font-size:12px;color:#4ADE80;margin-top:4px;">&#8377;' + upiAmt.toLocaleString('en-IN') + '</div></div>'
+  + '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px;text-align:center;">'
+  + '<div style="font-size:22px;margin-bottom:4px;">&#128181;</div>'
+  + '<div style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;">' + codCount + '</div>'
+  + '<div style="font-size:11px;color:rgba(253,246,236,.4);">COD Orders</div>'
+  + '<div style="font-size:12px;color:#4ADE80;margin-top:4px;">&#8377;' + codAmt.toLocaleString('en-IN') + '</div></div>'
+  + '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px;text-align:center;">'
+  + '<div style="font-size:22px;margin-bottom:4px;">&#127974;</div>'
+  + '<div style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;">' + rzpCount + '</div>'
+  + '<div style="font-size:11px;color:rgba(253,246,236,.4);">Razorpay</div>'
+  + '<div style="font-size:12px;color:#4ADE80;margin-top:4px;">&#8377;' + rzpAmt.toLocaleString('en-IN') + '</div></div>'
+  + '</div></div>';
+}
+
+function ubSavePayToggle(method, enabled){
+  localStorage.setItem('ub_'+method+'_enabled', enabled?'1':'0');
+  var name = method==='cod'?'Cash on Delivery':method==='upi'?'UPI/QR':method==='rzp'?'Razorpay':'PhonePe';
+  showToast((enabled?'✅ ':'❌ ')+name+' '+(enabled?'enabled':'disabled'),'ok');
+}
+
+function ubSetRzpMode(mode){
+  localStorage.setItem('ub_rzp_mode', mode);
+  renderAdminTab();
+  showToast('Razorpay set to '+(mode==='live'?'Live':'Test')+' mode','ok');
+}
+
+function ubSaveRazorpay(){
+  var key = (document.getElementById('rzp_key_id')||{}).value||'';
+  var secret = (document.getElementById('rzp_key_secret')||{}).value||'';
+  key = key.trim(); secret = secret.trim();
+  if(!key){ showToast('Enter your Razorpay Key ID','err'); return; }
+  if(!secret){ showToast('Enter your Razorpay Key Secret','err'); return; }
+  if(!key.startsWith('rzp_')){ showToast('Key ID must start with rzp_test_ or rzp_live_','err'); return; }
+  localStorage.setItem('ub_rzp_key_id', key);
+  localStorage.setItem('ub_rzp_key_secret', secret);
+  localStorage.setItem('ub_rzp_enabled','1');
+  var st = document.getElementById('rzp_status');
+  if(st) st.innerHTML = '<span style="color:#4ADE80;">&#10003; Saved! Mode: '+localStorage.getItem('ub_rzp_mode')+'</span>';
+  showToast('✅ Razorpay keys saved!','ok');
+}
+
+function ubTestRazorpay(){
+  var key = localStorage.getItem('ub_rzp_key_id')||'';
+  var st = document.getElementById('rzp_status');
+  if(!key){ showToast('Save your Razorpay keys first','err'); return; }
+  if(st) st.innerHTML = '<span style="color:#FCD34D;">&#9203; Testing connection...</span>';
+  function doTest(){
+    try {
+      var rzp = new window.Razorpay({
+        key: key, amount:100, currency:'INR',
+        name:'Udaya Bakery', description:'API Key Test',
+        handler: function(){ if(st) st.innerHTML='<span style="color:#4ADE80;">&#10003; Razorpay connected!</span>'; showToast('✅ Razorpay is working!','ok'); },
+        modal:{ ondismiss: function(){ if(st) st.innerHTML='<span style="color:#FCD34D;">Dismissed — key looks valid.</span>'; } }
+      });
+      rzp.open();
+      if(st) st.innerHTML='<span style="color:#4ADE80;">&#10003; SDK loaded — key format valid!</span>';
+    } catch(e){ if(st) st.innerHTML='<span style="color:#F87171;">Error: '+e.message+'</span>'; }
+  }
+  if(!window.Razorpay){
+    var s=document.createElement('script'); s.src='https://checkout.razorpay.com/v1/checkout.js';
+    s.onload=doTest; s.onerror=function(){ if(st) st.innerHTML='<span style="color:#F87171;">Could not load Razorpay SDK</span>'; };
+    document.head.appendChild(s);
+  } else { doTest(); }
+}
+
+function ubSavePhonePe(){
+  var mid = ((document.getElementById('pp_mid')||{}).value||'').trim();
+  var salt = ((document.getElementById('pp_salt')||{}).value||'').trim();
+  var idx = ((document.getElementById('pp_salt_idx')||{}).value||'1').trim();
+  if(!mid){ showToast('Enter your PhonePe Merchant ID','err'); return; }
+  if(!salt){ showToast('Enter your PhonePe Salt Key','err'); return; }
+  localStorage.setItem('ub_pp_mid', mid);
+  localStorage.setItem('ub_pp_salt', salt);
+  localStorage.setItem('ub_pp_salt_idx', idx);
+  localStorage.setItem('ub_pp_enabled','1');
+  var st = document.getElementById('pp_status');
+  if(st) st.innerHTML='<span style="color:#4ADE80;">&#10003; PhonePe keys saved!</span>';
+  showToast('✅ PhonePe keys saved!','ok');
+}
+
+
+
+// ═══ CUSTOM CONFIRM DIALOG (replaces browser confirm() which is blocked on Android) ═══
+function ubConfirmDialog(message, onConfirm){
+  // Remove any existing dialog
+  const existing = document.getElementById('ubConfirmDlg');
+  if(existing) existing.remove();
+  const dlg = document.createElement('div');
+  dlg.id = 'ubConfirmDlg';
+  dlg.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);';
+  dlg.innerHTML = `
+    <div style="background:#1E0E06;border:1.5px solid rgba(200,146,58,.35);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.6);">
+      <div style="font-size:36px;margin-bottom:12px;">⚠️</div>
+      <div style="font-family:'Playfair Display',serif;font-size:16px;color:#FDF6EC;font-weight:600;margin-bottom:22px;line-height:1.5;">${message}</div>
+      <div style="display:flex;gap:10px;">
+        <button id="ubDlgCancel" style="flex:1;background:rgba(255,255,255,.08);color:rgba(253,246,236,.6);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:13px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Cancel</button>
+        <button id="ubDlgConfirm" style="flex:1;background:linear-gradient(135deg,#EF4444,#DC2626);color:#fff;border:none;border-radius:12px;padding:13px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Confirm</button>
+      </div>
+    </div>`;
+  document.body.appendChild(dlg);
+  dlg.querySelector('#ubDlgCancel').onclick = ()=>dlg.remove();
+  dlg.querySelector('#ubDlgConfirm').onclick = ()=>{ dlg.remove(); onConfirm(); };
+  dlg.onclick = (e)=>{ if(e.target===dlg) dlg.remove(); };
 }
 
 // ═══ TOAST ═══
