@@ -2058,7 +2058,7 @@ async function loadCatsFromDB(){
     const snap = await db.collection('categories').orderBy('order').get();
     if(!snap.empty){
       const fbCats = snap.docs.map(d=>({id:d.id,...d.data()}))
-        .filter(c => c.id !== '__branding__'); // skip branding doc
+        .filter(c => c.id !== 'ubBranding'); // skip branding doc
       fbCats.forEach(fc=>{ if(!CATS.find(c=>c.id===fc.id)) CATS.push(fc); });
     }
   } catch(e){}
@@ -2088,7 +2088,7 @@ async function loadProdsFromDB(){
 // ── REAL-TIME BRANDING LISTENER — logo/name update shows live on all devices ──
 function startBrandingListener(){
   if(!db) return;
-  db.collection('categories').doc('__branding__').onSnapshot(doc => {
+  db.collection('categories').doc('ubBranding').onSnapshot(doc => {
     if(!doc.exists) return;
     const data = doc.data();
     if(typeof data.logo !== 'undefined'){
@@ -2150,8 +2150,8 @@ function startProductListener(){
   _catUnsubscribe = db.collection('categories').onSnapshot(snap=>{
     snap.docChanges().forEach(change=>{
       const fc = {...change.doc.data(), id: change.doc.id};
-      // Skip the __branding__ doc — it stores logo/name, not a real category
-      if(fc.id === '__branding__') return;
+      // Skip the ubBranding doc — it stores logo/name, not a real category
+      if(fc.id === 'ubBranding') return;
       const idx = CATS.findIndex(c=>String(c.id)===String(fc.id));
       if(change.type === 'added' || change.type === 'modified'){
         if(idx > -1) CATS[idx] = fc;
@@ -2195,7 +2195,7 @@ async function loadOrdersFromDB(){
 async function loadBrandingFromDB(){
   if(!db) return;
   try {
-    const doc = await db.collection('categories').doc('__branding__').get();
+    const doc = await db.collection('categories').doc('ubBranding').get();
     if(!doc.exists) return;
     const data = doc.data();
     // Apply logo
@@ -7178,7 +7178,7 @@ async function saveLogo(){
     localStorage.setItem('ub_logo', logoUrl);
     // Save to Firestore so ALL customers & devices see it
     if(db){
-      await db.collection('categories').doc('__branding__').set({
+      await db.collection('categories').doc('ubBranding').set({
         logo: logoUrl,
         bname: localStorage.getItem('ub_bname') || 'Udaya Bakery',
         btag: localStorage.getItem('ub_btag') || 'Artisan Bakes',
@@ -7203,7 +7203,7 @@ function removeLogo(){
   applyLogoToNav();
   // Remove from Firestore too
   if(db){
-    db.collection('categories').doc('__branding__').set({
+    db.collection('categories').doc('ubBranding').set({
       logo: '',
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, {merge: true}).catch(()=>{});
@@ -7227,7 +7227,7 @@ function saveBrandName(){
   if(textEl) textEl.innerHTML = `${name}<span>${tag}</span>`;
   // Sync to Firestore so all customers see updated name
   if(db){
-    db.collection('categories').doc('__branding__').set({
+    db.collection('categories').doc('ubBranding').set({
       bname: name,
       btag: tag,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
