@@ -1020,6 +1020,30 @@ body.dark-mode #customOrderModal p { color:rgba(253,246,236,.6); }
 /* ── MIC BUTTON: hide if speech not supported ── */
 .no-speech #voiceBtn, .no-speech [onclick*="voiceSearch"] { display:none !important; }
 
+/* ── DELIVERY TYPE SELECTOR ── */
+.del-type-wrap{margin:12px 0 10px;padding:12px;background:var(--cream);border-radius:14px;border:1.5px solid var(--cream-dark);}
+.del-type-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.del-type-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.del-type-opt{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;border:2px solid var(--cream-dark);border-radius:12px;cursor:pointer;transition:all .2s;background:var(--white);text-align:center;}
+.del-type-opt:hover{border-color:var(--gold);}
+.del-type-opt.active{border-color:var(--choco);background:linear-gradient(135deg,rgba(59,31,14,.07),rgba(59,31,14,.03));}
+.del-type-opt .dto-icon{font-size:22px;}
+.del-type-opt .dto-name{font-size:12px;font-weight:700;color:var(--choco);}
+.del-type-opt .dto-sub{font-size:10px;color:var(--text-mid);}
+.del-type-opt.active .dto-name{color:var(--choco);}
+body.dark-mode .del-type-wrap{background:rgba(255,255,255,.04);}
+body.dark-mode .del-type-opt{background:rgba(255,255,255,.03);border-color:rgba(200,146,58,.15);}
+body.dark-mode .del-type-opt.active{background:rgba(200,146,58,.1);}
+
+/* ── LANGUAGE BUTTON ── */
+.lang-btn{background:var(--white);color:var(--choco);border:1.5px solid var(--cream-dark);padding:7px 11px;border-radius:20px;font-family:Jost,sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;letter-spacing:.3px;}
+.lang-btn:hover{border-color:var(--gold);color:var(--gold);}
+body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,146,58,.2);color:var(--choco);}
+
+/* ── PICKUP BADGE IN ADMIN ── */
+.pickup-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(16,185,129,.15);color:#059669;border:1px solid rgba(16,185,129,.3);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
+.delivery-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(59,130,246,.15);color:#1D4ED8;border:1px solid rgba(59,130,246,.3);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
+
 </style>
 <script type="application/ld+json">
 {
@@ -1121,6 +1145,7 @@ body.dark-mode #customOrderModal p { color:rgba(253,246,236,.6); }
         </button>
       </div>
       <!-- cart button moved to floating -->
+      <button class="lang-btn" onclick="toggleLang()" id="langBtn" title="Switch Language">ಕನ್ನಡ</button>
       <button class="dark-toggle" onclick="toggleDark()" id="darkBtn" title="Toggle Dark Mode">🌙</button>
       <div class="hamburger" onclick="toggleMob()"><span></span><span></span><span></span></div>
     </div>
@@ -1516,6 +1541,24 @@ body.dark-mode #customOrderModal p { color:rgba(253,246,236,.6); }
   <div class="cart-head" style="flex-shrink:0;"><h2>🛒 Your Cart</h2><button class="cart-close" onclick="closeCart()">✕</button></div>
   <div class="cart-list" id="cartList" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;"></div>
   <div class="cart-foot" style="flex-shrink:0;overflow-y:auto;max-height:55vh;-webkit-overflow-scrolling:touch;border-top:2px solid var(--cream-dark);">
+    <!-- DELIVERY TYPE SELECTOR -->
+    <div class="del-type-wrap">
+      <div class="del-type-label" id="dtLabel">🚚 How do you want it?</div>
+      <div class="del-type-opts">
+        <div class="del-type-opt" id="dopt-delivery" onclick="setDeliveryType('delivery')">
+          <span class="dto-icon">🚚</span>
+          <span class="dto-name" id="dtDeliveryName">Home Delivery</span>
+          <span class="dto-sub" id="dtDeliverySub">Charges apply</span>
+        </div>
+        <div class="del-type-opt active" id="dopt-pickup" onclick="setDeliveryType('pickup')">
+          <span class="dto-icon">🏪</span>
+          <span class="dto-name" id="dtPickupName">Pick Up at Store</span>
+          <span class="dto-sub" id="dtPickupSub">FREE • Pay Online</span>
+        </div>
+      </div>
+    </div>
+    <!-- AUTO DELIVERY PANEL (hidden for pickup) -->
+    <div id="deliveryPanelWrap">
     <!-- AUTO DELIVERY PANEL -->
     <div class="auto-delivery-panel">
       <div class="adp-title">🚚 Delivery Charge Calculator</div>
@@ -1541,6 +1584,7 @@ body.dark-mode #customOrderModal p { color:rgba(253,246,236,.6); }
         <strong id="delCalcAmt" class="">—</strong>
       </div>
     </div>
+    </div><!-- /deliveryPanelWrap -->
     <!-- COUPON CODE -->
     <div style="margin-bottom:4px;">
       <div style="font-size:11px;font-weight:700;color:var(--text-mid);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">🏷️ Have a Coupon Code?</div>
@@ -1565,6 +1609,10 @@ body.dark-mode #customOrderModal p { color:rgba(253,246,236,.6); }
     <button class="modal-close" onclick="closeOrderModal()">✕</button>
     <h2>🎂 Place Your Order</h2>
     <p>Fill in your details and we'll confirm your order right away.</p>
+    <div id="pickupNotice" style="display:none;background:rgba(16,185,129,.08);border:1.5px solid rgba(16,185,129,.3);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#065F46;align-items:center;gap:8px;">
+      <span style="font-size:20px;">🏪</span>
+      <div><strong>Pick Up at Store — FREE!</strong><br><span style="font-size:12px;opacity:.85;">Udaya Bakery, Belman, Karnataka · Open 7AM–9PM · Payment required online</span></div>
+    </div>
     <div id="afterHoursNote" style="display:none;background:rgba(200,146,58,.12);border:1.5px solid rgba(200,146,58,.3);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--choco);gap:8px;align-items:center;">
       <span style="font-size:18px;">🌙</span>
       <span>We're closed right now — your order will be delivered <strong>tomorrow</strong> when we open!</span>
@@ -1596,6 +1644,7 @@ body.dark-mode #customOrderModal p { color:rgba(253,246,236,.6); }
     <div id="deliveryDateLabel" style="display:none;background:rgba(200,146,58,.08);border:1px solid rgba(200,146,58,.2);border-radius:10px;padding:9px 14px;font-size:13px;color:var(--choco);margin-bottom:4px;">
       📦 Delivering on: <strong id="deliveryDateText"></strong>
     </div>
+    <div id="deliveryFieldsWrap">
     <input type="hidden" id="custDist" value="0">
     <div id="custDistDisplay" style="background:rgba(200,146,58,.08);border:1.5px solid rgba(200,146,58,.25);border-radius:10px;padding:9px 14px;font-size:13px;color:var(--choco);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
       <span>📍</span><span id="custDistLabel">Detecting your location...</span>
@@ -1608,15 +1657,22 @@ body.dark-mode #customOrderModal p { color:rgba(253,246,236,.6); }
     <div id="locDelInfo" style="display:none;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.25);border-radius:10px;padding:8px 14px;font-size:13px;margin-bottom:10px;align-items:center;gap:8px;">
       <span>🚚</span><span>Delivery fee: <strong id="locDelCharge">₹0</strong></span>
     </div>
-    <div class="fg"><label>Delivery Address *</label><textarea id="custAddr" placeholder="Full delivery address with landmark..."></textarea>
+    <div class="fg"><label id="addrLabel">Delivery Address *</label><textarea id="custAddr" placeholder="Full delivery address with landmark..."></textarea>
       <!-- Saved addresses picker (Bug 6 fix) -->
       <div id="savedAddrsContainer" style="margin-top:8px;"></div>
+    </div>
+    </div><!-- /deliveryFieldsWrap -->
+    <div id="pickupAddrInfo" style="display:none;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:10px 14px;font-size:13px;color:#065F46;margin-bottom:12px;">
+      📍 <strong>Pick-up Location:</strong> Udaya Bakery, Main Road, Belman, Karkala Taluk, Karnataka — <a href="https://maps.google.com/?q=Udaya+Bakery+Belman+Karnataka" target="_blank" style="color:var(--gold);font-weight:700;">Open in Maps</a>
     </div>
     <div class="fg"><label>Special Instructions</label><textarea id="custNote" placeholder="Custom message, flavour preferences, decoration ideas..."></textarea></div>
     
     <!-- PAYMENT METHOD -->
     <div class="payment-method-select">
       <div class="pms-label">💳 Payment Method</div>
+      <div id="pickupPayNote" style="display:none;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:8px 12px;font-size:12px;color:#065F46;margin-bottom:10px;">
+        🏪 Store pickup requires <strong>online payment</strong> — Cash on Delivery not available for pickup orders.
+      </div>
       <div class="pms-options">
         <div class="pms-option sel" id="pms-phonepe" onclick="selectPayMethod('phonepe')">
           <div class="pms-icon" style="background:linear-gradient(135deg,#5B2D8E,#8B5CF6);">💜</div>
@@ -2135,7 +2191,8 @@ function playOrderSound(){
 }
 
 function sendAdminWhatsApp(order){
-  const msg = `🔔 *NEW ORDER — Udaya Bakery*%0A*Order: ${order.id}*%0A%0A👤 ${order.name}%0A📞 ${order.phone}%0A📍 ${order.addr}%0A📏 ${order.dist||0}km%0A💳 ${order.payMethod==='phonepe'?'PhonePe/UPI':'COD'}%0A%0A*Items:*%0A${order.items.map(i=>`• ${i.emoji} ${i.name} (${i.variant}) ×${i.qty} = ₹${i.price*i.qty}`).join('%0A')}%0A%0A🚚 Delivery: ${order.delivery===0?'FREE':'₹'+order.delivery}%0A💰 *Total: ₹${order.total}*${order.note?'%0A%0A📝 '+order.note:''}`;
+  const pickupLine = order.orderType==='pickup' ? '%0A🏪 *STORE PICKUP*' : `%0A📍 ${order.addr}%0A📏 ${order.dist||0}km`;
+  const msg = `🔔 *NEW ORDER — Udaya Bakery*%0A*Order: ${order.id}*%0A%0A👤 ${order.name}%0A📞 ${order.phone}${pickupLine}%0A💳 ${order.payMethod==='phonepe'?'PhonePe/UPI':'COD'}%0A%0A*Items:*%0A${order.items.map(i=>`• ${i.emoji} ${i.name} (${i.variant}) ×${i.qty} = ₹${i.price*i.qty}`).join('%0A')}%0A%0A🚚 Delivery: ${order.delivery===0?'FREE':'₹'+order.delivery}%0A💰 *Total: ₹${order.total}*${order.note?'%0A%0A📝 '+order.note:''}`;
   window.open(`https://wa.me/919845406712?text=${msg}`, '_blank');
 }
 
@@ -2278,40 +2335,40 @@ let CATS = [
 
 let PRODS = [
   // CAKES
-  {id:1, cat:'cakes', name:'Classic Chocolate Cake', desc:'Rich dark chocolate layers with ganache frosting. Perfect for birthdays.', emoji:'🍫', image:'', price:450, tags:['chocolate','birthday cake','cream cake'], variants:[{label:'500g',type:'weight',price:450},{label:'1kg',type:'weight',price:850},{label:'2kg',type:'weight',price:1600}], badge:'Bestseller'},
-  {id:2, cat:'cakes', name:'Vanilla Dream Cake', desc:'Light fluffy vanilla sponge with fresh cream and fruit toppings.', emoji:'🎂', image:'', price:400, tags:['vanilla','birthday','cream'], variants:[{label:'500g',type:'weight',price:400},{label:'1kg',type:'weight',price:750},{label:'2kg',type:'weight',price:1400}], badge:''},
-  {id:3, cat:'cakes', name:'Royal Wedding Cake', desc:'Elegant multi-tier wedding cake with fondant and floral accents.', emoji:'💒', image:'', price:3500, tags:['wedding cake','tier cake','fondant','special'], variants:[{label:'2kg',type:'weight',price:3500},{label:'3kg',type:'weight',price:5000},{label:'5kg',type:'weight',price:8000}], badge:'Premium'},
-  {id:4, cat:'custom', name:'Photo Print Cake', desc:'Your favourite photo printed on a delicious cake. Unique gifting idea!', emoji:'📸', image:'', price:650, tags:['photo cake','custom','special order'], variants:[{label:'500g',type:'weight',price:650},{label:'1kg',type:'weight',price:1100}], badge:'Popular'},
-  {id:5, cat:'custom', name:'Theme Cake', desc:'Fully customised themed cake — superheroes, flowers, cars, anything!', emoji:'🎨', image:'', price:850, tags:['custom cake','theme','design','special'], variants:[{label:'1kg',type:'weight',price:850},{label:'2kg',type:'weight',price:1600}], badge:'Custom'},
+  {id:1, cat:'cakes', name:'Classic Chocolate Cake', nameKn:'ಕ್ಲಾಸಿಕ್ ಚಾಕೊಲೇಟ್ ಕೇಕ್', desc:'Rich dark chocolate layers with ganache frosting. Perfect for birthdays.', descKn:'ಗ್ಯಾನಾಶ್ ಫ್ರಾಸ್ಟಿಂಗ್‌ನೊಂದಿಗೆ ಶ್ರೀಮಂತ ಡಾರ್ಕ್ ಚಾಕೊಲೇಟ್ ಪದರಗಳು. ಹುಟ್ಟುಹಬ್ಬಕ್ಕೆ ಸರಿಯಾದ ಆಯ್ಕೆ.', emoji:'🍫', image:'', price:450, tags:['chocolate','birthday cake','cream cake'], variants:[{label:'500g',type:'weight',price:450},{label:'1kg',type:'weight',price:850},{label:'2kg',type:'weight',price:1600}], badge:'Bestseller'},
+  {id:2, cat:'cakes', name:'Vanilla Dream Cake', nameKn:'ವೆನಿಲ್ಲಾ ಡ್ರೀಮ್ ಕೇಕ್', desc:'Light fluffy vanilla sponge with fresh cream and fruit toppings.', descKn:'ತಾಜಾ ಕ್ರೀಮ್ ಮತ್ತು ಹಣ್ಣಿನ ಟಾಪಿಂಗ್‌ನೊಂದಿಗೆ ಮೃದು ವೆನಿಲ್ಲಾ ಸ್ಪಂಜ್ ಕೇಕ್.', emoji:'🎂', image:'', price:400, tags:['vanilla','birthday','cream'], variants:[{label:'500g',type:'weight',price:400},{label:'1kg',type:'weight',price:750},{label:'2kg',type:'weight',price:1400}], badge:''},
+  {id:3, cat:'cakes', name:'Royal Wedding Cake', nameKn:'ರಾಯಲ್ ವೆಡ್ಡಿಂಗ್ ಕೇಕ್', desc:'Elegant multi-tier wedding cake with fondant and floral accents.', descKn:'ಫಾಂಡೆಂಟ್ ಮತ್ತು ಹೂವಿನ ಅಲಂಕಾರದೊಂದಿಗೆ ಸುಂದರ ಬಹು-ಅಂತಸ್ತಿನ ಮದುವೆ ಕೇಕ್.', emoji:'💒', image:'', price:3500, tags:['wedding cake','tier cake','fondant','special'], variants:[{label:'2kg',type:'weight',price:3500},{label:'3kg',type:'weight',price:5000},{label:'5kg',type:'weight',price:8000}], badge:'Premium'},
+  {id:4, cat:'custom', name:'Photo Print Cake', nameKn:'ಫೋಟೋ ಪ್ರಿಂಟ್ ಕೇಕ್', desc:'Your favourite photo printed on a delicious cake. Unique gifting idea!', descKn:'ನಿಮ್ಮ ಪ್ರಿಯ ಫೋಟೋ ರುಚಿಕರ ಕೇಕ್ ಮೇಲೆ ಮುದ್ರಿಸಲಾಗಿದೆ. ಅನನ್ಯ ಉಡುಗೊರೆ!', emoji:'📸', image:'', price:650, tags:['photo cake','custom','special order'], variants:[{label:'500g',type:'weight',price:650},{label:'1kg',type:'weight',price:1100}], badge:'Popular'},
+  {id:5, cat:'custom', name:'Theme Cake', nameKn:'ಥೀಮ್ ಕೇಕ್', desc:'Fully customised themed cake — superheroes, flowers, cars, anything!', descKn:'ಸಂಪೂರ್ಣ ಕಸ್ಟಮೈಸ್ ಮಾಡಿದ ಥೀಮ್ ಕೇಕ್ — ಸೂಪರ್‌ಹೀರೋ, ಹೂವು, ಕಾರು, ಏನು ಬೇಕಾದರೂ!', emoji:'🎨', image:'', price:850, tags:['custom cake','theme','design','special'], variants:[{label:'1kg',type:'weight',price:850},{label:'2kg',type:'weight',price:1600}], badge:'Custom'},
   // PUFFS
-  {id:6, cat:'puffs', name:'Egg Puff', desc:'Golden crispy pastry with spiced egg filling. The most loved bakery snack!', emoji:'🥚', image:'', price:18, tags:['egg puff','puff','egg','snack'], variants:[{label:'1 piece',type:'count',price:18},{label:'6 pieces',type:'count',price:100},{label:'12 pieces',type:'count',price:190}], badge:'🔥 Hot'},
-  {id:7, cat:'puffs', name:'Veg Masala Puff', desc:'Crispy golden puff pastry with spiced potato-pea filling.', emoji:'🥟', image:'', price:15, tags:['veg puff','puff','vegetarian','masala'], variants:[{label:'1 piece',type:'count',price:15},{label:'6 pieces',type:'count',price:82},{label:'12 pieces',type:'count',price:155}], badge:''},
-  {id:8, cat:'puffs', name:'Paneer Puff', desc:'Soft cottage cheese filling with aromatic spices inside a flaky crust.', emoji:'🫓', image:'', price:20, tags:['paneer puff','puff','cottage cheese'], variants:[{label:'1 piece',type:'count',price:20},{label:'6 pieces',type:'count',price:110}], badge:''},
-  {id:9, cat:'puffs', name:'Chicken Puff', desc:'Tender spiced chicken filling wrapped in a golden buttery puff pastry.', emoji:'🍗', image:'', price:22, tags:['chicken puff','puff','non veg','chicken'], variants:[{label:'1 piece',type:'count',price:22},{label:'6 pieces',type:'count',price:120},{label:'12 pieces',type:'count',price:228}], badge:''},
+  {id:6, cat:'puffs', name:'Egg Puff', nameKn:'ಎಗ್ ಪಫ್', desc:'Golden crispy pastry with spiced egg filling. The most loved bakery snack!', descKn:'ಮಸಾಲೆ ಮೊಟ್ಟೆ ತುಂಬಿದ ಚಿನ್ನದ ಕರಕರೆ ಪೇಸ್ಟ್ರಿ. ಅತ್ಯಂತ ಪ್ರಿಯ ಬೇಕರಿ ತಿಂಡಿ!', emoji:'🥚', image:'', price:18, tags:['egg puff','puff','egg','snack'], variants:[{label:'1 piece',type:'count',price:18},{label:'6 pieces',type:'count',price:100},{label:'12 pieces',type:'count',price:190}], badge:'🔥 Hot'},
+  {id:7, cat:'puffs', name:'Veg Masala Puff', nameKn:'ವೆಜ್ ಮಸಾಲಾ ಪಫ್', desc:'Crispy golden puff pastry with spiced potato-pea filling.', descKn:'ಮಸಾಲೆ ಆಲೂ-ಬಟಾಣಿ ತುಂಬಿದ ಕರಕರೆ ಚಿನ್ನದ ಪಫ್ ಪೇಸ್ಟ್ರಿ.', emoji:'🥟', image:'', price:15, tags:['veg puff','puff','vegetarian','masala'], variants:[{label:'1 piece',type:'count',price:15},{label:'6 pieces',type:'count',price:82},{label:'12 pieces',type:'count',price:155}], badge:''},
+  {id:8, cat:'puffs', name:'Paneer Puff', nameKn:'ಪನೀರ್ ಪಫ್', desc:'Soft cottage cheese filling with aromatic spices inside a flaky crust.', descKn:'ಪರಿಮಳಯುಕ್ತ ಮಸಾಲೆ ಪನೀರ್ ತುಂಬಿದ ಕರಕರೆ ಪಫ್.', emoji:'🫓', image:'', price:20, tags:['paneer puff','puff','cottage cheese'], variants:[{label:'1 piece',type:'count',price:20},{label:'6 pieces',type:'count',price:110}], badge:''},
+  {id:9, cat:'puffs', name:'Chicken Puff', nameKn:'ಚಿಕನ್ ಪಫ್', desc:'Tender spiced chicken filling wrapped in a golden buttery puff pastry.', descKn:'ಮೃದು ಮಸಾಲೆ ಚಿಕನ್ ತುಂಬಿದ ಚಿನ್ನದ ಬೆಣ್ಣೆ ಪಫ್ ಪೇಸ್ಟ್ರಿ.', emoji:'🍗', image:'', price:22, tags:['chicken puff','puff','non veg','chicken'], variants:[{label:'1 piece',type:'count',price:22},{label:'6 pieces',type:'count',price:120},{label:'12 pieces',type:'count',price:228}], badge:''},
   // PASTRIES
-  {id:10, cat:'pastries', name:'Butter Croissant', desc:'Flaky buttery croissants baked fresh every morning.', emoji:'🥐', image:'', price:35, tags:['croissant','pastry','butter','breakfast'], variants:[{label:'1 piece',type:'count',price:35},{label:'6 pieces',type:'count',price:200},{label:'12 pieces',type:'count',price:380}], badge:''},
-  {id:11, cat:'pastries', name:'Cream Pastry', desc:'Soft sponge filled with vanilla cream. A classic favourite.', emoji:'🍰', image:'', price:45, tags:['cream pastry','pastry','vanilla'], variants:[{label:'1 piece',type:'count',price:45},{label:'6 pieces',type:'count',price:250}], badge:''},
-  {id:12, cat:'pastries', name:'Black Forest Pastry', desc:'Cherry layered chocolate sponge with whipped cream and chocolate shavings.', emoji:'🍒', image:'', price:55, tags:['black forest','pastry','chocolate','cherry'], variants:[{label:'1 piece',type:'count',price:55},{label:'6 pieces',type:'count',price:310}], badge:'Popular'},
+  {id:10, cat:'pastries', name:'Butter Croissant', nameKn:'ಬಟರ್ ಕ್ರಾಸಾಂ', desc:'Flaky buttery croissants baked fresh every morning.', descKn:'ಪ್ರತಿ ಬೆಳಿಗ್ಗೆ ತಾಜಾ ಬೇಕ್ ಮಾಡಿದ ಕರಕರೆ ಬೆಣ್ಣೆ ಕ್ರಾಸಾಂ.', emoji:'🥐', image:'', price:35, tags:['croissant','pastry','butter','breakfast'], variants:[{label:'1 piece',type:'count',price:35},{label:'6 pieces',type:'count',price:200},{label:'12 pieces',type:'count',price:380}], badge:''},
+  {id:11, cat:'pastries', name:'Cream Pastry', nameKn:'ಕ್ರೀಮ್ ಪೇಸ್ಟ್ರಿ', desc:'Soft sponge filled with vanilla cream. A classic favourite.', descKn:'ವೆನಿಲ್ಲಾ ಕ್ರೀಮ್ ತುಂಬಿದ ಮೃದು ಸ್ಪಂಜ್. ಕ್ಲಾಸಿಕ್ ಮೆಚ್ಚಿನ ರುಚಿ.', emoji:'🍰', image:'', price:45, tags:['cream pastry','pastry','vanilla'], variants:[{label:'1 piece',type:'count',price:45},{label:'6 pieces',type:'count',price:250}], badge:''},
+  {id:12, cat:'pastries', name:'Black Forest Pastry', nameKn:'ಬ್ಲ್ಯಾಕ್ ಫಾರೆಸ್ಟ್ ಪೇಸ್ಟ್ರಿ', desc:'Cherry layered chocolate sponge with whipped cream and chocolate shavings.', descKn:'ಚೆರ್ರಿ ಪದರ ಚಾಕೊಲೇಟ್ ಸ್ಪಂಜ್ ಮತ್ತು ವಿಪ್ಡ್ ಕ್ರೀಮ್ ಹೊದಿಕೆ.', emoji:'🍒', image:'', price:55, tags:['black forest','pastry','chocolate','cherry'], variants:[{label:'1 piece',type:'count',price:55},{label:'6 pieces',type:'count',price:310}], badge:'Popular'},
   // SWEETS
-  {id:13, cat:'sweets', name:'Besan Laddoo', desc:'Traditional gram flour laddoos with ghee and cardamom. Festival special!', emoji:'🟡', image:'', price:280, tags:['laddoo','laddu','sweet','festival','besan'], variants:[{label:'250g',type:'weight',price:280},{label:'500g',type:'weight',price:520},{label:'1kg',type:'weight',price:1000}], badge:'Festival Special'},
-  {id:14, cat:'sweets', name:'Gulab Jamun', desc:'Soft khoya balls soaked in rose saffron syrup. Warm and heavenly.', emoji:'🟤', image:'', price:160, tags:['gulab jamun','sweet','dessert'], variants:[{label:'250g',type:'weight',price:160},{label:'500g',type:'weight',price:300}], badge:''},
-  {id:15, cat:'sweets', name:'Rava Laddoo', desc:'Light and melt-in-mouth semolina laddoos, perfect for all occasions.', emoji:'🍡', image:'', price:240, tags:['rava laddoo','sweet','semolina'], variants:[{label:'250g',type:'weight',price:240},{label:'500g',type:'weight',price:460},{label:'1kg',type:'weight',price:880}], badge:''},
+  {id:13, cat:'sweets', name:'Besan Laddoo', nameKn:'ಬೇಸನ್ ಲಡ್ಡು', desc:'Traditional gram flour laddoos with ghee and cardamom. Festival special!', descKn:'ತುಪ್ಪ ಮತ್ತು ಏಲಕ್ಕಿಯೊಂದಿಗೆ ಸಾಂಪ್ರದಾಯಿಕ ಕಡಲೆ ಹಿಟ್ಟಿನ ಲಡ್ಡು. ಹಬ್ಬದ ವಿಶೇಷ!', emoji:'🟡', image:'', price:280, tags:['laddoo','laddu','sweet','festival','besan'], variants:[{label:'250g',type:'weight',price:280},{label:'500g',type:'weight',price:520},{label:'1kg',type:'weight',price:1000}], badge:'Festival Special'},
+  {id:14, cat:'sweets', name:'Gulab Jamun', nameKn:'ಗುಲಾಬ್ ಜಾಮೂನ್', desc:'Soft khoya balls soaked in rose saffron syrup. Warm and heavenly.', descKn:'ಗುಲಾಬ್ ಕೇಸರಿ ಪಾಕದಲ್ಲಿ ನೆನೆಸಿದ ಮೃದು ಖೋವಾ ಉಂಡೆಗಳು.', emoji:'🟤', image:'', price:160, tags:['gulab jamun','sweet','dessert'], variants:[{label:'250g',type:'weight',price:160},{label:'500g',type:'weight',price:300}], badge:''},
+  {id:15, cat:'sweets', name:'Rava Laddoo', nameKn:'ರವಾ ಲಡ್ಡು', desc:'Light and melt-in-mouth semolina laddoos, perfect for all occasions.', descKn:'ಬಾಯಲ್ಲಿ ಕರಗುವ ಹಗುರ ರವಾ ಲಡ್ಡು, ಎಲ್ಲ ಸಂದರ್ಭಗಳಿಗೆ ಸೂಕ್ತ.', emoji:'🍡', image:'', price:240, tags:['rava laddoo','sweet','semolina'], variants:[{label:'250g',type:'weight',price:240},{label:'500g',type:'weight',price:460},{label:'1kg',type:'weight',price:880}], badge:''},
   // NAMKEEN
-  {id:16, cat:'namkeen', name:'Moong Dal Namkeen', desc:'Light crispy moong dal fried to perfection with mild spices.', emoji:'🫘', image:'', price:120, tags:['moong dal','namkeen','snack','crispy'], variants:[{label:'200g',type:'weight',price:120},{label:'500g',type:'weight',price:280},{label:'1kg',type:'weight',price:530}], badge:''},
-  {id:17, cat:'namkeen', name:'Bombay Mixture', desc:'Crunchy tangy and perfectly spiced traditional Bombay mixture.', emoji:'🥜', image:'', price:150, tags:['mixture','bombay mixture','namkeen','snack'], variants:[{label:'250g',type:'weight',price:150},{label:'500g',type:'weight',price:280},{label:'1kg',type:'weight',price:530}], badge:''},
-  {id:18, cat:'namkeen', name:'Thin Sev', desc:'Ultra thin crispy sev with a light, peppery flavour.', emoji:'🌾', image:'', price:110, tags:['sev','thin sev','namkeen','crispy'], variants:[{label:'200g',type:'weight',price:110},{label:'500g',type:'weight',price:260}], badge:''},
+  {id:16, cat:'namkeen', name:'Moong Dal Namkeen', nameKn:'ಮೂಂಗ್ ದಾಲ್ ನಮ್ಕೀನ್', desc:'Light crispy moong dal fried to perfection with mild spices.', descKn:'ಮೃದು ಮಸಾಲೆಯೊಂದಿಗೆ ಲಘು ಕರಕರೆ ಮೂಂಗ್ ದಾಲ್ ಹುರಿದದ್ದು.', emoji:'🫘', image:'', price:120, tags:['moong dal','namkeen','snack','crispy'], variants:[{label:'200g',type:'weight',price:120},{label:'500g',type:'weight',price:280},{label:'1kg',type:'weight',price:530}], badge:''},
+  {id:17, cat:'namkeen', name:'Bombay Mixture', nameKn:'ಬಾಂಬೆ ಮಿಕ್ಸ್ಚರ್', desc:'Crunchy tangy and perfectly spiced traditional Bombay mixture.', descKn:'ಹಳೆಯ ಸಾಂಪ್ರದಾಯಿಕ ಬಾಂಬೆ ಮಿಕ್ಸ್ಚರ್ — ಕರಕರೆ ಮತ್ತು ಖಾರ.', emoji:'🥜', image:'', price:150, tags:['mixture','bombay mixture','namkeen','snack'], variants:[{label:'250g',type:'weight',price:150},{label:'500g',type:'weight',price:280},{label:'1kg',type:'weight',price:530}], badge:''},
+  {id:18, cat:'namkeen', name:'Thin Sev', nameKn:'ತೆಳು ಸೇವ್', desc:'Ultra thin crispy sev with a light, peppery flavour.', descKn:'ಹಗುರ ಖಾರದ ರುಚಿಯ ಅತ್ಯಂತ ತೆಳು ಕರಕರೆ ಸೇವ್.', emoji:'🌾', image:'', price:110, tags:['sev','thin sev','namkeen','crispy'], variants:[{label:'200g',type:'weight',price:110},{label:'500g',type:'weight',price:260}], badge:''},
   // CHAKLI
-  {id:19, cat:'chakli', name:'Rice Chakli', desc:'Crispy spiral chakli made from rice flour with sesame seeds.', emoji:'🌀', image:'', price:180, tags:['chakli','rice chakli','spiral','crunchy'], variants:[{label:'250g',type:'weight',price:180},{label:'500g',type:'weight',price:340},{label:'1kg',type:'weight',price:640}], badge:'Homemade'},
-  {id:20, cat:'chakli', name:'Butter Chakli', desc:'Rich buttery chakli that melts in your mouth — a true festive delight.', emoji:'🌀', image:'', price:200, tags:['butter chakli','chakli','butter','festival'], variants:[{label:'250g',type:'weight',price:200},{label:'500g',type:'weight',price:380}], badge:'Festival Special'},
+  {id:19, cat:'chakli', name:'Rice Chakli', nameKn:'ಅಕ್ಕಿ ಚಕ್ಲಿ', desc:'Crispy spiral chakli made from rice flour with sesame seeds.', descKn:'ಎಳ್ಳಿನೊಂದಿಗೆ ಅಕ್ಕಿ ಹಿಟ್ಟಿನ ಕರಕರೆ ಸುರುಳಿ ಚಕ್ಲಿ.', emoji:'🌀', image:'', price:180, tags:['chakli','rice chakli','spiral','crunchy'], variants:[{label:'250g',type:'weight',price:180},{label:'500g',type:'weight',price:340},{label:'1kg',type:'weight',price:640}], badge:'Homemade'},
+  {id:20, cat:'chakli', name:'Butter Chakli', nameKn:'ಬಟರ್ ಚಕ್ಲಿ', desc:'Rich buttery chakli that melts in your mouth — a true festive delight.', descKn:'ಬಾಯಲ್ಲಿ ಕರಗುವ ಶ್ರೀಮಂತ ಬೆಣ್ಣೆ ಚಕ್ಲಿ — ನಿಜವಾದ ಹಬ್ಬದ ತಿಂಡಿ.', emoji:'🌀', image:'', price:200, tags:['butter chakli','chakli','butter','festival'], variants:[{label:'250g',type:'weight',price:200},{label:'500g',type:'weight',price:380}], badge:'Festival Special'},
   // SNACKS
-  {id:21, cat:'snacks', name:'Khari Biscuit', desc:'Delicate layered khari biscuits perfect with morning chai.', emoji:'🫙', image:'', price:80, tags:['khari','biscuit','snack','tea time'], variants:[{label:'200g',type:'weight',price:80},{label:'400g',type:'weight',price:150}], badge:''},
-  {id:22, cat:'snacks', name:'Toast Rusk', desc:'Crispy double-baked rusk — the perfect companion for your hot beverage.', emoji:'🍞', image:'', price:60, tags:['rusk','toast','snack','tea'], variants:[{label:'200g',type:'weight',price:60},{label:'400g',type:'weight',price:115}], badge:''},
+  {id:21, cat:'snacks', name:'Khari Biscuit', nameKn:'ಖಾರಿ ಬಿಸ್ಕತ್', desc:'Delicate layered khari biscuits perfect with morning chai.', descKn:'ಬೆಳಿಗ್ಗೆ ಚಹಾಕ್ಕೆ ಸರಿಯಾದ ಪದರ ಪದರ ಖಾರಿ ಬಿಸ್ಕತ್.', emoji:'🫙', image:'', price:80, tags:['khari','biscuit','snack','tea time'], variants:[{label:'200g',type:'weight',price:80},{label:'400g',type:'weight',price:150}], badge:''},
+  {id:22, cat:'snacks', name:'Toast Rusk', nameKn:'ಟೋಸ್ಟ್ ರಸ್ಕ್', desc:'Crispy double-baked rusk — the perfect companion for your hot beverage.', descKn:'ಎರಡು ಬಾರಿ ಬೇಕ್ ಮಾಡಿದ ಕರಕರೆ ರಸ್ಕ್ — ಬಿಸಿ ಪಾನೀಯಕ್ಕೆ ಸೂಕ್ತ.', emoji:'🍞', image:'', price:60, tags:['rusk','toast','snack','tea'], variants:[{label:'200g',type:'weight',price:60},{label:'400g',type:'weight',price:115}], badge:''},
   // SEASONAL
-  {id:23, cat:'seasonal', name:'Diwali Sweet Box', desc:'Assorted festive sweets — laddoo, barfi, halwa — beautifully boxed.', emoji:'🪔', image:'', price:350, tags:['diwali','festival box','sweet box','assorted','seasonal'], variants:[{label:'250g Box',type:'size',price:350},{label:'500g Box',type:'size',price:650},{label:'1kg Box',type:'size',price:1200}], badge:'🌟 Seasonal'},
-  {id:24, cat:'seasonal', name:'Christmas Plum Cake', desc:'Rich, moist plum cake with dried fruits and nuts. A holiday favourite!', emoji:'🎄', image:'', price:420, tags:['christmas','plum cake','seasonal','holiday','cake'], variants:[{label:'500g',type:'weight',price:420},{label:'1kg',type:'weight',price:800}], badge:'🌟 Seasonal'},
+  {id:23, cat:'seasonal', name:'Diwali Sweet Box', nameKn:'ದೀಪಾವಳಿ ಮಿಠಾಯಿ ಪೆಟ್ಟಿಗೆ', desc:'Assorted festive sweets — laddoo, barfi, halwa — beautifully boxed.', descKn:'ಲಡ್ಡು, ಬರ್ಫಿ, ಹಲ್ವಾ — ಸುಂದರ ಪ್ಯಾಕ್‌ನಲ್ಲಿ ಹಬ್ಬದ ಸಿಹಿಗಳ ಸಂಗ್ರಹ.', emoji:'🪔', image:'', price:350, tags:['diwali','festival box','sweet box','assorted','seasonal'], variants:[{label:'250g Box',type:'size',price:350},{label:'500g Box',type:'size',price:650},{label:'1kg Box',type:'size',price:1200}], badge:'🌟 Seasonal'},
+  {id:24, cat:'seasonal', name:'Christmas Plum Cake', nameKn:'ಕ್ರಿಸ್ಮಸ್ ಪ್ಲಮ್ ಕೇಕ್', desc:'Rich, moist plum cake with dried fruits and nuts. A holiday favourite!', descKn:'ಒಣ ಹಣ್ಣು ಮತ್ತು ಬೀಜಗಳ ಶ್ರೀಮಂತ ತೇವಾಂಶ ಪ್ಲಮ್ ಕೇಕ್. ಹಬ್ಬದ ಮೆಚ್ಚಿನ!', emoji:'🎄', image:'', price:420, tags:['christmas','plum cake','seasonal','holiday','cake'], variants:[{label:'500g',type:'weight',price:420},{label:'1kg',type:'weight',price:800}], badge:'🌟 Seasonal'},
   // BREADS
-  {id:25, cat:'breads', name:'Milk Bread Loaf', desc:'Soft fluffy milk bread baked fresh daily. Perfect for breakfast.', emoji:'🍞', image:'', price:45, tags:['bread','milk bread','loaf','breakfast'], variants:[{label:'Small',type:'size',price:45},{label:'Large',type:'size',price:75}], badge:'Daily Fresh'},
-  {id:26, cat:'breads', name:'Dinner Rolls', desc:'Soft pillowy dinner rolls — serve them warm with butter!', emoji:'🫓', image:'', price:80, tags:['dinner roll','roll','bread','soft'], variants:[{label:'4 pieces',type:'count',price:80},{label:'8 pieces',type:'count',price:150}], badge:''},
+  {id:25, cat:'breads', name:'Milk Bread Loaf', nameKn:'ಮಿಲ್ಕ್ ಬ್ರೆಡ್ ಲೋಫ್', desc:'Soft fluffy milk bread baked fresh daily. Perfect for breakfast.', descKn:'ಪ್ರತಿದಿನ ತಾಜಾ ಬೇಕ್ ಮಾಡಿದ ಮೃದು ಹಾಲಿನ ಬ್ರೆಡ್. ಉಪಾಹಾರಕ್ಕೆ ಸರಿಯಾದ ಆಯ್ಕೆ.', emoji:'🍞', image:'', price:45, tags:['bread','milk bread','loaf','breakfast'], variants:[{label:'Small',type:'size',price:45},{label:'Large',type:'size',price:75}], badge:'Daily Fresh'},
+  {id:26, cat:'breads', name:'Dinner Rolls', nameKn:'ಡಿನ್ನರ್ ರೋಲ್ಸ್', desc:'Soft pillowy dinner rolls — serve them warm with butter!', descKn:'ಮೃದು ರಾತ್ರಿ ಭೋಜನ ರೋಲ್‌ಗಳು — ಬೆಣ್ಣೆಯೊಂದಿಗೆ ಬಿಸಿಯಾಗಿ ಬಡಿಸಿ!', emoji:'🫓', image:'', price:80, tags:['dinner roll','roll','bread','soft'], variants:[{label:'4 pieces',type:'count',price:80},{label:'8 pieces',type:'count',price:150}], badge:''},
 ];
 
 let ORDERS = [];
@@ -2614,12 +2671,15 @@ function openQAModal(pid){
 
   const defPrice = p.variants[0].price;
 
+  const _qaIsKn = currentLang === 'kn';
+  const qaDisplayName = _qaIsKn && p.nameKn ? p.nameKn : p.name;
+  const qaDisplayDesc = _qaIsKn && p.descKn ? p.descKn : p.desc;
   document.getElementById('qaContent').innerHTML = `
     ${imgHtml}
     <div class="qa-body">
       <div class="qa-cat">${cat?cat.name:p.cat}</div>
-      <div class="qa-name">${p.name}</div>
-      <div class="qa-desc">${p.desc}</div>
+      <div class="qa-name">${qaDisplayName}</div>
+      <div class="qa-desc">${qaDisplayDesc}</div>
       ${variantsHtml}
       ${flavoursHtml}
     </div>`;
@@ -2934,8 +2994,10 @@ function renderRecentlyViewed(){
   sec.style.display = '';
   grid.innerHTML = items.map(p=>{
     const cat = CATS.find(c=>c.id===p.cat);
+    const _rvKn = currentLang === 'kn';
+    const rvName = _rvKn && p.nameKn ? p.nameKn : p.name;
+    const rvDesc = _rvKn && p.descKn ? p.descKn : p.desc;
     const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy">` : `<div class="pimg-emoji">${p.emoji}</div>`;
-    // Use default flavour's variants if available for weight chips
     const defFlvForCard = (hasFlavours && p._displayFlavours && p._displayFlavours[0]?.variants?.length) ? p._displayFlavours[0] : null;
     const cardVariants = defFlvForCard ? defFlvForCard.variants : p.variants;
     const defV = cardVariants[0];
@@ -2943,8 +3005,8 @@ function renderRecentlyViewed(){
       <div class="pimg-wrap">${imgH}${p.badge?`<span class="pbadge">${p.badge}</span>`:''}</div>
       <div class="pbody">
         <div class="pcat">${cat?cat.name:p.cat}</div>
-        <div class="pname">${p.name}</div>
-        <div class="pdesc">${p.desc}</div>
+        <div class="pname">${rvName}</div>
+        <div class="pdesc">${rvDesc}</div>
         <div class="varlabel">Select Variant:</div>
         <div class="vchips" id="pv-rv-${p.id}">${p.variants.map((v,i)=>`<span class="vc ${i===0?'sel':''}" onclick="selV('rv-${p.id}',${i})">${v.label}</span>`).join('')}</div>
         <div class="pfoot">
@@ -3052,13 +3114,215 @@ function toggleDark(){
 (function(){
   if(localStorage.getItem('ub_dark')==='1'){
     document.body.classList.add('dark-mode');
-    // btn not ready yet, set after load
     window.addEventListener('DOMContentLoaded',()=>{
       const b=document.getElementById('darkBtn');
       if(b) b.textContent='☀️';
     });
   }
 })();
+
+// ══════════════════════════════════════════════
+//  DELIVERY TYPE (Pickup / Home Delivery)
+// ══════════════════════════════════════════════
+function setDeliveryType(type){
+  selectedDeliveryType = type;
+  localStorage.setItem('ub_del_type', type);
+  const dOptDelivery  = document.getElementById('dopt-delivery');
+  const dOptPickup    = document.getElementById('dopt-pickup');
+  const delivWrap     = document.getElementById('deliveryPanelWrap');
+  const checkoutBtn   = document.getElementById('checkoutBtn');
+  const isKn = currentLang === 'kn';
+
+  if(dOptDelivery) dOptDelivery.classList.toggle('active', type === 'delivery');
+  if(dOptPickup)   dOptPickup.classList.toggle('active', type === 'pickup');
+
+  if(type === 'pickup'){
+    if(delivWrap) delivWrap.style.display = 'none';
+    // Show free delivery row
+    updateCartDelivery(0, isKn ? 'ಅಂಗಡಿಯಿಂದ ಪಿಕಪ್' : 'Store Pickup');
+    if(checkoutBtn) checkoutBtn.textContent = isKn ? '🏪 ಪಿಕಪ್ ಆರ್ಡರ್ ಮಾಡಿ →' : '🏪 Place Pickup Order →';
+    showToast(isKn ? '🏪 ಅಂಗಡಿ ಪಿಕಪ್ — ಉಚಿತ! ಆನ್‌ಲೈನ್ ಪಾವತಿ ಅಗತ್ಯ.' : '🏪 Store Pickup — FREE! Online payment required.','ok');
+  } else {
+    if(delivWrap) delivWrap.style.display = '';
+    // Restore delivery fee
+    if(userDistKm !== null) updateCartDelivery(userDistKm, userLocName);
+    else updateCartDelivery(0, '');
+    if(checkoutBtn) checkoutBtn.textContent = isKn ? '🎂 ಆರ್ಡರ್ ಮಾಡಿ →' : '🎂 Place Order →';
+  }
+}
+
+// ══════════════════════════════════════════════
+//  LANGUAGE SWITCHER (English / Kannada)
+// ══════════════════════════════════════════════
+let currentLang = localStorage.getItem('ub_lang') || 'en';
+
+const TRANSLATIONS = {
+  en: {
+    langBtn: 'ಕನ್ನಡ',
+    navMenu: 'Menu', navShop: 'Shop', navReviews: 'Reviews', navContact: 'Contact',
+    heroLabel: '✦ Belman\'s Finest Bakery',
+    heroTitle: 'Baked with <em>Love</em>,<br>Crafted with <em>Passion</em>',
+    heroDesc: 'From dreamy wedding cakes to crispy chaklis — every bite tells a story of tradition, quality and joy in the heart of Belman.',
+    heroOrder: '🛒 Order Now', heroExplore: 'Explore Menu ↓',
+    categoriesLabel: '✦ Our Menu', categoriesTitle: 'Browse by <em>Category</em>',
+    categoriesDesc: 'Tap any category to instantly filter our fresh products.',
+    productsLabel: '✦ Fresh From Oven', productsTitle: 'Our <em>Delicious</em> Products',
+    cartTitle: '🛒 Your Cart', cartEmpty: 'Your cart is empty',
+    cartEmptySub: 'Add some freshly baked delights!',
+    checkoutBtn: '🎂 Place Order →',
+    dtLabel: '🚚 How do you want it?',
+    dtDeliveryName: 'Home Delivery', dtDeliverySub: 'Charges apply',
+    dtPickupName: 'Pick Up at Store', dtPickupSub: 'FREE • Pay Online',
+    couponLabel: '🏷️ Have a Coupon Code?',
+    signIn: 'Sign In', mbnHome: 'Home', mbnMenu: 'Menu', mbnCart: 'Cart',
+    mbnOrders: 'Orders', mbnProfile: 'Profile',
+    orderTitle: '🎂 Place Your Order',
+    orderDesc: 'Fill in your details and we\'ll confirm your order right away.',
+    fnameLabel: 'Full Name *', phoneLabel: 'Phone *',
+    dateLabel: '📅 Delivery Date *', timeLabel: '⏰ Preferred Time *',
+    addrLabel: 'Delivery Address *', noteLabel: 'Special Instructions',
+    payLabel: '💳 Payment Method', confirmBtn: '✅ Confirm & Pay →',
+    allItems: 'All Items',
+  },
+  kn: {
+    langBtn: 'English',
+    navMenu: 'ಮೆನು', navShop: 'ಶಾಪ್', navReviews: 'ವಿಮರ್ಶೆಗಳು', navContact: 'ಸಂಪರ್ಕ',
+    heroLabel: '✦ ಬೆಲ್ಮಣ್‌ನ ಶ್ರೇಷ್ಠ ಬೇಕರಿ',
+    heroTitle: '<em>ಪ್ರೀತಿ</em>ಯಿಂದ ಬೇಕ್ ಮಾಡಿದ,<br><em>ಉತ್ಸಾಹ</em>ದಿಂದ ರಚಿಸಿದ',
+    heroDesc: 'ಮದುವೆ ಕೇಕ್‌ಗಳಿಂದ ಕರಕರೆ ಚಕ್ಲಿವರೆಗೆ — ಪ್ರತಿ ತುತ್ತೂ ಒಂದು ಕಥೆ ಹೇಳುತ್ತದೆ.',
+    heroOrder: '🛒 ಈಗ ಆರ್ಡರ್ ಮಾಡಿ', heroExplore: 'ಮೆನು ನೋಡಿ ↓',
+    categoriesLabel: '✦ ನಮ್ಮ ಮೆನು', categoriesTitle: '<em>ವರ್ಗ</em>ದ ಮೂಲಕ ಬ್ರೌಸ್ ಮಾಡಿ',
+    categoriesDesc: 'ತಾಜಾ ಉತ್ಪನ್ನಗಳನ್ನು ನೋಡಲು ಯಾವುದೇ ವರ್ಗವನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ.',
+    productsLabel: '✦ ಒಲೆಯಿಂದ ತಾಜಾ', productsTitle: 'ನಮ್ಮ <em>ರುಚಿಕರ</em> ಉತ್ಪನ್ನಗಳು',
+    cartTitle: '🛒 ನಿಮ್ಮ ಕಾರ್ಟ್', cartEmpty: 'ನಿಮ್ಮ ಕಾರ್ಟ್ ಖಾಲಿಯಾಗಿದೆ',
+    cartEmptySub: 'ತಾಜಾ ಬೇಕರಿ ಸ್ವಾದಗಳನ್ನು ಸೇರಿಸಿ!',
+    checkoutBtn: '🎂 ಆರ್ಡರ್ ಮಾಡಿ →',
+    dtLabel: '🚚 ಹೇಗೆ ಬೇಕು?',
+    dtDeliveryName: 'ಮನೆ ಡೆಲಿವರಿ', dtDeliverySub: 'ಶುಲ್ಕ ಅನ್ವಯ',
+    dtPickupName: 'ಅಂಗಡಿಯಿಂದ ಪಿಕಪ್', dtPickupSub: 'ಉಚಿತ • ಆನ್‌ಲೈನ್ ಪಾವತಿ',
+    couponLabel: '🏷️ ಕೂಪನ್ ಕೋಡ್ ಇದೆಯೇ?',
+    signIn: 'ಸೈನ್ ಇನ್', mbnHome: 'ಮನೆ', mbnMenu: 'ಮೆನು', mbnCart: 'ಕಾರ್ಟ್',
+    mbnOrders: 'ಆರ್ಡರ್‌ಗಳು', mbnProfile: 'ಪ್ರೊಫೈಲ್',
+    orderTitle: '🎂 ನಿಮ್ಮ ಆರ್ಡರ್ ಮಾಡಿ',
+    orderDesc: 'ವಿವರಗಳನ್ನು ತುಂಬಿ, ನಾವು ತಕ್ಷಣ ದೃಢಪಡಿಸುತ್ತೇವೆ.',
+    fnameLabel: 'ಪೂರ್ಣ ಹೆಸರು *', phoneLabel: 'ಫೋನ್ *',
+    dateLabel: '📅 ಡೆಲಿವರಿ ದಿನಾಂಕ *', timeLabel: '⏰ ಆದ್ಯತೆ ಸಮಯ *',
+    addrLabel: 'ಡೆಲಿವರಿ ವಿಳಾಸ *', noteLabel: 'ವಿಶೇಷ ಸೂಚನೆಗಳು',
+    payLabel: '💳 ಪಾವತಿ ವಿಧಾನ', confirmBtn: '✅ ದೃಢಪಡಿಸಿ ಮತ್ತು ಪಾವತಿ →',
+    allItems: 'ಎಲ್ಲ ಐಟಂಗಳು',
+  }
+};
+
+function applyLang(lang){
+  currentLang = lang;
+  localStorage.setItem('ub_lang', lang);
+  const T = TRANSLATIONS[lang];
+  const set = (id, html, isHtml) => { const el = document.getElementById(id); if(el){ isHtml ? el.innerHTML = html : el.textContent = html; } };
+  const setQ = (sel, prop, val) => { const el = document.querySelector(sel); if(el) el[prop] = val; };
+  const setAll = (sel, prop, val) => { document.querySelectorAll(sel).forEach(el => el[prop] = val); };
+
+  // Lang button
+  set('langBtn', T.langBtn);
+
+  // Nav
+  setAll('.nav-links li:nth-child(1) a', 'textContent', T.navMenu);
+  setAll('.nav-links li:nth-child(2) a', 'textContent', T.navShop);
+  setAll('.nav-links li:nth-child(3) a', 'textContent', T.navReviews);
+  setAll('.nav-links li:nth-child(4) a', 'textContent', T.navContact);
+
+  // Hero
+  const heroLabel = document.querySelector('.hero-label');
+  if(heroLabel) heroLabel.textContent = T.heroLabel;
+  const heroTitle = document.querySelector('.hero-title');
+  if(heroTitle) heroTitle.innerHTML = T.heroTitle;
+  const heroDesc = document.querySelector('.hero-desc');
+  if(heroDesc) heroDesc.textContent = T.heroDesc;
+  const heroOrderBtn = document.querySelector('.hero-btns .btn-primary');
+  if(heroOrderBtn) heroOrderBtn.textContent = T.heroOrder;
+  const heroExploreBtn = document.querySelector('.hero-btns .btn-outline');
+  if(heroExploreBtn) heroExploreBtn.textContent = T.heroExplore;
+
+  // Categories section
+  const catLabel = document.querySelector('#categories .section-label');
+  if(catLabel) catLabel.textContent = T.categoriesLabel;
+  const catTitle = document.querySelector('#categories .section-title');
+  if(catTitle) catTitle.innerHTML = T.categoriesTitle;
+  const catDesc = document.querySelector('#categories .section-desc');
+  if(catDesc) catDesc.textContent = T.categoriesDesc;
+
+  // Products section
+  const prodLabel = document.querySelector('#products .section-label');
+  if(prodLabel) prodLabel.textContent = T.productsLabel;
+  const prodTitle = document.getElementById('productsTitle');
+  if(prodTitle) prodTitle.innerHTML = T.productsTitle;
+
+  // Cart
+  const cartHead = document.querySelector('.cart-head h2');
+  if(cartHead) cartHead.textContent = T.cartTitle;
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  if(checkoutBtn) checkoutBtn.textContent = selectedDeliveryType === 'pickup'
+    ? (lang === 'kn' ? '🏪 ಪಿಕಪ್ ಆರ್ಡರ್ ಮಾಡಿ →' : '🏪 Place Pickup Order →')
+    : T.checkoutBtn;
+
+  // Delivery type labels
+  set('dtLabel', T.dtLabel);
+  set('dtDeliveryName', T.dtDeliveryName);
+  set('dtDeliverySub', T.dtDeliverySub);
+  set('dtPickupName', T.dtPickupName);
+  set('dtPickupSub', T.dtPickupSub);
+
+  // Mobile bottom nav labels
+  const mbnLabels = document.querySelectorAll('.mbn-label');
+  const mbnKeys = ['mbnHome','mbnMenu','mbnCart','mbnTrack','mbnProfile'];
+  const mbnVals = [T.mbnHome, T.mbnMenu, T.mbnCart, T.mbnOrders, T.mbnProfile];
+  mbnLabels.forEach((el, i) => { if(mbnVals[i]) el.textContent = mbnVals[i]; });
+
+  // Sign in button
+  const signBtn = document.getElementById('btnSignIn');
+  if(signBtn) signBtn.innerHTML = `<img src="https://www.google.com/favicon.ico" alt="G"> ${T.signIn}`;
+  const signBtnNav = document.getElementById('btnSignInNav');
+  if(signBtnNav) signBtnNav.innerHTML = `<img src="https://www.google.com/favicon.ico" alt="G"> ${T.signIn}`;
+
+  // Order modal
+  const orderModalTitle = document.querySelector('#orderModalBg h2');
+  if(orderModalTitle) orderModalTitle.textContent = T.orderTitle;
+  const orderModalDesc = document.querySelector('#orderModalBg p');
+  if(orderModalDesc) orderModalDesc.textContent = T.orderDesc;
+  const fnameLabel = document.querySelector('label[for="custName"], .fg label');
+  // Labels in order modal
+  document.querySelectorAll('#orderModalBg .fg label').forEach((el, i) => {
+    const map = [T.fnameLabel, T.phoneLabel, T.addrLabel, T.noteLabel];
+    if(map[i]) el.textContent = map[i];
+  });
+  set('addrLabel', T.addrLabel);
+
+  // Re-render products to pick up "All Items" translation
+  renderCats();
+}
+
+function toggleLang(){
+  applyLang(currentLang === 'en' ? 'kn' : 'en');
+}
+
+// Apply saved language on page load
+window.addEventListener('DOMContentLoaded', () => {
+  if(currentLang === 'kn') setTimeout(() => applyLang('kn'), 600);
+  // Apply saved delivery type UI state
+  setTimeout(() => {
+    const dOptDelivery = document.getElementById('dopt-delivery');
+    const dOptPickup   = document.getElementById('dopt-pickup');
+    const delivWrap    = document.getElementById('deliveryPanelWrap');
+    if(selectedDeliveryType === 'pickup'){
+      if(dOptDelivery) dOptDelivery.classList.remove('active');
+      if(dOptPickup)   dOptPickup.classList.add('active');
+      if(delivWrap)    delivWrap.style.display = 'none';
+    } else {
+      if(dOptDelivery) dOptDelivery.classList.add('active');
+      if(dOptPickup)   dOptPickup.classList.remove('active');
+      if(delivWrap)    delivWrap.style.display = '';
+    }
+  }, 300);
+});
 
 // ══════════════════════════════════════════════
 //  COUPON CODES
@@ -3449,12 +3713,14 @@ function liveSearch(q){
   }
   dd.innerHTML = results.map(({p})=>{
     const cat = CATS.find(c=>c.id===p.cat);
+    const _sdKn = currentLang === 'kn';
+    const sdName = _sdKn && p.nameKn ? p.nameKn : p.name;
     const imgH = p.image ? `<img src="${p.image}" alt="" loading="lazy">` : `${p.emoji}`;
     return `<div class="sd-item" onclick="selectSearchResult(${p.id})">
       <div class="sd-img">${imgH}</div>
       <div class="sd-info">
         <div class="sd-tag">${cat?.name||p.cat}</div>
-        <div class="sd-name">${highlight(p.name,q)}</div>
+        <div class="sd-name">${highlight(sdName,q)}</div>
         <div class="sd-cat">from ₹${p.variants[0].price} / ${p.variants[0].label}</div>
       </div>
       <div class="sd-price">₹${p.variants[0].price}</div>
@@ -3609,7 +3875,8 @@ function clearSearch(){
 // ═══════════════════════════════════════
 let selCat = 'all';
 function renderCats(){
-  const all = [{id:'all', name:'All Items', emoji:'✨', image:''}, ...CATS];
+  const allLabel = (currentLang === 'kn') ? 'ಎಲ್ಲ ಐಟಂಗಳು' : 'All Items';
+  const all = [{id:'all', name: allLabel, emoji:'✨', image:''}, ...CATS];
   document.getElementById('catGridEl').innerHTML = all.map(c=>{
     // count products in this category
     const cnt = c.id === 'all' ? PRODS.length : PRODS.filter(p=>p.cat===c.id).length;
@@ -3819,7 +4086,10 @@ function renderProds(){
   grid.innerHTML = list.map(p=>{
     const cat = CATS.find(c=>c.id===p.cat);
     const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy" decoding="async" style="cursor:pointer;" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='flex')">` : `<div class="pimg-emoji">${p.emoji}</div>`;
-    const pname = searchQuery ? highlight(p.name, searchQuery) : p.name;
+    const _isKn = currentLang === 'kn';
+    const pDisplayName = _isKn && p.nameKn ? p.nameKn : p.name;
+    const pDisplayDesc = _isKn && p.descKn ? p.descKn : p.desc;
+    const pname = searchQuery ? highlight(pDisplayName, searchQuery) : pDisplayName;
     const hasFlavours = p.flavours && p.flavours.length > 0;
     const flvLabel = hasFlavours ? `<div class="flv-img-label" id="fl-${p.id}"></div>` : '';
     // Reorder flavours so defaultFlavour is first, store on p BEFORE building overlays
@@ -3852,7 +4122,7 @@ function renderProds(){
           <div class="pname" style="flex:1;">${pname}</div>
         </div>
         <div class="ub-stars" id="pstars-${p.id}">${ubGetStarsHtml(p.id)}</div>
-        <div class="pdesc">${p.desc}</div>
+        <div class="pdesc">${pDisplayDesc}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
           ${((p._displayFlavours&&p._displayFlavours[0]?.variants?.length)?p._displayFlavours[0].variants:p.variants).map(v=>`<span style="font-size:11px;background:var(--cream-dark);color:var(--text-mid);padding:3px 8px;border-radius:20px;">${v.label}</span>`).join('')}
           ${hasFlavours?`<span style="font-size:11px;background:rgba(200,146,58,.12);color:var(--gold);padding:3px 8px;border-radius:20px;">${p.flavours.length} flavours</span>`:''}
@@ -3955,6 +4225,25 @@ function getSelV(pid){
 let cart = (()=>{ try{ const s=localStorage.getItem('ub_cart'); return s?JSON.parse(s):[]; }catch(e){ return []; } })();
 let delFee = 0;
 function saveCart(){ try{ localStorage.setItem('ub_cart',JSON.stringify(cart)); }catch(e){} }
+
+// ── DELIVERY TYPE: 'delivery' | 'pickup' ──
+let selectedDeliveryType = localStorage.getItem('ub_del_type') || 'delivery';
+
+// ── CART RESTORATION: if user went to payment and returned without completing ──
+(function restoreCartIfNeeded(){
+  try{
+    const savedPendingCart = localStorage.getItem('ub_pending_order_cart');
+    if(savedPendingCart && cart.length === 0){
+      const items = JSON.parse(savedPendingCart);
+      if(items && items.length > 0){
+        cart = items;
+        saveCart();
+        // Show a note after the page is ready
+        setTimeout(()=>showToast('🛒 Your cart has been restored!','ok'), 1200);
+      }
+    }
+  } catch(e){}
+})();
 
 function addCart(pid){
   trackView(pid);
@@ -4110,12 +4399,17 @@ function openOrderModal(prefillTime){
     showToast(`Minimum order is ₹${CFG.minOrder}. Add ₹${CFG.minOrder-sub} more!`,'err');
     return;
   }
-  // Require location before proceeding to order modal
-  const friendLocEl = document.getElementById('friendLocChosen');
-  const hasFriendLoc = friendLocEl && friendLocEl.style.display !== 'none' && friendLocEl.textContent.trim().length > 0;
-  if(userDistKm === null && !hasFriendLoc){
-    showToast('📍 Please detect your location or search an address to see delivery fee before ordering!','err');
-    return;
+
+  const isPickup = selectedDeliveryType === 'pickup';
+
+  // For delivery: require location. For pickup: skip location check.
+  if(!isPickup){
+    const friendLocEl = document.getElementById('friendLocChosen');
+    const hasFriendLoc = friendLocEl && friendLocEl.style.display !== 'none' && friendLocEl.textContent.trim().length > 0;
+    if(userDistKm === null && !hasFriendLoc){
+      showToast('📍 Please detect your location or search an address to see delivery fee before ordering!','err');
+      return;
+    }
   }
   closeCart();
 
@@ -4123,7 +4417,6 @@ function openOrderModal(prefillTime){
   const dateInput = document.getElementById('custDate');
   if(dateInput){
     const today = new Date();
-    // Check if any cart item has a leadDays requirement
     const maxLead = cart.reduce((mx, ci) => {
       const prod = PRODS.find(p=>String(p.id)===String(ci.pid));
       return Math.max(mx, prod?.leadDays||0);
@@ -4135,9 +4428,8 @@ function openOrderModal(prefillTime){
     const dd = String(minDate.getDate()).padStart(2,'0');
     dateInput.min = `${yyyy}-${mm}-${dd}`;
     if(maxLead > 0){
-      showToast(`📅 This order needs ${maxLead}+ day(s) lead time — earliest delivery: ${dd}/${mm}/${yyyy}`, 'ok');
+      showToast(`📅 This order needs ${maxLead}+ day(s) lead time — earliest pickup/delivery: ${dd}/${mm}/${yyyy}`, 'ok');
     }
-    // Pre-fill: respect lead time + store closed logic
     const preBase = new Date(Math.max(today.getTime(), minDate.getTime()));
     if(!isStoreOpen() && maxLead === 0) preBase.setDate(preBase.getDate() + 1);
     const py = preBase.getFullYear();
@@ -4147,16 +4439,47 @@ function openOrderModal(prefillTime){
     updateDeliveryLabel();
   }
 
-  if(userDistKm!==null){
-    const cd=document.getElementById('custDist');
-    if(cd) cd.value=userDistKm.toFixed(1);
-    const lbl=document.getElementById('custDistLabel');
-    const fee=compDel(userDistKm);
-    if(lbl) lbl.innerHTML=`📍 <strong>${userLocName||'Your location'}</strong> — ${userDistKm.toFixed(1)} km &nbsp;|&nbsp; Delivery: <strong style="color:var(--gold)">${fee===0?'FREE':'₹'+fee}</strong>`;
+  // Show/hide delivery-type-specific fields
+  const deliveryFieldsWrap = document.getElementById('deliveryFieldsWrap');
+  const pickupAddrInfo     = document.getElementById('pickupAddrInfo');
+  const pickupNoticeEl     = document.getElementById('pickupNotice');
+  const pickupPayNote      = document.getElementById('pickupPayNote');
+  const codOpt             = document.getElementById('pms-cod');
+  const distDisplay        = document.getElementById('custDistDisplay');
+
+  if(isPickup){
+    if(deliveryFieldsWrap) deliveryFieldsWrap.style.display = 'none';
+    if(pickupAddrInfo)     pickupAddrInfo.style.display = 'block';
+    if(pickupNoticeEl)     pickupNoticeEl.style.display = 'flex';
+    if(pickupPayNote)      pickupPayNote.style.display = 'block';
+    if(distDisplay)        distDisplay.style.display = 'none';
+    // Force PhonePe payment for pickup; hide COD
+    selectPayMethod('phonepe');
+    if(codOpt) codOpt.style.display = 'none';
+    // Set dist to 0 (free delivery for pickup)
+    const cd = document.getElementById('custDist');
+    if(cd) cd.value = '0';
+    // Pre-fill address with bakery address
+    const addrField = document.getElementById('custAddr');
+    if(addrField && !addrField.value) addrField.value = 'Udaya Bakery, Belman, Karkala, Karnataka (Store Pickup)';
   } else {
-    const lbl=document.getElementById('custDistLabel');
-    if(lbl) lbl.textContent='Location not detected — please use Auto Detect in cart';
+    if(deliveryFieldsWrap) deliveryFieldsWrap.style.display = '';
+    if(pickupAddrInfo)     pickupAddrInfo.style.display = 'none';
+    if(pickupNoticeEl)     pickupNoticeEl.style.display = 'none';
+    if(pickupPayNote)      pickupPayNote.style.display = 'none';
+    if(codOpt)             codOpt.style.display = '';
+    if(userDistKm !== null){
+      const cd = document.getElementById('custDist');
+      if(cd) cd.value = userDistKm.toFixed(1);
+      const lbl = document.getElementById('custDistLabel');
+      const fee = compDel(userDistKm);
+      if(lbl) lbl.innerHTML=`📍 <strong>${userLocName||'Your location'}</strong> — ${userDistKm.toFixed(1)} km &nbsp;|&nbsp; Delivery: <strong style="color:var(--gold)">${fee===0?'FREE':'₹'+fee}</strong>`;
+    } else {
+      const lbl = document.getElementById('custDistLabel');
+      if(lbl) lbl.textContent='Location not detected — please use Auto Detect in cart';
+    }
   }
+
   refreshOS();
   const afterHoursBanner = document.getElementById('afterHoursNote');
   if(afterHoursBanner){
@@ -4225,12 +4548,19 @@ function ubAdminToggleStore(el){
 function submitOrder(){
   const name=document.getElementById('custName').value.trim();
   const phone=document.getElementById('custPhone').value.trim();
-  const addr=document.getElementById('custAddr').value.trim();
-  const dist=parseFloat(document.getElementById('custDist').value)||0;
+  const isPickup = selectedDeliveryType === 'pickup';
+  // For pickup, use bakery address if field empty
+  const addrField = document.getElementById('custAddr');
+  if(isPickup && addrField && !addrField.value.trim()){
+    addrField.value = 'Udaya Bakery, Belman, Karkala, Karnataka (Store Pickup)';
+  }
+  const addr=addrField ? addrField.value.trim() : '';
+  const dist = isPickup ? 0 : (parseFloat(document.getElementById('custDist').value)||0);
   const note=document.getElementById('custNote').value.trim();
   const time=document.getElementById('custTime').value.trim();
   let dateVal=document.getElementById('custDate').value;
-  if(!name||!phone||!addr){showToast('Fill name, phone & address!','err');return;}
+  if(!name||!phone){showToast('Fill name & phone!','err');return;}
+  if(!isPickup && !addr){showToast('Fill delivery address!','err');return;}
   // Bug 12 fix: validate phone number
   const cleanPhone = phone.replace(/\D/g,'');
   if(cleanPhone.length < 10 || !/^[6-9]\d{9}$/.test(cleanPhone.slice(-10))){
@@ -4238,14 +4568,20 @@ function submitOrder(){
     document.getElementById('custPhone')?.focus();
     return;
   }
-  if(!dateVal){showToast('Please select a delivery date! 📅','err');return;}
+  if(!dateVal){showToast('Please select a date! 📅','err');return;}
   // Bug 13 fix: enforce minimum order at checkout
   const _sub13 = cart.reduce((s,c)=>s+c.price*c.qty,0);
   if(CFG.minOrder > 0 && _sub13 < CFG.minOrder){
     showToast('Minimum order is ₹'+CFG.minOrder+' — add ₹'+(CFG.minOrder-_sub13)+' more!','err');
     return;
   }
-  // If bakery is currently closed, auto-set delivery to tomorrow
+  // Pickup must pay online
+  if(isPickup && selectedPayMethod === 'cod'){
+    selectPayMethod('phonepe');
+    showToast('🏪 Store pickup requires online payment — please pay via PhonePe/UPI','err');
+    return;
+  }
+  // If bakery is currently closed, auto-set to tomorrow
   if(!isStoreOpen()){
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -4254,7 +4590,7 @@ function submitOrder(){
     if(dateField && (!dateField.value || dateField.value === new Date().toISOString().split('T')[0])){
       dateField.value = tomorrowStr;
       dateVal = tomorrowStr;
-      showToast('🌙 We are closed now — delivery scheduled for tomorrow!', 'ok');
+      showToast('🌙 We are closed now — scheduled for tomorrow!', 'ok');
     }
   }
   if(!time){showToast('Please select a preferred time slot! ⏰','err');return;}
@@ -4262,7 +4598,8 @@ function submitOrder(){
   const dateObj = new Date(dateVal);
   const delivDate = dateObj.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   const delivDateTime = delivDate + ' · ' + time;
-  const fee=compDel(dist); const sub=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const fee = isPickup ? 0 : compDel(dist);
+  const sub=cart.reduce((s,c)=>s+c.price*c.qty,0);
   // Apply coupon discount
   const couponDisc = appliedCoupon ? calcDiscount(sub, fee) : 0;
   // Apply loyalty points discount
@@ -4272,13 +4609,21 @@ function submitOrder(){
   const walletBal = useWallet ? ubGetMyWallet() : 0;
   const walletDisc = Math.min(walletBal, Math.max(0, sub + fee - couponDisc - ptsDisc));
   const total = Math.max(0, sub + fee - couponDisc - ptsDisc - walletDisc);
-  const order={id:'UB-'+String((parseInt(localStorage.getItem('ub_order_seq')||'0')+1)).padStart(5,'0'), name, phone, addr, dist, note, time: delivDateTime, delivDate: delivDate, delivTime: time, items:cart.map(c=>({...c})), subtotal:sub, delivery:fee, total, timestamp:new Date().toLocaleString('en-IN'), status:'pending', payMethod: selectedPayMethod,
-  couponCode: appliedCoupon ? (document.getElementById('couponInput')?.value||'').trim().toUpperCase() : '',
-  couponDiscount: couponDisc,
-  pointsDiscount: ptsDisc,
-  walletDiscount: walletDisc};
+  const order={
+    id:'UB-'+String((parseInt(localStorage.getItem('ub_order_seq')||'0')+1)).padStart(5,'0'),
+    name, phone, addr, dist, note,
+    time: delivDateTime, delivDate: delivDate, delivTime: time,
+    items:cart.map(c=>({...c})), subtotal:sub, delivery:fee, total,
+    timestamp:new Date().toLocaleString('en-IN'), status:'pending',
+    payMethod: isPickup ? 'phonepe' : selectedPayMethod,
+    orderType: isPickup ? 'pickup' : 'delivery',
+    couponCode: appliedCoupon ? (document.getElementById('couponInput')?.value||'').trim().toUpperCase() : '',
+    couponDiscount: couponDisc,
+    pointsDiscount: ptsDisc,
+    walletDiscount: walletDisc
+  };
   
-  if(selectedPayMethod === 'phonepe'){
+  if(order.payMethod === 'phonepe'){
     pendingOrder = order;
     closeOrderModal();
     openPhonePeModal(total, order);
@@ -4332,6 +4677,8 @@ function finalizeOrder(order, payNote){
 
   // Clear cart immediately
   cart=[]; saveCart(); updateBadge(); updateMobBadge();
+  // Clear cart backup (order is complete — no need to restore)
+  try{ localStorage.removeItem('ub_pending_order_cart'); }catch(e){}
   closeOrderModal(); closeCart(); renderCartItems();
 
   // Points & coupons
@@ -4362,7 +4709,10 @@ function finalizeOrder(order, payNote){
   // ── STEP 2: Background tasks — Firebase + WhatsApp (never block UI) ──
   // Build WhatsApp message
   let msg=`🎂 *New Order — Udaya Bakery*\n*Order: ${order.id}*\n\n`;
-  msg+=`👤 ${order.name}\n📞 ${order.phone}\n📍 ${order.addr}\n📏 ${order.dist}km\n`;
+  msg+=`👤 ${order.name}\n📞 ${order.phone}\n`;
+  msg+=order.orderType==='pickup'
+    ? `🏪 *STORE PICKUP* — Customer will collect from bakery\n📏 Delivery: FREE\n`
+    : `📍 ${order.addr}\n📏 ${order.dist}km\n`;
   if(order.time) msg+=`⏰ ${order.time}\n`;
   if(order.utrId) msg+=`💳 Payment: ${payNote} | UTR: ${order.utrId}\n\n*Items:*\n`;
   else msg+=`💳 Payment: ${payNote}\n\n*Items:*\n`;
@@ -4400,6 +4750,8 @@ function selectPayMethod(m){
 //  PHONEPE PAYMENT MODAL
 // ═══════════════════════════════════════
 function openPhonePeModal(total, order){
+  // Save cart backup so it can be restored if user returns without paying
+  try{ localStorage.setItem('ub_pending_order_cart', JSON.stringify(cart)); }catch(e){}
   document.getElementById('paymentModalBg').classList.add('open');
   renderPhonePeForm(total, order);
   _ubPush('payment');
@@ -4407,6 +4759,7 @@ function openPhonePeModal(total, order){
 function closePhonePeModal(){
   _ubClosePaymentModal();
   document.getElementById('pmBody').innerHTML='';
+  // Keep cart backup in case user accidentally closed — clear only on successful order
 }
 
 function renderPhonePeForm(total, order){
@@ -6065,6 +6418,12 @@ function buildOrdersTab(){
       <option value="delivered">🎉 Delivered</option>
       <option value="cancelled">❌ Cancelled</option>
     </select>
+    <select id="orderTypeFilter" onchange="filterOrders()"
+      style="background:rgba(255,255,255,.06);border:1px solid rgba(200,146,58,.2);border-radius:12px;padding:10px 14px;font-family:Jost,sans-serif;font-size:13px;color:rgba(253,246,236,.85);outline:none;cursor:pointer;">
+      <option value="all">All Types</option>
+      <option value="delivery">🚚 Home Delivery</option>
+      <option value="pickup">🏪 Store Pickup</option>
+    </select>
   </div>
 
   <div id="ordersListContainer">
@@ -6083,6 +6442,9 @@ function buildOrderCard(o){
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
       <div id="ubcb-${o.id}" onclick="ubToggleBulk('${o.id}')" style="width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,.08);border:1.5px solid rgba(200,146,58,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:background .2s;"></div>
       <div style="font-size:11px;color:rgba(253,246,236,.35);">Select</div>
+      ${o.orderType==='pickup'
+        ? `<span class="pickup-badge">🏪 Store Pickup</span>`
+        : `<span class="delivery-badge">🚚 Home Delivery</span>`}
     </div>
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.06);">
       <div>
@@ -6231,12 +6593,16 @@ function ubPrintBill(oid){
 function filterOrders(){
   const search = (document.getElementById('orderSearchInput')?.value||'').toLowerCase();
   const status = document.getElementById('orderStatusFilter')?.value||'all';
+  const typeFilter = document.getElementById('orderTypeFilter')?.value||'all';
   const container = document.getElementById('ordersListContainer');
   if(!container) return;
   const filtered = ORDERS.filter(o=>{
     const matchStatus = status==='all' || o.status===status;
+    const matchType = typeFilter==='all'
+      || (typeFilter==='pickup' && o.orderType==='pickup')
+      || (typeFilter==='delivery' && (o.orderType==='delivery' || !o.orderType));
     const matchSearch = !search || (o.name||'').toLowerCase().includes(search) || (o.phone||'').includes(search) || (o.id||'').toLowerCase().includes(search);
-    return matchStatus && matchSearch;
+    return matchStatus && matchType && matchSearch;
   });
   if(filtered.length===0){
     container.innerHTML = `<div style="text-align:center;padding:40px;color:rgba(253,246,236,.3);"><div style="font-size:40px;margin-bottom:12px;">🔍</div><div>No orders found</div></div>`;
@@ -6821,8 +7187,14 @@ function ubShowConfirm(order){
       </div>`
     ).join('');
   const dd = document.getElementById('ubConfDelivery');
-  if(order.delivDate) dd.innerHTML = `📅 Delivery: <strong style="color:#E8B96A;">${order.delivDate}</strong>${order.delivTime ? '&nbsp; ⏰ '+order.delivTime : ''}`;
-  else { const est=ubGetEstDelivery(order.dist||0); dd.innerHTML=`⏰ Estimated delivery: <strong style="color:#E8B96A;">${est}</strong>`; }
+  if(order.orderType === 'pickup'){
+    dd.innerHTML = `🏪 <strong style="color:#4ADE80;">Store Pickup</strong> — Please collect from Udaya Bakery, Belman`;
+  } else if(order.delivDate) {
+    dd.innerHTML = `📅 Delivery: <strong style="color:#E8B96A;">${order.delivDate}</strong>${order.delivTime ? '&nbsp; ⏰ '+order.delivTime : ''}`;
+  } else {
+    const est=ubGetEstDelivery(order.dist||0);
+    dd.innerHTML=`⏰ Estimated delivery: <strong style="color:#E8B96A;">${est}</strong>`;
+  }
   const bg = document.getElementById('ubOrderConfirmBg');
   bg.style.display = 'flex';
   _ubPush('confirm');
@@ -7594,7 +7966,7 @@ function ubShowWishlistPage(){
           <button onclick="ubToggleWish(${p.id})" style="position:absolute;top:8px;right:8px;background:rgba(255,255,255,.9);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;">❌</button>
         </div>
         <div style="padding:10px;">
-          <div style="font-size:13px;font-weight:700;color:#3B1F0E;margin-bottom:2px;">${p.name}</div>
+          <div style="font-size:13px;font-weight:700;color:#3B1F0E;margin-bottom:2px;">${(currentLang==='kn'&&p.nameKn)?p.nameKn:p.name}</div>
           <div style="font-size:12px;color:#C8923A;font-weight:700;margin-bottom:8px;">${v?'₹'+v.price:''}</div>
           <button onclick="openQAModal(${p.id});ubCloseWishlist();" style="width:100%;background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;padding:8px;border-radius:10px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">+ Add to Cart</button>
         </div>
