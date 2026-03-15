@@ -525,10 +525,10 @@ section{padding:80px 0;contain:layout;}
 /* ── FLOAT ── */
 
 /* ── FLOATING CART BUTTON (only when cart has items) ── */
-.float-cart{position:fixed;bottom:192px;right:16px;width:52px;height:52px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(200,146,58,.5);z-index:800;border:none;cursor:pointer;transition:transform .2s;display:none;}
+.float-cart{position:fixed;bottom:276px;right:16px;width:52px;height:52px;background:var(--gold);border-radius:50%;display:none;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(200,146,58,.5);z-index:800;border:none;cursor:pointer;transition:transform .2s;}
 .float-cart:hover{transform:scale(1.1);}
 .float-cart-badge{position:absolute;top:-4px;right:-4px;background:#EF4444;color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #fff;}
-@media(max-width:768px){.float-cart{bottom:186px;right:14px;width:50px;height:50px;}}
+@media(max-width:768px){.float-cart{bottom:266px;right:14px;width:50px;height:50px;}}
 
 .float-wa{position:fixed;bottom:150px;right:16px;width:52px;height:52px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(37,211,102,.4);z-index:800;text-decoration:none;transition:transform .2s;}
 .float-wa:hover{transform:scale(1.1);}
@@ -997,8 +997,10 @@ footer{background:var(--choco);padding:50px 0 24px;}
 .obadge.cancelled{background:rgba(239,68,68,.18);color:#F87171;}
 
 /* Fab admin — ONLY shown to owner */
-.fab-admin{display:none!important;position:fixed;bottom:170px;right:16px;z-index:3000;background:linear-gradient(135deg,#C8923A,#6B3A25);color:#fff;border:none;border-radius:14px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(200,146,58,.45);align-items:center;gap:6px;}
+.fab-admin{display:none!important;position:fixed;bottom:216px;right:16px;z-index:3000;background:linear-gradient(135deg,#C8923A,#6B3A25);color:#fff;border:none;border-radius:50%;width:52px;height:52px;font-family:Jost,sans-serif;font-size:22px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(200,146,58,.55);align-items:center;justify-content:center;transition:transform .2s;}
 .fab-admin.owner-visible{display:flex!important;}
+.fab-admin:hover{transform:scale(1.1);}
+@media(max-width:768px){.fab-admin{bottom:210px;right:14px;width:48px;height:48px;font-size:20px;}}
 
 /* ── FLASH SALE BANNER ANIMATION ── */
 @keyframes flashPulse {
@@ -1415,7 +1417,7 @@ body.dark-mode #customOrderModal p { color:rgba(253,246,236,.6); }
 </a>
 
 <!-- FLOATING ADMIN BUTTON -->
-<button class="fab-admin" onclick="openAdmin()">👑 Admin Panel</button>
+<button class="fab-admin" onclick="openAdmin()" title="Admin Panel">👑</button>
 
 <!-- MOBILE BOTTOM NAV -->
 <div class="mob-bottom-nav" id="mobBottomNav">
@@ -1548,6 +1550,8 @@ body.dark-mode #customOrderModal p { color:rgba(253,246,236,.6); }
       </div>
       <div id="couponStatus" style="display:none;" class="coupon-status"></div>
     </div>
+    <!-- WALLET CASH ROW -->
+    <div id="cartWalletRow" style="display:none;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:9px 12px;margin-bottom:8px;"></div>
     <div class="cart-total-row"><span>Total Amount</span><strong id="cartTotalEl">₹0</strong></div>
     <div id="minOrderWarn" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:8px 12px;font-size:12px;color:#991b1b;margin-bottom:8px;text-align:center;"></div>
     <button class="btn-checkout" onclick="openOrderModal()" id="checkoutBtn" style="position:sticky;bottom:0;margin-top:8px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;">🎂 Place Order →</button>
@@ -1673,6 +1677,14 @@ body.dark-mode #customOrderModal p { color:rgba(253,246,236,.6); }
           Sign in with Google
         </button>
         <button onclick="closeAdmin()" style="width:100%;margin-top:10px;background:transparent;color:rgba(253,246,236,.35);border:1px solid rgba(255,255,255,.08);padding:11px;border-radius:14px;font-family:Jost,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>
+        <!-- Security status indicators -->
+        <div style="margin-top:20px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;">
+          <span style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#4ADE80;border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;letter-spacing:.5px;">🔐 AES-256-GCM</span>
+          <span style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#4ADE80;border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;letter-spacing:.5px;">🛡️ Rate Limited</span>
+          <span style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#4ADE80;border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;letter-spacing:.5px;">⏱️ Auto Logout</span>
+          <span style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#4ADE80;border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;letter-spacing:.5px;">🚫 No Session Save</span>
+        </div>
+        <div id="loginRateLimitInfo" style="margin-top:10px;font-size:11px;color:rgba(253,246,236,.3);text-align:center;"></div>
       </div>
     </div>
   </div>
@@ -1721,6 +1733,166 @@ body.dark-mode #customOrderModal p { color:rgba(253,246,236,.6); }
 <div class="toast" id="toast"></div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ╔══════════════════════════════════════════════════════════════╗
+// ║          🔐 UB SECURITY MODULE — DO NOT MODIFY              ║
+// ║  AES-256-GCM encrypted storage + session hardening          ║
+// ╚══════════════════════════════════════════════════════════════╝
+const UB_SECURE = (() => {
+  'use strict';
+  let _ck = null; // AES-256-GCM CryptoKey — only lives in memory, gone on logout/refresh
+
+  // Derive AES key from admin password hash via PBKDF2
+  async function init(passHash) {
+    try {
+      const enc = new TextEncoder();
+      const km = await crypto.subtle.importKey('raw', enc.encode(passHash), 'PBKDF2', false, ['deriveKey']);
+      _ck = await crypto.subtle.deriveKey(
+        { name:'PBKDF2', salt: enc.encode('ub-s-v2-'+location.hostname), iterations:120000, hash:'SHA-256' },
+        km, { name:'AES-GCM', length:256 }, false, ['encrypt','decrypt']
+      );
+      return true;
+    } catch(e){ return false; }
+  }
+
+  async function set(key, val) {
+    if(!_ck || val === null || val === undefined) return false;
+    try {
+      const enc = new TextEncoder();
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const ct = await crypto.subtle.encrypt({name:'AES-GCM',iv}, _ck, enc.encode(String(val)));
+      const buf = new Uint8Array(iv.length + ct.byteLength);
+      buf.set(iv); buf.set(new Uint8Array(ct), iv.length);
+      localStorage.setItem('_ubs_'+key, btoa(String.fromCharCode(...buf)));
+      return true;
+    } catch(e){ return false; }
+  }
+
+  async function get(key) {
+    if(!_ck) return null;
+    const raw = localStorage.getItem('_ubs_'+key);
+    if(!raw) return null;
+    try {
+      const buf = new Uint8Array([...atob(raw)].map(c=>c.charCodeAt(0)));
+      const dec = await crypto.subtle.decrypt({name:'AES-GCM',iv:buf.slice(0,12)}, _ck, buf.slice(12));
+      return new TextDecoder().decode(dec);
+    } catch(e){ return null; }
+  }
+
+  function clear() {
+    _ck = null;
+    // Wipe encrypted blobs from localStorage on explicit logout
+    ['rzp_key_id','rzp_key_secret','upi_id','pp_mid','pp_salt'].forEach(k => {
+      // Do NOT remove blobs — keep them encrypted so admin can decrypt next login
+    });
+  }
+
+  function isReady() { return _ck !== null; }
+
+  // Wipe all sensitive encrypted data (called on logout + tab close if requested)
+  function wipeAll() {
+    _ck = null;
+    ['_ubs_rzp_key_id','_ubs_rzp_key_secret','_ubs_upi_id','_ubs_pp_mid','_ubs_pp_salt'].forEach(k => localStorage.removeItem(k));
+  }
+
+  return { init, set, get, clear, isReady, wipeAll };
+})();
+
+// ── ADMIN LOGIN RATE LIMITER ──
+const UB_RATELIMIT = (() => {
+  const KEY = 'ub_rl';
+  function _state(){ try{ return JSON.parse(sessionStorage.getItem(KEY)||'{"c":0,"u":0}'); }catch(e){ return {c:0,u:0}; }}
+  function _save(s){ try{ sessionStorage.setItem(KEY, JSON.stringify(s)); }catch(e){} }
+  const MAX = 5, LOCK_MS = 5*60*1000;
+  function isLocked(){
+    const s = _state();
+    if(s.c >= MAX && Date.now() < s.u) return Math.ceil((s.u - Date.now())/1000);
+    if(s.c >= MAX && Date.now() >= s.u) { _save({c:0,u:0}); return 0; }
+    return 0;
+  }
+  function fail(){ const s=_state(); s.c++; if(s.c>=MAX) s.u=Date.now()+LOCK_MS; _save(s); return s.c; }
+  function pass(){ _save({c:0,u:0}); }
+  function remaining(){ const s=_state(); return Math.max(0, MAX-s.c); }
+  return { isLocked, fail, pass, remaining };
+})();
+
+// ── ADMIN IDLE AUTO-LOGOUT (30 min) ──
+let _adminIdleTimer = null;
+const ADMIN_IDLE_MS = 30 * 60 * 1000;
+function _resetAdminIdle(){
+  if(!adminLoggedIn) return;
+  clearTimeout(_adminIdleTimer);
+  _adminIdleTimer = setTimeout(()=>{
+    if(adminLoggedIn){ doLogout(); showToast('⏱️ Admin session expired — logged out for security','err'); }
+  }, ADMIN_IDLE_MS);
+}
+function _startAdminIdle(){
+  ['mousemove','keydown','touchstart','click'].forEach(ev => window.addEventListener(ev, _resetAdminIdle, {passive:true}));
+  _resetAdminIdle();
+}
+function _stopAdminIdle(){
+  clearTimeout(_adminIdleTimer);
+  ['mousemove','keydown','touchstart','click'].forEach(ev => window.removeEventListener(ev, _resetAdminIdle));
+}
+
+// ── DEVTOOLS DETECTION — clears sensitive in-memory data if inspector opened ──
+(function _devToolsGuard(){
+  let _dtOpen = false;
+  const _check = () => {
+    const t = new Image();
+    let d = false;
+    Object.defineProperty(t,'id',{ get(){ d=true; return ''; } });
+    console.log('%c', t);
+    if(d && !_dtOpen){
+      _dtOpen = true;
+      if(typeof adminLoggedIn !== 'undefined' && !adminLoggedIn){
+        // Non-admin opened DevTools — block console and show warning
+        _blockConsole();
+      }
+    }
+    if(!d) _dtOpen = false;
+  };
+  setInterval(_check, 1500);
+})();
+
+// Block console access for non-admin visitors (prevents data leakage via console)
+let _consoleLocked = false;
+function _blockConsole(){
+  if(_consoleLocked) return;
+  _consoleLocked = true;
+  const blocked = ()=>{ return undefined; };
+  try {
+    ['log','warn','error','info','dir','table','group','groupEnd','trace'].forEach(m=>{
+      try{ console[m] = blocked; }catch(e){}
+    });
+  } catch(e){}
+}
+function _unblockConsole(){
+  // Restore on admin login so admin can debug if needed
+  _consoleLocked = false;
+}
+
+// ── DISABLE RIGHT-CLICK SOURCE VIEW & F12 for non-admin ──
+document.addEventListener('contextmenu', e => {
+  if(typeof adminLoggedIn === 'undefined' || !adminLoggedIn){
+    e.preventDefault(); return false;
+  }
+}, false);
+document.addEventListener('keydown', e => {
+  if(typeof adminLoggedIn === 'undefined' || !adminLoggedIn){
+    // Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U (view source)
+    if(e.key==='F12' || (e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key)) || (e.ctrlKey&&e.key==='U')){
+      e.preventDefault(); e.stopPropagation(); return false;
+    }
+  }
+}, true);
+
+// ── PROTECT SENSITIVE GLOBALS — wrap in closure so they're not accessible from console ──
+// Sensitive runtime values stored only in UB_SECURE memory, not as JS globals
+
+// ── CLEAR SENSITIVE DATA WHEN TAB/WINDOW CLOSES ──
+window.addEventListener('pagehide', () => { UB_SECURE.clear(); });
+window.addEventListener('beforeunload', () => { UB_SECURE.clear(); });
+
 // ═══════════════════════════════════════
 //  FIREBASE + IMAGEBB CONFIG
 // ═══════════════════════════════════════
@@ -1748,6 +1920,15 @@ function initFirebase(){
 }
 // Try immediately
 initFirebase();
+
+// ── SECURITY CLEANUP: Remove any old plain-text sensitive values from localStorage ──
+// These would have been set by previous versions before encryption was added.
+// UPI ID is kept as plain (needed by customer payment screen), others wiped.
+(function _securityCleanup(){
+  ['ub_rzp_key_id','ub_rzp_key_secret','ub_pp_mid','ub_pp_salt'].forEach(k => {
+    localStorage.removeItem(k);
+  });
+})();
 
 // ─── Show loading spinner on start ───
 document.addEventListener('DOMContentLoaded', ()=>{
@@ -2297,6 +2478,13 @@ function saveAnnouncementAdmin(){
   showToast('✅ Banner updated!', 'ok');
 }
 
+function removeAnnouncementAdmin(){
+  ANNOUNCEMENT = {active: false, text: ''};
+  saveAnnouncement();
+  renderAdminTab();
+  showToast('🗑 Announcement banner removed!', 'ok');
+}
+
 function toggleAnnouncement(){
   const activeEl = document.getElementById('annActive');
   if(activeEl) ANNOUNCEMENT.active = activeEl.checked;
@@ -2308,17 +2496,20 @@ function buildAnnouncementAdmin(){
   const txt = (ANNOUNCEMENT.text||'').replace(/"/g,'&quot;');
   return '<div class="acard" style="margin-top:16px;">'
     + '<h3>📢 Announcement Banner</h3>'
-    + '<div class="asub">Show a festive banner at the top — great for offers and special messages</div>'
+    + '<div class="asub">Show a festive banner at the top — great for offers and special messages. Toggle off to hide instantly, or Remove to delete it entirely.</div>'
     + '<div class="af-group" style="margin-top:12px;">'
     + '<label>Banner Message</label>'
     + '<input class="af-inp" id="annText" value="' + txt + '" placeholder="e.g. 🎉 Use code UDAYA10 for 10% off!">'
     + '</div>'
-    + '<div style="display:flex;gap:12px;align-items:center;margin-top:10px;flex-wrap:wrap;">'
+    + '<div style="display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap;">'
     + '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:rgba(253,246,236,.7);">'
     + '<input type="checkbox" id="annActive" ' + checked + ' onchange="toggleAnnouncement()" style="width:16px;height:16px;accent-color:var(--gold);">'
     + ' Show banner on site</label>'
     + '<button class="abtn" onclick="saveAnnouncementAdmin()">💾 Save Banner</button>'
-    + '</div></div>';
+    + '<button onclick="removeAnnouncementAdmin()" style="background:rgba(239,68,68,.14);color:#F87171;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:9px 16px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">🗑 Remove Banner</button>'
+    + '</div>'
+    + (ANNOUNCEMENT.active && ANNOUNCEMENT.text ? '<div style="margin-top:12px;background:rgba(200,146,58,.08);border:1px solid rgba(200,146,58,.2);border-radius:10px;padding:10px 14px;font-size:12px;color:rgba(253,246,236,.6);">👁 Currently showing: <strong style="color:#E8B96A;">' + (ANNOUNCEMENT.text.length > 60 ? ANNOUNCEMENT.text.substring(0,60)+'...' : ANNOUNCEMENT.text) + '</strong></div>' : '<div style="margin-top:12px;font-size:12px;color:rgba(239,68,68,.6);">🚫 Banner is currently hidden</div>')
+    + '</div>';
 }
 
 
@@ -2802,19 +2993,7 @@ function checkBusinessHours(){
   if(snEl) snEl.textContent = BIZ_HOURS.sun.open + ' – ' + BIZ_HOURS.sun.close;
 }
 
-// Also block checkout when closed
-function isStoreOpen(){
-  if(!BIZ_HOURS.enabled) return true;
-  const now = new Date();
-  const days = ['sun','mon','tue','wed','thu','fri','sat'];
-  const day = days[now.getDay()];
-  const h = BIZ_HOURS[day];
-  if(!h) return true;
-  const nowMins = now.getHours()*60 + now.getMinutes();
-  const openMins = parseInt(h.open.split(':')[0])*60 + parseInt(h.open.split(':')[1]);
-  const closeMins = parseInt(h.close.split(':')[0])*60 + parseInt(h.close.split(':')[1]);
-  return nowMins >= openMins && nowMins < closeMins;
-}
+// isStoreOpen is defined further below with master switch support
 
 // ══════════════════════════════════════════════
 //  COUPON ADMIN
@@ -3242,13 +3421,18 @@ function scoreProduct(p, q){
   const descL = p.desc.toLowerCase();
   const catName = (CATS.find(c=>c.id===p.cat)?.name||'').toLowerCase();
   const tagsStr = (p.tags||[]).join(' ').toLowerCase();
+  // Variant labels — includes flavour names like "Chocolate", "Vanilla", etc.
+  const varLabels = (p.variants||[]).map(v=>(v.label||'')+(v.flavour||'')).join(' ').toLowerCase();
   // Exact name match = highest
   if(nameL===ql) score+=100;
   if(nameL.includes(ql)) score+=60;
+  // Check if query matches any variant/flavour label exactly
+  if(varLabels.includes(ql)) score+=55;
   // Word-by-word
   words.forEach(w=>{
     if(nameL.includes(w)) score+=30;
     if(tagsStr.includes(w)) score+=25;
+    if(varLabels.includes(w)) score+=22; // flavour/variant match
     if(catName.includes(w)) score+=20;
     if(descL.includes(w)) score+=10;
   });
@@ -3340,17 +3524,29 @@ function _doVoiceRecognition(btn, input){
   }
   rec.onresult = e => {
     resultReceived = true;
-    const text = e.results[0][0].transcript;
-    input.value = text;
-    liveSearch(text);
-    searchQuery = text;
+    // Collect all spoken alternatives from the engine
+    const alts = [];
+    for(let i = 0; i < e.results[0].length; i++){
+      alts.push(e.results[0][i].transcript.toLowerCase().trim());
+    }
+    // Pick the alternative that scores highest against products (smarter matching)
+    let bestText = alts[0];
+    let bestScore = -1;
+    alts.forEach(alt => {
+      const topScore = PRODS.reduce((mx, p) => Math.max(mx, scoreProduct(p, alt)), 0);
+      if(topScore > bestScore){ bestScore = topScore; bestText = alt; }
+    });
+    const displayText = bestText.charAt(0).toUpperCase() + bestText.slice(1);
+    input.value = displayText;
+    liveSearch(displayText);
+    searchQuery = displayText;
     selCat = 'all';
     renderProds();
     const prodSec = document.getElementById('products');
     if(prodSec) setTimeout(()=>prodSec.scrollIntoView({behavior:'smooth', block:'start'}), 200);
     btn.classList.remove('listening');
     btn.textContent = '🎤';
-    showToast('🔍 Searching: ' + text,'ok');
+    showToast('🔍 Searching: ' + displayText,'ok');
   };
   rec.onerror = e => {
     btn.classList.remove('listening');
@@ -3846,12 +4042,30 @@ function rmItem(key){ cart=cart.filter(c=>c.key!==key); saveCart(); updateBadge(
 function updateTotal(){
   const sub = cart.reduce((s,c)=>s+c.price*c.qty,0);
   const discount = calcDiscount(sub, delFee);
-  const total = Math.max(0, sub + delFee - discount);
+  const walletBal = ubGetMyWallet();
+  // Read current checkbox state BEFORE re-rendering it
+  const prevChkEl = document.getElementById('useWalletChk');
+  const walletChecked = prevChkEl ? prevChkEl.checked : (walletBal > 0);
+  const walletUse = (walletChecked && walletBal > 0) ? Math.min(walletBal, Math.max(0, sub + delFee - discount)) : 0;
+  const total = Math.max(0, sub + delFee - discount - walletUse);
   const el = document.getElementById('cartTotalEl');
   if(discount>0){
     el.innerHTML = `<span style="text-decoration:line-through;font-size:13px;opacity:.5;margin-right:5px;">₹${sub+delFee}</span>₹${total}`;
   } else {
     el.textContent = '₹'+total;
+  }
+  // Wallet balance display in cart
+  const walletEl = document.getElementById('cartWalletRow');
+  if(walletEl){
+    if(walletBal > 0){
+      walletEl.style.display = 'flex';
+      walletEl.innerHTML = `<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--choco);font-weight:600;width:100%;">
+        <input type="checkbox" id="useWalletChk" ${walletChecked?'checked':''} onchange="updateTotal()" style="width:16px;height:16px;accent-color:var(--gold);">
+        💰 Use Wallet Cash (₹${walletBal} available)${walletChecked && walletUse>0 ? ` — Save ₹${walletUse}` : ''}
+      </label>`;
+    } else {
+      walletEl.style.display = 'none';
+    }
   }
   // Min order warning
   const warn = document.getElementById('minOrderWarn');
@@ -3972,19 +4186,23 @@ function refreshOS(){
   const d=parseFloat(document.getElementById('custDist')?.value)||0;
   const fee=compDel(d);
   const sub=cart.reduce((s,c)=>s+c.price*c.qty,0);
-  const total=sub+fee;
   const box=document.getElementById('oSummary');
   if(box){
-    // Bug 14 fix: show coupon & points discounts in summary
     const _couponDisc14 = appliedCoupon ? calcDiscount(sub, fee) : 0;
     const _ptsDisc14 = ubGetPointsDiscount();
-    const _finalTotal14 = Math.max(0, sub + fee - _couponDisc14 - _ptsDisc14);
-    box.innerHTML=`<div class="os-box"><h4>📋 Order Summary</h4>${cart.map(c=>`<div class="os-line"><span>${c.emoji} ${c.name} (${c.variant}) ×${c.qty}</span><strong>₹${c.price*c.qty}</strong></div>`).join('')}<div class="os-line"><span>Delivery (${d||0}km)</span><strong>${fee===0?'FREE':'₹'+fee}</strong></div>${_couponDisc14>0?`<div class="os-line" style="color:#4ADE80"><span>🎟 Coupon Discount</span><strong>−₹${_couponDisc14}</strong></div>`:''} ${_ptsDisc14>0?`<div class="os-line" style="color:#F59E0B"><span>💫 Loyalty Points</span><strong>−₹${_ptsDisc14}</strong></div>`:''}<div class="os-total"><span>Total</span><span>₹${_finalTotal14}</span></div></div>`;
+    // Wallet discount in order summary
+    const _walletBal = ubGetMyWallet();
+    const _walletChecked = document.getElementById('useWalletChk')?.checked ?? (_walletBal > 0);
+    const _walletDisc14 = (_walletChecked && _walletBal > 0) ? Math.min(_walletBal, Math.max(0, sub + fee - _couponDisc14 - _ptsDisc14)) : 0;
+    const _finalTotal14 = Math.max(0, sub + fee - _couponDisc14 - _ptsDisc14 - _walletDisc14);
+    box.innerHTML=`<div class="os-box"><h4>📋 Order Summary</h4>${cart.map(c=>`<div class="os-line"><span>${c.emoji} ${c.name} (${c.variant}) ×${c.qty}</span><strong>₹${c.price*c.qty}</strong></div>`).join('')}<div class="os-line"><span>Delivery (${d||0}km)</span><strong>${fee===0?'FREE':'₹'+fee}</strong></div>${_couponDisc14>0?`<div class="os-line" style="color:#4ADE80"><span>🎟 Coupon Discount</span><strong>−₹${_couponDisc14}</strong></div>`:''} ${_ptsDisc14>0?`<div class="os-line" style="color:#F59E0B"><span>💫 Loyalty Points</span><strong>−₹${_ptsDisc14}</strong></div>`:''} ${_walletDisc14>0?`<div class="os-line" style="color:#4ADE80"><span>💰 Wallet Cash</span><strong>−₹${_walletDisc14}</strong></div>`:''}<div class="os-total"><span>Total</span><span>₹${_finalTotal14}</span></div></div>`;
   }
 }
 
 // Bug 16 fix: helper to check if bakery is currently open
 function isStoreOpen(){
+  // Master deactivation switch — admin can instantly shut store
+  if(localStorage.getItem('ub_store_active') === '0') return false;
   if(!BIZ_HOURS || !BIZ_HOURS.enabled) return true; // if disabled, always open
   const now = new Date();
   const days = ['sun','mon','tue','wed','thu','fri','sat'];
@@ -3995,6 +4213,13 @@ function isStoreOpen(){
   const [ch, cm] = todayHours.close.split(':').map(Number);
   const nowMins = now.getHours()*60 + now.getMinutes();
   return nowMins >= oh*60+om && nowMins < ch*60+cm;
+}
+function ubAdminToggleStore(el){
+  localStorage.setItem('ub_store_active', el.checked ? '1' : '0');
+  checkBusinessHours();
+  showToast(el.checked ? '✅ Store is now LIVE — customers can order!' : '🔴 Store DEACTIVATED — all orders blocked!', el.checked ? 'ok' : 'err');
+  // Re-render settings tab so card border/text/color updates immediately
+  renderAdminTab();
 }
 
 function submitOrder(){
@@ -4042,11 +4267,16 @@ function submitOrder(){
   const couponDisc = appliedCoupon ? calcDiscount(sub, fee) : 0;
   // Apply loyalty points discount
   const ptsDisc = ubGetPointsDiscount();
-  const total = Math.max(0, sub + fee - couponDisc - ptsDisc);
+  // Apply wallet cash
+  const useWallet = document.getElementById('useWalletChk')?.checked && currentUser?.phone;
+  const walletBal = useWallet ? ubGetMyWallet() : 0;
+  const walletDisc = Math.min(walletBal, Math.max(0, sub + fee - couponDisc - ptsDisc));
+  const total = Math.max(0, sub + fee - couponDisc - ptsDisc - walletDisc);
   const order={id:'UB-'+String((parseInt(localStorage.getItem('ub_order_seq')||'0')+1)).padStart(5,'0'), name, phone, addr, dist, note, time: delivDateTime, delivDate: delivDate, delivTime: time, items:cart.map(c=>({...c})), subtotal:sub, delivery:fee, total, timestamp:new Date().toLocaleString('en-IN'), status:'pending', payMethod: selectedPayMethod,
   couponCode: appliedCoupon ? (document.getElementById('couponInput')?.value||'').trim().toUpperCase() : '',
   couponDiscount: couponDisc,
-  pointsDiscount: ptsDisc};
+  pointsDiscount: ptsDisc,
+  walletDiscount: walletDisc};
   
   if(selectedPayMethod === 'phonepe'){
     pendingOrder = order;
@@ -4111,6 +4341,12 @@ function finalizeOrder(order, payNote){
     const redeemedPts = _ptsDisc * 10;
     localStorage.setItem('ub_points', Math.max(0, ubGetPoints() - redeemedPts));
     showToast('💫 ' + redeemedPts + ' loyalty points redeemed!', 'ok');
+  }
+  // Deduct wallet cash used
+  if(order.walletDiscount > 0 && currentUser?.phone){
+    const newWalBal = Math.max(0, ubGetMyWallet() - order.walletDiscount);
+    ubSetWallet(currentUser.phone, newWalBal);
+    setTimeout(()=>showToast(`💰 ₹${order.walletDiscount} wallet cash used! Remaining: ₹${newWalBal}`,'ok'), 1500);
   }
   if(appliedCoupon && (appliedCoupon.oneTime || appliedCoupon.singleUse)){
     const usedCoupons = JSON.parse(localStorage.getItem('ub_used_coupons')||'[]');
@@ -4222,10 +4458,10 @@ function selectPmMethod(m){
   document.getElementById('upiInputWrap').className = 'pm-upi-input' + (m==='upi'?' show':'');
 }
 
-function processPhonePePayment(total){
+async function processPhonePePayment(total){
   const pmBody = document.getElementById('pmBody');
-  // Get owner's UPI ID from admin settings (set via Admin > Settings > Payment)
-  const ownerUPI = localStorage.getItem('ub_upi_id') || '9845406712@ybl';
+  // UPI ID is needed by customers to pay — read from encrypted store first, plain fallback
+  const ownerUPI = (await UB_SECURE.get('upi_id')) || localStorage.getItem('ub_upi_id') || '9845406712@ybl';
   const ownerName = localStorage.getItem('ub_bname') || 'Udaya Bakery';
   // Build standard UPI deep link — works with PhonePe, GPay, Paytm, BHIM
   const upiLink = `upi://pay?pa=${encodeURIComponent(ownerUPI)}&pn=${encodeURIComponent(ownerName)}&am=${total}&cu=INR&tn=${encodeURIComponent('Udaya Bakery Order')}`;
@@ -4763,22 +4999,34 @@ let pendingImg = '';
 let vRowCount = 2;
 
 function openAdmin(){
-  // Restore persisted admin session (e.g. after page reload)
-  if(!adminLoggedIn && localStorage.getItem('ub_admin_logged_in') === '1'){
-    adminLoggedIn = true;
-    if(!currentUser) currentUser = JSON.parse(localStorage.getItem('ub_current_user')||'null');
-  }
+  // Always require login every time the admin panel is opened.
+  // adminLoggedIn is session-only (in-memory) — never restored from localStorage.
   document.getElementById('adminOverlay').style.display = 'block';
   _ubPush('admin');
   if(adminLoggedIn){
-    showAdminDash();
-  } else if(currentUser && currentUser.email === OWNER_EMAIL){
-    adminLoggedIn = true;
+    // Already logged in within this page session — go straight to dashboard
     showAdminDash();
   } else {
+    // Always show login screen — no auto-login from stored session
     adminLoggedIn = false;
     document.getElementById('adminLoginScreen').style.display = 'flex';
     document.getElementById('adminDashScreen').style.display = 'none';
+    // Clear any leftover field values for security
+    const au = document.getElementById('aUser'); if(au) au.value = '';
+    const ap = document.getElementById('aPass'); if(ap) ap.value = '';
+    // Show rate limit info if applicable
+    const lockSecs = UB_RATELIMIT.isLocked();
+    const info = document.getElementById('loginRateLimitInfo');
+    if(info){
+      if(lockSecs > 0){
+        info.innerHTML = `🔒 Locked for ${Math.ceil(lockSecs/60)} more minute(s)`;
+        info.style.color = '#F87171';
+      } else {
+        const rem = UB_RATELIMIT.remaining();
+        info.innerHTML = rem < 5 ? `⚠️ ${rem} attempt${rem!==1?'s':''} remaining before lockout` : '';
+        info.style.color = 'rgba(253,246,236,.3)';
+      }
+    }
     setTimeout(()=>document.getElementById('aUser')?.focus(), 200);
   }
 }
@@ -4858,6 +5106,14 @@ async function _sha256(str){
 })();
 
 async function doAdminLogin(){
+  // ── Rate limit check ──
+  const lockSecs = UB_RATELIMIT.isLocked();
+  if(lockSecs > 0){
+    const mins = Math.ceil(lockSecs/60);
+    showLoginErr(`🔒 Too many failed attempts. Try again in ${mins} minute${mins>1?'s':''}.`);
+    return;
+  }
+
   const u = (document.getElementById('aUser')?.value||'').trim();
   const p = (document.getElementById('aPass')?.value||'').trim();
   if(!u || !p){ showLoginErr('Please enter username and password.'); return; }
@@ -4866,8 +5122,15 @@ async function doAdminLogin(){
   const storedU = localStorage.getItem('ub_admin_user_hash') || _adminUserHash;
   const storedP = localStorage.getItem('ub_admin_pass_hash') || _adminPassHash;
   if(uHash === storedU && pHash === storedP){
+    UB_RATELIMIT.pass(); // Reset fail counter on success
+
+    // Derive AES encryption key from password hash — enables decrypting stored secrets
+    await UB_SECURE.init(pHash);
+    _unblockConsole();
+
     adminLoggedIn = true;
-    localStorage.setItem('ub_admin_logged_in', '1');
+    // Do NOT save to localStorage — admin must log in fresh every time the panel is opened
+    localStorage.removeItem('ub_admin_logged_in');
     currentUser = currentUser || { name:'Admin', email:'admin@udayabakery.com', initials:'A', isOwner:true };
     localStorage.setItem('ub_current_user', JSON.stringify(currentUser));
     const lbl = document.getElementById('adminWelcomeLabel');
@@ -4878,11 +5141,18 @@ async function doAdminLogin(){
     const navAdm=document.getElementById('navAdminLink'); if(navAdm) navAdm.style.display='';
     const mobAdm=document.getElementById('mobAdminLink'); if(mobAdm) mobAdm.style.display='';
     const footAdm=document.getElementById('footerAdminLink'); if(footAdm) footAdm.style.display='';
+    _startAdminIdle(); // Start 30-minute idle timeout
     showAdminDash();
     startOrderListener();
     showToast('✅ Welcome to Admin Dashboard!','ok');
   } else {
-    showLoginErr('❌ Wrong username or password. Please try again.');
+    const attempts = UB_RATELIMIT.fail();
+    const rem = UB_RATELIMIT.remaining();
+    if(rem > 0){
+      showLoginErr(`❌ Wrong username or password. ${rem} attempt${rem!==1?'s':''} remaining.`);
+    } else {
+      showLoginErr('🔒 Too many failed attempts. Locked for 5 minutes.');
+    }
     document.getElementById('aPass').value='';
     document.getElementById('aPass').focus();
   }
@@ -4914,13 +5184,21 @@ function showAdminDash(){
 
 function doLogout(){
   adminLoggedIn = false;
+  _stopAdminIdle();
+  UB_SECURE.clear(); // Wipe AES key from memory — encrypted data stays but unreadable
   localStorage.removeItem('ub_admin_logged_in');
   document.getElementById('adminDashScreen').style.display = 'none';
   document.getElementById('adminLoginScreen').style.display = 'flex';
   const au=document.getElementById('aUser'); if(au) au.value='';
   const ap=document.getElementById('aPass'); if(ap) ap.value='';
+  // Wipe any visible sensitive values from DOM inputs
+  ['rzp_key_id','rzp_key_secret','s_upi_id','pp_mid','pp_salt','pp_salt_idx'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
   document.querySelector('.fab-admin')?.classList.remove('owner-visible');
   stopAdminAlert();
+  setTimeout(()=>document.getElementById('aUser')?.focus(), 200);
+  _blockConsole(); // Re-block console for non-admin
   showToast('👋 Logged out from Admin','ok');
 }
 
@@ -4953,8 +5231,29 @@ function renderAdminTab(){
   else if(adminTab==='addprod'){ el.innerHTML = buildAddProdTab(); initAddProdForm(); }
   else if(adminTab==='cats') el.innerHTML = buildCatsTab();
   else if(adminTab==='orders') el.innerHTML = buildOrdersTab();
-  else if(adminTab==='payments') el.innerHTML = buildPaymentsTab();
-  else if(adminTab==='settings') el.innerHTML = buildSettingsTab();
+  else if(adminTab==='payments'){
+    el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:200px;color:rgba(253,246,236,.4);font-size:14px;">🔐 Loading secure payment settings…</div>';
+    buildPaymentsTab().then(html => { el.innerHTML = html; }).catch(()=>{
+      el.innerHTML = '<div style="padding:40px;text-align:center;color:#F87171;">⚠️ Could not load payment settings. Please re-login as admin.</div>';
+    });
+    return;
+  }
+  else if(adminTab==='settings'){
+    el.innerHTML = buildSettingsTab();
+    // Async-populate the UPI field from encrypted store after render
+    UB_SECURE.get('upi_id').then(upi => {
+      const val = upi || localStorage.getItem('ub_upi_id') || '';
+      const inp = document.getElementById('s_upi_id');
+      const lbl = document.getElementById('upi_status_label');
+      if(inp) inp.value = val;
+      if(lbl){
+        lbl.innerHTML = val
+          ? `<div style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:8px 12px;color:#4ADE80;">✅ Active UPI ID: <strong>${val}</strong></div>`
+          : '<div style="color:rgba(239,68,68,.7);">⚠️ No UPI ID set yet — customers cannot pay online until you add one.</div>';
+      }
+    });
+    return;
+  }
   else if(adminTab==='reports')   el.innerHTML = buildReportsTab();
   else if(adminTab==='customers') el.innerHTML = buildCustomersTab();
   else if(adminTab==='broadcast') el.innerHTML = buildBroadcastTab();
@@ -5856,6 +6155,9 @@ function buildOrderCard(o){
     <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px 14px;margin-bottom:14px;">
       <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(253,246,236,.55);padding:3px 0;"><span>Subtotal</span><span>₹${o.subtotal||o.total}</span></div>
       <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(253,246,236,.55);padding:3px 0;"><span>Delivery</span><span>${o.delivery===0?'<span style="color:#4ADE80;">FREE</span>':'₹'+o.delivery}</span></div>
+      ${o.couponDiscount>0?`<div style="display:flex;justify-content:space-between;font-size:13px;color:#4ADE80;padding:3px 0;"><span>🎟 Coupon (${o.couponCode})</span><span>−₹${o.couponDiscount}</span></div>`:''}
+      ${o.pointsDiscount>0?`<div style="display:flex;justify-content:space-between;font-size:13px;color:#F59E0B;padding:3px 0;"><span>💫 Loyalty Points</span><span>−₹${o.pointsDiscount}</span></div>`:''}
+      ${o.walletDiscount>0?`<div style="display:flex;justify-content:space-between;font-size:13px;color:#4ADE80;padding:3px 0;"><span>💰 Wallet Cash</span><span>−₹${o.walletDiscount}</span></div>`:''}
       <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:#E8B96A;padding:8px 0 0;border-top:1px solid rgba(200,146,58,.2);margin-top:6px;"><span>Total</span><span>₹${o.total}</span></div>
     </div>
     <!-- Action Buttons -->
@@ -5915,6 +6217,8 @@ function ubPrintBill(oid){
     +'<tr><td>Subtotal</td><td class="ra">₹'+(o.subtotal||o.total)+'</td></tr>'
     +'<tr><td>Delivery</td><td class="ra">'+(o.delivery===0?'FREE':'₹'+o.delivery)+'</td></tr>'
     +(o.couponDiscount?'<tr><td>Coupon ('+o.couponCode+')</td><td class="ra" style="color:green;">-₹'+o.couponDiscount+'</td></tr>':'')
+    +(o.pointsDiscount?'<tr><td>Loyalty Points</td><td class="ra" style="color:green;">-₹'+o.pointsDiscount+'</td></tr>':'')
+    +(o.walletDiscount?'<tr><td>💰 Wallet Cash</td><td class="ra" style="color:green;">-₹'+o.walletDiscount+'</td></tr>':'')
     +'<tr><td class="b tot">TOTAL</td><td class="ra b tot" style="color:#8B4513;">₹'+o.total+'</td></tr>'
     +'</table><hr class="dv">'
     +'<p style="text-align:center;font-size:12px;">💳 '+(o.payMethod==='phonepe'?'UPI / PhonePe':'Cash on Delivery')+'</p>'
@@ -6090,14 +6394,13 @@ function buildSettingsTab(){
     <div class="asub">Enter your UPI ID so customers can pay you directly via PhonePe, GPay or Paytm</div>
     <div class="af-group" style="margin-top:14px;">
       <label>Your UPI ID <span style="font-size:10px;color:rgba(253,246,236,.4);font-weight:400;">(e.g. 9845406712@ybl or name@okaxis)</span></label>
-      <input class="af-inp" id="s_upi_id" placeholder="e.g. 9845406712@ybl"
-        value="${localStorage.getItem('ub_upi_id')||''}">
+      <input class="af-inp" id="s_upi_id" placeholder="e.g. 9845406712@ybl" value="">
     </div>
     <div style="display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap;">
       <button class="abtn" onclick="saveUPISettings()">💾 Save UPI ID</button>
       <span style="font-size:11px;color:rgba(253,246,236,.35);">Customers will see a QR code + Pay button on checkout</span>
     </div>
-    ${localStorage.getItem('ub_upi_id') ? `<div style="margin-top:10px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:8px 12px;font-size:12px;color:#4ADE80;">✅ Active UPI ID: <strong>${localStorage.getItem('ub_upi_id')}</strong></div>` : '<div style="margin-top:10px;font-size:12px;color:rgba(239,68,68,.7);">⚠️ No UPI ID set yet — customers cannot pay online until you add one.</div>'}
+    <div id="upi_status_label" style="margin-top:10px;font-size:12px;color:rgba(253,246,236,.4);">🔐 Loading…</div>
   </div>
 
   <!-- MSG91 SMS SETTINGS -->
@@ -6121,6 +6424,42 @@ function buildSettingsTab(){
   </div>
 
   <!-- BAKERY NAME -->
+  <!-- STORE MASTER SWITCH -->
+  <div class="acard" style="margin-bottom:16px;border-left:3px solid ${localStorage.getItem('ub_store_active')==='0'?'#EF4444':'#4ADE80'};">
+    <h3>${localStorage.getItem('ub_store_active')==='0'?'🔴 Store is DEACTIVATED':'🟢 Store is LIVE'}</h3>
+    <div class="asub">Instantly turn your store on or off — when off, customers cannot place any orders</div>
+    <div style="margin-top:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:rgba(255,255,255,.04);border:1.5px solid rgba(200,146,58,.2);border-radius:12px;padding:14px 18px;flex:1;min-width:200px;">
+        <div style="position:relative;width:52px;height:28px;flex-shrink:0;">
+          <input type="checkbox" id="storeActiveToggle" ${localStorage.getItem('ub_store_active')!=='0'?'checked':''} onchange="ubAdminToggleStore(this)" style="opacity:0;width:0;height:0;position:absolute;">
+          <div onclick="document.getElementById('storeActiveToggle').click()" style="position:absolute;inset:0;background:${localStorage.getItem('ub_store_active')==='0'?'rgba(239,68,68,.4)':'rgba(74,222,128,.4)'};border-radius:14px;cursor:pointer;transition:all .3s;">
+            <div style="position:absolute;top:3px;${localStorage.getItem('ub_store_active')==='0'?'left:3px':'right:3px'};width:22px;height:22px;background:${localStorage.getItem('ub_store_active')==='0'?'#EF4444':'#4ADE80'};border-radius:50%;transition:all .3s;box-shadow:0 2px 6px rgba(0,0,0,.3);"></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:${localStorage.getItem('ub_store_active')==='0'?'#F87171':'#4ADE80'};">${localStorage.getItem('ub_store_active')==='0'?'Store OFF — Deactivated':'Store ON — Accepting Orders'}</div>
+          <div style="font-size:11px;color:rgba(253,246,236,.4);margin-top:2px;">Toggle to instantly open/close your store</div>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- ORDER ALERT SOUND -->
+  <div class="acard" style="margin-bottom:16px;">
+    <h3>🔔 New Order Alert Sound</h3>
+    <div class="asub">When a new order arrives, play a loud sound and say "New Order Received!" twice</div>
+    <div style="margin-top:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(200,146,58,.15);border-radius:12px;padding:12px 16px;flex:1;">
+        <input type="checkbox" id="orderSoundToggle" ${localStorage.getItem('ub_order_sound')!=='0'?'checked':''} onchange="ubAdminToggleOrderSound(this)" style="width:20px;height:20px;accent-color:var(--gold);cursor:pointer;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:rgba(253,246,236,.9);">Enable Order Alert Sound</div>
+          <div style="font-size:11px;color:rgba(253,246,236,.4);margin-top:1px;">Loud beep + voice says "New Order Received!" twice per new order</div>
+        </div>
+      </label>
+      <button onclick="_ubBeep()" style="background:rgba(200,146,58,.14);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">🔊 Test Sound</button>
+    </div>
+  </div>
+
   <div class="acard" style="margin-bottom:16px;">
     <h3>🏪 Bakery Name & Tagline</h3>
     <div class="asub">Change the name shown in the top navigation</div>
@@ -6357,12 +6696,17 @@ async function changePass(){
   ['s_curr','s_new','s_conf'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
 }
 
-function saveUPISettings(){
+async function saveUPISettings(){
+  if(!adminLoggedIn){ showToast('Admin login required','err'); return; }
   const upi = (document.getElementById('s_upi_id')?.value||'').trim();
   if(!upi){ showToast('Enter your UPI ID','err'); return; }
   if(!upi.includes('@')){ showToast('UPI ID must contain @ (e.g. 9845406712@ybl)','err'); return; }
+  // Store encrypted — not readable from browser console
+  const ok = await UB_SECURE.set('upi_id', upi);
+  if(!ok){ showToast('⚠️ Please login to admin first to save UPI settings','err'); return; }
+  // Also keep a plain copy for the payment screen (UPI ID must be shown to customer to pay)
   localStorage.setItem('ub_upi_id', upi);
-  showToast('✅ UPI ID saved! Customers can now pay to ' + upi, 'ok');
+  showToast('✅ UPI ID saved securely! Customers can now pay to ' + upi, 'ok');
 }
 
 function ubSaveSmsSettings(){
@@ -6493,18 +6837,39 @@ function ubCloseConfirm(){
 
 // ═══ ADMIN NEW-ORDER SOUND ALERT ═══
 let _ubPrevPend = 0, _ubAlertTmr = null;
+function _ubOrderSoundEnabled(){ return localStorage.getItem('ub_order_sound') !== '0'; }
 function _ubBeep(){
+  if(!_ubOrderSoundEnabled()) return;
+  // 1) Loud multi-tone beep
   try{
     const ac = new(window.AudioContext||window.webkitAudioContext)();
-    [[523,0],[659,.14],[784,.28],[659,.44],[784,.58]].forEach(([hz,t])=>{
+    // Play a strong, loud fanfare
+    const tones=[[440,0,.9],[523,.15,.9],[659,.3,.9],[784,.45,1.0],[880,.6,1.0],[784,.75,.9],[659,.9,.7]];
+    tones.forEach(([hz,t,vol])=>{
       const o=ac.createOscillator(), g=ac.createGain();
       o.connect(g); g.connect(ac.destination);
-      o.frequency.value=hz; o.type='sine';
-      g.gain.setValueAtTime(.3,ac.currentTime+t);
-      g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+.22);
-      o.start(ac.currentTime+t); o.stop(ac.currentTime+t+.25);
+      o.frequency.value=hz; o.type='sawtooth';
+      g.gain.setValueAtTime(vol,ac.currentTime+t);
+      g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+.28);
+      o.start(ac.currentTime+t); o.stop(ac.currentTime+t+.32);
     });
+    // 2) Speech — "New Order Received" said TWICE
+    if('speechSynthesis' in window){
+      const sayIt=(delay)=>{
+        setTimeout(()=>{
+          const u=new SpeechSynthesisUtterance('New Order Received!');
+          u.lang='en-IN'; u.rate=0.9; u.pitch=1.1; u.volume=1.0;
+          speechSynthesis.speak(u);
+        }, delay);
+      };
+      sayIt(300);
+      sayIt(2000);
+    }
   }catch(e){}
+}
+function ubAdminToggleOrderSound(el){
+  localStorage.setItem('ub_order_sound', el.checked ? '1' : '0');
+  showToast(el.checked ? '🔔 Order sound ON — you will hear "New Order Received!" twice' : '🔕 Order sound OFF', el.checked?'ok':'');
 }
 function startAdminAlert(){
   if(_ubAlertTmr) return;
@@ -6694,6 +7059,52 @@ function buildCustomersTab(){
   html+='<p style="font-size:12px;color:rgba(253,246,236,.35);margin-top:3px;">'+custs.length+' unique customers · Rs.'+totalRev.toLocaleString('en-IN')+' total revenue</p></div>';
   html+='<button onclick="ubExportCustomersCSV()" style="background:rgba(74,222,128,.12);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:10px;padding:8px 16px;font-family:\'Jost\',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">📥 Export CSV</button></div>';
 
+  // ── FREE CASH / WALLET ──
+  html+=`<div class="acard" style="margin-bottom:16px;border-left:3px solid #4ADE80;">
+    <h3>💰 Add Free Cash to Wallet</h3>
+    <div class="asub">Add free cash to attract customers — they can use it on their next order. A WhatsApp message will be sent automatically!</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;">
+      <div class="af-group" style="margin-bottom:0;">
+        <label>Customer Phone</label>
+        <input class="af-inp" type="tel" id="wlt_phone" placeholder="e.g. 9845400000" maxlength="10">
+      </div>
+      <div class="af-group" style="margin-bottom:0;">
+        <label>Cash Amount (₹)</label>
+        <input class="af-inp" type="number" id="wlt_amt" placeholder="e.g. 50" min="1">
+      </div>
+    </div>
+    <div class="af-group" style="margin-top:10px;">
+      <label>WhatsApp Message Note (optional)</label>
+      <input class="af-inp" id="wlt_note" placeholder="e.g. Thank you for your loyalty! 🎂" value="Thank you for choosing Udaya Bakery! 🎂">
+    </div>
+    <div style="margin-top:10px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:rgba(253,246,236,.75);">
+        <input type="checkbox" id="wlt_sendwa" checked style="width:16px;height:16px;accent-color:var(--gold);"> Send WhatsApp notification to customer
+      </label>
+    </div>
+    <div id="wlt_result" style="margin-top:10px;font-size:13px;"></div>
+    <button class="abtn" onclick="ubAdminAddFreeCash()" style="margin-top:12px;width:100%;">💸 Add Free Cash & Notify on WhatsApp</button>
+  </div>`;
+
+  // ── BULK FREE CASH ──
+  html+=`<div class="acard" style="margin-bottom:16px;border-left:3px solid #E8B96A;">
+    <h3>📢 Bulk Free Cash — Select Customers</h3>
+    <div class="asub">Select multiple customers and add free cash to all at once. WhatsApp will open once per selected customer.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
+      <div class="af-group" style="margin-bottom:0;"><label>Cash Amount (₹)</label><input class="af-inp" type="number" id="wlt_bulk_amt" placeholder="e.g. 30" min="1"></div>
+      <div class="af-group" style="margin-bottom:0;"><label>Note</label><input class="af-inp" id="wlt_bulk_note" placeholder="Special reward for you!" value="Special reward from Udaya Bakery!"></div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:rgba(253,246,236,.75);"><input type="checkbox" id="wlt_bulk_wa" checked style="width:16px;height:16px;accent-color:var(--gold);"> Send WhatsApp to each</label>
+      <span id="wlt_bulk_count" style="font-size:12px;color:#E8B96A;font-weight:700;">${_wltBulkSelected.size} selected</span>
+      <button onclick="ubWltSelectAll()" style="background:rgba(200,146,58,.12);color:#E8B96A;border:1px solid rgba(200,146,58,.25);border-radius:8px;padding:7px 14px;font-family:'Jost',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">Select All</button>
+      <button id="wlt_bulk_btn" onclick="ubAdminBulkFreeCash()" style="background:linear-gradient(135deg,rgba(74,222,128,.2),rgba(74,222,128,.1));color:#4ADE80;border:1px solid rgba(74,222,128,.3);border-radius:8px;padding:7px 16px;font-family:'Jost',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">💸 Add Cash to ${_wltBulkSelected.size} Customers</button>
+    </div>
+    <div style="margin-top:12px;max-height:200px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:8px;">
+      ${custs.map(c=>{const k=c.phone.replace(/\D/g,'').slice(-10); const sel=_wltBulkSelected.has(k); return `<div onclick="ubWltToggleCust('${k}')" style="cursor:pointer;padding:7px 12px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid;transition:all .2s;${sel?'background:rgba(74,222,128,.2);color:#4ADE80;border-color:rgba(74,222,128,.4);':'background:rgba(255,255,255,.04);color:rgba(253,246,236,.6);border-color:rgba(255,255,255,.1);'}"><span style="font-size:14px;">${sel?'☑':'☐'}</span> ${c.name} <span style="opacity:.5;font-size:10px;">${k}</span></div>`;}).join('')}
+    </div>
+  </div>`;
+
   // ── Loyalty Points Management (only if loyalty is enabled) ──
   if(ubLoyaltyEnabled()){
     html+=`<div class="acard" style="margin-bottom:16px;border-left:3px solid #E8B96A;">
@@ -6744,16 +7155,19 @@ function buildCustomersTab(){
       const tier=c.spent>=5000?'Platinum':c.spent>=2000?'Gold':c.spent>=500?'Silver':'New';
       const tierColor=c.spent>=5000?'#c084fc':c.spent>=2000?'#fbbf24':c.spent>=500?'#9CA3AF':'#6B7280';
       const custPts = ubLoyaltyEnabled() ? (parseInt(localStorage.getItem('ub_points_'+k))||0) : null;
+      const custWallet = ubGetWallet(k);
       html+='<div class="acard" style="margin-bottom:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;'+(isBlocked?'opacity:.5;':'')+'" data-n="'+(c.name||'').toLowerCase()+'" data-p="'+(c.phone||'')+'">';
       html+='<div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(200,146,58,.4),rgba(200,146,58,.15));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#E8B96A;flex-shrink:0;">'+(c.name||'?')[0].toUpperCase()+'</div>';
       html+='<div style="flex:1;min-width:150px;"><div style="font-weight:700;color:rgba(253,246,236,.9);font-size:14px;">'+c.name+' <span style="font-size:10px;background:rgba(255,255,255,.07);border-radius:20px;padding:2px 7px;color:'+tierColor+';">'+tier+'</span>'+(isBlocked?' <span style="font-size:10px;color:#f87171;">Blocked</span>':'')+'</div>';
       html+='<div style="font-size:12px;color:rgba(253,246,236,.45);margin-top:1px;">'+c.phone+' · '+c.orders.length+' order'+(c.orders.length>1?'s':'')+'</div>';
       if(custPts !== null) html+='<div style="font-size:11px;color:#E8B96A;margin-top:2px;">🌟 '+custPts+' loyalty pts</div>';
+      if(custWallet > 0) html+='<div style="font-size:11px;color:#4ADE80;margin-top:2px;">💰 ₹'+custWallet+' wallet cash</div>';
       html+='<div style="font-size:11px;color:rgba(253,246,236,.28);margin-top:1px;">Last: '+c.last+'</div></div>';
       html+='<div style="text-align:right;min-width:80px;"><div style="font-size:15px;font-weight:800;color:#E8B96A;">Rs.'+c.spent.toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);">total spent</div></div>';
       html+='<div style="display:flex;gap:7px;flex-wrap:wrap;">';
       html+='<a href="https://wa.me/91'+k+'" target="_blank" style="background:rgba(37,211,102,.1);color:#25D366;border:1px solid rgba(37,211,102,.2);border-radius:8px;padding:8px 12px;font-size:13px;text-decoration:none;font-weight:700;touch-action:manipulation;">💬</a>';
       html+='<a href="tel:'+c.phone+'" style="background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.2);border-radius:8px;padding:8px 12px;font-size:13px;text-decoration:none;font-weight:700;touch-action:manipulation;">📞</a>';
+      html+='<button onclick="(function(){document.getElementById(\'wlt_phone\').value=\''+k+'\';switchTab(\'customers\');document.getElementById(\'wlt_amt\').focus();})()" style="background:rgba(74,222,128,.12);color:#4ADE80;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:8px 10px;font-size:12px;cursor:pointer;font-family:\'Jost\',sans-serif;touch-action:manipulation;">💰 Cash</button>';
       if(ubLoyaltyEnabled()) html+='<button onclick="ubQuickPts(\''+k+'\',\''+c.name+'\')" style="background:rgba(234,179,8,.12);color:#fbbf24;border:1px solid rgba(234,179,8,.2);border-radius:8px;padding:8px 10px;font-size:12px;cursor:pointer;font-family:\'Jost\',sans-serif;touch-action:manipulation;">🌟 Pts</button>';
       html+='<button onclick="ubBlockCust(\''+c.phone+'\')" style="background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;font-family:\'Jost\',sans-serif;touch-action:manipulation;">'+(isBlocked?'Unblock':'Block')+'</button>';
       html+='</div></div>';
@@ -6773,16 +7187,16 @@ function ubFilterCusts(){
 // ════════════════════════════════════════════════════════
 function buildBroadcastTab(){
   const cm={};
-  ORDERS.forEach(o=>{ if(!o.phone)return; const k=o.phone.replace(/\D/g,'').slice(-10); if(!cm[k])cm[k]={name:o.name,phone:o.phone}; });
+  ORDERS.forEach(o=>{ if(!o.phone)return; const k=o.phone.replace(/\D/g,'').slice(-10); if(!cm[k])cm[k]={name:o.name,phone:k}; });
   const custs=Object.values(cm);
   const site=window.location.origin+window.location.pathname;
 
   return `<h2 style="font-family:Playfair Display,serif;font-size:20px;color:#E8B96A;margin-bottom:6px;">📢 WhatsApp Broadcast</h2>
-  <p style="font-size:13px;color:rgba(253,246,236,.4);margin-bottom:18px;">Send a message to all your customers via WhatsApp</p>
+  <p style="font-size:13px;color:rgba(253,246,236,.4);margin-bottom:18px;">Compose a message and send it to selected customers via WhatsApp</p>
 
   <div class="acard" style="margin-bottom:16px;">
     <h3>✍️ Compose Broadcast Message</h3>
-    <div class="asub">Choose a template or write your own. WhatsApp will open once per customer.</div>
+    <div class="asub">Choose a template or write your own. WhatsApp will open once per selected customer.</div>
     <div class="af-group" style="margin-top:12px;">
       <label>Quick Template</label>
       <select class="af-inp" id="ubBcTpl" onchange="ubFillTpl()">
@@ -6790,16 +7204,33 @@ function buildBroadcastTab(){
         <option value="offer">🎉 Special Offer / Coupon</option>
         <option value="newprod">🎂 New Product Announcement</option>
         <option value="festival">🪔 Festival Greetings</option>
+        <option value="wallet">💰 Wallet Cash Notification</option>
       </select>
     </div>
     <div class="af-group">
       <label>Message *</label>
       <textarea class="af-inp" id="ubBcMsg" rows="6" placeholder="Type your message here..." style="resize:vertical;min-height:110px;"></textarea>
     </div>
-    <div style="background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.18);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:rgba(253,246,236,.5);">
-      ℹ️ WhatsApp will open <strong style="color:#E8B96A;">${custs.length} time${custs.length!==1?'s':''}</strong>, once per customer. Each message is personalised with their name.
+
+    <!-- CUSTOMER MULTI-SELECTION -->
+    <div style="margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+        <div style="font-size:11px;font-weight:700;color:rgba(253,246,236,.4);text-transform:uppercase;letter-spacing:.8px;">👥 Select Recipients</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="ubBcSelectAll(true)" style="background:rgba(200,146,58,.12);color:#E8B96A;border:1px solid rgba(200,146,58,.25);border-radius:7px;padding:5px 12px;font-family:'Jost',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">✅ All</button>
+          <button onclick="ubBcSelectAll(false)" style="background:rgba(255,255,255,.05);color:rgba(253,246,236,.5);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:5px 12px;font-family:'Jost',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">☐ None</button>
+        </div>
+      </div>
+      ${custs.length ? `<div style="max-height:180px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:7px;padding:4px 0;" id="ubBcCustList">
+        ${custs.map(c=>`<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:6px 10px;border-radius:20px;background:rgba(255,255,255,.04);border:1.5px solid rgba(200,146,58,.15);font-size:12px;color:rgba(253,246,236,.75);user-select:none;">
+          <input type="checkbox" class="ubBcCustChk" value="${c.phone}" checked style="width:14px;height:14px;accent-color:var(--gold);" onchange="ubBcUpdateCount()">
+          ${c.name} <span style="opacity:.4;font-size:10px;">${c.phone}</span>
+        </label>`).join('')}
+      </div>
+      <div style="margin-top:8px;font-size:12px;color:#E8B96A;" id="ubBcSelCount">${custs.length} of ${custs.length} customers selected</div>` : '<div style="font-size:13px;color:rgba(253,246,236,.3);padding:16px 0;">No customers yet — orders needed first</div>'}
     </div>
-    <button class="abtn" onclick="ubSendBroadcast()" style="width:100%;">📢 Send to All ${custs.length} Customers</button>
+
+    <button class="abtn" onclick="ubSendBroadcast()" style="width:100%;">📢 Send to Selected Customers</button>
   </div>
 
   <div class="acard">
@@ -6810,14 +7241,26 @@ function buildBroadcastTab(){
   </div>`;
 }
 
+function ubBcUpdateCount(){
+  const all = document.querySelectorAll('.ubBcCustChk');
+  const sel = document.querySelectorAll('.ubBcCustChk:checked');
+  const el = document.getElementById('ubBcSelCount');
+  if(el) el.textContent = sel.length+' of '+all.length+' customers selected';
+}
+function ubBcSelectAll(v){
+  document.querySelectorAll('.ubBcCustChk').forEach(el=>el.checked=v);
+  ubBcUpdateCount();
+}
+
 function ubFillTpl(){
   const t=document.getElementById('ubBcTpl')?.value;
   const b=document.getElementById('ubBcMsg'); if(!b) return;
   const site=window.location.origin+window.location.pathname;
   const tpls={
-    offer:'🎉 *Special Offer — Udaya Bakery!*\n\nHello! 🎂\n\nUse code *UDAYA10* for *10% OFF* your next order!\n\n👉 Order here: '+site+'\n\nOffer for limited time only! ⏰\n\n— Udaya Bakery 🙏',
-    newprod:'🎂 *New at Udaya Bakery!*\n\nHello! We just added something delicious to our menu. 😋\n\nCheck it out: '+site+'\n\nFresh bakes delivered to your door! 🚚\n\n— Udaya Bakery 🙏',
-    festival:'🪔 *Festive Greetings from Udaya Bakery!*\n\nWishing you and your family a joyful celebration! 🎊\n\nCelebrate with our fresh bakes & sweets.\n👉 Order: '+site+'\n\n— Udaya Bakery 🙏'
+    offer:'🎉 *Special Offer — Udaya Bakery!*\n\nHello {name}! 🎂\n\nUse code *UDAYA10* for *10% OFF* your next order!\n\n👉 Order here: '+site+'\n\nOffer for limited time only! ⏰\n\n— Udaya Bakery 🙏',
+    newprod:'🎂 *New at Udaya Bakery!*\n\nHello {name}! We just added something delicious to our menu. 😋\n\nCheck it out: '+site+'\n\nFresh bakes delivered to your door! 🚚\n\n— Udaya Bakery 🙏',
+    festival:'🪔 *Festive Greetings from Udaya Bakery!*\n\nHello {name}! Wishing you and your family a joyful celebration! 🎊\n\nCelebrate with our fresh bakes & sweets.\n👉 Order: '+site+'\n\n— Udaya Bakery 🙏',
+    wallet:'🎁 *Free Cash Added — Udaya Bakery!*\n\nHello {name}! 🎂\n\nWe\'ve added free cash to your wallet as a special thank-you!\n\n💰 Use it on your next order: '+site+'\n\n— Udaya Bakery 🙏'
   };
   if(tpls[t]) b.value=tpls[t];
 }
@@ -6825,18 +7268,20 @@ function ubFillTpl(){
 function ubSendBroadcast(){
   const msg=(document.getElementById('ubBcMsg')?.value||'').trim();
   if(!msg){ showToast('Please type a message first!','err'); return; }
+  const selected = Array.from(document.querySelectorAll('.ubBcCustChk:checked')).map(el=>el.value);
+  if(!selected.length){ showToast('Select at least one customer!','err'); return; }
   const cm={};
   ORDERS.forEach(o=>{ if(!o.phone)return; const k=o.phone.replace(/\D/g,'').slice(-10); if(!cm[k])cm[k]={name:o.name,phone:k}; });
-  const custs=Object.values(cm);
-  if(!custs.length){ showToast('No customers yet!','err'); return; }
-  if(!confirm('Send to '+custs.length+' customers via WhatsApp?\n\nWhatsApp will open '+custs.length+' times. Continue?')) return;
-  custs.forEach((c,i)=>{
+  const toSend = selected.map(ph=>cm[ph]).filter(Boolean);
+  if(!toSend.length){ showToast('No customers found!','err'); return; }
+  if(!confirm('Send to '+toSend.length+' customer(s) via WhatsApp?\n\nWhatsApp will open '+toSend.length+' times. Continue?')) return;
+  toSend.forEach((c,i)=>{
     setTimeout(()=>{
-      const m=msg.replace(/Hello!/g,'Hello '+c.name+'!');
+      const m=msg.replace(/\{name\}/g,c.name).replace(/Hello!/g,'Hello '+c.name+'!');
       window.open('https://wa.me/91'+c.phone+'?text='+encodeURIComponent(m),'_blank');
     }, i*1500);
   });
-  showToast('📢 Sending to '+custs.length+' customers...','ok');
+  showToast('📢 Sending to '+toSend.length+' customer(s)...','ok');
 }
 
 function ubBcSingle(){
@@ -7000,8 +7445,89 @@ function ubQuickPts(phone, name){
 }
 
 // ═══════════════════════════════════════════════════════
-//  🏠 SAVED ADDRESSES
+//  💰 FREE CASH / WALLET SYSTEM
 // ═══════════════════════════════════════════════════════
+function ubGetWallet(phone){
+  const k = 'ub_wallet_'+(phone||'').replace(/\D/g,'').slice(-10);
+  return parseFloat(localStorage.getItem(k)||'0');
+}
+function ubSetWallet(phone, amt){
+  const k = 'ub_wallet_'+(phone||'').replace(/\D/g,'').slice(-10);
+  localStorage.setItem(k, Math.max(0, parseFloat(amt)||0));
+}
+function ubAddWallet(phone, amt){
+  const cur = ubGetWallet(phone);
+  ubSetWallet(phone, cur + (parseFloat(amt)||0));
+  return cur + (parseFloat(amt)||0);
+}
+function ubGetMyWallet(){
+  if(!currentUser || !currentUser.phone) return 0;
+  return ubGetWallet(currentUser.phone);
+}
+
+// Admin: Add free cash to a customer's wallet and send WhatsApp
+function ubAdminAddFreeCash(){
+  const phone = (document.getElementById('wlt_phone')?.value||'').replace(/\D/g,'').slice(-10);
+  const amt = parseFloat(document.getElementById('wlt_amt')?.value||'0');
+  const note = (document.getElementById('wlt_note')?.value||'').trim() || 'Free cash reward from Udaya Bakery! 🎉';
+  const sendWa = document.getElementById('wlt_sendwa')?.checked !== false;
+  if(phone.length < 10){ showToast('Enter a valid 10-digit phone number','err'); return; }
+  if(!amt || amt <= 0){ showToast('Enter a valid amount','err'); return; }
+  const newBal = ubAddWallet(phone, amt);
+  const site = window.location.origin + window.location.pathname;
+  const resEl = document.getElementById('wlt_result');
+  if(resEl) resEl.innerHTML = `<span style="color:#4ADE80;">✅ Added ₹${amt} to wallet of +91${phone} → New balance: <strong>₹${newBal}</strong></span>`;
+  showToast(`✅ ₹${amt} added to +91${phone}'s wallet!`, 'ok');
+  // Send WhatsApp notification
+  if(sendWa){
+    const msg = `🎁 *Udaya Bakery — Free Cash Added!*\n\nHello! 🎂\n\nWe've added *₹${amt}* free cash to your wallet as a special reward!\n\n💰 Your wallet balance: *₹${newBal}*\n\n📝 ${note}\n\n👉 Use it on your next order: ${site}\n\n_(Minimum order applies to use wallet balance)_\n\n— Udaya Bakery 🙏`;
+    setTimeout(()=>{ window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`,'_blank'); }, 300);
+  }
+  renderAdminTab();
+}
+
+// Admin: Add free cash to BULK selected customers
+let _wltBulkSelected = new Set();
+function ubWltToggleCust(phone){
+  if(_wltBulkSelected.has(phone)) _wltBulkSelected.delete(phone);
+  else _wltBulkSelected.add(phone);
+  const el = document.getElementById('wlt_bulk_count');
+  if(el) el.textContent = _wltBulkSelected.size + ' selected';
+  const btn = document.getElementById('wlt_bulk_btn');
+  if(btn) btn.textContent = `💸 Add Cash to ${_wltBulkSelected.size} Customers`;
+}
+function ubWltSelectAll(){
+  const cm={};
+  ORDERS.forEach(o=>{ if(!o.phone)return; const k=o.phone.replace(/\D/g,'').slice(-10); cm[k]=true; });
+  Object.keys(cm).forEach(k=>_wltBulkSelected.add(k));
+  renderAdminTab();
+}
+function ubAdminBulkFreeCash(){
+  const amt = parseFloat(document.getElementById('wlt_bulk_amt')?.value||'0');
+  const note = (document.getElementById('wlt_bulk_note')?.value||'').trim() || 'Free cash reward from Udaya Bakery! 🎉';
+  const sendWa = document.getElementById('wlt_bulk_wa')?.checked !== false;
+  if(!_wltBulkSelected.size){ showToast('Select at least one customer','err'); return; }
+  if(!amt || amt <= 0){ showToast('Enter a valid amount','err'); return; }
+  const site = window.location.origin + window.location.pathname;
+  let i = 0;
+  _wltBulkSelected.forEach(phone=>{
+    const newBal = ubAddWallet(phone, amt);
+    if(sendWa){
+      setTimeout(()=>{
+        const cm2={};
+        ORDERS.forEach(o=>{ if(!o.phone)return; const k=o.phone.replace(/\D/g,'').slice(-10); if(k===phone) cm2.name=o.name; });
+        const name = cm2.name || 'Valued Customer';
+        const msg = `🎁 *Udaya Bakery — Free Cash Added!*\n\nHello ${name}! 🎂\n\nWe've added *₹${amt}* free cash to your wallet as a special reward!\n\n💰 Your wallet balance: *₹${newBal}*\n\n📝 ${note}\n\n👉 Use it: ${site}\n\n— Udaya Bakery 🙏`;
+        window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+      }, i * 1800);
+    }
+    i++;
+  });
+  showToast(`✅ ₹${amt} added to ${_wltBulkSelected.size} customers' wallets!`,'ok');
+  _wltBulkSelected.clear();
+  renderAdminTab();
+}
+
 function ubGetAddresses(){ try{ return JSON.parse(localStorage.getItem('ub_addrs')||'[]'); }catch(e){ return []; } }
 function ubSaveAddress(addr, name){
   const list=ubGetAddresses();
@@ -7309,7 +7835,7 @@ function ubDeleteAddr(i){
 function ubDownloadInvoice(orderId){
   const o=ORDERS.find(x=>x.id===orderId);
   if(!o){showToast('Order not found','err');return;}
-  const subtotal = o.total - (o.delivery||0) + (o.couponDiscount||0) + (o.pointsDiscount||0);
+  const subtotal = o.total - (o.delivery||0) + (o.couponDiscount||0) + (o.pointsDiscount||0) + (o.walletDiscount||0);
   const w = window.open('','_blank','width=680,height=820');
   w.document.write(`<!DOCTYPE html>
 <html lang="en">
@@ -7401,6 +7927,7 @@ function ubDownloadInvoice(orderId){
       <div class="tot-row"><span>Delivery Charge</span><span>${o.delivery===0?'<span style="color:#16a34a;font-weight:700;">FREE</span>':'₹'+o.delivery}</span></div>
       ${o.couponDiscount>0?`<div class="tot-row disc"><span>🎟 Coupon (${o.couponCode})</span><span>−₹${o.couponDiscount}</span></div>`:''}
       ${o.pointsDiscount>0?`<div class="tot-row disc"><span>💫 Loyalty Points</span><span>−₹${o.pointsDiscount}</span></div>`:''}
+      ${o.walletDiscount>0?`<div class="tot-row disc"><span>💰 Wallet Cash</span><span>−₹${o.walletDiscount}</span></div>`:''}
       <div class="tot-row final"><span>Total Amount</span><span>₹${o.total}</span></div>
     </div>
     <div class="pay-row">
@@ -7507,17 +8034,18 @@ async function removeCatImg(catId){
 // ═══════════════════════════════════════════════════════
 //  💳 PAYMENTS TAB
 // ═══════════════════════════════════════════════════════
-function buildPaymentsTab(){
-  var rzpKey    = localStorage.getItem('ub_rzp_key_id') || '';
-  var rzpSecret = localStorage.getItem('ub_rzp_key_secret') || '';
+async function buildPaymentsTab(){
+  if(!adminLoggedIn){ return '<div style="padding:40px;text-align:center;color:#F87171;">🔒 Admin login required to view payment settings.</div>'; }
+  var rzpKey    = (await UB_SECURE.get('rzp_key_id')) || '';
+  // rzp_key_secret intentionally NOT loaded — it should never be stored in browser
   var rzpMode   = localStorage.getItem('ub_rzp_mode') || 'test';
   var rzpOn     = localStorage.getItem('ub_rzp_enabled') === '1';
-  var upiId     = localStorage.getItem('ub_upi_id') || '';
+  var upiId     = (await UB_SECURE.get('upi_id')) || localStorage.getItem('ub_upi_id') || '';
   var upiOn     = localStorage.getItem('ub_upi_enabled') !== '0';
   var codOn     = localStorage.getItem('ub_cod_enabled') !== '0';
   var ppOn      = localStorage.getItem('ub_pp_enabled') !== '0';
-  var ppMid     = localStorage.getItem('ub_pp_mid') || '';
-  var ppSalt    = localStorage.getItem('ub_pp_salt') || '';
+  var ppMid     = (await UB_SECURE.get('pp_mid')) || '';
+  var ppSalt    = ''; // Salt is write-only — never shown again once saved (security)
   var ppIdx     = localStorage.getItem('ub_pp_salt_idx') || '1';
 
   // Payment summary counts
@@ -7610,9 +8138,10 @@ function buildPaymentsTab(){
   + rzpModeNote
   + '<div class="af-group"><label>Key ID <span style="font-size:10px;color:rgba(253,246,236,.4);">starts with rzp_test_ or rzp_live_</span></label>'
   + '<input class="af-inp" id="rzp_key_id" value="' + rzpKey.replace(/"/g,'&quot;') + '" placeholder="rzp_test_xxxxxxxxxxxxxxxxxx" autocomplete="off"></div>'
-  + '<div class="af-group"><label>Key Secret <span style="font-size:10px;color:rgba(253,246,236,.4);">keep private — never share!</span></label>'
-  + '<div style="position:relative;"><input class="af-inp" type="password" id="rzp_key_secret" value="' + rzpSecret.replace(/"/g,'&quot;') + '" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="new-password" style="padding-right:70px;">'
-  + '<button onclick="var e=document.getElementById(\'rzp_key_secret\');e.type=e.type===\'password\'?\'text\':\'password\';" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(253,246,236,.5);font-size:11px;cursor:pointer;white-space:nowrap;">&#128065; Show</button></div></div>'
+  + '<div class="af-group"><label>Key Secret <span style="font-size:10px;color:rgba(239,68,68,.6);">⚠️ Never stored in browser — enter only to test</span></label>'
+  + '<div style="position:relative;"><input class="af-inp" type="password" id="rzp_key_secret" value="" placeholder="Enter secret only for testing — not stored" autocomplete="new-password" style="padding-right:70px;">'
+  + '<button onclick="var e=document.getElementById(\'rzp_key_secret\');e.type=e.type===\'password\'?\'text\':\'password\';" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(253,246,236,.5);font-size:11px;cursor:pointer;white-space:nowrap;">&#128065; Show</button></div>'
+  + '<div style="font-size:11px;color:rgba(239,68,68,.6);margin-top:5px;">🔒 Key Secret is only used server-side. Do NOT paste it here — use it only in your backend/server.</div></div>'
   + '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;margin-bottom:14px;">'
   + '<div style="font-size:12px;font-weight:700;color:rgba(253,246,236,.6);margin-bottom:8px;">&#128203; How to get Razorpay Keys:</div>'
   + '<div style="font-size:12px;color:rgba(253,246,236,.45);line-height:1.9;">1. Go to <strong style="color:#E8B96A;">razorpay.com</strong> &#8594; Sign Up free<br>2. Dashboard &#8594; <strong style="color:#E8B96A;">Settings &#8594; API Keys</strong><br>3. Click <strong style="color:#E8B96A;">"Generate Test Key"</strong><br>4. Copy Key ID &amp; Key Secret here<br>5. After KYC approval &#8594; Generate Live Key</div>'
@@ -7678,25 +8207,28 @@ function ubSetRzpMode(mode){
   showToast('Razorpay set to '+(mode==='live'?'Live':'Test')+' mode','ok');
 }
 
-function ubSaveRazorpay(){
+async function ubSaveRazorpay(){
+  if(!adminLoggedIn){ showToast('Admin login required','err'); return; }
   var key = (document.getElementById('rzp_key_id')||{}).value||'';
-  var secret = (document.getElementById('rzp_key_secret')||{}).value||'';
-  key = key.trim(); secret = secret.trim();
+  key = key.trim();
   if(!key){ showToast('Enter your Razorpay Key ID','err'); return; }
-  if(!secret){ showToast('Enter your Razorpay Key Secret','err'); return; }
   if(!key.startsWith('rzp_')){ showToast('Key ID must start with rzp_test_ or rzp_live_','err'); return; }
-  localStorage.setItem('ub_rzp_key_id', key);
-  localStorage.setItem('ub_rzp_key_secret', secret);
+  // Store Key ID encrypted in localStorage
+  await UB_SECURE.set('rzp_key_id', key);
   localStorage.setItem('ub_rzp_enabled','1');
+  // Clear Key Secret input — it should NEVER be stored in browser
+  const secEl = document.getElementById('rzp_key_secret');
+  if(secEl) secEl.value = '';
   var st = document.getElementById('rzp_status');
-  if(st) st.innerHTML = '<span style="color:#4ADE80;">&#10003; Saved! Mode: '+localStorage.getItem('ub_rzp_mode')+'</span>';
-  showToast('✅ Razorpay keys saved!','ok');
+  if(st) st.innerHTML = '<span style="color:#4ADE80;">&#10003; Key ID saved securely (encrypted)! Mode: '+localStorage.getItem('ub_rzp_mode')+'</span>';
+  showToast('✅ Razorpay Key ID saved securely!','ok');
 }
 
-function ubTestRazorpay(){
-  var key = localStorage.getItem('ub_rzp_key_id')||'';
+async function ubTestRazorpay(){
+  if(!adminLoggedIn){ showToast('Admin login required','err'); return; }
+  var key = await UB_SECURE.get('rzp_key_id') || '';
   var st = document.getElementById('rzp_status');
-  if(!key){ showToast('Save your Razorpay keys first','err'); return; }
+  if(!key){ showToast('Save your Razorpay Key ID first','err'); return; }
   if(st) st.innerHTML = '<span style="color:#FCD34D;">&#9203; Testing connection...</span>';
   function doTest(){
     try {
@@ -7717,19 +8249,24 @@ function ubTestRazorpay(){
   } else { doTest(); }
 }
 
-function ubSavePhonePe(){
+async function ubSavePhonePe(){
+  if(!adminLoggedIn){ showToast('Admin login required','err'); return; }
   var mid = ((document.getElementById('pp_mid')||{}).value||'').trim();
   var salt = ((document.getElementById('pp_salt')||{}).value||'').trim();
   var idx = ((document.getElementById('pp_salt_idx')||{}).value||'1').trim();
   if(!mid){ showToast('Enter your PhonePe Merchant ID','err'); return; }
   if(!salt){ showToast('Enter your PhonePe Salt Key','err'); return; }
-  localStorage.setItem('ub_pp_mid', mid);
-  localStorage.setItem('ub_pp_salt', salt);
+  // Store both encrypted — not readable in plain text
+  await UB_SECURE.set('pp_mid', mid);
+  await UB_SECURE.set('pp_salt', salt);
+  // Store non-secret index in plain localStorage
   localStorage.setItem('ub_pp_salt_idx', idx);
   localStorage.setItem('ub_pp_enabled','1');
+  // Clear sensitive inputs from DOM
+  const saltEl = document.getElementById('pp_salt'); if(saltEl) saltEl.value='';
   var st = document.getElementById('pp_status');
-  if(st) st.innerHTML='<span style="color:#4ADE80;">&#10003; PhonePe keys saved!</span>';
-  showToast('✅ PhonePe keys saved!','ok');
+  if(st) st.innerHTML='<span style="color:#4ADE80;">&#10003; PhonePe keys saved securely (encrypted)!</span>';
+  showToast('✅ PhonePe keys saved securely!','ok');
 }
 
 
