@@ -1997,6 +1997,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if(db){
       startProductListener(); // real-time — all devices update instantly
       initFirebaseOrders();
+      loadBrandingFromDB();   // sync logo & brand name from Firestore
+      startBrandingListener(); // live updates when admin changes logo
     } else {
       setTimeout(startFirebaseSync, 1500); // retry if SDK not ready
     }
@@ -2082,6 +2084,33 @@ async function loadProdsFromDB(){
   } catch(e){ console.error('loadProdsFromDB error:', e); }
 }
 
+// ── REAL-TIME BRANDING LISTENER — logo/name update shows live on all devices ──
+function startBrandingListener(){
+  if(!db) return;
+  db.collection('settings').doc('branding').onSnapshot(doc => {
+    if(!doc.exists) return;
+    const data = doc.data();
+    if(typeof data.logo !== 'undefined'){
+      if(data.logo){
+        const current = localStorage.getItem('ub_logo');
+        if(current !== data.logo){
+          localStorage.setItem('ub_logo', data.logo);
+          applyLogoToNav();
+        }
+      } else {
+        localStorage.removeItem('ub_logo');
+        applyLogoToNav();
+      }
+    }
+    if(data.bname) localStorage.setItem('ub_bname', data.bname);
+    if(data.btag)  localStorage.setItem('ub_btag',  data.btag);
+    if(data.bname || data.btag){
+      const textEl = document.getElementById('logoTextEl');
+      if(textEl) textEl.innerHTML = `${data.bname||'Udaya Bakery'}<span>${data.btag||'Artisan Bakes'}</span>`;
+    }
+  }, ()=>{});
+}
+
 // ── REAL-TIME LISTENERS — all devices update instantly ──
 let _prodUnsubscribe = null;
 let _catUnsubscribe = null;
@@ -2157,6 +2186,28 @@ async function loadOrdersFromDB(){
     const snap = await db.collection('orders').orderBy('createdAt','desc').limit(200).get();
     if(!snap.empty){ ORDERS = snap.docs.map(d=>({id:d.id,...d.data()})); }
   } catch(e){}
+}
+
+// ── LOAD BRANDING FROM FIRESTORE (logo + bakery name — syncs to all devices) ──
+async function loadBrandingFromDB(){
+  if(!db) return;
+  try {
+    const doc = await db.collection('settings').doc('branding').get();
+    if(!doc.exists) return;
+    const data = doc.data();
+    // Apply logo
+    if(data.logo){
+      localStorage.setItem('ub_logo', data.logo);
+      applyLogoToNav();
+    }
+    // Apply bakery name & tagline
+    if(data.bname) localStorage.setItem('ub_bname', data.bname);
+    if(data.btag)  localStorage.setItem('ub_btag',  data.btag);
+    if(data.bname || data.btag){
+      const textEl = document.getElementById('logoTextEl');
+      if(textEl) textEl.innerHTML = `${data.bname||'Udaya Bakery'}<span>${data.btag||'Artisan Bakes'}</span>`;
+    }
+  } catch(e){ console.warn('loadBrandingFromDB error:', e); }
 }
 async function seedCategories(){
   if(!db) return;
@@ -7085,10 +7136,12 @@ function ubSaveSmsSettings(){
 
 // ── LOGO FUNCTIONS ──
 let pendingLogoData = '';
+let pendingLogoFile = null;
 function previewLogo(input){
   const file = input.files[0];
   if(!file) return;
   if(file.size > 10*1024*1024){ showToast('⚠️ Image too large! Max 10MB.','err'); return; }
+  pendingLogoFile = file;
   const reader = new FileReader();
   reader.onload = e => {
     pendingLogoData = e.target.result;
@@ -7099,20 +7152,61 @@ function previewLogo(input){
   };
   reader.readAsDataURL(file);
 }
-function saveLogo(){
+
+async function saveLogo(){
   const data = pendingLogoData || localStorage.getItem('ub_logo');
   if(!data){ showToast('⚠️ No image selected!','err'); return; }
-  localStorage.setItem('ub_logo', pendingLogoData || data);
-  applyLogoToNav();
-  showToast('✅ Logo saved & applied!','ok');
-  pendingLogoData = '';
+  const statusEl = document.getElementById('logoUploadStatus');
+  if(statusEl) statusEl.textContent = '⏳ Uploading logo...';
+  showToast('⏳ Uploading logo to cloud...','ok');
+  try {
+    let logoUrl = data;
+    // If we have an actual file (not already a URL), upload to ImageBB for a permanent URL
+    if(pendingLogoFile){
+      try {
+        logoUrl = await uploadToImageBB(pendingLogoFile);
+      } catch(imgErr){
+        // Fall back to base64 if ImageBB fails
+        logoUrl = data;
+        console.warn('ImageBB upload failed, using base64:', imgErr);
+      }
+    }
+    // Save to localStorage (for this device)
+    localStorage.setItem('ub_logo', logoUrl);
+    // Save to Firestore so ALL customers & devices see it
+    if(db){
+      await db.collection('settings').doc('branding').set({
+        logo: logoUrl,
+        bname: localStorage.getItem('ub_bname') || 'Udaya Bakery',
+        btag: localStorage.getItem('ub_btag') || 'Artisan Bakes',
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, {merge: true});
+    }
+    applyLogoToNav();
+    pendingLogoData = '';
+    pendingLogoFile = null;
+    if(statusEl) statusEl.textContent = '✅ Logo saved & synced to all devices!';
+    showToast('✅ Logo saved! All customers will see it now.','ok');
+  } catch(e){
+    if(statusEl) statusEl.textContent = '❌ Save failed: ' + (e.message||'unknown error');
+    showToast('❌ Logo save failed: ' + (e.message||'try again'),'err');
+  }
 }
+
 function removeLogo(){
   localStorage.removeItem('ub_logo');
   pendingLogoData = '';
+  pendingLogoFile = null;
   applyLogoToNav();
+  // Remove from Firestore too
+  if(db){
+    db.collection('settings').doc('branding').set({
+      logo: '',
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, {merge: true}).catch(()=>{});
+  }
   renderAdminTab();
-  showToast('✅ Logo removed','ok');
+  showToast('✅ Logo removed from all devices','ok');
 }
 function applyLogoToNav(){
   const el = document.getElementById('logoIconEl');
@@ -7128,7 +7222,15 @@ function saveBrandName(){
   localStorage.setItem('ub_btag', tag);
   const textEl = document.getElementById('logoTextEl');
   if(textEl) textEl.innerHTML = `${name}<span>${tag}</span>`;
-  showToast('✅ Bakery name updated!','ok');
+  // Sync to Firestore so all customers see updated name
+  if(db){
+    db.collection('settings').doc('branding').set({
+      bname: name,
+      btag: tag,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, {merge: true}).catch(()=>{});
+  }
+  showToast('✅ Bakery name updated for all devices!','ok');
 }
 function exportData(){
   const blob=new Blob([JSON.stringify({products:PRODS,categories:CATS,orders:ORDERS,settings:CFG,exported:new Date().toISOString()},null,2)],{type:'application/json'});
