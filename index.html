@@ -12,15 +12,22 @@
 <meta property="og:url" content="https://udayabakery.github.io/Udayabakery/">
 <meta property="og:image" content="https://udayabakery.github.io/Udayabakery/logo.png">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Udaya Bakery – Artisan Bakes | Belman, Karnataka">
+<meta name="twitter:description" content="Fresh cakes, egg puffs, chaklis & more. Order online for home delivery in Belman!">
+<meta name="twitter:image" content="https://udayabakery.github.io/Udayabakery/logo.png">
+<link rel="icon" href="https://udayabakery.github.io/Udayabakery/logo.png" type="image/png">
 <meta name="theme-color" content="#3B1F0E">
 <link rel="canonical" href="https://udayabakery.github.io/Udayabakery/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Jost:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<!-- Firebase SDK - async so page always loads even if Firebase fails -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<!-- Firebase SDK - defer so page always loads even if Firebase fails -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js" defer></script>
 <style>
 :root{
   --cream:#FDF6EC;--cream-dark:#F0E0C8;--choco:#3B1F0E;--choco-mid:#6B3A25;
@@ -43,7 +50,7 @@ html{scroll-behavior:smooth;}
 .ann-bar-text{color:#fff;font-family:Jost,sans-serif;font-size:13px;font-weight:600;letter-spacing:.3px;}
 .ann-bar-close{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.2);border:none;color:#fff;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
 .ann-bar-close:hover{background:rgba(255,255,255,.35);}
-body.dark-mode .ann-bar{background:linear-gradient(90deg,#2A1208,#6B3A25,#C8923A,#6B3A25,#2A1208);background-size:300% 100%;animation:annGrad 6s linear infinite;}
+body.dark-mode .ann-bar{background:linear-gradient(90deg,#2A1208,#6B3A25,#C8923A,#6B3A25,#2A1208);background-size:300% 100%;}
 
 /* ── DARK MODE ── */
 body.dark-mode{
@@ -103,7 +110,7 @@ body.dark-mode .review-form-card{background:rgba(200,146,58,.05);border-color:rg
 .qa-modal-bg{position:fixed;inset:0;z-index:4000;background:rgba(10,4,0,.75);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
 .qa-modal-bg.open{display:flex;animation:fadeIn .2s ease;}
 @media(min-width:600px){.qa-modal-bg{align-items:center;}}
-.qa-modal{background:var(--white);border-radius:28px 28px 0 0;width:100%;max-width:480px;position:relative;max-height:92dvh;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;}
+.qa-modal{background:var(--white);border-radius:28px 28px 0 0;width:100%;max-width:480px;position:relative;max-height:92vh;max-height:92dvh;display:flex;flex-direction:column;overflow:hidden;}
 @media(min-width:600px){.qa-modal{border-radius:28px;}}
 .qa-img{width:100%;height:200px;object-fit:cover;border-radius:28px 28px 0 0;background:#1a1008;flex-shrink:0;}
 .qa-img-emoji{width:100%;height:160px;display:flex;align-items:center;justify-content:center;font-size:72px;background:var(--cream);border-radius:28px 28px 0 0;}
@@ -218,7 +225,7 @@ body.dark-mode .coupon-banner-title{color:var(--choco);}
 .dark-toggle{background:none;border:1.5px solid var(--cream-dark);border-radius:50px;padding:6px 10px;cursor:pointer;font-size:16px;color:var(--choco);transition:all .2s;display:flex;align-items:center;}
 .dark-toggle:hover{border-color:var(--gold);background:rgba(200,146,58,.1);}
 
-body{font-family:'DM Sans','Jost',sans-serif;background:var(--cream);color:var(--text-dark);overflow-x:hidden;transition:background .3s,color .3s;}
+body{font-family:'DM Sans','Jost',sans-serif;background:var(--cream);color:var(--text-dark);overflow-x:hidden;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--cream-dark);}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px;}
 
 /* ── NAV ── */
@@ -229,7 +236,7 @@ nav.scrolled{background:rgba(253,246,236,.99);backdrop-filter:blur(8px);padding:
 .logo-icon{width:42px;height:42px;min-width:42px;background:linear-gradient(135deg,var(--gold),var(--choco-mid));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;}
 .logo-icon img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
 .logo-text{font-family:Playfair Display,serif;font-size:20px;color:var(--choco)!important;font-weight:700;line-height:1.1;white-space:nowrap;}
-.logo-text span{display:block;font-family:Cormorant Garamond,serif;font-size:10px;font-weight:300;letter-spacing:3px;color:var(--gold)!important;text-transform:uppercase;}
+.logo-text span{display:block;font-family:'Playfair Display',serif;font-size:10px;font-weight:400;letter-spacing:3px;color:var(--gold)!important;text-transform:uppercase;}
 
 /* SEARCH BAR IN NAV */
 .nav-search{flex:1;max-width:380px;position:relative;}
@@ -263,7 +270,7 @@ nav.scrolled{background:rgba(253,246,236,.99);backdrop-filter:blur(8px);padding:
 .hamburger span{width:23px;height:2px;background:var(--choco);border-radius:2px;}
 .mob-menu{display:none;position:fixed;inset:0;background:var(--cream);z-index:1100;flex-direction:column;align-items:center;justify-content:center;gap:26px;}
 .mob-menu.open{display:flex;}
-.mob-menu a{font-family:Playfair Display,serif;font-size:24px;color:var(--choco);text-decoration:none;}
+.mob-menu a{font-family:Playfair Display,serif;font-size:24px;color:var(--choco);text-decoration:none;min-height:44px;display:flex;align-items:center;justify-content:center;width:100%;padding:4px 0;}
 .mob-close{position:absolute;top:22px;right:22px;font-size:26px;cursor:pointer;color:var(--choco);}
 /* Mobile search */
 .mob-search-wrap{width:80%;position:relative;}
@@ -541,12 +548,12 @@ footer{background:var(--choco);padding:50px 0 24px;}
 .footer-grid{max-width:1300px;margin:auto;padding:0 22px;display:grid;grid-template-columns:2fr 1fr 1fr;gap:38px;margin-bottom:30px;}
 .footer-brand .logo-text{color:var(--cream);font-size:22px;}
 .footer-brand .logo-text span{color:var(--gold-light);}
-.footer-brand p{font-size:13px;color:rgba(253,246,236,.5);line-height:1.7;margin-top:12px;max-width:260px;}
+.footer-brand p{font-size:13px;color:rgba(253,246,236,.65);line-height:1.7;margin-top:12px;max-width:260px;}
 .fcol h4{font-family:Playfair Display,serif;font-size:14px;color:var(--gold-light);margin-bottom:13px;}
 .fcol ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
-.fcol ul li a{font-size:13px;color:rgba(253,246,236,.5);text-decoration:none;transition:color .2s;}
+.fcol ul li a{font-size:13px;color:rgba(253,246,236,.65);text-decoration:none;transition:color .2s;}
 .fcol ul li a:hover{color:var(--gold-light);}
-.footer-bottom{max-width:1300px;margin:auto;padding:17px 22px 0;border-top:1px solid rgba(253,246,236,.09);text-align:center;font-size:12px;color:rgba(253,246,236,.3);}
+.footer-bottom{max-width:1300px;margin:auto;padding:17px 22px 0;border-top:1px solid rgba(253,246,236,.09);text-align:center;font-size:12px;color:rgba(253,246,236,.55);}
 
 /* ════════════════════════════
    ADMIN PANEL
@@ -557,7 +564,7 @@ footer{background:var(--choco);padding:50px 0 24px;}
 .admin-topbar{display:flex;align-items:center;justify-content:space-between;padding:13px 21px;background:rgba(200,146,58,.09);border-bottom:1px solid rgba(200,146,58,.16);}
 .admin-topbar h2{font-family:Playfair Display,serif;font-size:18px;color:var(--gold-light);}
 .admin-topbar-right{display:flex;align-items:center;gap:11px;}
-.admin-topbar-right span{font-size:12px;color:rgba(253,246,236,.42);}
+.admin-topbar-right span{font-size:12px;color:rgba(253,246,236,.6);}
 .btn-ac{background:none;border:none;color:rgba(253,246,236,.5);font-size:21px;cursor:pointer;}
 .btn-ac:hover{color:var(--gold-light);}
 .admin-layout{display:flex;flex:1;overflow:hidden;}
@@ -1044,6 +1051,69 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
 .pickup-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(16,185,129,.15);color:#059669;border:1px solid rgba(16,185,129,.3);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
 .delivery-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(59,130,246,.15);color:#1D4ED8;border:1px solid rgba(59,130,246,.3);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
 
+
+/* ── BUILD YOUR OWN CAKE MODAL ── */
+#cakeBuilderModal{position:fixed;inset:0;z-index:5100;background:rgba(10,4,0,.82);display:none;align-items:center;justify-content:center;padding:12px;backdrop-filter:blur(6px);}
+#cakeBuilderModal.open{display:flex;}
+.cb-wrap{background:linear-gradient(155deg,#FDF6EC,#F5E6CC);border-radius:28px;width:100%;max-width:520px;max-height:95vh;overflow-y:auto;position:relative;font-family:Jost,sans-serif;box-shadow:0 32px 80px rgba(59,31,14,.35);}
+.cb-header{background:linear-gradient(135deg,#3B1F0E,#6B3A25);padding:20px 24px;border-radius:28px 28px 0 0;display:flex;align-items:center;justify-content:space-between;}
+.cb-header h2{font-family:Playfair Display,serif;font-size:20px;color:#E8B96A;font-weight:700;margin:0;}
+.cb-header p{font-size:12px;color:rgba(253,246,236,.55);margin:3px 0 0;}
+.cb-close{background:rgba(255,255,255,.12);border:none;border-radius:10px;width:36px;height:36px;font-size:18px;cursor:pointer;color:#fff;flex-shrink:0;}
+.cb-body{padding:20px 22px;}
+.cb-section{margin-bottom:22px;}
+.cb-section-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#3B1F0E;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.cb-section-title span{background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
+.cb-tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.cb-tier-card{border:2px solid #E5D5C5;border-radius:14px;padding:10px 6px;text-align:center;cursor:pointer;background:#fff;transition:all .2s;user-select:none;}
+.cb-tier-card:hover{border-color:#C8923A;}
+.cb-tier-card.sel{border-color:#3B1F0E;background:linear-gradient(135deg,rgba(59,31,14,.08),rgba(59,31,14,.04));box-shadow:0 4px 12px rgba(59,31,14,.12);}
+.cb-tier-label{font-size:11px;font-weight:700;color:#3B1F0E;}
+.cb-tier-price{font-size:10px;color:#A0623A;margin-top:2px;}
+.cb-flv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.cb-flv-card{border:2px solid #E5D5C5;border-radius:12px;padding:10px 8px;text-align:center;cursor:pointer;background:#fff;transition:all .2s;user-select:none;position:relative;overflow:hidden;}
+.cb-flv-card:hover{border-color:#C8923A;}
+.cb-flv-card.sel{border-color:#3B1F0E;background:linear-gradient(135deg,rgba(59,31,14,.06),rgba(59,31,14,.02));}
+.cb-flv-img{width:100%;height:56px;object-fit:cover;border-radius:8px;margin-bottom:5px;}
+.cb-flv-emoji{font-size:30px;margin-bottom:5px;line-height:1.1;}
+.cb-flv-name{font-size:11px;font-weight:700;color:#3B1F0E;}
+.cb-flv-price{font-size:10px;color:#A0623A;}
+.cb-sel-check{position:absolute;top:6px;right:6px;width:18px;height:18px;background:#3B1F0E;border-radius:50%;display:none;align-items:center;justify-content:center;color:#E8B96A;font-size:10px;font-weight:900;}
+.cb-flv-card.sel .cb-sel-check{display:flex;}
+.cb-design-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.cb-design-card{border:2px solid #E5D5C5;border-radius:14px;cursor:pointer;background:#fff;transition:all .2s;user-select:none;overflow:hidden;position:relative;}
+.cb-design-card:hover{border-color:#C8923A;transform:translateY(-1px);box-shadow:0 4px 14px rgba(59,31,14,.1);}
+.cb-design-card.sel{border-color:#3B1F0E;box-shadow:0 0 0 2px #3B1F0E;}
+.cb-design-img-wrap{width:100%;height:90px;overflow:hidden;background:#f5e6cc;display:flex;align-items:center;justify-content:center;font-size:36px;}
+.cb-design-img-wrap img{width:100%;height:100%;object-fit:cover;}
+.cb-design-info{padding:8px 10px;display:flex;align-items:center;gap:6px;}
+.cb-design-icon{font-size:16px;flex-shrink:0;}
+.cb-design-name{font-size:11px;font-weight:700;color:#3B1F0E;flex:1;}
+.cb-design-price{font-size:10px;color:#A0623A;}
+.cb-design-sel-badge{position:absolute;top:6px;right:6px;background:#3B1F0E;color:#E8B96A;border-radius:50%;width:22px;height:22px;display:none;align-items:center;justify-content:center;font-size:12px;font-weight:900;}
+.cb-design-card.sel .cb-design-sel-badge{display:flex;}
+.cb-live-preview{background:linear-gradient(135deg,#1a0a04,#2e1408);border-radius:20px;padding:18px;margin-bottom:20px;text-align:center;position:relative;overflow:hidden;}
+.cb-preview-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(232,185,106,.6);margin-bottom:14px;}
+.cb-preview-detail{font-size:11px;color:rgba(253,246,236,.5);min-height:20px;}
+.cb-preview-empty{font-size:40px;margin-bottom:8px;opacity:.3;}
+.cb-upload-zone{border:2px dashed #C8923A;border-radius:14px;padding:20px;text-align:center;cursor:pointer;position:relative;overflow:hidden;background:rgba(200,146,58,.04);transition:all .2s;}
+.cb-upload-zone:hover{background:rgba(200,146,58,.08);}
+.cb-upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.cb-upload-preview{width:100%;max-height:140px;object-fit:cover;border-radius:10px;display:none;margin-bottom:8px;}
+.cb-price-summary{background:linear-gradient(135deg,#3B1F0E,#5C2D0A);border-radius:18px;padding:18px 20px;color:#fff;margin-bottom:18px;}
+.cb-price-row{display:flex;justify-content:space-between;font-size:13px;color:rgba(253,246,236,.6);padding:3px 0;}
+.cb-price-total{display:flex;justify-content:space-between;font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;font-weight:700;border-top:1px solid rgba(200,146,58,.3);margin-top:8px;padding-top:8px;}
+.cb-add-btn{width:100%;background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:16px;padding:16px;font-family:Jost,sans-serif;font-size:16px;font-weight:700;cursor:pointer;}
+.cake-order-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(200,146,58,.18);color:#E8B96A;border:1px solid rgba(200,146,58,.35);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:800;letter-spacing:.5px;}
+body.dark-mode .cb-wrap{background:linear-gradient(155deg,#1A1008,#2A1A0E);}
+body.dark-mode .cb-tier-card,body.dark-mode .cb-flv-card,body.dark-mode .cb-design-card{background:#221408;border-color:#3A2A1E;}
+body.dark-mode .cb-tier-label,body.dark-mode .cb-flv-name,body.dark-mode .cb-design-name{color:#F0DEC8;}
+body.dark-mode .cb-section-title{color:#E8B96A;}
+body.dark-mode .cb-upload-zone{background:rgba(200,146,58,.05);}
+body.dark-mode .cb-tier-card.sel,body.dark-mode .cb-flv-card.sel,body.dark-mode .cb-design-card.sel{border-color:#C8923A;background:rgba(200,146,58,.1);}
+body.dark-mode .cb-design-img-wrap{background:#3A2018;}
+body.dark-mode .cb-live-preview{background:linear-gradient(135deg,#0d0502,#1a0c04);}
+
 </style>
 <script type="application/ld+json">
 {
@@ -1071,17 +1141,28 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
 </head>
 <body>
 
+<noscript>
+  <div style="position:fixed;inset:0;z-index:99999;background:#FDF6EC;display:flex;align-items:center;justify-content:center;text-align:center;font-family:sans-serif;padding:20px;">
+    <div>
+      <div style="font-size:52px;margin-bottom:16px;">🎂</div>
+      <h2 style="font-family:Georgia,serif;font-size:24px;color:#3B1F0E;margin-bottom:8px;">Udaya Bakery</h2>
+      <p style="color:#5C3520;font-size:15px;margin-bottom:16px;">Please enable JavaScript in your browser to use our online ordering system.</p>
+      <p style="color:#5C3520;font-size:14px;">You can still reach us on <a href="https://wa.me/919845406712" style="color:#C8923A;font-weight:bold;">WhatsApp: +91 98454 06712</a></p>
+    </div>
+  </div>
+</noscript>
+
 <!-- ANNOUNCEMENT BANNER -->
 <div class="ann-bar" id="annBar" style="display:none;">
   <span style="font-size:16px;">🎉</span>
   <span class="ann-bar-text" id="annBarText">Special offer today!</span>
-  <button class="ann-bar-close" onclick="document.getElementById('annBar').style.display='none'">✕</button>
+  <button class="ann-bar-close" onclick="document.getElementById('annBar').style.display='none'" aria-label="Close announcement">✕</button>
 </div>
 
 <!-- WELCOME COUPON BANNER -->
 <div class="coupon-banner-bg" id="couponBannerBg" style="display:none;">
   <div class="coupon-banner-card">
-    <button class="coupon-banner-close" onclick="closeCouponBanner()">✕</button>
+    <button class="coupon-banner-close" onclick="closeCouponBanner()" aria-label="Close welcome offer">✕</button>
     <div class="coupon-banner-emoji">🎂</div>
     <div class="coupon-banner-title">Welcome Gift!</div>
     <div class="coupon-banner-sub">Use this code on your first order and get <strong>10% OFF</strong> on all items!</div>
@@ -1123,10 +1204,10 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
 <!-- NAV -->
 <nav id="mainNav">
   <div class="nav-inner">
-    <a href="#" class="logo"><div class="logo-icon" id="logoIconEl">🎂</div><div class="logo-text" id="logoTextEl">Udaya Bakery<span>Artisan Bakes</span></div></a>
+    <a href="#" class="logo" aria-label="Udaya Bakery - Home"><div class="logo-icon" id="logoIconEl">🎂</div><div class="logo-text" id="logoTextEl">Udaya Bakery<span>Artisan Bakes</span></div></a>
     <!-- SMART SEARCH -->
     <div class="nav-search" id="navSearchWrap">
-      <input type="text" id="navSearchInput" placeholder="Search egg puff, cake, chakli..." autocomplete="off" oninput="liveSearch(this.value)" onfocus="liveSearch(this.value)" onblur="setTimeout(()=>closeSD(),200)">
+      <input type="text" id="navSearchInput" placeholder="Search egg puff, cake, chakli..." autocomplete="off" aria-label="Search products" oninput="liveSearch(this.value)" onfocus="liveSearch(this.value)" onblur="setTimeout(()=>closeSD(),200)">
       <button id="voiceSearchBtn" onclick="startVoiceSearch()" title="Voice Search" style="position:absolute;right:36px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--gold);padding:0;line-height:1;z-index:2;" aria-label="Voice Search">🎤</button>
       <span class="nav-search-icon">🔍</span>
       <div class="search-dropdown" id="searchDropdown"></div>
@@ -1136,7 +1217,7 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
       <li><a href="#products">Shop</a></li>
       <li><a href="#reviews">Reviews</a></li>
       <li><a href="#contact">Contact</a></li>
-      <li id="navAdminLink" style="display:none;"><a href="#" onclick="openAdmin();return false;" style="color:var(--gold);font-weight:700;">👑 Admin</a></li>
+      <li id="navAdminLink"><a href="javascript:void(0)" onclick="event.preventDefault();openAdmin();" style="color:var(--gold);font-weight:700;">👑 Admin</a></li>
     </ul>
     <div class="nav-actions">
       <div id="navUserArea">
@@ -1147,20 +1228,20 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
       <!-- cart button moved to floating -->
       <button class="lang-btn" onclick="toggleLang()" id="langBtn" title="Switch Language">ಕನ್ನಡ</button>
       <button class="dark-toggle" onclick="toggleDark()" id="darkBtn" title="Toggle Dark Mode">🌙</button>
-      <div class="hamburger" onclick="toggleMob()"><span></span><span></span><span></span></div>
+      <div class="hamburger" onclick="toggleMob()" role="button" aria-label="Open menu" tabindex="0"><span></span><span></span><span></span></div>
     </div>
   </div>
 </nav>
 <div class="mob-menu" id="mobMenu">
-  <span class="mob-close" onclick="toggleMob()">✕</span>
+  <span class="mob-close" onclick="toggleMob()" role="button" aria-label="Close menu" tabindex="0">✕</span>
   <div class="mob-search-wrap"><input type="text" placeholder="Search products..." oninput="liveSearch(this.value);toggleMob()"></div>
   <a href="#categories" onclick="toggleMob()">Menu</a>
   <a href="#products" onclick="toggleMob()">Shop</a>
   <a href="#reviews" onclick="toggleMob()">Reviews</a>
   <a href="#contact" onclick="toggleMob()">Contact</a>
-  <a href="#" onclick="toggleMob();openTrackModal()">📦 Track Order</a>
-  <a href="#" id="mobAuthLink" onclick="toggleMob();openAuthModal()">🔑 Sign In</a>
-  <a href="#" id="mobAdminLink" style="display:none;" onclick="toggleMob();openAdmin()">👑 Admin</a>
+  <a href="javascript:void(0)" onclick="event.preventDefault();toggleMob();setTimeout(openTrackModal,180);">📦 Track Order</a>
+  <a href="javascript:void(0)" id="mobAuthLink" onclick="event.preventDefault();toggleMob();setTimeout(openAuthModal,180);" style="display:flex;align-items:center;justify-content:center;gap:8px;">🔑 Sign In</a>
+  <a href="javascript:void(0)" id="mobAdminLink" onclick="event.preventDefault();toggleMob();setTimeout(openAdmin,180);">👑 Admin</a>
 </div>
 
 <!-- HERO -->
@@ -1176,6 +1257,11 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
       <div class="hero-btns anim-fade-up" style="animation-delay:.4s">
         <a href="#products" class="btn-primary">🛒 Order Now</a>
         <a href="#categories" class="btn-outline">Explore Menu ↓</a>
+      </div>
+      <div class="anim-fade-up" style="animation-delay:.5s;margin-top:14px;">
+        <button onclick="openCakeBuilder()" style="background:linear-gradient(135deg,rgba(200,146,58,.18),rgba(200,146,58,.08));border:2px solid rgba(200,146,58,.5);color:var(--choco);border-radius:50px;padding:13px 28px;font-family:Jost,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;">
+          🎂 Build Your Own Cake
+        </button>
       </div>
       <!-- Mobile-only hero visual row -->
       <div class="mob-hero-visual">
@@ -1285,7 +1371,7 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
           ✏️ Write a Google Review
         </a>
         <div style="margin-top:18px;padding:14px;background:rgba(200,146,58,.06);border-radius:12px;font-size:12px;color:var(--text-mid);line-height:1.7;">
-          💡 <strong>Bakery owner?</strong> To embed live Google reviews, add your <a href="https://developers.google.com/maps/documentation/embed/get-api-key" target="_blank" style="color:var(--gold);">Google Maps API key</a> and <strong>Place ID</strong> in Admin → Settings → Google Reviews.
+          💡 <strong>Bakery owner?</strong> To embed live Google reviews, add your <a href="https://developers.google.com/maps/documentation/embed/get-api-key" target="_blank" rel="noopener noreferrer" style="color:var(--gold);">Google Maps API key</a> and <strong>Place ID</strong> in Admin → Settings → Google Reviews.
         </div>
         <!-- Dynamic embed when API key + Place ID are set -->
         <div id="googleReviewsEmbed" style="margin-top:18px;"></div>
@@ -1336,11 +1422,11 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
       </iframe>
     </div>
     <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;justify-content:center;">
-      <a href="https://maps.google.com/?q=Belman+Karnataka" target="_blank"
+      <a href="https://maps.google.com/?q=Belman+Karnataka" target="_blank" rel="noopener noreferrer"
          style="background:var(--choco);color:var(--cream);padding:11px 22px;border-radius:12px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:8px;">
         📍 Open in Google Maps
       </a>
-      <a href="https://wa.me/919845406712?text=Hi!%20I%20want%20to%20visit%20Udaya%20Bakery.%20Please%20share%20the%20exact%20location." target="_blank"
+      <a href="https://wa.me/919845406712?text=Hi!%20I%20want%20to%20visit%20Udaya%20Bakery.%20Please%20share%20the%20exact%20location." target="_blank" rel="noopener noreferrer"
          style="background:#25D366;color:#fff;padding:11px 22px;border-radius:12px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:8px;">
         📱 Get Directions via WhatsApp
       </a>
@@ -1401,12 +1487,12 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
           <div class="ci"><div class="ci-icon">🕐</div><div class="ci-text"><h4>Hours</h4><p>Mon–Sat: 7:00 AM – 9:00 PM<br>Sunday: 8:00 AM – 8:00 PM</p></div></div>
         </div>
         <div class="abtns">
-          <a href="https://wa.me/919845406712?text=Hi!%20I%20would%20like%20to%20order%20from%20Udaya%20Bakery" target="_blank" class="btn-wa">📱 Chat on WhatsApp</a>
+          <a href="https://wa.me/919845406712?text=Hi!%20I%20would%20like%20to%20order%20from%20Udaya%20Bakery" target="_blank" rel="noopener noreferrer" class="btn-wa">📱 Chat on WhatsApp</a>
           <a href="tel:+919845406712" class="btn-call">📞 Call: +91 98454 06712</a>
         </div>
       </div>
       <div>
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15529!2d74.982!3d13.198!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zQmVsbWFu!5e0!3m2!1sen!2sin!4v1700000000000" width="100%" height="230" style="border:0;border-radius:17px;" allowfullscreen loading="lazy"></iframe>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15529!2d74.982!3d13.198!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zQmVsbWFu!5e0!3m2!1sen!2sin!4v1700000000000" width="100%" height="230" style="border:0;border-radius:17px;" allowfullscreen loading="lazy" title="Udaya Bakery location on Google Maps"></iframe>
         <div class="del-info" style="margin-top:14px;">
           <h4>🚚 Delivery Charges</h4>
           <div class="di-row"><span>Within 2 km</span><strong style="color:#4ADE80;">FREE</strong></div>
@@ -1423,26 +1509,26 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
 <footer>
   <div class="footer-grid">
     <div class="footer-brand"><div class="logo-text">Udaya Bakery<span>Artisan Bakes • Belman, Karnataka</span></div><p>Crafting delicious memories — cakes, sweets & snacks made fresh daily with love.</p></div>
-    <div class="fcol"><h4>Quick Links</h4><ul><li><a href="#categories">Menu</a></li><li><a href="#products">Shop</a></li><li><a href="#reviews">Reviews</a></li><li><a href="#contact">Contact</a></li><li id="footerAdminLink" style="display:none;"><a href="#" onclick="openAdmin();return false;">Admin Panel</a></li></ul></div>
+    <div class="fcol"><h4>Quick Links</h4><ul><li><a href="#categories">Menu</a></li><li><a href="#products">Shop</a></li><li><a href="#reviews">Reviews</a></li><li><a href="#contact">Contact</a></li><li id="footerAdminLink"><a href="javascript:void(0)" onclick="event.preventDefault();openAdmin();">Admin Panel</a></li></ul></div>
     <div class="fcol"><h4>Products</h4><ul><li><a href="#">Birthday Cakes</a></li><li><a href="#">Wedding Cakes</a></li><li><a href="#">Egg Puff & Puffs</a></li><li><a href="#">Sweets & Laddoos</a></li><li><a href="#">Chakli & Namkeen</a></li></ul></div>
   </div>
   <div class="footer-bottom">© 2026 Udaya Bakery, Belman, Karnataka. All rights reserved. Made with 🧡</div>
 </footer>
 
-<button class="float-cart" id="floatCartBtn" onclick="openCart()" title="View Cart">
+<button class="float-cart" id="floatCartBtn" onclick="openCart()" aria-label="View cart" title="View Cart">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96C5 16.1 6.9 18 9 18h12v-2H9.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H19c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0023.45 5H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2z"/></svg>
   <span class="float-cart-badge" id="floatCartCount">0</span>
 </button>
 
-<a href="https://wa.me/919845406712" target="_blank" class="float-wa" title="Chat on WhatsApp">
+<a href="https://wa.me/919845406712" target="_blank" rel="noopener noreferrer" class="float-wa" title="Chat on WhatsApp" aria-label="Chat with us on WhatsApp" rel="noopener noreferrer">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="white" width="26" height="26"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.82.736 5.46 2.027 7.754L0 32l8.463-2.001A15.938 15.938 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 01-6.764-1.843l-.484-.288-5.023 1.188 1.217-4.896-.316-.502A13.267 13.267 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.29-9.958c-.4-.2-2.363-1.165-2.73-1.298-.367-.133-.634-.2-.9.2-.267.4-1.033 1.298-1.267 1.565-.233.267-.467.3-.867.1-.4-.2-1.688-.622-3.214-1.983-1.188-1.06-1.99-2.37-2.223-2.77-.233-.4-.025-.616.175-.815.18-.18.4-.467.6-.7.2-.233.267-.4.4-.667.133-.267.067-.5-.033-.7-.1-.2-.9-2.167-1.233-2.967-.325-.78-.655-.674-.9-.686l-.767-.013c-.267 0-.7.1-1.067.5-.367.4-1.4 1.367-1.4 3.333s1.433 3.867 1.633 4.133c.2.267 2.82 4.307 6.833 6.04.955.413 1.7.66 2.28.845.958.305 1.83.262 2.52.159.769-.115 2.363-.966 2.697-1.9.333-.933.333-1.733.233-1.9-.1-.167-.367-.267-.767-.467z"/></svg>
 </a>
-<a href="tel:+919845406712" class="float-call" title="Call Us">
+<a href="tel:+919845406712" class="float-call" title="Call Us" aria-label="Call Udaya Bakery">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>
 </a>
 
 <!-- FLOATING ADMIN BUTTON -->
-<button class="fab-admin" onclick="openAdmin()" title="Admin Panel">👑</button>
+<button class="fab-admin" onclick="openAdmin()" title="Admin Panel" aria-label="Open Admin Panel">👑</button>
 
 <!-- MOBILE BOTTOM NAV -->
 <div class="mob-bottom-nav" id="mobBottomNav">
@@ -1476,7 +1562,7 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
 <!-- GOOGLE AUTH MODAL -->
 <div class="auth-modal-bg" id="authModalBg">
   <div class="auth-modal">
-    <span class="auth-close" onclick="closeAuthModal()">✕</span>
+    <span class="auth-close" onclick="closeAuthModal()" role="button" aria-label="Close sign-in modal" tabindex="0">✕</span>
     <span class="auth-cake-icon">🎂</span>
     <h2>Welcome to Udaya Bakery</h2>
     <p>Sign in to track your orders, save your address, and enjoy a personalised experience.</p>
@@ -1491,7 +1577,7 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
     <div class="auth-divider">or</div>
     <button class="auth-skip" onclick="closeAuthModal()">Continue as Guest</button>
     <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--cream-dark);text-align:center;">
-      <button onclick="closeAuthModal();openAdmin();" style="background:rgba(200,146,58,.08);color:var(--gold);border:1px solid rgba(200,146,58,.25);border-radius:10px;padding:8px 18px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">👑 Admin Login</button>
+      <button onclick="closeAuthModal();setTimeout(openAdmin,150);" style="background:rgba(200,146,58,.08);color:var(--gold);border:1px solid rgba(200,146,58,.25);border-radius:10px;padding:8px 18px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">👑 Admin Login</button>
     </div>
     <div class="auth-trust">
       <div class="auth-trust-item">🔒 Secure sign-in</div>
@@ -1538,7 +1624,7 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
 <!-- CART -->
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
 <div class="cart-sidebar" id="cartSidebar">
-  <div class="cart-head" style="flex-shrink:0;"><h2>🛒 Your Cart</h2><button class="cart-close" onclick="closeCart()">✕</button></div>
+  <div class="cart-head" style="flex-shrink:0;"><h2>🛒 Your Cart</h2><button class="cart-close" onclick="closeCart()" aria-label="Close cart">✕</button></div>
   <div class="cart-list" id="cartList" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;"></div>
   <div class="cart-foot" style="flex-shrink:0;overflow-y:auto;max-height:55vh;-webkit-overflow-scrolling:touch;border-top:2px solid var(--cream-dark);">
     <!-- DELIVERY TYPE SELECTOR -->
@@ -1599,14 +1685,14 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
     <div class="cart-total-row"><span>Total Amount</span><strong id="cartTotalEl">₹0</strong></div>
     <div id="minOrderWarn" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:8px 12px;font-size:12px;color:#991b1b;margin-bottom:8px;text-align:center;"></div>
     <button class="btn-checkout" onclick="openOrderModal()" id="checkoutBtn" style="position:sticky;bottom:0;margin-top:8px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;">🎂 Place Order →</button>
-    <div id="signInNote" style="display:none;text-align:center;font-size:12px;color:var(--text-mid);margin-top:6px;">🔑 <a href="#" onclick="closeCart();openAuthModal()" style="color:var(--gold);font-weight:700;">Sign in</a> to place your order</div>
+    <div id="signInNote" style="display:none;text-align:center;font-size:12px;color:var(--text-mid);margin-top:6px;">🔑 <a href="javascript:void(0)" onclick="event.preventDefault();closeCart();setTimeout(openAuthModal,100);" style="color:var(--gold);font-weight:700;">Sign in</a> to place your order</div>
   </div>
 </div>
 
 <!-- ORDER MODAL -->
 <div class="modal-bg" id="orderModalBg">
   <div class="modal">
-    <button class="modal-close" onclick="closeOrderModal()">✕</button>
+    <button class="modal-close" onclick="closeOrderModal()" aria-label="Close order form">✕</button>
     <h2>🎂 Place Your Order</h2>
     <p>Fill in your details and we'll confirm your order right away.</p>
     <div id="pickupNotice" style="display:none;background:rgba(16,185,129,.08);border:1.5px solid rgba(16,185,129,.3);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#065F46;align-items:center;gap:8px;">
@@ -1663,7 +1749,7 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
     </div>
     </div><!-- /deliveryFieldsWrap -->
     <div id="pickupAddrInfo" style="display:none;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:10px 14px;font-size:13px;color:#065F46;margin-bottom:12px;">
-      📍 <strong>Pick-up Location:</strong> Udaya Bakery, Main Road, Belman, Karkala Taluk, Karnataka — <a href="https://maps.google.com/?q=Udaya+Bakery+Belman+Karnataka" target="_blank" style="color:var(--gold);font-weight:700;">Open in Maps</a>
+      📍 <strong>Pick-up Location:</strong> Udaya Bakery, Main Road, Belman, Karkala Taluk, Karnataka — <a href="https://maps.google.com/?q=Udaya+Bakery+Belman+Karnataka" target="_blank" rel="noopener noreferrer" style="color:var(--gold);font-weight:700;">Open in Maps</a>
     </div>
     <div class="fg"><label>Special Instructions</label><textarea id="custNote" placeholder="Custom message, flavour preferences, decoration ideas..."></textarea></div>
     
@@ -1748,19 +1834,19 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
   <!-- DASHBOARD SCREEN (hidden until logged in) -->
   <div id="adminDashScreen" style="display:none;height:100vh;flex-direction:column;background:#0F0600;">
     
-    <!-- Top Bar -->
-    <div style="background:linear-gradient(90deg,#1E0C02,#2A1208);border-bottom:1px solid rgba(200,146,58,.18);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:36px;height:36px;background:linear-gradient(135deg,#C8923A,#6B3A25);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;">👑</div>
-        <div>
-          <div style="font-family:Playfair Display,serif;font-size:16px;color:#E8B96A;font-weight:700;">Udaya Bakery</div>
-          <div style="font-size:10px;color:rgba(253,246,236,.35);letter-spacing:1px;text-transform:uppercase;">Admin Dashboard</div>
+    <!-- Top Bar — mobile-optimised -->
+    <div id="ub-topbar" style="background:linear-gradient(90deg,#1E0C02,#2A1208);border-bottom:1px solid rgba(200,146,58,.18);padding:0 12px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:6px;">
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;min-width:0;">
+        <div style="width:30px;height:30px;background:linear-gradient(135deg,#C8923A,#6B3A25);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">👑</div>
+        <div style="min-width:0;">
+          <div style="font-family:'Playfair Display',serif;font-size:13px;color:#E8B96A;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Udaya Bakery</div>
+          <div style="font-size:8px;color:rgba(253,246,236,.3);letter-spacing:1.2px;text-transform:uppercase;">Admin</div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span id="adminWelcomeLabel" style="font-size:12px;color:rgba(253,246,236,.45);display:none;"></span>
-        <button onclick="doLogout()" style="background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:7px 14px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">🚪 Logout</button>
-        <button onclick="closeAdmin()" style="background:rgba(255,255,255,.06);color:rgba(253,246,236,.6);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:7px 14px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✕ Close</button>
+      <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
+        <span id="adminWelcomeLabel" style="font-size:11px;color:rgba(253,246,236,.4);display:none;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <button onclick="doLogout()" style="background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:6px 10px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;">🚪<span class="ub-dsk-only">Logout</span></button>
+        <button onclick="closeAdmin()" style="background:rgba(255,255,255,.06);color:rgba(253,246,236,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0;">✕</button>
       </div>
     </div>
     
@@ -1778,6 +1864,7 @@ body.dark-mode .lang-btn{background:rgba(255,255,255,.06);border-color:rgba(200,
         <button class="atab" onclick="switchTab('customers')" id="at-customers">👥 Customers</button>
         <button class="atab" onclick="switchTab('broadcast')" id="at-broadcast">📢 Broadcast</button>
         <button class="atab" onclick="switchTab('analytics')" id="at-analytics">📈 Analytics</button>
+        <button class="atab" onclick="switchTab('cakebuilder')" id="at-cakebuilder">🎂 Cake Builder</button>
       </div>
     </div>
     
@@ -1952,6 +2039,12 @@ window.addEventListener('beforeunload', () => { UB_SECURE.clear(); });
 // ═══════════════════════════════════════
 //  FIREBASE + IMAGEBB CONFIG
 // ═══════════════════════════════════════
+// ⚠️ SECURITY NOTICE: These keys are visible in client-side code.
+// Firebase API keys for web apps are NOT secret — they are public identifiers.
+// Your real security is enforced by Firebase Security Rules in the Firebase Console.
+// IMPORTANT: Make sure your Firestore Security Rules restrict write/delete access
+// to authenticated admin users only. See: https://firebase.google.com/docs/rules
+// ImgBB key: consider rotating this periodically via https://api.imgbb.com/
 const IMGBB_KEY = '1c86b5aeb0459d2374d02a4ea4011fe0';
 const OWNER_EMAIL = 'udayabakeryb@gmail.com';
 
@@ -3937,7 +4030,7 @@ function renderCats(){
     const cntLabel = cnt > 0 ? `<div class="cc-count">${c.id==='all'?cnt+' items':cnt+' item'+(cnt!==1?'s':'')}</div>` : '';
     // If image exists: show ONLY image (no emoji), perfectly fitted in white card
     const imgEl = c.image
-      ? `<div class="cc-img-wrap"><img src="${c.image}" alt="${c.name}"></div>`
+      ? `<div class="cc-img-wrap"><img src="${c.image}" alt="${c.name}" loading="lazy"></div>`
       : `<span class="cc-emoji">${c.emoji}</span>`;
     return `<div class="cat-card-main ${selCat===c.id?'active':''}" onclick="selCatFn('${c.id}')">
       ${imgEl}
@@ -4939,8 +5032,11 @@ let currentUser = JSON.parse(localStorage.getItem('ub_current_user')||'null');
 
 function openAuthModal(){
   if(currentUser){ openUserDropdown(); return; }
-  document.getElementById('authModalBg').classList.add('open');
-  _ubPush('auth');
+  const el = document.getElementById('authModalBg');
+  if(!el) return;
+  el.classList.add('open');
+  // Small delay before pushing state to avoid popstate race on Android
+  setTimeout(function(){ _ubPush('auth'); }, 50);
 }
 function closeAuthModal(){ _ubCloseAuthModal(); }
 
@@ -5055,7 +5151,7 @@ function renderUserNav(){
     return;
   }
   const imgEl = currentUser.picture 
-    ? `<img src="${currentUser.picture}" class="user-avatar" alt="${currentUser.name}">`
+    ? `<img src="${currentUser.picture}" class="user-avatar" alt="${currentUser.name}" loading="lazy">`
     : `<div class="user-avatar-placeholder">${currentUser.initials||'U'}</div>`;
   area.innerHTML=`<div class="user-avatar-wrap" onclick="toggleUserDropdown()">
     ${imgEl}
@@ -5144,7 +5240,7 @@ async function renderTrackContent(autoShowOrderId){
     if(!currentUser){
       myOrdersSec.innerHTML=`<div class="track-empty" style="padding:20px;">
         <div class="icon">🔑</div>
-        <p><a href="#" onclick="closeTrackModal();openAuthModal();" style="color:var(--gold);font-weight:700;">Sign in with Google</a> to see your order history</p>
+        <p><a href="javascript:void(0)" onclick="event.preventDefault();closeTrackModal();setTimeout(openAuthModal,100);" style="color:var(--gold);font-weight:700;">Sign in with Google</a> to see your order history</p>
       </div>`;
       return;
     }
@@ -5409,7 +5505,8 @@ function openAdmin(){
   // Always require login every time the admin panel is opened.
   // adminLoggedIn is session-only (in-memory) — never restored from localStorage.
   document.getElementById('adminOverlay').style.display = 'block';
-  _ubPush('admin');
+  // Small delay before pushing state to avoid popstate race on Android Chrome
+  setTimeout(function(){ _ubPush('admin'); }, 50);
   if(adminLoggedIn){
     // Already logged in within this page session — go straight to dashboard
     showAdminDash();
@@ -5665,6 +5762,7 @@ function renderAdminTab(){
   else if(adminTab==='customers') el.innerHTML = buildCustomersTab();
   else if(adminTab==='broadcast') el.innerHTML = buildBroadcastTab();
   else if(adminTab==='analytics') el.innerHTML = buildAnalyticsTab();
+  else if(adminTab==='cakebuilder') el.innerHTML = buildCakeBuilderAdminTab();
 }
 
 // ── DASHBOARD ──
@@ -6602,7 +6700,7 @@ function buildOrderCard(o){
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
       ${o.status!=='cancelled'&&o.status!=='delivered'?`<button class="abtn-del" onclick="setStatus('${o.id}','cancelled')">✕ Cancel</button>`:''}
       <button class="abtn-del" onclick="deleteOrder('${o.id}')" style="background:rgba(239,68,68,.18);color:#FCA5A5;border-color:rgba(239,68,68,.3);">🗑️ Delete</button>
-      <a href="https://wa.me/91${(o.phone||'').replace(/\D/g,'')}?text=${encodeURIComponent('Hello '+o.name+'! 🎂\n\nYour Udaya Bakery order *'+o.id+'* status:\n\n*'+statusLabel(o.status)+'* ✅\n\nThank you for choosing Udaya Bakery! 🙏')}" target="_blank" style="background:rgba(37,211,102,.12);color:#25D366;border:1px solid rgba(37,211,102,.25);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:16px;">💬</span> WhatsApp</a>
+      <a href="https://wa.me/91${(o.phone||'').replace(/\D/g,'')}?text=${encodeURIComponent('Hello '+o.name+'! 🎂\n\nYour Udaya Bakery order *'+o.id+'* status:\n\n*'+statusLabel(o.status)+'* ✅\n\nThank you for choosing Udaya Bakery! 🙏')}" target="_blank" rel="noopener noreferrer" style="background:rgba(37,211,102,.12);color:#25D366;border:1px solid rgba(37,211,102,.25);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:16px;">💬</span> WhatsApp</a>
       <a href="tel:${o.phone}" style="background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.2);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;">📞 Call</a>
       <button onclick="ubPrintBill('${o.id}')" style="background:rgba(255,255,255,.06);color:rgba(253,246,236,.6);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🖨️ Print Bill</button>
     </div>
@@ -6839,7 +6937,7 @@ function buildSettingsTab(){
     <div class="asub">Let visitors see your Google Maps reviews on the Reviews section</div>
     <div class="af-group" style="margin-top:12px;"><label>Google Maps Embed API Key</label><input class="af-inp" id="s_gmaps_key" value="${localStorage.getItem('ub_gmaps_key')||''}" placeholder="AIzaSy..."></div>
     <div class="af-group"><label>Google Place ID</label><input class="af-inp" id="s_gmaps_place" value="${localStorage.getItem('ub_gmaps_place')||''}" placeholder="ChIJ..."></div>
-    <div style="background:rgba(200,146,58,.06);border-radius:10px;padding:10px 12px;font-size:12px;color:rgba(253,246,236,.5);margin-bottom:12px;">💡 Get your Place ID at <a href="https://developers.google.com/maps/documentation/places/web-service/place-id" target="_blank" style="color:#E8B96A;">developers.google.com/maps</a>. Embed API key must have Maps Embed API enabled.</div>
+    <div style="background:rgba(200,146,58,.06);border-radius:10px;padding:10px 12px;font-size:12px;color:rgba(253,246,236,.5);margin-bottom:12px;">💡 Get your Place ID at <a href="https://developers.google.com/maps/documentation/places/web-service/place-id" target="_blank" rel="noopener noreferrer" style="color:#E8B96A;">developers.google.com/maps</a>. Embed API key must have Maps Embed API enabled.</div>
     <button class="abtn" onclick="ubSaveGmapsSettings()">💾 Save Google Maps Settings</button>
   </div>
 
@@ -7642,7 +7740,7 @@ function buildCustomersTab(){
       html+='<div style="font-size:11px;color:rgba(253,246,236,.28);margin-top:1px;">Last: '+c.last+'</div></div>';
       html+='<div style="text-align:right;min-width:80px;"><div style="font-size:15px;font-weight:800;color:#E8B96A;">Rs.'+c.spent.toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);">total spent</div></div>';
       html+='<div style="display:flex;gap:7px;flex-wrap:wrap;">';
-      html+='<a href="https://wa.me/91'+k+'" target="_blank" style="background:rgba(37,211,102,.1);color:#25D366;border:1px solid rgba(37,211,102,.2);border-radius:8px;padding:8px 12px;font-size:13px;text-decoration:none;font-weight:700;touch-action:manipulation;">💬</a>';
+      html+='<a href="https://wa.me/91'+k+'" target="_blank" rel="noopener noreferrer" style="background:rgba(37,211,102,.1);color:#25D366;border:1px solid rgba(37,211,102,.2);border-radius:8px;padding:8px 12px;font-size:13px;text-decoration:none;font-weight:700;touch-action:manipulation;">💬</a>';
       html+='<a href="tel:'+c.phone+'" style="background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.2);border-radius:8px;padding:8px 12px;font-size:13px;text-decoration:none;font-weight:700;touch-action:manipulation;">📞</a>';
       html+='<button onclick="(function(){document.getElementById(\'wlt_phone\').value=\''+k+'\';switchTab(\'customers\');document.getElementById(\'wlt_amt\').focus();})()" style="background:rgba(74,222,128,.12);color:#4ADE80;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:8px 10px;font-size:12px;cursor:pointer;font-family:\'Jost\',sans-serif;touch-action:manipulation;">💰 Cash</button>';
       if(ubLoyaltyEnabled()) html+='<button onclick="ubQuickPts(\''+k+'\',\''+c.name+'\')" style="background:rgba(234,179,8,.12);color:#fbbf24;border:1px solid rgba(234,179,8,.2);border-radius:8px;padding:8px 10px;font-size:12px;cursor:pointer;font-family:\'Jost\',sans-serif;touch-action:manipulation;">🌟 Pts</button>';
@@ -8607,7 +8705,7 @@ async function buildPaymentsTab(){
   + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">'
   + '<h3 style="margin:0;">&#127974; Razorpay API Keys</h3>'
   + '<span style="font-size:10px;background:rgba(99,102,241,.2);color:#A5B4FC;border-radius:6px;padding:3px 8px;font-weight:700;">BEST FOR INDIA</span></div>'
-  + '<div class="asub">Cards, UPI, Net Banking, EMI, Wallets. Sign up free at <a href="https://razorpay.com" target="_blank" style="color:#E8B96A;">razorpay.com</a></div>'
+  + '<div class="asub">Cards, UPI, Net Banking, EMI, Wallets. Sign up free at <a href="https://razorpay.com" target="_blank" rel="noopener noreferrer" style="color:#E8B96A;">razorpay.com</a></div>'
   + '<div style="display:flex;gap:8px;margin:14px 0;">'
   + '<button onclick="ubSetRzpMode(\'test\')" style="flex:1;padding:10px;border-radius:10px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid;' + rzpModeTestStyle + '">&#129514; Test Mode</button>'
   + '<button onclick="ubSetRzpMode(\'live\')" style="flex:1;padding:10px;border-radius:10px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid;' + rzpModeLiveStyle + '">&#128994; Live Mode</button>'
@@ -8633,7 +8731,7 @@ async function buildPaymentsTab(){
   // ── PhonePe ──
   + '<div class="acard" style="margin-bottom:16px;" id="pp_section">'
   + '<h3>&#128156; PhonePe Business API</h3>'
-  + '<div class="asub">Official PhonePe gateway. Apply at <a href="https://business.phonepe.com" target="_blank" style="color:#E8B96A;">business.phonepe.com</a></div>'
+  + '<div class="asub">Official PhonePe gateway. Apply at <a href="https://business.phonepe.com" target="_blank" rel="noopener noreferrer" style="color:#E8B96A;">business.phonepe.com</a></div>'
   + '<div class="af-group" style="margin-top:14px;"><label>Merchant ID (MID)</label>'
   + '<input class="af-inp" id="pp_mid" value="' + ppMid.replace(/"/g,'&quot;') + '" placeholder="e.g. UDAYABAKERY123"></div>'
   + '<div class="af-group"><label>Salt Key <span style="font-size:10px;color:rgba(253,246,236,.4);">from PhonePe dashboard</span></label>'
@@ -8908,13 +9006,452 @@ function sendNotification(title, body, icon){
 
 // Show notification prompt after page load
 showNotifPrompt();
+
+
+// ═══════════════════════════════════════════════════════════════
+//  BUILD YOUR OWN CAKE — FULL SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+function getCbTiers(){
+  try{ var d=localStorage.getItem('ub_cb_tiers'); if(d) return JSON.parse(d); }catch(e){}
+  return [
+    {id:'t1',label:'1 Tier', emoji:'🎂',basePrice:350, minWeight:'0.5 kg'},
+    {id:'t2',label:'2 Tiers',emoji:'🎂',basePrice:700, minWeight:'1 kg'},
+    {id:'t3',label:'3 Tiers',emoji:'🎂',basePrice:1200,minWeight:'2 kg'},
+    {id:'t4',label:'4 Tiers',emoji:'🎂',basePrice:2000,minWeight:'3 kg'},
+  ];
+}
+function getCbFlavours(){
+  try{ var d=localStorage.getItem('ub_cb_flavours'); if(d) return JSON.parse(d); }catch(e){}
+  return [
+    {id:'vanilla',    name:'Vanilla',       emoji:'🍦',extraPrice:0,  image:''},
+    {id:'chocolate',  name:'Chocolate',     emoji:'🍫',extraPrice:50, image:''},
+    {id:'strawberry', name:'Strawberry',    emoji:'🍓',extraPrice:60, image:''},
+    {id:'pineapple',  name:'Pineapple',     emoji:'🍍',extraPrice:40, image:''},
+    {id:'butterscotch',name:'Butterscotch',emoji:'🧡',extraPrice:50, image:''},
+    {id:'redvelvet',  name:'Red Velvet',    emoji:'❤️',extraPrice:80, image:''},
+    {id:'blackforest',name:'Black Forest',  emoji:'🍒',extraPrice:70, image:''},
+    {id:'mango',      name:'Mango',         emoji:'🥭',extraPrice:60, image:''},
+  ];
+}
+function getCbDesigns(){
+  try{ var d=localStorage.getItem('ub_cb_designs'); if(d) return JSON.parse(d); }catch(e){}
+  return [
+    {id:'classic',   name:'Classic Smooth',   icon:'🎀',extraPrice:0,  image:''},
+    {id:'rosette',   name:'Rosette Piping',    icon:'🌸',extraPrice:150,image:''},
+    {id:'fondant',   name:'Fondant Decorated', icon:'🎨',extraPrice:250,image:''},
+    {id:'geode',     name:'Geode Crystal',     icon:'💎',extraPrice:350,image:''},
+    {id:'floral',    name:'Fresh Flowers',     icon:'🌺',extraPrice:200,image:''},
+    {id:'cartoon',   name:'Cartoon/Character', icon:'🦄',extraPrice:300,image:''},
+    {id:'drip',      name:'Drip Cake',         icon:'🍯',extraPrice:180,image:''},
+    {id:'photo',     name:'Photo Print',       icon:'📸',extraPrice:400,image:''},
+  ];
+}
+
+var cbState = {tier:null,flavour:null,design:null,msg:'',imgDataUrl:'',imgFile:null};
+var cbImgUploaded = '';
+var CB_COLOURS = {
+  vanilla:      {bg:'#F5E6C8',stripe:'#EDD59A'},
+  chocolate:    {bg:'#3D1A0A',stripe:'#5C2910'},
+  strawberry:   {bg:'#E8637A',stripe:'#C94060'},
+  pineapple:    {bg:'#F0C040',stripe:'#D4A020'},
+  butterscotch: {bg:'#D4861A',stripe:'#B86A0A'},
+  redvelvet:    {bg:'#8B0000',stripe:'#6B0000'},
+  blackforest:  {bg:'#1A0505',stripe:'#2D0808'},
+  mango:        {bg:'#F5A020',stripe:'#E08010'},
+};
+var CB_DEFAULT_COL = {bg:'#D4907A',stripe:'#B8705A'};
+
+function cbGetCol(id){ return CB_COLOURS[id]||CB_DEFAULT_COL; }
+
+function openCakeBuilder(){
+  cbState = {tier:null,flavour:null,design:null,msg:'',imgDataUrl:'',imgFile:null};
+  cbImgUploaded = '';
+  var modal = document.getElementById('cakeBuilderModal');
+  if(modal) modal.style.display = 'flex';
+  cbRenderTiers(); cbRenderFlavours(); cbRenderDesigns(); cbUpdatePrice();
+  var prev=document.getElementById('cbImgPreview');
+  var ph=document.getElementById('cbUploadPlaceholder');
+  var st=document.getElementById('cbUploadStatus');
+  if(prev){prev.src='';prev.style.display='none';}
+  if(ph) ph.style.display='block';
+  if(st) st.style.display='none';
+  var msg=document.getElementById('cbCakeMsg'); if(msg) msg.value='';
+  var dt=document.getElementById('cbDelivDate'); if(dt) dt.value='';
+  document.body.style.overflow='hidden';
+  var wrap=document.getElementById('cbCakeCanvasWrap');
+  if(wrap) wrap.innerHTML='<div class="cb-preview-empty">🎂</div><div style="font-size:12px;color:rgba(253,246,236,.3);">Select tiers & flavour to see your cake</div>';
+}
+function closeCakeBuilder(){
+  var modal=document.getElementById('cakeBuilderModal');
+  if(modal) modal.style.display='none';
+  document.body.style.overflow='';
+}
+
+function cbRenderTiers(){
+  var grid=document.getElementById('cbTierGrid'); if(!grid) return;
+  var tiers=getCbTiers();
+  grid.innerHTML=tiers.map(function(t){
+    return '<div class="cb-tier-card'+(cbState.tier===t.id?' sel':'')+'" onclick="cbSelectTier(\''+t.id+'\')">'
+      +'<div style="font-size:26px;">'+t.emoji+'</div>'
+      +'<div style="font-size:13px;font-weight:800;color:#3B1F0E;">'+t.label+'</div>'
+      +'<div class="cb-tier-price">from Rs.'+t.basePrice+'</div>'
+      +'<div style="font-size:9px;color:#A0623A;">'+t.minWeight+'</div></div>';
+  }).join('');
+}
+function cbSelectTier(id){cbState.tier=id;cbRenderTiers();cbUpdateSummary();cbUpdatePrice();cbRenderLivePreview();}
+
+function cbRenderFlavours(){
+  var grid=document.getElementById('cbFlvGrid'); if(!grid) return;
+  grid.innerHTML=getCbFlavours().map(function(f){
+    return '<div class="cb-flv-card'+(cbState.flavour===f.id?' sel':'')+'" onclick="cbSelectFlavour(\''+f.id+'\')">'
+      +'<div class="cb-sel-check">&#10003;</div>'
+      +(f.image?'<img class="cb-flv-img" src="'+f.image+'" onerror="this.style.display=\'none\'">':'<div class="cb-flv-emoji">'+f.emoji+'</div>')
+      +'<div class="cb-flv-name">'+f.name+'</div>'
+      +'<div class="cb-flv-price">'+(f.extraPrice>0?'+Rs.'+f.extraPrice:'Included')+'</div></div>';
+  }).join('');
+}
+function cbSelectFlavour(id){cbState.flavour=id;cbRenderFlavours();cbUpdateSummary();cbUpdatePrice();cbRenderLivePreview();}
+
+function cbRenderDesigns(){
+  var grid=document.getElementById('cbDesignGrid'); if(!grid) return;
+  grid.innerHTML=getCbDesigns().map(function(d){
+    var imgHtml=d.image?'<img src="'+d.image+'" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'">':d.icon;
+    return '<div class="cb-design-card'+(cbState.design===d.id?' sel':'')+'" onclick="cbSelectDesign(\''+d.id+'\')">'
+      +'<div class="cb-design-sel-badge">&#10003;</div>'
+      +'<div class="cb-design-img-wrap">'+imgHtml+'</div>'
+      +'<div class="cb-design-info"><span class="cb-design-icon">'+d.icon+'</span>'
+      +'<div><div class="cb-design-name">'+d.name+'</div>'
+      +'<div class="cb-design-price">'+(d.extraPrice>0?'+Rs.'+d.extraPrice:'Included')+'</div></div></div></div>';
+  }).join('');
+}
+function cbSelectDesign(id){cbState.design=id;cbRenderDesigns();cbUpdateSummary();cbUpdatePrice();cbRenderLivePreview();}
+
+function cbRenderLivePreview(){
+  var wrap=document.getElementById('cbCakeCanvasWrap');
+  var detail=document.getElementById('cbPreviewDetail');
+  if(!wrap) return;
+  var tier=getCbTiers().filter(function(t){return t.id===cbState.tier;})[0];
+  var flavour=getCbFlavours().filter(function(f){return f.id===cbState.flavour;})[0];
+  var design=getCbDesigns().filter(function(d){return d.id===cbState.design;})[0];
+  if(!tier&&!flavour){
+    wrap.innerHTML='<div class="cb-preview-empty">🎂</div><div style="font-size:12px;color:rgba(253,246,236,.3);">Select tiers & flavour to see your cake</div>';
+    if(detail) detail.innerHTML=''; return;
+  }
+  var numTiers=parseInt(tier?tier.id.replace('t',''):1);
+  var col=flavour?cbGetCol(flavour.id):CB_DEFAULT_COL;
+  var widths=[200,160,126,96],heights=[62,52,44,36];
+  var candleColors=['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#c084fc'];
+  var candlesHtml='<div style="display:flex;gap:7px;justify-content:center;align-items:flex-end;margin-bottom:0;">';
+  for(var c=0;c<Math.min(numTiers+1,5);c++){
+    candlesHtml+='<div style="position:relative;width:8px;height:'+(16+(c%2)*5)+'px;background:'+candleColors[c%5]+';border-radius:3px 3px 1px 1px;">'
+      +'<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-size:10px;">🔥</div></div>';
+  }
+  candlesHtml+='</div>';
+  var tiersHtml='';
+  for(var i=numTiers-1;i>=0;i--){
+    var w=widths[i]||80,h=heights[i]||36;
+    var bg='repeating-linear-gradient(0deg,'+col.bg+','+col.bg+' 9px,'+col.stripe+' 9px,'+col.stripe+' 18px)';
+    var overlay=design&&design.image?'<div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;"><img src="'+design.image+'" style="width:100%;height:100%;object-fit:cover;opacity:.35;mix-blend-mode:overlay;" onerror="this.style.display=\'none\'"></div>':'';
+    tiersHtml+='<div style="position:relative;width:'+w+'px;height:'+h+'px;background:'+bg+';border-radius:10px 10px 6px 6px;margin:0 auto;z-index:'+(i+2)+';box-shadow:0 4px 10px rgba(0,0,0,.45),inset 0 2px 0 rgba(255,255,255,.2);overflow:hidden;">'
+      +overlay+'<div style="position:absolute;top:0;left:0;right:0;height:10px;background:'+col.bg+';opacity:.7;border-radius:10px 10px 0 0;"></div>'
+      +(i===0?'<div style="position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.65);color:rgba(232,185,106,.9);font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;z-index:10;">'+(tier?tier.label:'Cake')+'</div>':'')
+      +'</div>';
+  }
+  var plateW=(widths[numTiers-1]||200)+24;
+  wrap.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:0;">'
+    +candlesHtml+'<div style="display:flex;flex-direction:column;align-items:center;gap:0;margin-bottom:10px;">'+tiersHtml+'</div>'
+    +'<div style="width:'+plateW+'px;height:14px;background:linear-gradient(135deg,#c8923a,#9a5c1a);border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,.45);"></div></div>';
+  var parts=[];
+  if(flavour) parts.push('<span style="background:rgba(255,255,255,.1);border-radius:20px;padding:2px 10px;display:inline-block;">'+flavour.emoji+' '+flavour.name+'</span>');
+  if(design)  parts.push('<span style="background:rgba(255,255,255,.1);border-radius:20px;padding:2px 10px;display:inline-block;">'+design.icon+' '+design.name+'</span>');
+  if(detail) detail.innerHTML='<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:6px;">'+parts.join('')+'</div>';
+}
+
+function cbUpdateSummary(){
+  var box=document.getElementById('cbSummaryBox'),content=document.getElementById('cbSummaryContent');
+  if(!box||!content) return;
+  var tier=getCbTiers().filter(function(t){return t.id===cbState.tier;})[0];
+  var flavour=getCbFlavours().filter(function(f){return f.id===cbState.flavour;})[0];
+  var design=getCbDesigns().filter(function(d){return d.id===cbState.design;})[0];
+  if(!tier&&!flavour&&!design){box.style.display='none';return;}
+  box.style.display='block';
+  var h='<div style="display:flex;flex-wrap:wrap;gap:8px;">';
+  if(tier) h+='<div style="background:rgba(59,31,14,.08);border:1.5px solid rgba(59,31,14,.15);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;color:#3B1F0E;">'+tier.emoji+' '+tier.label+'</div>';
+  if(flavour) h+='<div style="background:rgba(200,146,58,.12);border:1.5px solid rgba(200,146,58,.3);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;color:#3B1F0E;">'+flavour.emoji+' '+flavour.name+'</div>';
+  if(design) h+='<div style="background:rgba(212,144,122,.12);border:1.5px solid rgba(212,144,122,.3);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;color:#3B1F0E;">'+design.icon+' '+design.name+'</div>';
+  content.innerHTML=h+'</div>';
+}
+
+function cbUpdatePrice(){
+  var tier=getCbTiers().filter(function(t){return t.id===cbState.tier;})[0];
+  var flavour=getCbFlavours().filter(function(f){return f.id===cbState.flavour;})[0];
+  var design=getCbDesigns().filter(function(d){return d.id===cbState.design;})[0];
+  var rows='',total=0;
+  if(tier){rows+='<div class="cb-price-row"><span>🎂 '+tier.label+'</span><span>Rs.'+tier.basePrice+'</span></div>';total+=tier.basePrice;}
+  else rows+='<div class="cb-price-row" style="opacity:.5;"><span>🎂 Select tiers</span><span>—</span></div>';
+  if(flavour&&flavour.extraPrice>0){rows+='<div class="cb-price-row"><span>🍰 '+flavour.name+'</span><span>+Rs.'+flavour.extraPrice+'</span></div>';total+=flavour.extraPrice;}
+  if(design&&design.extraPrice>0){rows+='<div class="cb-price-row"><span>🎨 '+design.name+'</span><span>+Rs.'+design.extraPrice+'</span></div>';total+=design.extraPrice;}
+  var pr=document.getElementById('cbPriceRows'); if(pr) pr.innerHTML=rows;
+  var pt=document.getElementById('cbPriceTotal'); if(pt) pt.textContent='Rs.'+total;
+}
+
+function cbHandleImage(input){
+  var file=input.files[0]; if(!file) return;
+  if(file.size>10*1024*1024){showToast('Image too large (max 10MB)','err');return;}
+  cbState.imgFile=file;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    cbState.imgDataUrl=e.target.result;
+    var prev=document.getElementById('cbImgPreview');
+    var ph=document.getElementById('cbUploadPlaceholder');
+    var st=document.getElementById('cbUploadStatus');
+    if(prev){prev.src=e.target.result;prev.style.display='block';}
+    if(ph) ph.style.display='none';
+    if(st){st.textContent='Image ready! Will be sent with your order.';st.style.display='block';}
+    showToast('Reference image ready!','ok');
+    if(typeof uploadToImageBB==='function'){
+      uploadToImageBB(file).then(function(url){cbImgUploaded=url;}).catch(function(){cbImgUploaded='';});
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function cbAddToCart(){
+  var tier=getCbTiers().filter(function(t){return t.id===cbState.tier;})[0];
+  var flavour=getCbFlavours().filter(function(f){return f.id===cbState.flavour;})[0];
+  var design=getCbDesigns().filter(function(d){return d.id===cbState.design;})[0];
+  if(!tier){showToast('Please select number of tiers','err');return;}
+  if(!flavour){showToast('Please select a flavour','err');return;}
+  if(!design){showToast('Please select a design theme','err');return;}
+  var msg=(document.getElementById('cbCakeMsg')||{value:''}).value.trim();
+  var date=(document.getElementById('cbDelivDate')||{value:''}).value;
+  var total=tier.basePrice+(flavour.extraPrice||0)+(design.extraPrice||0);
+  CART.push({pid:'custom_cake_'+Date.now(),name:'Custom '+tier.label+' Cake',emoji:'🎂',
+    variant:tier.label+' - '+flavour.name+' - '+design.name+(msg?' - "'+msg+'"':''),
+    price:total,qty:1,isCustomCake:true,
+    cakeDetails:{tier:tier.label,flavour:flavour.name,design:design.name,msg:msg,
+      referenceImage:cbImgUploaded||cbState.imgDataUrl||'',delivDate:date}});
+  saveCart();renderCart();updateCartBadge();
+  closeCakeBuilder();openCart();
+  showToast('Custom cake added to cart!','ok');
+  cbSaveOrderForAdmin({tier:tier.label,flavour:flavour.name,design:design.name,msg:msg,
+    referenceImage:cbImgUploaded||cbState.imgDataUrl||'',delivDate:date},'Custom '+tier.label+' Cake',total);
+}
+
+function cbSendWhatsApp(){
+  var tier=getCbTiers().filter(function(t){return t.id===cbState.tier;})[0];
+  var flavour=getCbFlavours().filter(function(f){return f.id===cbState.flavour;})[0];
+  var design=getCbDesigns().filter(function(d){return d.id===cbState.design;})[0];
+  if(!tier){showToast('Please select number of tiers','err');return;}
+  if(!flavour){showToast('Please select a flavour','err');return;}
+  if(!design){showToast('Please select a design theme','err');return;}
+  var msg=(document.getElementById('cbCakeMsg')||{value:''}).value.trim();
+  var date=(document.getElementById('cbDelivDate')||{value:''}).value;
+  var total=tier.basePrice+(flavour.extraPrice||0)+(design.extraPrice||0);
+  var waMsg='🎂 *Custom Cake Order — Udaya Bakery*\n\n'
+    +'*Tiers:* '+tier.label+' (Min. '+tier.minWeight+')\n'
+    +'*Flavour:* '+flavour.emoji+' '+flavour.name+'\n'
+    +'*Design:* '+design.icon+' '+design.name+'\n'
+    +(msg?'*Message on Cake:* "'+msg+'"\n':'')
+    +(date?'*Delivery Date:* '+date+'\n':'')
+    +'\n*Estimated Price:* Rs.'+total
+    +(cbImgUploaded||cbState.imgDataUrl?'\n\n(Reference image attached)':'')
+    +'\n\n_Placed via Udaya Bakery website_';
+  var phone=(localStorage.getItem('ub_whatsapp')||'919845406712').replace(/[^0-9]/g,'');
+  window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(waMsg),'_blank');
+  cbSaveOrderForAdmin({tier:tier.label,flavour:flavour.name,design:design.name,msg:msg,
+    referenceImage:cbImgUploaded||cbState.imgDataUrl||'',delivDate:date},'Custom '+tier.label+' Cake',total);
+  showToast('Opening WhatsApp...','ok');
+}
+
+function cbSaveOrderForAdmin(details,name,price){
+  try{
+    var list=JSON.parse(localStorage.getItem('ub_cake_orders')||'[]');
+    list.unshift({id:'CAKE-'+Date.now(),name:name,price:price,details:details,status:'pending',
+      timestamp:new Date().toLocaleString('en-IN'),
+      customerName:(typeof currentUser!=='undefined'&&currentUser&&currentUser.name)?currentUser.name:'Guest'});
+    if(list.length>200) list.splice(200);
+    localStorage.setItem('ub_cake_orders',JSON.stringify(list));
+    try{if(db) db.collection('cake_orders').add({name:name,price:price,details:details,status:'pending',
+      timestamp:firebase.firestore.FieldValue.serverTimestamp()}).catch(function(){});}catch(e){}
+  }catch(e){}
+}
+
+function buildCakeBuilderAdminTab(){
+  var tiers=getCbTiers(),flavours=getCbFlavours(),designs=getCbDesigns();
+  var orders=JSON.parse(localStorage.getItem('ub_cake_orders')||'[]');
+  var tiersHtml=tiers.map(function(t,i){
+    return '<div style="display:grid;grid-template-columns:55px 1fr 100px 110px 36px;gap:8px;align-items:center;margin-bottom:10px;">'
+      +'<input style="background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.2);border-radius:9px;padding:8px;font-size:14px;color:#FDF6EC;outline:none;text-align:center;width:100%;" value="'+t.emoji+'" id="cbT_emoji_'+i+'">'
+      +'<input style="background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.2);border-radius:9px;padding:8px 10px;font-size:13px;color:#FDF6EC;outline:none;width:100%;" value="'+t.label+'" id="cbT_label_'+i+'">'
+      +'<input type="number" min="0" style="background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.2);border-radius:9px;padding:8px;font-size:13px;color:#FDF6EC;outline:none;width:100%;" value="'+t.basePrice+'" id="cbT_price_'+i+'">'
+      +'<input style="background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.2);border-radius:9px;padding:8px;font-size:12px;color:#FDF6EC;outline:none;width:100%;" value="'+t.minWeight+'" id="cbT_weight_'+i+'">'
+      +'<button onclick="cbAdminRemoveTier('+i+')" style="background:rgba(239,68,68,.12);color:#F87171;border:none;border-radius:8px;width:36px;height:36px;cursor:pointer;">x</button></div>';
+  }).join('');
+  var flavsHtml=flavours.map(function(f,i){
+    return '<div style="display:grid;grid-template-columns:50px 1fr 80px 1fr 36px;gap:8px;align-items:center;margin-bottom:10px;">'
+      +'<input style="background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.2);border-radius:9px;padding:8px;font-size:14px;color:#FDF6EC;outline:none;text-align:center;width:100%;" value="'+f.emoji+'" id="cbF_emoji_'+i+'">'
+      +'<input style="background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.2);border-radius:9px;padding:8px;font-size:13px;color:#FDF6EC;outline:none;width:100%;" value="'+f.name+'" id="cbF_name_'+i+'">'
+      +'<input type="number" min="0" style="background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.2);border-radius:9px;padding:8px;font-size:12px;color:#FDF6EC;outline:none;width:100%;" value="'+f.extraPrice+'" id="cbF_price_'+i+'">'
+      +'<input style="background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.2);border-radius:9px;padding:8px;font-size:11px;color:#FDF6EC;outline:none;width:100%;" value="'+(f.image||'')+'" id="cbF_img_'+i+'" placeholder="Image URL">'
+      +'<button onclick="cbAdminRemoveFlv('+i+')" style="background:rgba(239,68,68,.12);color:#F87171;border:none;border-radius:8px;width:36px;height:36px;cursor:pointer;">x</button></div>';
+  }).join('');
+  var designsHtml=designs.map(function(d,i){
+    return '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,146,58,.12);border-radius:12px;padding:12px;margin-bottom:12px;">'
+      +'<div style="display:grid;grid-template-columns:50px 1fr 80px 36px;gap:8px;align-items:center;margin-bottom:10px;">'
+      +'<input style="background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.2);border-radius:9px;padding:8px;font-size:14px;color:#FDF6EC;outline:none;text-align:center;width:100%;" value="'+d.icon+'" id="cbD_icon_'+i+'">'
+      +'<input style="background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.2);border-radius:9px;padding:8px;font-size:13px;color:#FDF6EC;outline:none;width:100%;" value="'+d.name+'" id="cbD_name_'+i+'">'
+      +'<input type="number" min="0" style="background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.2);border-radius:9px;padding:8px;font-size:13px;color:#FDF6EC;outline:none;width:100%;" value="'+d.extraPrice+'" id="cbD_price_'+i+'">'
+      +'<button onclick="cbAdminRemoveDesign('+i+')" style="background:rgba(239,68,68,.12);color:#F87171;border:none;border-radius:8px;width:36px;height:36px;cursor:pointer;">x</button></div>'
+      +'<div style="display:flex;align-items:center;gap:10px;">'
+      +'<div style="position:relative;border:2px dashed rgba(200,146,58,.3);border-radius:10px;overflow:hidden;cursor:pointer;width:80px;height:60px;flex-shrink:0;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:24px;">'
+      +(d.image?'<img src="'+d.image+'" id="cbD_imgprev_'+i+'" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'">':'<span id="cbD_imgprev_'+i+'">'+d.icon+'</span>')
+      +'<input type="file" accept="image/*" onchange="cbAdminUploadDesignImg('+i+',this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;"></div>'
+      +'<div style="flex:1;"><div style="font-size:11px;color:rgba(253,246,236,.4);margin-bottom:4px;">Design photo for customers</div>'
+      +'<input style="background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.15);border-radius:8px;padding:6px 10px;font-size:11px;color:#FDF6EC;outline:none;width:100%;box-sizing:border-box;" value="'+(d.image||'')+'" id="cbD_img_'+i+'" placeholder="Paste image URL" oninput="cbAdminPreviewDesignUrl('+i+')">'
+      +'<div id="cbD_imgstatus_'+i+'" style="font-size:10px;color:rgba(253,246,236,.35);margin-top:3px;">'+(d.image?'Image set':'Upload or paste URL')+'</div>'
+      +'</div></div></div>';
+  }).join('');
+  var ordersHtml=orders.length===0
+    ?'<div style="text-align:center;padding:40px;color:rgba(253,246,236,.25);font-size:14px;">🎂 No custom cake orders yet</div>'
+    :orders.map(function(o){
+      return '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,146,58,.15);border-radius:14px;padding:16px;margin-bottom:12px;">'
+        +'<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px;">'
+        +'<div><div style="font-size:12px;color:#E8B96A;font-weight:700;">'+o.id+'</div><div style="font-size:11px;color:rgba(253,246,236,.3);">'+o.timestamp+'</div></div>'
+        +'<div style="text-align:right;"><span class="cake-order-badge">Custom Cake</span><div style="font-size:18px;color:#E8B96A;font-weight:700;margin-top:4px;">Rs.'+o.price+'</div></div></div>'
+        +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:10px;">'
+        +'<div style="background:rgba(255,255,255,.04);border-radius:8px;padding:8px;"><div style="font-size:9px;color:rgba(253,246,236,.3);margin-bottom:3px;">TIERS</div><div style="font-size:13px;font-weight:700;color:#FDF6EC;">'+(o.details&&o.details.tier||'-')+'</div></div>'
+        +'<div style="background:rgba(255,255,255,.04);border-radius:8px;padding:8px;"><div style="font-size:9px;color:rgba(253,246,236,.3);margin-bottom:3px;">FLAVOUR</div><div style="font-size:13px;font-weight:700;color:#FDF6EC;">'+(o.details&&o.details.flavour||'-')+'</div></div>'
+        +'<div style="background:rgba(255,255,255,.04);border-radius:8px;padding:8px;"><div style="font-size:9px;color:rgba(253,246,236,.3);margin-bottom:3px;">DESIGN</div><div style="font-size:13px;font-weight:700;color:#FDF6EC;">'+(o.details&&o.details.design||'-')+'</div></div>'
+        +(o.details&&o.details.delivDate?'<div style="background:rgba(200,146,58,.1);border-radius:8px;padding:8px;"><div style="font-size:9px;color:rgba(253,246,236,.3);margin-bottom:3px;">DELIVERY</div><div style="font-size:13px;font-weight:700;color:#E8B96A;">'+o.details.delivDate+'</div></div>':'')
+        +'</div>'
+        +(o.details&&o.details.msg?'<div style="background:rgba(200,146,58,.08);border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:12px;color:#E8B96A;">Message: "'+o.details.msg+'"</div>':'')
+        +(o.details&&o.details.referenceImage?'<div style="margin-bottom:8px;"><div style="font-size:10px;color:rgba(253,246,236,.35);margin-bottom:4px;">Reference Image from Customer</div><img src="'+o.details.referenceImage+'" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid rgba(200,146,58,.2);" onerror="this.style.display=\'none\'"></div>':'')
+        +'<select onchange="cbAdminUpdateOrderStatus(\''+o.id+'\',this.value)" style="background:rgba(255,255,255,.07);border:1.5px solid rgba(200,146,58,.25);border-radius:8px;padding:7px 10px;font-size:12px;color:#FDF6EC;outline:none;">'
+        +'<option value="pending"'+(o.status==='pending'?' selected':'')+'>Pending</option>'
+        +'<option value="confirmed"'+(o.status==='confirmed'?' selected':'')+'>Confirmed</option>'
+        +'<option value="making"'+(o.status==='making'?' selected':'')+'>Being Made</option>'
+        +'<option value="ready"'+(o.status==='ready'?' selected':'')+'>Ready</option>'
+        +'<option value="delivered"'+(o.status==='delivered'?' selected':'')+'>Delivered</option>'
+        +'<option value="cancelled"'+(o.status==='cancelled'?' selected':'')+'>Cancelled</option>'
+        +'</select></div>';
+    }).join('');
+  return '<div style="max-width:900px;">'
+    +'<div style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:6px;">🎂 Build Your Own Cake - Settings</div>'
+    +'<p style="font-size:13px;color:rgba(253,246,236,.5);margin-bottom:24px;">Control all flavours, designs, tier pricing and view custom cake orders.</p>'
+    +'<div style="background:rgba(255,255,255,.04);border:1px solid rgba(200,146,58,.15);border-radius:18px;padding:20px;margin-bottom:20px;">'
+    +'<div style="font-family:Playfair Display,serif;font-size:16px;color:#E8B96A;margin-bottom:14px;">🎂 Tier Pricing and Weights</div>'
+    +tiersHtml
+    +'<div style="display:flex;gap:10px;margin-top:8px;">'
+    +'<button onclick="cbAdminAddTier()" style="background:rgba(200,146,58,.12);color:#E8B96A;border:1.5px dashed rgba(200,146,58,.3);border-radius:9px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;">+ Add Tier</button>'
+    +'<button onclick="cbAdminSaveTiers('+tiers.length+')" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:9px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;">Save Tiers</button>'
+    +'</div></div>'
+    +'<div style="background:rgba(255,255,255,.04);border:1px solid rgba(200,146,58,.15);border-radius:18px;padding:20px;margin-bottom:20px;">'
+    +'<div style="font-family:Playfair Display,serif;font-size:16px;color:#E8B96A;margin-bottom:14px;">🍰 Flavour Options and Prices</div>'
+    +flavsHtml
+    +'<div style="display:flex;gap:10px;margin-top:8px;">'
+    +'<button onclick="cbAdminAddFlv()" style="background:rgba(200,146,58,.12);color:#E8B96A;border:1.5px dashed rgba(200,146,58,.3);border-radius:9px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;">+ Add Flavour</button>'
+    +'<button onclick="cbAdminSaveFlavs('+flavours.length+')" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:9px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;">Save Flavours</button>'
+    +'</div></div>'
+    +'<div style="background:rgba(255,255,255,.04);border:1px solid rgba(200,146,58,.15);border-radius:18px;padding:20px;margin-bottom:24px;">'
+    +'<div style="font-family:Playfair Display,serif;font-size:16px;color:#E8B96A;margin-bottom:14px;">🎨 Design Themes, Prices and Images</div>'
+    +designsHtml
+    +'<div style="display:flex;gap:10px;margin-top:8px;">'
+    +'<button onclick="cbAdminAddDesign()" style="background:rgba(200,146,58,.12);color:#E8B96A;border:1.5px dashed rgba(200,146,58,.3);border-radius:9px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;">+ Add Design</button>'
+    +'<button onclick="cbAdminSaveDesigns('+designs.length+')" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:9px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;">Save Designs</button>'
+    +'</div></div>'
+    +'<div style="background:rgba(255,255,255,.04);border:1px solid rgba(200,146,58,.15);border-radius:18px;padding:20px;">'
+    +'<div style="font-family:Playfair Display,serif;font-size:16px;color:#E8B96A;margin-bottom:14px;">📋 Custom Cake Orders ('+orders.length+')</div>'
+    +ordersHtml+'</div></div>';
+}
+
+function cbAdminUpdateOrderStatus(id,status){
+  try{var list=JSON.parse(localStorage.getItem('ub_cake_orders')||'[]');
+  var o=list.filter(function(x){return x.id===id;})[0]; if(o) o.status=status;
+  localStorage.setItem('ub_cake_orders',JSON.stringify(list));showToast('Status updated','ok');}catch(e){}
+}
+function cbAdminSaveTiers(n){var t=[];for(var i=0;i<n;i++){var e=(document.getElementById('cbT_emoji_'+i)||{value:'🎂'}).value||'🎂',l=(document.getElementById('cbT_label_'+i)||{value:''}).value||'',p=parseFloat((document.getElementById('cbT_price_'+i)||{value:'0'}).value)||0,w=(document.getElementById('cbT_weight_'+i)||{value:''}).value||'';if(!l)continue;t.push({id:'t'+i,label:l,emoji:e,basePrice:p,minWeight:w});}localStorage.setItem('ub_cb_tiers',JSON.stringify(t));showToast('Tiers saved!','ok');renderAdminTab();}
+function cbAdminAddTier(){var t=getCbTiers();t.push({id:'t'+t.length,label:'New Tier',emoji:'🎂',basePrice:500,minWeight:'1 kg'});localStorage.setItem('ub_cb_tiers',JSON.stringify(t));renderAdminTab();}
+function cbAdminRemoveTier(i){var t=getCbTiers();t.splice(i,1);localStorage.setItem('ub_cb_tiers',JSON.stringify(t));showToast('Tier removed','ok');renderAdminTab();}
+function cbAdminSaveFlavs(n){var t=[];for(var i=0;i<n;i++){var e=(document.getElementById('cbF_emoji_'+i)||{value:'🎂'}).value||'🎂',nm=(document.getElementById('cbF_name_'+i)||{value:''}).value||'',p=parseFloat((document.getElementById('cbF_price_'+i)||{value:'0'}).value)||0,img=(document.getElementById('cbF_img_'+i)||{value:''}).value||'';if(!nm)continue;t.push({id:nm.toLowerCase().replace(/\s+/g,'_'),name:nm,emoji:e,extraPrice:p,image:img});}localStorage.setItem('ub_cb_flavours',JSON.stringify(t));showToast('Flavours saved!','ok');renderAdminTab();}
+function cbAdminAddFlv(){var t=getCbFlavours();t.push({id:'new'+t.length,name:'New Flavour',emoji:'🎂',extraPrice:0,image:''});localStorage.setItem('ub_cb_flavours',JSON.stringify(t));renderAdminTab();}
+function cbAdminRemoveFlv(i){var t=getCbFlavours();t.splice(i,1);localStorage.setItem('ub_cb_flavours',JSON.stringify(t));showToast('Flavour removed','ok');renderAdminTab();}
+function cbAdminSaveDesigns(n){var t=[];for(var i=0;i<n;i++){var ic=(document.getElementById('cbD_icon_'+i)||{value:'🎀'}).value||'🎀',nm=(document.getElementById('cbD_name_'+i)||{value:''}).value||'',p=parseFloat((document.getElementById('cbD_price_'+i)||{value:'0'}).value)||0,img=(document.getElementById('cbD_img_'+i)||{value:''}).value||'';if(!nm)continue;t.push({id:nm.toLowerCase().replace(/\s+/g,'_'),name:nm,icon:ic,extraPrice:p,image:img});}localStorage.setItem('ub_cb_designs',JSON.stringify(t));showToast('Designs saved!','ok');renderAdminTab();}
+function cbAdminAddDesign(){var t=getCbDesigns();t.push({id:'new'+t.length,name:'New Design',icon:'🎀',extraPrice:0,image:''});localStorage.setItem('ub_cb_designs',JSON.stringify(t));renderAdminTab();}
+function cbAdminRemoveDesign(i){var t=getCbDesigns();t.splice(i,1);localStorage.setItem('ub_cb_designs',JSON.stringify(t));showToast('Design removed','ok');renderAdminTab();}
+async function cbAdminUploadDesignImg(i,input){var file=input.files[0];if(!file)return;var st=document.getElementById('cbD_imgstatus_'+i),ui=document.getElementById('cbD_img_'+i);if(st)st.textContent='Uploading...';try{var url=await uploadToImageBB(file);if(ui)ui.value=url;if(st){st.textContent='Uploaded! Save Designs to apply.';st.style.color='#4ADE80';}showToast('Design image uploaded!','ok');}catch(e){var r=new FileReader();r.onload=function(ev){if(ui)ui.value=ev.target.result;if(st){st.textContent='Ready (saved locally)';st.style.color='#4ADE80';}};r.readAsDataURL(file);}}
+function cbAdminPreviewDesignUrl(i){var url=(document.getElementById('cbD_img_'+i)||{value:''}).value||'';var st=document.getElementById('cbD_imgstatus_'+i);if(st){st.textContent=url?'URL set - Save Designs to apply':'Upload or paste URL';if(url)st.style.color='#4ADE80';}}
+
 </script>
 
+
+<!-- 🎂 BUILD YOUR OWN CAKE MODAL -->
+<div id="cakeBuilderModal" style="position:fixed;inset:0;z-index:5100;background:rgba(10,4,0,.82);display:none;align-items:center;justify-content:center;padding:12px;backdrop-filter:blur(6px);">
+  <div class="cb-wrap" id="cbWrap">
+    <div class="cb-header">
+      <div><h2>🎂 Build Your Dream Cake</h2><p>Choose tiers, flavour, design &amp; more</p></div>
+      <button class="cb-close" onclick="closeCakeBuilder()">✕</button>
+    </div>
+    <div class="cb-body">
+      <div class="cb-section">
+        <div class="cb-section-title"><span>1</span> Choose Number of Tiers</div>
+        <div class="cb-tier-grid" id="cbTierGrid"></div>
+      </div>
+      <div class="cb-section">
+        <div class="cb-section-title"><span>2</span> Select Flavour</div>
+        <div class="cb-flv-grid" id="cbFlvGrid"></div>
+      </div>
+      <div class="cb-section">
+        <div class="cb-section-title"><span>3</span> Pick a Design Theme</div>
+        <div class="cb-design-grid" id="cbDesignGrid"></div>
+      </div>
+      <div class="cb-section">
+        <div class="cb-section-title"><span>4</span> Custom Message on Cake</div>
+        <input id="cbCakeMsg" type="text" maxlength="60" placeholder="e.g. Happy Birthday Priya! 🎉" style="width:100%;border:1.5px solid #E5D5C5;border-radius:12px;padding:12px 14px;font-family:Jost,sans-serif;font-size:14px;outline:none;box-sizing:border-box;background:#fff;">
+      </div>
+      <div class="cb-section">
+        <div class="cb-section-title"><span>5</span> Upload Reference Image <span style="font-size:10px;font-weight:400;opacity:.6;">(optional)</span></div>
+        <div class="cb-upload-zone" id="cbUploadZone">
+          <input type="file" accept="image/*" onchange="cbHandleImage(this)" id="cbImgInput">
+          <img class="cb-upload-preview" id="cbImgPreview" src="" alt="Cake reference">
+          <div id="cbUploadPlaceholder"><div style="font-size:32px;margin-bottom:6px;">📸</div><div style="font-size:13px;font-weight:700;color:#5C3520;">Tap to upload cake photo / inspiration</div><div style="font-size:11px;color:#A0623A;margin-top:3px;">JPG, PNG up to 10MB</div></div>
+          <div id="cbUploadStatus" style="font-size:12px;color:#A0623A;margin-top:4px;display:none;"></div>
+        </div>
+      </div>
+      <div class="cb-section">
+        <div class="cb-section-title"><span>6</span> Preferred Delivery Date</div>
+        <input id="cbDelivDate" type="date" style="width:100%;border:1.5px solid #E5D5C5;border-radius:12px;padding:12px 14px;font-family:Jost,sans-serif;font-size:14px;outline:none;box-sizing:border-box;background:#fff;">
+      </div>
+      <!-- LIVE CAKE PREVIEW -->
+      <div class="cb-live-preview" id="cbLivePreview">
+        <div class="cb-preview-label">✦ Live Cake Preview</div>
+        <div id="cbCakeCanvasWrap"><div class="cb-preview-empty">🎂</div><div style="font-size:12px;color:rgba(253,246,236,.3);">Select tiers &amp; flavour to see your cake</div></div>
+        <div class="cb-preview-detail" id="cbPreviewDetail"></div>
+      </div>
+      <!-- SUMMARY -->
+      <div id="cbSummaryBox" style="background:linear-gradient(135deg,rgba(59,31,14,.07),rgba(200,146,58,.07));border:1.5px solid rgba(200,146,58,.25);border-radius:18px;padding:16px 18px;margin-bottom:18px;display:none;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#3B1F0E;margin-bottom:12px;">🎂 Your Cake Preview</div>
+        <div id="cbSummaryContent"></div>
+      </div>
+      <!-- PRICE -->
+      <div class="cb-price-summary">
+        <div id="cbPriceRows"></div>
+        <div class="cb-price-total"><span>Estimated Total</span><span id="cbPriceTotal">₹0</span></div>
+        <div style="font-size:10px;color:rgba(253,246,236,.4);margin-top:6px;">Final price confirmed by bakery on WhatsApp</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button onclick="cbAddToCart()" class="cb-add-btn" style="background:linear-gradient(135deg,#3B1F0E,#6B3A25);">🛒 Add to Cart</button>
+        <button onclick="cbSendWhatsApp()" class="cb-add-btn">💬 Send via WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- QUICK ADD MODAL -->
 <div class="qa-modal-bg" id="qaModalBg">
   <div class="qa-modal" id="qaModal">
-    <button class="qa-close" onclick="closeQAModal()">✕</button>
+    <button class="qa-close" onclick="closeQAModal()" aria-label="Close">✕</button>
     <div id="qaContent" style="flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;min-height:0;"></div>
     <div id="qaFooterSlot"></div>
   </div>
@@ -8922,7 +9459,7 @@ showNotifPrompt();
 
 <!-- IMAGE LIGHTBOX -->
 <div class="img-lightbox" id="imgLightbox" onclick="closeLightbox()">
-  <button class="img-lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="img-lightbox-close" onclick="closeLightbox()" aria-label="Close image">✕</button>
   <img id="lightboxImg" src="" alt="Product Image">
   <div class="img-lightbox-name" id="lightboxName"></div>
 </div>
@@ -8953,7 +9490,7 @@ showNotifPrompt();
 <!-- 🌟 CUSTOMER PROFILE PAGE -->
 <div id="ubProfilePage" style="display:none;position:fixed;inset:0;background:#FFFDF9;z-index:4100;overflow-y:auto;font-family:Jost,sans-serif;">
   <div style="background:linear-gradient(135deg,#3B1F0E,#5C2D0A);padding:18px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:2;">
-    <button onclick="ubCloseProfilePage()" style="background:rgba(255,255,255,.12);border:none;border-radius:10px;width:38px;height:38px;font-size:18px;cursor:pointer;color:#fff;">←</button>
+    <button onclick="ubCloseProfilePage()" style="background:rgba(255,255,255,.12);border:none;border-radius:10px;width:38px;height:38px;font-size:18px;cursor:pointer;color:#fff;" aria-label="Go back">←</button>
     <div style="font-family:Playfair Display,serif;font-size:18px;color:#E8B96A;font-weight:700;">🌟 My Account & Rewards</div>
   </div>
   <div id="ubProfileContent" style="padding:16px;max-width:600px;margin:0 auto;"></div>
@@ -8962,7 +9499,7 @@ showNotifPrompt();
 <!-- ❤️ WISHLIST PAGE -->
 <div id="ubWishlistPage" style="display:none;position:fixed;inset:0;background:#FFFDF9;z-index:4000;overflow-y:auto;font-family:Jost,sans-serif;">
   <div style="background:linear-gradient(135deg,#3B1F0E,#5C2D0A);padding:18px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:2;">
-    <button onclick="ubCloseWishlist()" style="background:rgba(255,255,255,.12);border:none;border-radius:10px;width:38px;height:38px;font-size:18px;cursor:pointer;color:#fff;">←</button>
+    <button onclick="ubCloseWishlist()" style="background:rgba(255,255,255,.12);border:none;border-radius:10px;width:38px;height:38px;font-size:18px;cursor:pointer;color:#fff;" aria-label="Go back">←</button>
     <div><div style="font-family:Playfair Display,serif;font-size:18px;color:#E8B96A;font-weight:700;">❤️ My Wishlist</div>
     <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:1px;" id="ubWishCount"></div></div>
   </div>
@@ -8975,9 +9512,15 @@ showNotifPrompt();
   <div style="background:#fff;border-radius:24px;padding:28px 24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;font-family:'Jost',sans-serif;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
       <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#3B1F0E;">🎨 Custom Order</div>
-      <button onclick="closeCustomOrderModal()" style="background:#F5F0EB;border:none;border-radius:10px;width:36px;height:36px;font-size:18px;cursor:pointer;">✕</button>
+      <button onclick="closeCustomOrderModal()" style="background:#F5F0EB;border:none;border-radius:10px;width:36px;height:36px;font-size:18px;cursor:pointer;" aria-label="Close custom order form">✕</button>
     </div>
     <p style="font-size:14px;color:#5C3520;margin-bottom:20px;line-height:1.6;">Tell us what you need — special cakes, bulk orders, custom designs, dietary requirements. We'll get back to you on WhatsApp!</p>
+    <div style="background:linear-gradient(135deg,rgba(200,146,58,.12),rgba(200,146,58,.06));border:1.5px solid rgba(200,146,58,.3);border-radius:14px;padding:14px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:28px;">🎂</span>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#3B1F0E;margin-bottom:2px;">Want to design a layered cake?</div><div style="font-size:12px;color:#5C3520;">Choose tiers, flavour and design visually</div></div>
+      <button onclick="closeCustomOrderModal();setTimeout(openCakeBuilder,200)" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">Build Cake →</button>
+    </div>
+    <p style="display:none;">
     <div style="display:flex;flex-direction:column;gap:14px;">
       <div>
         <label style="font-size:12px;font-weight:700;color:#3B1F0E;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Your Name *</label>
@@ -8999,5 +9542,974 @@ showNotifPrompt();
     </div>
   </div>
 </div>
+
+<!-- ═══════════════════════════════════════════════════
+     🚀 ADMIN UPGRADE v2.1 — SAFE, NO FUNCTION CONFLICTS
+     ═══════════════════════════════════════════════════ -->
+<style>
+/* ── VERTICAL SIDEBAR (desktop ≥900px) ── */
+@media(min-width:900px){
+  #adminTabBar{display:none!important;}
+  #adminDashScreen{flex-direction:row!important;}
+  #ub-vsidebar{display:flex!important;}
+  #ub-inner-wrap{display:flex;flex-direction:column;flex:1;overflow:hidden;min-width:0;}
+  #adminMain{padding:22px!important;}
+}
+@media(max-width:899px){
+  #ub-vsidebar{display:none!important;}
+  #ub-inner-wrap{display:contents!important;}
+}
+#ub-vsidebar{
+  width:200px;min-width:200px;background:#0D0600;
+  border-right:1px solid rgba(200,146,58,.13);
+  flex-direction:column;overflow-y:auto;flex-shrink:0;
+  padding:10px 0 20px;display:none;
+}
+.snl{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(200,146,58,.3);padding:12px 16px 4px;font-family:Jost,sans-serif;}
+.sni{display:flex;align-items:center;gap:9px;padding:9px 10px;cursor:pointer;
+  font-family:Jost,sans-serif;font-size:12px;font-weight:600;
+  color:rgba(253,246,236,.48);border:none;background:none;
+  width:calc(100% - 12px);margin:1px 6px;border-radius:9px;text-align:left;
+  transition:background .15s,color .15s;position:relative;}
+.sni:hover{background:rgba(200,146,58,.07);color:rgba(253,246,236,.8);}
+.sni.on{background:rgba(200,146,58,.13);color:#E8B96A;font-weight:700;
+  box-shadow:inset 3px 0 0 #C8923A;}
+.sni .ic{font-size:15px;flex-shrink:0;}
+.snbadge{background:#EF4444;color:#fff;border-radius:8px;padding:1px 6px;
+  font-size:9px;font-weight:800;margin-left:auto;}
+.snsp{height:1px;background:rgba(200,146,58,.1);margin:6px 14px;}
+
+/* ── TOPBAR EXTRAS ── */
+#ub-clock-wrap{display:flex;align-items:center;gap:7px;font-family:Jost,sans-serif;
+  font-size:12px;color:rgba(253,246,236,.48);font-weight:600;letter-spacing:.5px;}
+#ub-fb-dot{width:7px;height:7px;border-radius:50%;background:#4ADE80;
+  box-shadow:0 0 5px #4ADE80;transition:all .4s;flex-shrink:0;}
+#ub-fb-dot.off{background:#F87171;box-shadow:0 0 5px #F87171;}
+#ub-bell-btn{position:relative;background:none;border:none;font-size:17px;
+  padding:4px;cursor:pointer;border-radius:8px;transition:background .15s;}
+#ub-bell-btn:hover{background:rgba(255,255,255,.06);}
+.bell-dot{position:absolute;top:-1px;right:-1px;background:#EF4444;color:#fff;
+  border-radius:50%;width:15px;height:15px;font-size:9px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  animation:bpulse 1.6s ease-in-out infinite;}
+@keyframes bpulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{box-shadow:0 0 0 4px transparent}}
+.bell-drop{position:absolute;top:calc(100% + 8px);right:0;background:#180D07;
+  border:1px solid rgba(200,146,58,.2);border-radius:14px;width:270px;
+  box-shadow:0 18px 50px rgba(0,0,0,.55);z-index:9999;display:none;overflow:hidden;}
+.bell-drop.open{display:block;}
+.bditem{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.04);
+  cursor:pointer;transition:background .12s;}
+.bditem:hover{background:rgba(200,146,58,.07);}
+.bditem:last-child{border-bottom:none;}
+
+/* ── COMMAND PALETTE ── */
+#ub-cmd-bg{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.65);
+  backdrop-filter:blur(8px);display:none;align-items:flex-start;
+  justify-content:center;padding-top:14vh;}
+#ub-cmd-bg.open{display:flex;}
+#ub-cmd-box{background:#190C05;border:1.5px solid rgba(200,146,58,.28);
+  border-radius:18px;width:90%;max-width:560px;
+  box-shadow:0 28px 70px rgba(0,0,0,.6);overflow:hidden;font-family:Jost,sans-serif;}
+#ub-cmd-inp{width:100%;background:transparent;border:none;outline:none;
+  padding:16px 18px;font-family:Jost,sans-serif;font-size:15px;
+  color:#FDF6EC;border-bottom:1px solid rgba(200,146,58,.12);box-sizing:border-box;}
+#ub-cmd-inp::placeholder{color:rgba(253,246,236,.22);}
+#ub-cmd-list{max-height:340px;overflow-y:auto;padding:6px 0;}
+.cmdr{display:flex;align-items:center;gap:11px;padding:11px 18px;
+  cursor:pointer;transition:background .1s;color:rgba(253,246,236,.72);font-size:13px;}
+.cmdr:hover,.cmdr.sel{background:rgba(200,146,58,.1);}
+.cmdr-icon{font-size:17px;flex-shrink:0;}
+.cmdr-lbl{font-weight:600;flex:1;}
+.cmdr-sub{font-size:11px;color:rgba(253,246,236,.28);}
+#ub-cmd-foot{padding:7px 18px;border-top:1px solid rgba(255,255,255,.04);
+  font-size:10px;color:rgba(253,246,236,.2);display:flex;gap:14px;}
+
+/* ── KPI DASHBOARD ── */
+.ub-glance{background:linear-gradient(90deg,rgba(200,146,58,.09),rgba(200,146,58,.04));
+  border:1px solid rgba(200,146,58,.16);border-radius:13px;
+  display:grid;grid-template-columns:repeat(4,1fr);margin-bottom:16px;overflow:hidden;}
+@media(max-width:600px){.ub-glance{grid-template-columns:repeat(2,1fr);}}
+.gitem{padding:10px 8px;text-align:center;position:relative;}
+.gitem+.gitem::before{content:'';position:absolute;left:0;top:18%;height:64%;
+  width:1px;background:rgba(200,146,58,.14);}
+.gval{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;
+  color:#E8B96A;line-height:1;}
+@media(max-width:380px){.gval{font-size:15px;}}
+.glbl{font-size:9px;color:rgba(253,246,236,.32);font-weight:700;
+  letter-spacing:.6px;text-transform:uppercase;margin-top:3px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:16px;}
+@media(max-width:680px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
+.kcard{background:rgba(255,255,255,.04);border:1px solid rgba(200,146,58,.13);
+  border-radius:15px;padding:14px 13px;transition:border-color .2s,transform .2s;}
+.kcard:hover{border-color:rgba(200,146,58,.26);transform:translateY(-2px);}
+.klbl{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+  color:rgba(253,246,236,.32);margin-bottom:6px;font-family:Jost,sans-serif;}
+.kval{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;
+  color:#E8B96A;line-height:1;margin-bottom:5px;}
+@media(max-width:400px){.kval{font-size:18px;}}
+.ktrend{font-size:11px;font-weight:700;display:flex;align-items:center;gap:3px;}
+.ktrend.up{color:#4ADE80;}.ktrend.dn{color:#F87171;}.ktrend.nu{color:rgba(253,246,236,.35);}
+.spark{display:flex;align-items:flex-end;gap:2px;height:26px;margin-top:7px;}
+.sbar{border-radius:2px 2px 0 0;min-width:3px;}
+
+/* ── KANBAN ── */
+.kb-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;min-height:280px;}
+@media(max-width:780px){.kb-wrap{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.kb-wrap{grid-template-columns:1fr;}}
+.kb-col{background:rgba(255,255,255,.025);border-radius:14px;
+  border:1px solid rgba(200,146,58,.1);padding:10px;min-height:160px;}
+.kb-head{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+  padding:4px 2px 10px;margin-bottom:6px;border-bottom:2px solid;
+  font-family:Jost,sans-serif;display:flex;justify-content:space-between;align-items:center;}
+.kb-card{background:rgba(255,255,255,.05);border-radius:10px;padding:10px;
+  margin-bottom:8px;border:1px solid rgba(200,146,58,.1);cursor:grab;
+  transition:transform .12s,box-shadow .12s;}
+.kb-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.3);}
+.kkn{font-size:13px;font-weight:700;color:rgba(253,246,236,.9);margin-bottom:2px;}
+.kkm{font-size:10px;color:rgba(253,246,236,.38);margin-bottom:5px;}
+.kka{font-family:'Playfair Display',serif;font-size:14px;color:#E8B96A;font-weight:700;}
+.kkbtns{display:flex;gap:5px;margin-top:7px;}
+.kkwa{background:rgba(37,211,102,.1);color:#25D366;border:1px solid rgba(37,211,102,.22);
+  border-radius:6px;padding:4px 9px;font-size:10px;font-weight:700;cursor:pointer;
+  font-family:Jost,sans-serif;text-decoration:none;display:inline-block;}
+
+/* ── HEATMAP ── */
+.hm-row{display:flex;align-items:center;gap:2px;}
+.hm-lbl{font-size:9px;color:rgba(253,246,236,.3);width:26px;text-align:right;
+  flex-shrink:0;font-family:Jost,sans-serif;}
+.hm-cell{width:20px;height:20px;border-radius:3px;flex-shrink:0;cursor:default;
+  transition:transform .12s;}
+.hm-cell:hover{transform:scale(1.35);z-index:1;position:relative;}
+
+/* ── PRODUCT CARD VIEW ── */
+.pc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;}
+.pc{background:rgba(255,255,255,.04);border:1.5px solid rgba(200,146,58,.13);
+  border-radius:14px;overflow:hidden;transition:all .18s;}
+.pc:hover{transform:translateY(-2px);border-color:rgba(200,146,58,.28);}
+.pc-img{width:100%;height:110px;object-fit:cover;background:rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:center;font-size:40px;}
+.pc-body{padding:10px;}
+.pc-name{font-size:12px;font-weight:700;color:rgba(253,246,236,.88);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.pc-price{font-family:'Playfair Display',serif;font-size:13px;color:#E8B96A;}
+/* Toggle switch */
+.sw{position:relative;display:inline-flex;align-items:center;gap:6px;cursor:pointer;margin-top:7px;}
+.sw input{display:none;}
+.sw-track{width:34px;height:18px;background:rgba(239,68,68,.45);border-radius:18px;
+  position:relative;transition:background .2s;flex-shrink:0;}
+.sw-thumb{position:absolute;left:2px;top:2px;width:14px;height:14px;
+  background:#fff;border-radius:50%;transition:left .2s;}
+.sw input:checked~.sw-track{background:rgba(74,222,128,.55);}
+.sw input:checked~.sw-track .sw-thumb{left:18px;}
+.sw-lbl{font-size:10px;color:rgba(253,246,236,.45);font-family:Jost,sans-serif;}
+
+/* ── BROADCAST PREVIEW ── */
+.bc-layout{display:grid;grid-template-columns:1fr 290px;gap:16px;}
+@media(max-width:750px){.bc-layout{grid-template-columns:1fr;}}
+.wa-preview{background:#0B141A;border-radius:16px;padding:14px;}
+.wa-head{background:#202C33;border-radius:10px 10px 0 0;padding:9px 12px;
+  display:flex;align-items:center;gap:9px;margin:-14px -14px 12px;}
+.wa-bubble{background:#202C33;border-radius:0 10px 10px 10px;padding:9px 13px;
+  max-width:88%;display:inline-block;font-size:12px;color:#E9EDEF;
+  line-height:1.55;white-space:pre-wrap;word-break:break-word;}
+.wa-time{font-size:9px;color:rgba(255,255,255,.35);margin-top:5px;text-align:right;}
+
+/* ── PARTICLES CANVAS ── */
+#ub-parts{position:absolute;inset:0;pointer-events:none;z-index:0;}
+@keyframes crownpulse{
+  0%,100%{box-shadow:0 12px 36px rgba(200,146,58,.3);transform:scale(1);}
+  50%{box-shadow:0 16px 52px rgba(200,146,58,.55);transform:scale(1.06);}}
+.crown-anim{animation:crownpulse 2.8s ease-in-out infinite!important;}
+
+/* ── CHANGELOG POPOVER ── */
+.clpop{position:absolute;top:calc(100% + 8px);right:0;background:#180D07;
+  border:1.5px solid rgba(200,146,58,.22);border-radius:14px;width:290px;
+  box-shadow:0 18px 50px rgba(0,0,0,.5);z-index:9999;display:none;overflow:hidden;}
+.clpop.open{display:block;}
+.clitem{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.05);}
+.clitem:last-child{border-bottom:none;}
+.clver{font-size:10px;font-weight:800;color:#E8B96A;letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:3px;}
+.cldesc{font-size:11px;color:rgba(253,246,236,.6);line-height:1.5;}
+.newdot{width:7px;height:7px;background:#EF4444;border-radius:50%;
+  position:absolute;top:-2px;right:-2px;animation:bpulse 2s ease-in-out infinite;}
+
+/* ── SKELETON ── */
+.skel{background:linear-gradient(90deg,rgba(255,255,255,.035) 25%,rgba(255,255,255,.07) 50%,rgba(255,255,255,.035) 75%);
+  background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;border-radius:8px;}
+@keyframes shimmer{0%{background-position:200%}100%{background-position:-200%}}
+
+/* ── TICKER FLASH ── */
+#ub-ticker{transition:color .3s;}
+@keyframes tickflash{0%{color:#FCD34D;transform:scale(1.12)}100%{color:#E8B96A;transform:scale(1)}}
+.tick-anim{animation:tickflash .35s ease;}
+
+/* ── FADE IN ── */
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fadein{animation:fadein .25s ease forwards;}
+
+/* ── TOPBAR MOBILE FIXES ── */
+/* Hide text labels on small screens, show icons only */
+@media(max-width:520px){
+  .ub-dsk-only{display:none!important;}
+}
+@media(min-width:521px){
+  .ub-dsk-only{display:inline;}
+}
+
+/* ── CHANGELOG POPOVER — fixed position on mobile ── */
+.clpop{
+  position:fixed !important;
+  top:58px !important;
+  right:8px !important;
+  left:auto !important;
+  width:min(290px, calc(100vw - 16px)) !important;
+  z-index:99999;
+}
+
+/* ── BELL DROPDOWN — fixed on mobile too ── */
+.bell-drop{
+  position:fixed !important;
+  top:58px !important;
+  right:8px !important;
+  left:auto !important;
+  width:min(270px, calc(100vw - 16px)) !important;
+  z-index:99999;
+}
+
+/* ── TOPBAR: hide clock on very small screens ── */
+@media(max-width:440px){
+  #ub-clock-wrap{ display:none !important; }
+}
+
+/* ── MOBILE TAB BAR — cleaner scrollable chips ── */
+#adminTabBar{
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+#adminTabBar::-webkit-scrollbar{ display:none; }
+.atab{
+  padding:12px 14px !important;
+  font-size:12px !important;
+}
+
+/* ── COMMAND PALETTE — full width on mobile ── */
+@media(max-width:600px){
+  #ub-cmd-box{ width:calc(100vw - 20px) !important; }
+  #ub-cmd-bg{ padding-top:8vh !important; }
+}
+
+/* ── KPI GLANCE BAR — 2 col on tiny screens ── */
+@media(max-width:360px){
+  .ub-glance{ grid-template-columns:1fr 1fr !important; }
+  .kpi-grid{ grid-template-columns:1fr 1fr !important; }
+}
+
+/* ── ADMIN MAIN — reduce padding on mobile ── */
+@media(max-width:520px){
+  #adminMain{ padding:14px !important; }
+}
+
+/* ── ICON BUTTONS ── */
+.ub-icon-btn{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:7px;padding:5px 8px;
+  color:rgba(253,246,236,.5);cursor:pointer;font-size:14px;
+  position:relative;
+}
+.ub-icon-btn:hover{background:rgba(255,255,255,.09);}
+
+/* ── SIDEBAR: hide on mobile ── */
+@media(max-width:899px){
+  #ub-vsidebar{display:none!important;}
+}
+</style>
+
+<!-- Command Palette -->
+<div id="ub-cmd-bg">
+  <div id="ub-cmd-box">
+    <div style="display:flex;align-items:center;border-bottom:1px solid rgba(200,146,58,.1);">
+      <span style="padding:0 4px 0 18px;font-size:16px;opacity:.3;">⌘</span>
+      <input id="ub-cmd-inp" placeholder="Search tabs, products, orders…" autocomplete="off">
+      <span style="padding-right:14px;font-size:10px;color:rgba(253,246,236,.18);">ESC</span>
+    </div>
+    <div id="ub-cmd-list"></div>
+    <div id="ub-cmd-foot"><span>↑↓ navigate</span><span>↵ open</span><span>ESC close</span></div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ─────────────────────────────────────────
+   SAFE WRAPPERS — fully isolated, no page breakage
+   ───────────────────────────────────────── */
+
+let _patchDone = false;
+
+function ubPatchAdmin(){
+  if(_patchDone) return;
+  _patchDone = true;
+
+  try { _injectSidebar(); } catch(e){ console.warn('UB sidebar:', e); }
+  try { _injectTopbar(); } catch(e){ console.warn('UB topbar:', e); }
+
+  // Patch switchTab only if original still exists
+  try {
+    if(typeof window.switchTab === 'function'){
+      const _origSwitch = window.switchTab;
+      window.switchTab = function(t, preserveEdit){
+        try{ _origSwitch(t, preserveEdit); }catch(e){ console.warn('switchTab orig:', e); }
+        try{ _syncSidebar(t); }catch(e){}
+      };
+    }
+  } catch(e){ console.warn('UB switchTab patch:', e); }
+
+  // Patch build functions with full isolation
+  try{ _patchBuildDash(); }catch(e){ console.warn('UB dash patch:', e); }
+  try{ _patchBuildOrdersTab(); }catch(e){ console.warn('UB orders patch:', e); }
+  try{ _patchBuildProdsTab(); }catch(e){ console.warn('UB prods patch:', e); }
+  try{ _patchBuildAnalyticsTab(); }catch(e){ console.warn('UB analytics patch:', e); }
+  try{ _patchBuildBroadcastTab(); }catch(e){ console.warn('UB broadcast patch:', e); }
+
+  // Timers — non-critical
+  try{ setInterval(_tickClock, 1000); _tickClock(); }catch(e){}
+  try{ setInterval(_checkFb, 4000); _checkFb(); }catch(e){}
+  try{ setInterval(_syncNotifBadge, 2500); _syncNotifBadge(); }catch(e){}
+
+  try{ if(typeof adminTab !== 'undefined') _syncSidebar(adminTab); }catch(e){}
+}
+
+/* ─── SIDEBAR ─── */
+function _injectSidebar(){
+  const dash = document.getElementById('adminDashScreen');
+  const tabBar = document.getElementById('adminTabBar');
+  const main = document.getElementById('adminMain');
+  if(!dash || document.getElementById('ub-vsidebar')) return;
+
+  // Ensure adminMain padding is reduced on mobile
+  const mainEl = document.getElementById('adminMain');
+  if(mainEl) mainEl.style.boxSizing = 'border-box';
+
+  const sb = document.createElement('div');
+  sb.id = 'ub-vsidebar';
+  sb.innerHTML = `
+    <div style="padding:12px 14px 8px;display:flex;align-items:center;gap:9px;">
+      <div style="width:28px;height:28px;background:linear-gradient(135deg,#C8923A,#6B3A25);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">👑</div>
+      <div style="font-family:'Playfair Display',serif;font-size:12px;color:#E8B96A;font-weight:700;line-height:1.2;">Udaya<br>Bakery</div>
+    </div>
+    <div class="snl">OVERVIEW</div>
+    <button class="sni" onclick="switchTab('dashboard')" id="ubsn-dashboard"><span class="ic">📊</span>Dashboard</button>
+    <div class="snsp"></div>
+    <div class="snl">STORE</div>
+    <button class="sni" onclick="switchTab('products')" id="ubsn-products"><span class="ic">📦</span>Products</button>
+    <button class="sni" onclick="switchTab('addprod')" id="ubsn-addprod"><span class="ic">➕</span>Add Product</button>
+    <button class="sni" onclick="switchTab('cats')" id="ubsn-cats"><span class="ic">🏷️</span>Categories</button>
+    <button class="sni" onclick="switchTab('cakebuilder')" id="ubsn-cakebuilder"><span class="ic">🎂</span>Cake Builder</button>
+    <div class="snsp"></div>
+    <div class="snl">OPERATIONS</div>
+    <button class="sni" onclick="switchTab('orders')" id="ubsn-orders"><span class="ic">📋</span>Orders<span id="ubsn-obadge" class="snbadge" style="display:none;"></span></button>
+    <button class="sni" onclick="switchTab('payments')" id="ubsn-payments"><span class="ic">💳</span>Payments</button>
+    <button class="sni" onclick="switchTab('broadcast')" id="ubsn-broadcast"><span class="ic">📢</span>Broadcast</button>
+    <div class="snsp"></div>
+    <div class="snl">INSIGHTS</div>
+    <button class="sni" onclick="switchTab('analytics')" id="ubsn-analytics"><span class="ic">📈</span>Analytics</button>
+    <button class="sni" onclick="switchTab('reports')" id="ubsn-reports"><span class="ic">📊</span>Reports</button>
+    <button class="sni" onclick="switchTab('customers')" id="ubsn-customers"><span class="ic">👥</span>Customers</button>
+    <div class="snsp"></div>
+    <button class="sni" onclick="switchTab('settings')" id="ubsn-settings"><span class="ic">⚙️</span>Settings</button>
+  `;
+
+  const inner = document.createElement('div');
+  inner.id = 'ub-inner-wrap';
+  if(tabBar) inner.appendChild(tabBar);
+  if(main) inner.appendChild(main);
+
+  dash.appendChild(sb);
+  dash.appendChild(inner);
+}
+
+function _syncSidebar(t){
+  document.querySelectorAll('.sni').forEach(el => el.classList.remove('on'));
+  const el = document.getElementById('ubsn-' + t);
+  if(el) el.classList.add('on');
+  // Mobile: scroll horizontal tab into view
+  const at = document.getElementById('at-' + t);
+  if(at) at.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+}
+
+/* ─── TOPBAR ─── */
+function _injectTopbar(){
+  // Clock + bell + changelog are already baked into the new topbar HTML
+  // This function now just ensures the sidebar gets injected correctly
+  // (clock starts via setInterval in ubPatchAdmin, bell via ubToggleBell)
+  if(document.getElementById('ub-clock')) return; // already set up
+}
+
+function _tickClock(){
+  const el = document.getElementById('ub-clock'); if(!el) return;
+  el.textContent = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+}
+function _checkFb(){
+  const d = document.getElementById('ub-fb-dot'); if(!d) return;
+  const ok = typeof db !== 'undefined' && db !== null;
+  d.className = ok ? '' : 'off';
+  d.title = ok ? 'Firebase Connected' : 'Firebase Offline';
+}
+function _syncNotifBadge(){
+  const pend = (typeof ORDERS !== 'undefined') ? ORDERS.filter(o=>o.status==='pending').length : 0;
+  const bd = document.getElementById('ub-bell-dot');
+  if(bd){ bd.textContent = pend; bd.style.display = pend > 0 ? 'flex' : 'none'; }
+  const sb = document.getElementById('ubsn-obadge');
+  if(sb){ sb.textContent = pend; sb.style.display = pend > 0 ? 'inline-flex' : 'none'; }
+  // Ticker
+  if(typeof ORDERS !== 'undefined'){
+    const ticker = document.getElementById('ub-ticker');
+    if(ticker){
+      const today = new Date().toDateString();
+      const rev = ORDERS.filter(o=>new Date(o.timestamp).toDateString()===today&&o.status!=='cancelled').reduce((s,o)=>s+o.total,0);
+      const nv = '₹'+rev.toLocaleString('en-IN');
+      if(ticker.textContent !== nv){ ticker.textContent = nv; ticker.classList.add('tick-anim'); setTimeout(()=>ticker.classList.remove('tick-anim'),400); }
+    }
+  }
+}
+
+window.ubToggleBell = function(e){
+  e.stopPropagation();
+  const drop = document.getElementById('ub-bell-drop'); if(!drop) return;
+  const pend = (typeof ORDERS !== 'undefined') ? ORDERS.filter(o=>o.status==='pending') : [];
+  drop.innerHTML = pend.length === 0
+    ? '<div style="padding:14px;text-align:center;font-size:12px;color:rgba(253,246,236,.3);">No pending orders 🎉</div>'
+    : `<div style="padding:9px 14px;font-size:10px;font-weight:700;color:rgba(253,246,236,.35);letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,.05);">🔔 PENDING ORDERS</div>`
+      + pend.slice(0,3).map(o=>`<div class="bditem" onclick="switchTab('orders');this.closest('.bell-drop').classList.remove('open');"><div style="font-size:13px;font-weight:700;color:rgba(253,246,236,.88);">${o.name} <span style="color:#E8B96A;">₹${o.total}</span></div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:1px;">${o.id}</div></div>`).join('')
+      + (pend.length > 3 ? `<div style="padding:9px 14px;font-size:11px;color:#E8B96A;cursor:pointer;" onclick="switchTab('orders');">+${pend.length-3} more →</div>` : '');
+  drop.classList.toggle('open');
+};
+
+window.ubToggleCL = function(e){
+  e.stopPropagation();
+  document.getElementById('ub-clpop')?.classList.toggle('open');
+};
+
+document.addEventListener('click', ()=>{
+  document.getElementById('ub-bell-drop')?.classList.remove('open');
+  document.getElementById('ub-clpop')?.classList.remove('open');
+});
+
+/* ─── DASHBOARD PATCH ─── */
+function _patchBuildDash(){
+  const orig = window.buildDash;
+  window.buildDash = function(){
+    // Call original first to keep all existing logic, then enhance
+    try {
+      const pend = ORDERS.filter(o=>o.status==='pending').length;
+      const delivered = ORDERS.filter(o=>o.status==='delivered').length;
+      const rev = ORDERS.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+o.total,0);
+      const today = new Date().toDateString();
+      const todayOrds = ORDERS.filter(o=>new Date(o.timestamp).toDateString()===today);
+      const todayRev = todayOrds.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+o.total,0);
+      const newCust = new Set(todayOrds.map(o=>o.phone)).size;
+
+      // 7-day data
+      const d7rev=[], d7ord=[];
+      for(let i=6;i>=0;i--){
+        const dt=new Date(); dt.setDate(dt.getDate()-i);
+        const ds=dt.toDateString();
+        d7rev.push(ORDERS.filter(o=>new Date(o.timestamp).toDateString()===ds&&o.status!=='cancelled').reduce((s,o)=>s+o.total,0));
+        d7ord.push(ORDERS.filter(o=>new Date(o.timestamp).toDateString()===ds).length);
+      }
+      const ystRev=d7rev[5]||0;
+      const chg=ystRev>0?Math.round((todayRev-ystRev)/ystRev*100):0;
+
+      function spark(data, col){
+        const mx=Math.max(...data,1);
+        return `<div class="spark">${data.map((v,i)=>`<div class="sbar" style="flex:1;height:${Math.max(2,Math.round(v/mx*22))}px;background:${col};opacity:${i===data.length-1?1:0.35};"></div>`).join('')}</div>`;
+      }
+      function trend(v){
+        if(v>0) return `<span class="ktrend up">↑ +${v}% vs yesterday</span>`;
+        if(v<0) return `<span class="ktrend dn">↓ ${v}% vs yesterday</span>`;
+        return `<span class="ktrend nu">— same as yesterday</span>`;
+      }
+
+      const topProds={};
+      ORDERS.filter(o=>o.status!=='cancelled').forEach(o=>(o.items||[]).forEach(i=>{topProds[i.name]=(topProds[i.name]||0)+i.qty;}));
+      const tp=Object.entries(topProds).sort((a,b)=>b[1]-a[1]).slice(0,3);
+      const maxRev7=Math.max(...d7rev,1);
+      const dayLabels=['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+      return `<div class="fadein">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+        <div>
+          <h2 style="font-family:'Playfair Display',serif;font-size:21px;color:#E8B96A;margin-bottom:3px;">Good ${getGreeting()}, Owner! 👋</h2>
+          <p style="color:rgba(253,246,236,.38);font-size:12px;">${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p>
+        </div>
+        ${pend>0?`<div style="background:rgba(252,211,77,.09);border:1.5px solid rgba(252,211,77,.28);border-radius:13px;padding:9px 16px;display:flex;align-items:center;gap:8px;animation:pulse 2s infinite;cursor:pointer;" onclick="switchTab('orders')">
+          <span style="font-size:18px;">🔔</span>
+          <div><div style="font-weight:700;color:#FCD34D;font-size:13px;">${pend} Order${pend>1?'s':''} Waiting!</div>
+          <div style="font-size:11px;color:rgba(252,211,77,.55);">Tap to confirm →</div></div>
+        </div>`:`<div style="background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.16);border-radius:11px;padding:9px 14px;font-size:12px;color:#4ADE80;">✅ All caught up!</div>`}
+      </div>
+
+      <div class="ub-glance">
+        <div class="gitem"><div class="gval">${todayOrds.length}</div><div class="glbl">Today's Orders</div></div>
+        <div class="gitem"><div class="gval" id="ub-ticker">₹${todayRev.toLocaleString('en-IN')}</div><div class="glbl">Today's Revenue</div></div>
+        <div class="gitem"><div class="gval" style="color:${pend>0?'#FCD34D':'#4ADE80'};">${pend}</div><div class="glbl">Pending</div></div>
+        <div class="gitem"><div class="gval" style="color:#93C5FD;">${newCust}</div><div class="glbl">New Customers</div></div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kcard">
+          <div class="klbl">⏳ Pending</div>
+          <div class="kval" style="color:#FCD34D;">${pend}</div>
+          ${spark(d7ord,'rgba(252,211,77,.7)')}
+          <div style="margin-top:5px;font-size:10px;color:rgba(253,246,236,.28);">7-day orders</div>
+        </div>
+        <div class="kcard">
+          <div class="klbl">✅ Delivered</div>
+          <div class="kval" style="color:#34D399;">${delivered}</div>
+          ${spark(d7ord,'rgba(52,211,153,.7)')}
+          ${trend(chg)}
+        </div>
+        <div class="kcard">
+          <div class="klbl">💰 Total Revenue</div>
+          <div class="kval">₹${rev.toLocaleString('en-IN')}</div>
+          ${spark(d7rev,'rgba(200,146,58,.8)')}
+          ${trend(chg)}
+        </div>
+        <div class="kcard">
+          <div class="klbl">📦 Products</div>
+          <div class="kval" style="color:#93C5FD;">${typeof PRODS!=='undefined'?PRODS.length:0}</div>
+          <div style="margin-top:8px;font-size:10px;color:rgba(239,68,68,.7);">${typeof PRODS!=='undefined'?PRODS.filter(p=>p.inStock===false).length:0} out of stock</div>
+          <div style="font-size:10px;color:rgba(253,246,236,.28);margin-top:2px;">${typeof CATS!=='undefined'?CATS.length:0} categories</div>
+        </div>
+      </div>
+
+      <div class="acard" style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div><h3 style="margin:0;">📈 7-Day Revenue</h3></div>
+          <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:#E8B96A;">₹${d7rev.reduce((a,b)=>a+b,0).toLocaleString('en-IN')}</div>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:7px;height:80px;">
+          ${d7rev.map((r,i)=>{
+            const isToday=i===6; const mx2=Math.max(...d7rev,1);
+            const h=Math.max(3,Math.round(r/mx2*64));
+            const dt2=new Date(); dt2.setDate(dt2.getDate()-(6-i));
+            return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <div style="font-size:9px;color:rgba(253,246,236,.32);">${r>0?'₹'+Math.round(r/1000)+'k':''}</div>
+              <div style="width:100%;background:${isToday?'linear-gradient(180deg,#FCD34D,#C8923A)':'linear-gradient(180deg,rgba(200,146,58,.65),rgba(200,146,58,.18))'};border-radius:5px 5px 0 0;height:${h}px;${isToday?'box-shadow:0 0 10px rgba(200,146,58,.45);':''}"></div>
+              <div style="font-size:9px;color:${isToday?'#E8B96A':'rgba(253,246,236,.28)'};font-weight:${isToday?700:400};">${dayLabels[dt2.getDay()]}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        ${tp.length>0?`<div class="acard">
+          <h3>🏆 Top Products</h3><div class="asub">All-time best sellers</div>
+          ${tp.map(([name,qty],i)=>`<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+            <div style="width:24px;height:24px;border-radius:50%;background:${['linear-gradient(135deg,#F59E0B,#D97706)','linear-gradient(135deg,#9CA3AF,#6B7280)','linear-gradient(135deg,#CD7C3A,#92400E)'][i]};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;">${i+1}</div>
+            <div style="flex:1;font-size:12px;color:rgba(253,246,236,.78);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</div>
+            <div style="font-size:12px;color:#E8B96A;font-weight:700;">${qty} sold</div>
+          </div>`).join('')}
+        </div>`:'<div class="acard"><h3>🏆 Top Products</h3><div style="text-align:center;padding:28px;color:rgba(253,246,236,.18);">No data yet</div></div>'}
+        <div class="acard">
+          <h3>📋 Recent Orders</h3><div class="asub">Latest activity</div>
+          ${ORDERS.length===0?'<div style="text-align:center;padding:24px;font-size:32px;opacity:.2;">📭</div>':
+          ORDERS.slice(0,4).map(o=>`<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+            <div style="flex:1;min-width:0;"><div style="font-weight:600;color:rgba(253,246,236,.84);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.name}</div><div style="font-size:11px;color:#E8B96A;">₹${o.total}</div></div>
+            <span class="obadge ${o.status}" style="flex-shrink:0;">${statusLabel(o.status)}</span>
+          </div>`).join('')}
+          ${ORDERS.length>4?`<div style="margin-top:8px;"><button class="abtn-sec" onclick="switchTab('orders')" style="width:100%;font-size:12px;padding:7px;">View All ${ORDERS.length} →</button></div>`:''}
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px;">
+        ${[{i:'➕',l:'Add Product',s:PRODS.length+' items',t:'addprod'},{i:'📋',l:'Orders',s:pend+' pending',t:'orders'},{i:'📈',l:'Analytics',s:'Insights',t:'analytics'},{i:'⚙️',l:'Settings',s:'Config',t:'settings'}].map(a=>`<div class="acard" style="cursor:pointer;text-align:center;padding:14px 8px;" onclick="switchTab('${a.t}')">
+          <div style="font-size:26px;margin-bottom:5px;">${a.i}</div>
+          <div style="font-family:'Playfair Display',serif;color:#E8B96A;font-size:11px;font-weight:700;">${a.l}</div>
+          <div style="font-size:10px;color:rgba(253,246,236,.28);margin-top:2px;">${a.s}</div>
+        </div>`).join('')}
+      </div>
+      </div>`;
+    } catch(e){ console.warn('UB buildDash error:', e); try{ return orig(); }catch(e2){ return '<div style="padding:20px;color:#F87171;">⚠️ Dashboard error. Please reload.</div>'; } }
+  };
+}
+
+/* ─── ORDERS PATCH — add Kanban toggle ─── */
+function _patchBuildOrdersTab(){
+  const orig = window.buildOrdersTab;
+  window.buildOrdersTab = function(){
+    const origHtml = orig();
+    const kanbanHtml = _buildKanban();
+    return `<div style="display:flex;gap:7px;margin-bottom:12px;">
+      <button onclick="ubKbView(false)" id="ub-lv-btn" style="background:rgba(200,146,58,.18);color:#E8B96A;border:1.5px solid rgba(200,146,58,.35);border-radius:8px;padding:6px 13px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">☰ List</button>
+      <button onclick="ubKbView(true)" id="ub-kb-btn" style="background:rgba(255,255,255,.04);color:rgba(253,246,236,.45);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 13px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">⬛ Kanban</button>
+    </div>
+    <div id="ub-kb-wrap" style="display:none;">${kanbanHtml}</div>
+    <div id="ub-lv-wrap">${origHtml}</div>`;
+  };
+}
+
+function _buildKanban(){
+  const cols=[{k:'pending',l:'⏳ Pending',c:'#FCD34D'},{k:'confirmed',l:'✅ Confirmed',c:'#34D399'},{k:'out_for_delivery',l:'🛵 Out for Delivery',c:'#93C5FD'},{k:'delivered',l:'🎉 Delivered',c:'#6EE7B7'}];
+  function ago(ts){const s=Math.round((Date.now()-new Date(ts))/1000);if(s<60)return s+'s ago';if(s<3600)return Math.round(s/60)+'m ago';return Math.round(s/3600)+'h ago';}
+  return `<div class="kb-wrap">${cols.map(col=>{
+    const ords=(typeof ORDERS!=='undefined')?ORDERS.filter(o=>o.status===col.k):[];
+    return `<div class="kb-col" ondragover="event.preventDefault()" ondrop="ubKbDrop(event,'${col.k}')">
+      <div class="kb-head" style="color:${col.c};border-bottom-color:${col.c}44;">${col.l}<span style="background:${col.c}18;border:1px solid ${col.c}30;border-radius:12px;padding:1px 7px;font-size:9px;">${ords.length}</span></div>
+      ${ords.length===0?`<div style="text-align:center;padding:20px 8px;color:rgba(253,246,236,.18);font-size:11px;">Empty</div>`:''}
+      ${ords.map(o=>`<div class="kb-card" draggable="true" ondragstart="ubKbDrag(event,'${o.id}')">
+        <div class="kkn">${o.name}</div>
+        <div class="kkm">${(o.items||[]).length} item${(o.items||[]).length!==1?'s':''} · ${ago(o.timestamp)}</div>
+        <div class="kka">₹${o.total}</div>
+        <div class="kkbtns">
+          <a class="kkwa" href="https://wa.me/91${(o.phone||'').replace(/\D/g,'')}?text=${encodeURIComponent('Hello '+o.name+'! Your Udaya Bakery order *'+o.id+'* update!')}" target="_blank" rel="noopener noreferrer">💬 WA</a>
+          ${o.status==='pending'?`<button onclick="setStatus('${o.id}','confirmed');renderAdminTab()" style="background:rgba(74,222,128,.1);color:#4ADE80;border:1px solid rgba(74,222,128,.22);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">✅</button>`:''}
+        </div>
+      </div>`).join('')}
+    </div>`;
+  }).join('')}</div>`;
+}
+
+window.ubKbView = function(showKb){
+  const kw=document.getElementById('ub-kb-wrap'), lw=document.getElementById('ub-lv-wrap');
+  const kb=document.getElementById('ub-kb-btn'), lb=document.getElementById('ub-lv-btn');
+  if(!kw||!lw) return;
+  kw.style.display=showKb?'block':'none'; lw.style.display=showKb?'none':'block';
+  const A='background:rgba(200,146,58,.18);color:#E8B96A;border:1.5px solid rgba(200,146,58,.35);border-radius:8px;padding:6px 13px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;';
+  const B='background:rgba(255,255,255,.04);color:rgba(253,246,236,.45);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 13px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;';
+  if(showKb){kb.style.cssText=A;lb.style.cssText=B;}else{lb.style.cssText=A;kb.style.cssText=B;}
+};
+
+let _kbDragId=null;
+window.ubKbDrag=function(e,id){_kbDragId=id;};
+window.ubKbDrop=function(e,status){
+  e.preventDefault(); if(!_kbDragId) return;
+  const o=(typeof ORDERS!=='undefined')?ORDERS.find(x=>x.id===_kbDragId):null;
+  if(o&&o.status!==status){
+    o.status=status;
+    try{if(db)db.collection('orders').doc(_kbDragId).update({status}).catch(()=>{});}catch(ex){}
+    if(typeof updateOrderBadge==='function') updateOrderBadge();
+    _syncNotifBadge();
+    const kw=document.getElementById('ub-kb-wrap');
+    if(kw) kw.innerHTML=_buildKanban();
+    if(typeof showToast==='function') showToast('✅ Moved to '+status,'ok');
+  }
+  _kbDragId=null;
+};
+
+/* ─── PRODUCTS PATCH — card view ─── */
+function _patchBuildProdsTab(){
+  const orig = window.buildProdsTab;
+  window.buildProdsTab = function(){
+    const origHtml = orig();
+    const cards = (typeof PRODS!=='undefined') ? PRODS.map(p=>`<div class="pc">
+      <div class="pc-img">${p.image?`<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`:''}${p.emoji||'🎂'}</div>
+      <div class="pc-body">
+        <div class="pc-name">${p.name}</div>
+        <div class="pc-price">₹${(p.variants&&p.variants[0])?p.variants[0].price:p.price||0}</div>
+        <label class="sw" title="Toggle stock">
+          <input type="checkbox" ${p.inStock!==false?'checked':''} onchange="ubToggleStock(${p.id})">
+          <div class="sw-track"><div class="sw-thumb"></div></div>
+          <span class="sw-lbl">${p.inStock!==false?'In Stock':'Out of Stock'}</span>
+        </label>
+        <div style="display:flex;gap:5px;margin-top:6px;">
+          <button onclick="editProduct(${p.id})" style="flex:1;background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.18);border-radius:6px;padding:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">✏️ Edit</button>
+          <button onclick="deleteProduct(${p.id})" style="flex:1;background:rgba(239,68,68,.08);color:#F87171;border:1px solid rgba(239,68,68,.18);border-radius:6px;padding:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🗑️</button>
+        </div>
+      </div>
+    </div>`).join('') : '';
+
+    return `<div style="display:flex;gap:7px;margin-bottom:12px;">
+      <button onclick="ubPvTable()" id="ub-pt-btn" style="background:rgba(200,146,58,.18);color:#E8B96A;border:1.5px solid rgba(200,146,58,.35);border-radius:8px;padding:6px 13px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">☰ Table</button>
+      <button onclick="ubPvCards()" id="ub-pc-btn" style="background:rgba(255,255,255,.04);color:rgba(253,246,236,.45);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 13px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">⊞ Cards</button>
+    </div>
+    <div id="ub-pt-wrap">${origHtml}</div>
+    <div id="ub-pc-wrap" style="display:none;"><div class="pc-grid">${cards}</div></div>`;
+  };
+}
+
+window.ubPvTable=function(){
+  const t=document.getElementById('ub-pt-wrap'),c=document.getElementById('ub-pc-wrap');
+  const tb=document.getElementById('ub-pt-btn'),cb=document.getElementById('ub-pc-btn');
+  if(!t||!c) return;
+  t.style.display='block';c.style.display='none';
+  tb.style.cssText='background:rgba(200,146,58,.18);color:#E8B96A;border:1.5px solid rgba(200,146,58,.35);border-radius:8px;padding:6px 13px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;';
+  cb.style.cssText='background:rgba(255,255,255,.04);color:rgba(253,246,236,.45);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 13px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;';
+};
+window.ubPvCards=function(){
+  const t=document.getElementById('ub-pt-wrap'),c=document.getElementById('ub-pc-wrap');
+  const tb=document.getElementById('ub-pt-btn'),cb=document.getElementById('ub-pc-btn');
+  if(!t||!c) return;
+  t.style.display='none';c.style.display='block';
+  cb.style.cssText='background:rgba(200,146,58,.18);color:#E8B96A;border:1.5px solid rgba(200,146,58,.35);border-radius:8px;padding:6px 13px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;';
+  tb.style.cssText='background:rgba(255,255,255,.04);color:rgba(253,246,236,.45);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 13px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;';
+};
+
+/* ─── ANALYTICS PATCH ─── */
+function _patchBuildAnalyticsTab(){
+  const orig = window.buildAnalyticsTab;
+  window.buildAnalyticsTab = function(){
+    try {
+      const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const heatData=Array.from({length:7},()=>Array(24).fill(0));
+      ORDERS.filter(o=>o.status!=='cancelled').forEach(o=>{
+        const d=new Date(o.timestamp);
+        if(d&&!isNaN(d)) heatData[d.getDay()][d.getHours()]++;
+      });
+      const heatMax=Math.max(...heatData.flat(),1);
+
+      const ps={};
+      ORDERS.filter(o=>o.status!=='cancelled').forEach(o=>(o.items||[]).forEach(i=>{
+        if(!ps[i.name])ps[i.name]={q:0,r:0,e:i.emoji||'🎂'};
+        ps[i.name].q+=i.qty;ps[i.name].r+=i.price*i.qty;
+      }));
+      const topP=Object.entries(ps).sort((a,b)=>b[1].r-a[1].r).slice(0,5);
+      const topPMax=Math.max(...topP.map(([,d])=>d.r),1);
+
+      const phones={};
+      ORDERS.forEach(o=>{if(o.phone){const k=o.phone.replace(/\D/g,'').slice(-10);phones[k]=(phones[k]||0)+1;}});
+      const rr=Object.keys(phones).length>0?Math.round(Object.values(phones).filter(v=>v>1).length/Object.keys(phones).length*100):0;
+
+      const d7=[]; for(let i=6;i>=0;i--){const dt=new Date();dt.setDate(dt.getDate()-i);const ds=dt.toDateString();d7.push({l:dt.toLocaleDateString('en-IN',{weekday:'short'}),v:ORDERS.filter(o=>new Date(o.timestamp).toDateString()===ds&&o.status!=='cancelled').reduce((s,o)=>s+o.total,0)});}
+      const d30=[]; for(let i=29;i>=0;i--){const dt=new Date();dt.setDate(dt.getDate()-i);const ds=dt.toDateString();d30.push(ORDERS.filter(o=>new Date(o.timestamp).toDateString()===ds&&o.status!=='cancelled').reduce((s,o)=>s+o.total,0));}
+
+      const peakHr=Array(24).fill(0).map((_,h)=>heatData.reduce((s,d)=>s+d[h],0)).reduce((a,v,i,arr)=>v>arr[a]?i:a,0);
+      const peakLbl=peakHr<12?(peakHr||12)+':00 AM':((peakHr-12)||12)+':00 PM';
+
+      const origHtml=orig();
+
+      return `<div class="fadein">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+        <h2 style="font-family:'Playfair Display',serif;font-size:20px;color:#E8B96A;margin:0;">📈 Analytics Dashboard</h2>
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(200,146,58,.14);border-radius:12px;padding:10px 16px;display:flex;align-items:center;gap:10px;">
+          <div style="font-size:20px;font-weight:800;color:${rr>=50?'#4ADE80':'#FCD34D'};">${rr}%</div>
+          <div><div style="font-size:10px;font-weight:700;color:rgba(253,246,236,.35);letter-spacing:1px;text-transform:uppercase;">Return Rate</div><div style="font-size:11px;color:rgba(253,246,236,.3);">${Object.values(phones).filter(v=>v>1).length} of ${Object.keys(phones).length} returned</div></div>
+        </div>
+      </div>
+
+      <div class="acard" style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+          <div><h3 style="margin:0;">💹 Revenue Trend</h3></div>
+          <div style="display:flex;gap:5px;" id="ubpt">
+            <button onclick="ubPeriod('7d')" id="ubpt7" style="background:rgba(200,146,58,.18);color:#E8B96A;border:1.5px solid rgba(200,146,58,.35);border-radius:7px;padding:4px 11px;font-family:Jost,sans-serif;font-size:11px;font-weight:700;cursor:pointer;">7D</button>
+            <button onclick="ubPeriod('30d')" id="ubpt30" style="background:rgba(255,255,255,.04);color:rgba(253,246,236,.4);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:4px 11px;font-family:Jost,sans-serif;font-size:11px;font-weight:700;cursor:pointer;">30D</button>
+          </div>
+        </div>
+        <div id="ub-rch">
+          <div style="display:flex;align-items:flex-end;gap:5px;height:90px;">
+            ${(()=>{const mx=Math.max(...d7.map(x=>x.v),1);return d7.map(x=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;background:linear-gradient(180deg,rgba(200,146,58,.88),rgba(200,146,58,.2));border-radius:4px 4px 0 0;height:${Math.max(3,Math.round(x.v/mx*72))}px;"></div><div style="font-size:9px;color:rgba(253,246,236,.28);">${x.l}</div></div>`).join('');})()}
+          </div>
+        </div>
+      </div>
+
+      ${topP.length>0?`<div class="acard" style="margin-bottom:16px;">
+        <h3>🏆 Top 5 Products</h3><div class="asub">By revenue</div>
+        ${topP.map(([n,d],i)=>`<div style="margin-top:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:rgba(253,246,236,.82);font-weight:600;"><span style="font-size:16px;">${d.e}</span>${n}</div>
+            <div style="font-family:'Playfair Display',serif;font-size:13px;color:#E8B96A;font-weight:700;">₹${d.r.toLocaleString('en-IN')}</div>
+          </div>
+          <div style="background:rgba(255,255,255,.05);border-radius:5px;height:8px;overflow:hidden;"><div style="background:${['#E8B96A','#93C5FD','#34D399','#F9A8D4','#FCD34D'][i]};border-radius:5px;height:100%;width:${Math.round(d.r/topPMax*100)}%;"></div></div>
+          <div style="font-size:9px;color:rgba(253,246,236,.28);margin-top:2px;">${d.q} units</div>
+        </div>`).join('')}
+      </div>`:''}
+
+      <div class="acard" style="margin-bottom:16px;">
+        <h3>🕐 Order Activity Heatmap</h3>
+        <div class="asub">Orders by day & hour — peak: <strong style="color:#E8B96A;">${peakLbl}</strong></div>
+        <div style="overflow-x:auto;">
+          <div style="display:flex;gap:2px;margin-bottom:2px;padding-left:29px;min-width:max-content;">
+            ${Array.from({length:24},(_,h)=>`<div style="width:20px;text-align:center;font-size:8px;color:rgba(253,246,236,.22);">${h%4===0?h:''}</div>`).join('')}
+          </div>
+          <div style="min-width:max-content;">
+            ${days.map((day,di)=>`<div class="hm-row">
+              <div class="hm-lbl">${day.slice(0,2)}</div>
+              ${Array.from({length:24},(_,h)=>{
+                const v=heatData[di][h];
+                const a=(0.06+v/heatMax*0.86).toFixed(2);
+                return `<div class="hm-cell" style="background:rgba(200,146,58,${a});" title="${day} ${h}:00 — ${v} orders"></div>`;
+              }).join('')}
+            </div>`).join('')}
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:9px;color:rgba(253,246,236,.28);">
+            <span>Less</span>${[.06,.25,.45,.65,.88].map(a=>`<div style="width:12px;height:12px;border-radius:3px;background:rgba(200,146,58,${a});"></div>`).join('')}<span>More</span>
+          </div>
+        </div>
+      </div>
+
+      ${origHtml}
+      </div>`;
+    } catch(e){ console.warn('UB analytics error:', e); try{ return orig(); }catch(e2){ return '<div style="padding:20px;color:#F87171;">⚠️ Analytics error.</div>'; } }
+  };
+}
+
+window.ubPeriod=function(p){
+  const wrap=document.getElementById('ub-rch'); if(!wrap) return;
+  const d=[];const n=p==='7d'?7:30;
+  for(let i=n-1;i>=0;i--){const dt=new Date();dt.setDate(dt.getDate()-i);const ds=dt.toDateString();d.push({l:p==='7d'?dt.toLocaleDateString('en-IN',{weekday:'short'}):dt.getDate()+'',v:ORDERS.filter(o=>new Date(o.timestamp).toDateString()===ds&&o.status!=='cancelled').reduce((s,o)=>s+o.total,0)});}
+  const mx=Math.max(...d.map(x=>x.v),1);
+  wrap.innerHTML=`<div style="display:flex;align-items:flex-end;gap:${p==='30d'?2:5}px;height:90px;">${d.map(x=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:linear-gradient(180deg,rgba(200,146,58,.88),rgba(200,146,58,.2));border-radius:3px 3px 0 0;height:${Math.max(2,Math.round(x.v/mx*72))}px;"></div>${p==='7d'?`<div style="font-size:9px;color:rgba(253,246,236,.28);">${x.l}</div>`:''}</div>`).join('')}</div>`;
+  ['7d','30d'].forEach(id=>{const b=document.getElementById('ubpt'+id.replace('d',''));if(b){if(id===p){b.style.cssText='background:rgba(200,146,58,.18);color:#E8B96A;border:1.5px solid rgba(200,146,58,.35);border-radius:7px;padding:4px 11px;font-family:Jost,sans-serif;font-size:11px;font-weight:700;cursor:pointer;';}else{b.style.cssText='background:rgba(255,255,255,.04);color:rgba(253,246,236,.4);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:4px 11px;font-family:Jost,sans-serif;font-size:11px;font-weight:700;cursor:pointer;';}}});
+};
+
+/* ─── BROADCAST PATCH — WA preview panel ─── */
+function _patchBuildBroadcastTab(){
+  const orig = window.buildBroadcastTab;
+  window.buildBroadcastTab = function(){
+    return `<div class="bc-layout">
+      <div>${orig()}</div>
+      <div>
+        <div style="position:sticky;top:12px;">
+          <div class="acard" style="padding:0;overflow:hidden;">
+            <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;font-weight:700;color:rgba(253,246,236,.35);letter-spacing:1.2px;text-transform:uppercase;">📱 Live WhatsApp Preview</div>
+            <div class="wa-preview">
+              <div class="wa-head">
+                <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#C8923A,#6B3A25);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🎂</div>
+                <div><div style="font-size:12px;font-weight:700;color:#E9EDEF;">Udaya Bakery</div><div style="font-size:10px;color:rgba(233,238,239,.45);">online</div></div>
+              </div>
+              <div id="ub-waprev">
+                <div class="wa-bubble">Your message appears here as you type…</div>
+                <div class="wa-time">Now ✓✓</div>
+              </div>
+            </div>
+          </div>
+          <div class="acard" style="margin-top:12px;">
+            <h3 style="font-size:13px;">💡 Formatting</h3>
+            <div style="font-size:11px;color:rgba(253,246,236,.45);line-height:1.9;">
+              *bold* → <strong>bold</strong><br>
+              _italic_ → <em>italic</em><br>
+              {name} → customer name
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  };
+}
+
+// Live preview listener
+document.addEventListener('input', function(e){
+  if(e.target&&e.target.id==='ubBcMsg'){
+    const el=document.getElementById('ub-waprev'); if(!el) return;
+    const txt=e.target.value||'Your message appears here as you type…';
+    const fmt=txt.replace(/\*(.*?)\*/g,'<strong>$1</strong>').replace(/_(.*?)_/g,'<em>$1</em>').replace(/\{name\}/g,'<span style="color:#4ADE80;">Customer</span>').replace(/\n/g,'<br>');
+    el.innerHTML=`<div class="wa-bubble">${fmt}</div><div class="wa-time">${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})} ✓✓</div>`;
+  }
+});
+
+/* ─── LOGIN PARTICLES ─── */
+function _initParticles(){
+  const screen=document.getElementById('adminLoginScreen');
+  if(!screen||document.getElementById('ub-parts')) return;
+  const c=document.createElement('canvas'); c.id='ub-parts';
+  screen.appendChild(c);
+  const ctx=c.getContext('2d');
+  const ps=[];
+  const E=['🍪','🎂','🧁','🍩','✨','⭐'];
+  function resize(){c.width=screen.offsetWidth;c.height=screen.offsetHeight;}
+  resize(); window.addEventListener('resize',resize);
+  for(let i=0;i<18;i++) ps.push({x:Math.random()*screen.offsetWidth,y:screen.offsetHeight+Math.random()*200,s:.3+Math.random()*.5,sz:11+Math.random()*12,e:E[Math.floor(Math.random()*E.length)],o:.08+Math.random()*.2,dx:(Math.random()-.5)*.3});
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    ps.forEach(p=>{ctx.globalAlpha=p.o;ctx.font=p.sz+'px serif';ctx.fillText(p.e,p.x,p.y);p.y-=p.s;p.x+=p.dx;if(p.y<-20){p.y=c.height+20;p.x=Math.random()*c.width;}});
+    ctx.globalAlpha=1; requestAnimationFrame(draw);
+  }
+  draw();
+  // Crown pulse
+  const crown=screen.querySelector('div[style*="border-radius:24px"]');
+  if(crown) crown.classList.add('crown-anim');
+  // Last login
+  const ll=localStorage.getItem('ub_last_login');
+  if(ll){const box=screen.querySelector('#loginErr')?.parentElement?.parentElement;if(box){const d=document.createElement('div');d.style.cssText='margin-top:12px;font-size:11px;color:rgba(253,246,236,.22);text-align:center;';d.textContent='🕐 Last login: '+ll;box.appendChild(d);}}
+}
+
+/* ─── COMMAND PALETTE ─── */
+const TABS=[
+  {i:'📊',l:'Dashboard',s:'Overview',t:'dashboard'},{i:'📦',l:'Products',s:'Catalog',t:'products'},
+  {i:'➕',l:'Add Product',s:'New item',t:'addprod'},{i:'🏷️',l:'Categories',s:'Manage',t:'cats'},
+  {i:'📋',l:'Orders',s:'All orders',t:'orders'},{i:'💳',l:'Payments',s:'Settings',t:'payments'},
+  {i:'⚙️',l:'Settings',s:'Config',t:'settings'},{i:'📊',l:'Reports',s:'Sales',t:'reports'},
+  {i:'👥',l:'Customers',s:'List',t:'customers'},{i:'📢',l:'Broadcast',s:'WhatsApp',t:'broadcast'},
+  {i:'📈',l:'Analytics',s:'Insights',t:'analytics'},{i:'🎂',l:'Cake Builder',s:'Builder',t:'cakebuilder'},
+];
+let _ci=0, _cr=[];
+
+function ubOpenCmd(){
+  const bg=document.getElementById('ub-cmd-bg'); if(!bg) return;
+  const d=document.getElementById('adminDashScreen');
+  if(!d||d.style.display==='none') return;
+  bg.classList.add('open');
+  setTimeout(()=>document.getElementById('ub-cmd-inp')?.focus(),40);
+  ubCmdSearch('');
+}
+function ubCloseCmd(){ document.getElementById('ub-cmd-bg')?.classList.remove('open'); }
+
+window.ubCmdSearch=function(q){
+  const list=document.getElementById('ub-cmd-list'); if(!list) return;
+  q=q.toLowerCase().trim(); _cr=[];
+  const tabs=TABS.filter(t=>!q||t.l.toLowerCase().includes(q)||t.s.toLowerCase().includes(q));
+  _cr.push(...tabs.map(t=>({i:t.i,l:t.l,s:t.s,fn:()=>{switchTab(t.t);ubCloseCmd();}})));
+  if(typeof PRODS!=='undefined'&&q){const prods=PRODS.filter(p=>p.name.toLowerCase().includes(q)).slice(0,4);_cr.push(...prods.map(p=>({i:p.emoji||'🎂',l:p.name,s:'Product · ₹'+((p.variants&&p.variants[0])?p.variants[0].price:p.price||0),fn:()=>{editProduct(p.id);ubCloseCmd();}})));}
+  if(typeof ORDERS!=='undefined'&&q.length>=3){const ords=ORDERS.filter(o=>o.id?.toLowerCase().includes(q)||o.name?.toLowerCase().includes(q)).slice(0,3);_cr.push(...ords.map(o=>({i:'📋',l:o.name,s:'Order '+o.id,fn:()=>{switchTab('orders');ubCloseCmd();}})));}
+  _ci=0;
+  list.innerHTML=_cr.slice(0,10).map((r,i)=>`<div class="cmdr${i===0?' sel':''}" onclick="ubCmdRun(${i})"><span class="cmdr-icon">${r.i}</span><span class="cmdr-lbl">${r.l}</span><span class="cmdr-sub">${r.s}</span></div>`).join('');
+};
+
+window.ubCmdKey=function(e){
+  const list=document.getElementById('ub-cmd-list'); if(!list) return;
+  const items=list.querySelectorAll('.cmdr');
+  if(e.key==='ArrowDown'){e.preventDefault();_ci=Math.min(_ci+1,items.length-1);}
+  else if(e.key==='ArrowUp'){e.preventDefault();_ci=Math.max(_ci-1,0);}
+  else if(e.key==='Enter'){e.preventDefault();ubCmdRun(_ci);return;}
+  else if(e.key==='Escape'){ubCloseCmd();return;}
+  items.forEach((el,i)=>el.classList.toggle('sel',i===_ci));
+  items[_ci]?.scrollIntoView({block:'nearest'});
+};
+window.ubCmdRun=function(i){ if(_cr[i]) _cr[i].fn(); };
+document.getElementById('ub-cmd-bg')?.addEventListener('click',function(e){if(e.target===this)ubCloseCmd();});
+
+/* ─── KEYBOARD SHORTCUTS ─── */
+document.addEventListener('keydown',function(e){
+  const d=document.getElementById('adminDashScreen');
+  if(!d||d.style.display==='none') return;
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();ubOpenCmd();return;}
+  const tag=document.activeElement?.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+  if(e.key==='d'||e.key==='D') switchTab('dashboard');
+  else if(e.key==='p'||e.key==='P') switchTab('products');
+  else if(e.key==='o'||e.key==='O') switchTab('orders');
+  else if(e.key==='a'||e.key==='A') switchTab('analytics');
+  else if(e.key==='s'||e.key==='S') switchTab('settings');
+  else if(e.key==='Escape') { if(typeof closeAdmin==='function') closeAdmin(); }
+});
+
+/* ─── OBSERVE ADMIN DASH BECOMING VISIBLE ─── */
+const _dashEl=document.getElementById('adminDashScreen');
+if(_dashEl){
+  new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      if(m.target.id==='adminDashScreen'&&m.target.style.display!=='none'){
+        setTimeout(ubPatchAdmin,80);
+        localStorage.setItem('ub_last_login',new Date().toLocaleString('en-IN'));
+      }
+    });
+  }).observe(_dashEl,{attributes:true,attributeFilter:['style']});
+}
+
+/* Login screen particles observer */
+const _loginEl=document.getElementById('adminLoginScreen');
+if(_loginEl){
+  new MutationObserver(function(muts){
+    muts.forEach(function(m){if(m.target.style.display!=='none') setTimeout(_initParticles,60);});
+  }).observe(_loginEl,{attributes:true,attributeFilter:['style']});
+  if(getComputedStyle(_loginEl).display!=='none') setTimeout(_initParticles,300);
+}
+
+})(); // end IIFE
+</script>
 </body>
 </html>
