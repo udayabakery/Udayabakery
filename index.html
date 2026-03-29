@@ -140,7 +140,101 @@ body.dark-mode .review-form-card{background:rgba(200,146,58,.05);border-color:rg
 
 .qa-chip-inner{display:flex;flex-direction:column;align-items:center;gap:2px;}
 
-/* ── PUSH NOTIFICATION PROMPT ── */
+/* ═══════════════════════════════════════
+   🎨 LUXURY THEME SYSTEM — 10 THEMES
+═══════════════════════════════════════ */
+/* Theme classes override :root variables */
+body.theme-midnight {
+  --cream:#0D0A1A;--cream-dark:#1A1530;--choco:#E8D5FF;--choco-mid:#B09AE8;
+  --choco-light:#9B7FD4;--gold:#C8B4FF;--gold-light:#DDD0FF;--pink:#1A0F2E;
+  --pink-deep:#2D1A4A;--white:#120D24;--text-dark:#F0E8FF;--text-mid:#C4B0E8;
+  --shadow:rgba(90,50,180,.2);
+}
+body.theme-midnight nav { background: rgba(13,10,26,0.97) !important; }
+body.theme-midnight .ann-bar { background: linear-gradient(90deg,#1A0F2E,#2D1A4A,#9B7FD4,#2D1A4A,#1A0F2E) !important; background-size:300% 100% !important; }
+
+body.theme-rosegold {
+  --cream:#FDF0F0;--cream-dark:#F5D8D8;--choco:#4A1520;--choco-mid:#8B3A4A;
+  --choco-light:#C2607A;--gold:#E8A0B0;--gold-light:#F5C8D4;--pink:#FCEAEC;
+  --pink-deep:#E8A0B0;--white:#FFFBFB;--text-dark:#3A1018;--text-mid:#7A3045;
+  --shadow:rgba(200,80,100,.15);
+}
+body.theme-rosegold nav { background: rgba(253,240,240,0.97) !important; }
+body.theme-rosegold .ann-bar { background: linear-gradient(90deg,#4A1520,#8B3A4A,#E8A0B0,#8B3A4A,#4A1520) !important; background-size:300% 100% !important; }
+
+body.theme-emerald {
+  --cream:#F0FDF4;--cream-dark:#D1FAE5;--choco:#064E3B;--choco-mid:#065F46;
+  --choco-light:#059669;--gold:#34D399;--gold-light:#6EE7B7;--pink:#ECFDF5;
+  --pink-deep:#A7F3D0;--white:#F9FFFE;--text-dark:#022C22;--text-mid:#047857;
+  --shadow:rgba(5,150,105,.15);
+}
+body.theme-emerald nav { background: rgba(240,253,244,0.97) !important; }
+body.theme-emerald .ann-bar { background: linear-gradient(90deg,#064E3B,#065F46,#34D399,#065F46,#064E3B) !important; background-size:300% 100% !important; }
+
+body.theme-royal {
+  --cream:#FEF9F0;--cream-dark:#FCF0D5;--choco:#1A0A4A;--choco-mid:#2D1580;
+  --choco-light:#4A2DB0;--gold:#F5C040;--gold-light:#FFE080;--pink:#FFF5E0;
+  --pink-deep:#F5C040;--white:#FFFDF5;--text-dark:#0F0630;--text-mid:#3D1F8A;
+  --shadow:rgba(45,21,128,.15);
+}
+body.theme-royal nav { background: rgba(254,249,240,0.97) !important; }
+body.theme-royal .ann-bar { background: linear-gradient(90deg,#1A0A4A,#2D1580,#F5C040,#2D1580,#1A0A4A) !important; background-size:300% 100% !important; }
+
+body.theme-obsidian {
+  --cream:#0A0A0A;--cream-dark:#1A1A1A;--choco:#F8F8F8;--choco-mid:#D0D0D0;
+  --choco-light:#A0A0A0;--gold:#FFD700;--gold-light:#FFE84D;--pink:#1A1A1A;
+  --pink-deep:#252525;--white:#111111;--text-dark:#FFFFFF;--text-mid:#C8C8C8;
+  --shadow:rgba(0,0,0,.5);
+}
+body.theme-obsidian nav { background: rgba(10,10,10,0.98) !important; }
+body.theme-obsidian .ann-bar { background: linear-gradient(90deg,#0A0A0A,#1A1A1A,#FFD700,#1A1A1A,#0A0A0A) !important; background-size:300% 100% !important; }
+
+body.theme-sakura {
+  --cream:#FFF5F8;--cream-dark:#FFD6E4;--choco:#3D0020;--choco-mid:#801040;
+  --choco-light:#C04070;--gold:#FF80A0;--gold-light:#FFB0C8;--pink:#FFF0F5;
+  --pink-deep:#FFAAC0;--white:#FFFBFD;--text-dark:#280015;--text-mid:#7A2050;
+  --shadow:rgba(200,60,100,.12);
+}
+body.theme-sakura nav { background: rgba(255,245,248,0.97) !important; }
+body.theme-sakura .ann-bar { background: linear-gradient(90deg,#3D0020,#801040,#FF80A0,#801040,#3D0020) !important; background-size:300% 100% !important; }
+
+body.theme-ocean {
+  --cream:#F0F8FF;--cream-dark:#CCE8FF;--choco:#002040;--choco-mid:#003C6A;
+  --choco-light:#005A9E;--gold:#00A8E8;--gold-light:#60C8F5;--pink:#E8F5FF;
+  --pink-deep:#80CCFF;--white:#F5FBFF;--text-dark:#001428;--text-mid:#004880;
+  --shadow:rgba(0,90,160,.15);
+}
+body.theme-ocean nav { background: rgba(240,248,255,0.97) !important; }
+body.theme-ocean .ann-bar { background: linear-gradient(90deg,#002040,#003C6A,#00A8E8,#003C6A,#002040) !important; background-size:300% 100% !important; }
+
+body.theme-sunset {
+  --cream:#FFF8F0;--cream-dark:#FFE8CC;--choco:#3A1500;--choco-mid:#7A3000;
+  --choco-light:#C05000;--gold:#FF8C00;--gold-light:#FFB84D;--pink:#FFF3E8;
+  --pink-deep:#FFB080;--white:#FFFBF5;--text-dark:#250D00;--text-mid:#8A3500;
+  --shadow:rgba(200,80,0,.15);
+}
+body.theme-sunset nav { background: rgba(255,248,240,0.97) !important; }
+body.theme-sunset .ann-bar { background: linear-gradient(90deg,#3A1500,#7A3000,#FF8C00,#7A3000,#3A1500) !important; background-size:300% 100% !important; }
+
+body.theme-lavender {
+  --cream:#F8F5FF;--cream-dark:#EAE0FF;--choco:#2D1060;--choco-mid:#5530A0;
+  --choco-light:#8060D0;--gold:#A080F0;--gold-light:#C8B0FF;--pink:#F4F0FF;
+  --pink-deep:#C0A8FF;--white:#FDFAFF;--text-dark:#1A0840;--text-mid:#6040B0;
+  --shadow:rgba(100,60,200,.15);
+}
+body.theme-lavender nav { background: rgba(248,245,255,0.97) !important; }
+body.theme-lavender .ann-bar { background: linear-gradient(90deg,#2D1060,#5530A0,#A080F0,#5530A0,#2D1060) !important; background-size:300% 100% !important; }
+
+/* Admin theme panel */
+.theme-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-top: 14px; }
+.theme-swatch {
+  border-radius: 14px; padding: 10px 6px; cursor: pointer;
+  border: 2.5px solid transparent; text-align: center; transition: all .25s;
+  font-size: 10px; font-weight: 700; letter-spacing: .3px;
+}
+.theme-swatch.active { border-color: #E8B96A !important; box-shadow: 0 0 0 3px rgba(200,146,58,.3); transform: scale(1.06); }
+.theme-swatch:hover { transform: scale(1.05); box-shadow: 0 6px 18px rgba(0,0,0,.2); }
+@media(max-width:600px){ .theme-grid { grid-template-columns: repeat(2,1fr); } }
 .notif-prompt{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:3500;background:linear-gradient(135deg,var(--choco),var(--choco-mid));color:var(--cream);border-radius:20px;padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 32px rgba(0,0,0,.3);max-width:360px;width:90%;animation:slideUp .4s cubic-bezier(.34,1.56,.64,1);}
 @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(30px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
 .notif-prompt-icon{font-size:28px;flex-shrink:0;}
@@ -4053,7 +4147,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
   <span class="float-cart-badge" id="floatCartCount">0</span>
 </button>
 
-<a href="https://wa.me/919845406712" target="_blank" rel="noopener noreferrer" class="float-wa" title="Chat on WhatsApp" aria-label="Chat with us on WhatsApp" rel="noopener noreferrer">
+<a href="https://wa.me/919845406712" target="_blank" rel="noopener noreferrer" class="float-wa" title="Chat on WhatsApp" aria-label="Chat with us on WhatsApp">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="white" width="26" height="26"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.82.736 5.46 2.027 7.754L0 32l8.463-2.001A15.938 15.938 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 01-6.764-1.843l-.484-.288-5.023 1.188 1.217-4.896-.316-.502A13.267 13.267 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.29-9.958c-.4-.2-2.363-1.165-2.73-1.298-.367-.133-.634-.2-.9.2-.267.4-1.033 1.298-1.267 1.565-.233.267-.467.3-.867.1-.4-.2-1.688-.622-3.214-1.983-1.188-1.06-1.99-2.37-2.223-2.77-.233-.4-.025-.616.175-.815.18-.18.4-.467.6-.7.2-.233.267-.4.4-.667.133-.267.067-.5-.033-.7-.1-.2-.9-2.167-1.233-2.967-.325-.78-.655-.674-.9-.686l-.767-.013c-.267 0-.7.1-1.067.5-.367.4-1.4 1.367-1.4 3.333s1.433 3.867 1.633 4.133c.2.267 2.82 4.307 6.833 6.04.955.413 1.7.66 2.28.845.958.305 1.83.262 2.52.159.769-.115 2.363-.966 2.697-1.9.333-.933.333-1.733.233-1.9-.1-.167-.367-.267-.767-.467z"/></svg>
 </a>
 <a href="tel:+919845406712" class="float-call" title="Call Us" aria-label="Call Udaya Bakery">
@@ -4609,6 +4703,12 @@ function initFirebase(){
 // Try immediately
 initFirebase();
 
+// Load theme early so customers see correct theme on page load
+(function _earlyTheme(){
+  const saved = localStorage.getItem('ub_theme') || 'default';
+  if(saved !== 'default') document.body.classList.add('theme-'+saved);
+})();
+
 // ── SECURITY CLEANUP: Remove any old plain-text sensitive values from localStorage ──
 // These would have been set by previous versions before encryption was added.
 // UPI ID is kept as plain (needed by customer payment screen), others wiped.
@@ -4739,7 +4839,9 @@ function startBrandingListener(){
     if(data.btag)  localStorage.setItem('ub_btag',  data.btag);
     if(data.bname || data.btag){
       const textEl = document.getElementById('logoTextEl');
-      if(textEl) textEl.innerHTML = `${data.bname||'Udaya Bakery'}<span>${data.btag||'Artisan Bakes'}</span>`;
+      const _sBname=(data.bname||'Udaya Bakery').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const _sBtag=(data.btag||'Artisan Bakes').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      if(textEl) textEl.innerHTML = `${_sBname}<span>${_sBtag}</span>`;
     }
   }, ()=>{});
 }
@@ -4779,7 +4881,24 @@ function startProductListener(){
   });
 
   // ── CATEGORIES listener ──
+  let _catsInitialized = false;
   _catUnsubscribe = db.collection('categories').onSnapshot(snap=>{
+    // On first snapshot, REPLACE the hardcoded CATS array entirely with
+    // whatever is in Firestore — this is the fix for deleted categories
+    // reappearing on reload.
+    if(!_catsInitialized){
+      _catsInitialized = true;
+      const fbCats = snap.docs
+        .map(d=>({...d.data(), id: d.id}))
+        .filter(c => c.id !== 'ubBranding');
+      if(fbCats.length > 0){
+        CATS = fbCats; // replace hardcoded array with Firestore data
+        renderCats();
+        renderProds();
+        return;
+      }
+      // If Firestore has no categories yet, seed from built-in list
+    }
     snap.docChanges().forEach(change=>{
       const fc = {...change.doc.data(), id: change.doc.id};
       // Skip the ubBranding doc — it stores logo/name, not a real category
@@ -4840,7 +4959,9 @@ async function loadBrandingFromDB(){
     if(data.btag)  localStorage.setItem('ub_btag',  data.btag);
     if(data.bname || data.btag){
       const textEl = document.getElementById('logoTextEl');
-      if(textEl) textEl.innerHTML = `${data.bname||'Udaya Bakery'}<span>${data.btag||'Artisan Bakes'}</span>`;
+      const _safeBname = (data.bname||'Udaya Bakery').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const _safeBtag  = (data.btag||'Artisan Bakes').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      if(textEl) textEl.innerHTML = `${_safeBname}<span>${_safeBtag}</span>`;
     }
   } catch(e){ console.warn('loadBrandingFromDB error:', e); }
 }
@@ -4939,11 +5060,9 @@ async function saveCatToDB(cat){
   }
   await db.collection('categories').doc(cat.id).set({...cat, order: CATS.indexOf(cat)});
 }
-function deleteCatFromDB(id){
-  if(!db) return;
-  db.collection('categories').doc(id).delete()
-    .then(()=>{})
-    .catch(e=>console.warn('deleteCatFromDB error:', e));
+async function deleteCatFromDB(id){
+  if(!db) throw new Error('Database not connected');
+  await db.collection('categories').doc(id).delete();
 }
 async function saveProdToDB(prod){
   // Re-init db if null
@@ -5096,7 +5215,7 @@ let ORDERS = [];
 let CFG = LS.get('ub_cfg') || {freeKm:2, base:70, perKm:15, minOrder:0};
 let adminPass = null; // plain-text password removed — see hashPass() below
 
-function save(){LS.set('ub_cats',CATS);LS.set('ub_prods',PRODS);LS.set('ub_orders',ORDERS);LS.set('ub_cfg',CFG);}
+// Note: Duplicate save() removed — use the save() defined above which persists to localStorage as Firebase backup.
 
 // ═══════════════════════════════════════
 //  NAV
@@ -6018,6 +6137,18 @@ function applyLang(lang){
   });
   set('addrLabel', T.addrLabel);
 
+  // Search placeholder Kannada
+  const _searchEls = document.querySelectorAll('#navSearchInput, #heroSearchInput');
+  const _searchPH = lang === 'kn' ? 'ಕೇಕ್, ಪಫ್, ಚಕ್ಲಿ ಹುಡುಕಿ...' : 'Search cakes, puffs, chakli...';
+  _searchEls.forEach(el => { if(el) el.placeholder = _searchPH; });
+
+  // Mobile hero stat badges
+  const _mobBadgeLbls = document.querySelectorAll('.mob-hero-badge .lbl');
+  if(_mobBadgeLbls.length >= 2) {
+    _mobBadgeLbls[0].textContent = lang === 'kn' ? 'ಗ್ರಾಹಕರು' : 'Happy Customers';
+    _mobBadgeLbls[1].textContent = lang === 'kn' ? 'ವರ್ಷ ಬೇಕಿಂಗ್' : 'Yrs Baking';
+  }
+
   // Re-render products to pick up "All Items" translation
   renderCats();
 }
@@ -6596,23 +6727,51 @@ function clearSearch(){
 //  CATEGORIES
 // ═══════════════════════════════════════
 let selCat = 'all';
+// Kannada translations for common category names (auto-translated when lang=kn)
+const CAT_KN_MAP = {
+  'cakes': 'ಕೇಕ್‌ಗಳು', 'cake': 'ಕೇಕ್‌ಗಳು',
+  'puffs': 'ಪಫ್‌ಗಳು', 'puff': 'ಪಫ್‌ಗಳು',
+  'pastries': 'ಪೇಸ್ಟ್ರಿಗಳು', 'pastry': 'ಪೇಸ್ಟ್ರಿಗಳು',
+  'sweets': 'ಸಿಹಿತಿಂಡಿಗಳು', 'sweet': 'ಸಿಹಿತಿಂಡಿಗಳು',
+  'namkeen': 'ನಮ್ಕೀನ್', 'snacks': 'ತಿಂಡಿಗಳು',
+  'bakery snacks': 'ಬೇಕರಿ ತಿಂಡಿಗಳು',
+  'chakli & farsan': 'ಚಕ್ಲಿ & ಫರ್ಸಾನ್', 'chakli': 'ಚಕ್ಲಿ',
+  'breads & buns': 'ರೊಟ್ಟಿ & ಬನ್‌ಗಳು', 'bread': 'ರೊಟ್ಟಿ', 'buns': 'ಬನ್‌ಗಳು',
+  'custom orders': 'ಕಸ್ಟಮ್ ಆರ್ಡರ್‌ಗಳು', 'seasonal special': 'ಋತು ವಿಶೇಷ',
+  'cookies': 'ಕುಕೀಸ್', 'biscuits': 'ಬಿಸ್ಕತ್ತುಗಳು',
+  'beverages': 'ಪಾನೀಯಗಳು', 'drinks': 'ಪಾನೀಯಗಳು',
+  'ice cream': 'ಐಸ್ ಕ್ರೀಂ',
+};
+function getCatNameKn(catName) {
+  if(!catName) return catName;
+  const key = catName.toLowerCase().trim();
+  return CAT_KN_MAP[key] || catName;
+}
+
 function renderCats(){
-  const allLabel = (currentLang === 'kn') ? 'ಎಲ್ಲ ಐಟಂಗಳು' : 'All Items';
+  const isKn = currentLang === 'kn';
+  const allLabel = isKn ? 'ಎಲ್ಲ ಐಟಂಗಳು' : 'All Items';
   const all = [{id:'all', name: allLabel, emoji:'✨', image:''}, ...CATS];
   document.getElementById('catGridEl').innerHTML = all.map((c, idx)=>{
     // count products in this category
     const cnt = c.id === 'all' ? PRODS.length : PRODS.filter(p=>p.cat===c.id).length;
-    const cntLabel = cnt > 0 ? `<div class="cc-count">${c.id==='all'?cnt+' items':cnt+' item'+(cnt!==1?'s':'')}</div>` : '';
+    // Translate count labels to Kannada
+    const itemWord = isKn ? 'ಐಟಂಗಳು' : (cnt!==1?'items':'item');
+    const cntLabel = cnt > 0 ? `<div class="cc-count">${cnt} ${itemWord}</div>` : '';
     // First 6 categories load eagerly (always visible on mobile); rest lazy
     const loadAttr = idx < 6 ? 'eager' : 'lazy';
     const prioAttr = idx < 3 ? 'high' : 'low';
+    // Get Kannada name if available
+    const displayName = (isKn && c.id !== 'all')
+      ? (c.nameKn || getCatNameKn(c.name))
+      : c.name;
     // If image exists: show ONLY image (no emoji), perfectly fitted in white card
     const imgEl = c.image
-      ? `<div class="cc-img-wrap" id="ccw-${c.id}"><img src="${c.image}" alt="${c.name}" loading="${loadAttr}" decoding="async" width="68" height="68" fetchpriority="${prioAttr}" onload="this.closest('.cc-img-wrap').classList.add('img-loaded')" onerror="this.closest('.cc-img-wrap').classList.add('img-loaded');this.style.display='none'"></div>`
+      ? `<div class="cc-img-wrap" id="ccw-${c.id}"><img src="${c.image}" alt="${displayName}" loading="${loadAttr}" decoding="async" width="68" height="68" fetchpriority="${prioAttr}" onload="this.closest('.cc-img-wrap').classList.add('img-loaded')" onerror="this.closest('.cc-img-wrap').classList.add('img-loaded');this.style.display='none'"></div>`
       : `<span class="cc-emoji">${c.emoji}</span>`;
     return `<div class="cat-card-main ${selCat===c.id?'active':''}" onclick="selCatFn('${c.id}')">
       ${imgEl}
-      <div class="cc-name">${c.name}</div>
+      <div class="cc-name">${displayName}</div>
       ${cntLabel}
     </div>`;
   }).join('');
@@ -7661,8 +7820,9 @@ function handleCredentialResponse(response){
         })
         .catch(err=>{
           console.warn('Firebase credential sign-in failed:', err);
-          // Fallback: still sign user into app even if Firebase session fails
-          signInUser(userInfo);
+          // Do NOT grant access if Firebase auth fails — this could allow
+          // a crafted JWT to bypass Firestore security rules.
+          showToast('❌ Sign-in failed. Please try again.','err');
           closeAuthModal();
         });
     } else {
@@ -7766,15 +7926,9 @@ document.addEventListener('click', (e)=>{
 // Init Google Sign-In
 window.addEventListener('load', ()=>{
   if(currentUser) renderUserNav();
-  // Restore admin FAB if session was persisted
-  if(localStorage.getItem('ub_admin_logged_in') === '1'){
-    adminLoggedIn = true;
-    const fab = document.querySelector('.fab-admin');
-    if(fab) fab.classList.add('owner-visible');
-    const navAdm=document.getElementById('navAdminLink'); if(navAdm) navAdm.style.display='';
-    const mobAdm=document.getElementById('mobAdminLink'); if(mobAdm) mobAdm.style.display='';
-    const footAdm=document.getElementById('footerAdminLink'); if(footAdm) footAdm.style.display='';
-  }
+  // Admin FAB visibility is handled by Firebase auth.onAuthStateChanged — do not
+  // restore adminLoggedIn from localStorage alone, as it bypasses auth verification.
+  // The onAuthStateChanged listener below handles this securely.
   // Initialize Google Sign-In — show fallback if GSI not loaded
   if(typeof google !== 'undefined' && google.accounts){
     google.accounts.id.initialize({
@@ -8182,8 +8336,8 @@ async function _sha256(str){
     localStorage.setItem('ub_admin_user_hash', _adminUserHash);
   }
   if(!_adminPassHash){
-    _adminPassHash = await _sha256('Udaya0519');
-    localStorage.setItem('ub_admin_pass_hash', _adminPassHash);
+    // Default password removed for security — admin must set password via Firestore or first-run setup.
+    console.warn('Admin password hash not set. Please configure admin credentials in Firestore.');
   }
 })();
 
@@ -9129,10 +9283,16 @@ async function addCat(){
 }
 async function delCat(id){
   ubConfirmDialog('Remove this category? Products in it won\'t be deleted.', async ()=>{
-    CATS=CATS.filter(c=>c.id!==id);
-    await deleteCatFromDB(id);
-    renderCats(); renderAdminTab();
-    showToast('🗑 Category removed','ok');
+    if(!db){ showToast('❌ Not connected to database. Please refresh.','err'); return; }
+    try {
+      await db.collection('categories').doc(id).delete();
+      CATS = CATS.filter(c=>c.id!==id);
+      renderCats(); renderAdminTab();
+      showToast('🗑 Category removed','ok');
+    } catch(e){
+      showToast('❌ Delete failed: '+(e.message||'Permission denied — check Firestore rules'),'err');
+      console.error('delCat error:', e);
+    }
   });
 }
 
@@ -9411,6 +9571,181 @@ function clearDelivered(){
 }
 
 // ── SETTINGS TAB — see below ──
+
+// ═══════════════════════════════════════════════════════
+//  🎨 LUXURY THEME SYSTEM
+// ═══════════════════════════════════════════════════════
+const UB_THEMES = ['default','midnight','rosegold','emerald','royal','obsidian','sakura','ocean','sunset','lavender'];
+
+function ubApplyTheme(themeId) {
+  UB_THEMES.forEach(t => { if(t!=='default') document.body.classList.remove('theme-'+t); });
+  if(themeId !== 'default') document.body.classList.add('theme-'+themeId);
+  localStorage.setItem('ub_theme', themeId);
+  try {
+    if(db) db.collection('config').doc('theme').set({ themeId, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{});
+  } catch(e) {}
+  document.querySelectorAll('.theme-swatch').forEach((el, i) => {
+    el.classList.toggle('active', UB_THEMES[i] === themeId);
+    if(UB_THEMES[i] === themeId) {
+      const c = el.querySelector('div')?.style.background||'#C8923A';
+      el.style.borderColor = c;
+      el.style.boxShadow = '0 0 0 3px rgba(200,146,58,.3)';
+    } else {
+      el.style.borderColor = 'transparent';
+      el.style.boxShadow = '';
+    }
+  });
+  showToast('🎨 Theme applied to all customers!', 'ok');
+}
+
+function ubLoadTheme() {
+  // Check Firebase first, then localStorage
+  try {
+    if(db) {
+      db.collection('config').doc('theme').get().then(doc => {
+        const tid = doc.exists ? (doc.data().themeId || 'default') : (localStorage.getItem('ub_theme') || 'default');
+        localStorage.setItem('ub_theme', tid);
+        UB_THEMES.forEach(t => { if(t!=='default') document.body.classList.remove('theme-'+t); });
+        if(tid !== 'default') document.body.classList.add('theme-'+tid);
+      }).catch(()=>{
+        const saved = localStorage.getItem('ub_theme') || 'default';
+        UB_THEMES.forEach(t => { if(t!=='default') document.body.classList.remove('theme-'+t); });
+        if(saved !== 'default') document.body.classList.add('theme-'+saved);
+      });
+    } else {
+      const saved = localStorage.getItem('ub_theme') || 'default';
+      UB_THEMES.forEach(t => { if(t!=='default') document.body.classList.remove('theme-'+t); });
+      if(saved !== 'default') document.body.classList.add('theme-'+saved);
+    }
+  } catch(e) {
+    const saved = localStorage.getItem('ub_theme') || 'default';
+    if(saved !== 'default') document.body.classList.add('theme-'+saved);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  📊 MONTHLY ORDER REPORT (CSV/Excel + WhatsApp)
+// ═══════════════════════════════════════════════════════
+function ubGetMonthOrders() {
+  const now = new Date();
+  return ORDERS.filter(o => {
+    try {
+      // Try multiple timestamp formats
+      const raw = o.timestamp || o.createdAt || '';
+      const d = raw ? new Date(raw) : null;
+      if(!d || isNaN(d.getTime())) return false;
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    } catch(e) { return false; }
+  });
+}
+
+function ubGenerateMonthlyReport(sendWhatsApp) {
+  const statusEl = document.getElementById('reportStatus');
+  const email = document.getElementById('s_report_email')?.value.trim() || '';
+  const waNum = document.getElementById('s_report_wa')?.value.trim() || '';
+  localStorage.setItem('ub_report_email', email);
+  localStorage.setItem('ub_report_wa', waNum);
+
+  const monthOrders = ubGetMonthOrders();
+  const now = new Date();
+  const monthName = now.toLocaleString('en-IN', {month:'long', year:'numeric'});
+
+  if(!monthOrders.length) {
+    if(statusEl) statusEl.innerHTML = '<span style="color:#F87171;">⚠️ No orders found for this month.</span>';
+    showToast('No orders this month to report!', 'err');
+    return;
+  }
+
+  const totalRev = monthOrders.reduce((s, o) => s + (o.total || 0), 0);
+  const totalOrders = monthOrders.length;
+  const deliveredCount = monthOrders.filter(o => o.status === 'delivered').length;
+  const pendingCount = monthOrders.filter(o => o.status === 'pending').length;
+  const confirmedCount = monthOrders.filter(o => o.status === 'confirmed').length;
+
+  // Build CSV (UTF-8 BOM for Excel)
+  let csv = `UDAYA BAKERY — Monthly Order Report\n`;
+  csv += `Month:,${monthName}\nGenerated:,${new Date().toLocaleString('en-IN')}\nOwner:,${email}\n\n`;
+  csv += `SUMMARY\n`;
+  csv += `Total Orders:,${totalOrders}\nTotal Revenue (₹):,${totalRev}\nDelivered:,${deliveredCount}\nConfirmed:,${confirmedCount}\nPending:,${pendingCount}\n\n`;
+  csv += `ORDER DETAILS\n`;
+  csv += `Order ID,Customer Name,Phone,Order Type,Address/Pickup,Items,Subtotal,Delivery Fee,Discount,Total,Payment Method,Status,Order Date\n`;
+
+  monthOrders.forEach(o => {
+    const items = (o.items || []).map(i => `${i.name} x${i.qty} @₹${i.price}`).join(' | ');
+    const disc = (o.couponDiscount||0) + (o.pointsDiscount||0) + (o.walletDiscount||0);
+    const addr = (o.orderType === 'pickup') ? 'STORE PICKUP' : (o.addr || '');
+    csv += `"${o.id}","${(o.name||'').replace(/"/g,"'")}","${o.phone||''}","${o.orderType||'delivery'}","${addr.replace(/"/g,"'")}","${items.replace(/"/g,"'")}",${o.subtotal||0},${o.delivery||0},${disc},${o.total||0},"${o.payMethod||''}","${o.status||''}","${o.timestamp||''}"\n`;
+  });
+
+  // Item sales summary
+  const itemMap = {};
+  monthOrders.forEach(o => {
+    (o.items||[]).forEach(i => {
+      const k = `${i.name} (${i.variant||''})`;
+      if(!itemMap[k]) itemMap[k] = {qty:0, revenue:0};
+      itemMap[k].qty += i.qty||1;
+      itemMap[k].revenue += (i.price||0)*(i.qty||1);
+    });
+  });
+  csv += `\nITEM-WISE SALES\nItem,Qty Sold,Revenue (₹)\n`;
+  Object.entries(itemMap).sort((a,b)=>b[1].revenue-a[1].revenue).forEach(([name,d])=>{
+    csv += `"${name}",${d.qty},${d.revenue}\n`;
+  });
+
+  // Download
+  const blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Udaya_Bakery_Report_${now.getFullYear()}_${String(now.getMonth()+1).padStart(2,'0')}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  if(statusEl) statusEl.innerHTML = `<span style="color:#34D399;">✅ Report downloaded! ${totalOrders} orders · ₹${totalRev} revenue for ${monthName}</span>`;
+  showToast(`📊 Excel report downloaded! ${totalOrders} orders`, 'ok');
+
+  if(sendWhatsApp && waNum) {
+    const top5 = Object.entries(itemMap).sort((a,b)=>b[1].qty-a[1].qty).slice(0,5)
+      .map(([n,d])=>`  • ${n}: ×${d.qty} = ₹${d.revenue}`).join('\n');
+    const waMsg = `📊 *Udaya Bakery — ${monthName} Report*\n\n`
+      + `📦 Total Orders: *${totalOrders}*\n`
+      + `💰 Total Revenue: *₹${totalRev}*\n`
+      + `✅ Delivered: ${deliveredCount} | ⏳ Pending: ${pendingCount}\n\n`
+      + `🏆 *Top Selling Items:*\n${top5}\n\n`
+      + `📎 Excel report downloaded to device.\n`
+      + `_${new Date().toLocaleString('en-IN')}_`;
+    const cleanWa = waNum.replace(/\D/g,'');
+    setTimeout(()=>{ try{ window.open(`https://wa.me/${cleanWa}?text=${encodeURIComponent(waMsg)}`,'_blank'); }catch(e){} }, 900);
+  }
+}
+
+async function ubDeleteMonthlyOrders() {
+  const monthOrders = ubGetMonthOrders();
+  const now = new Date();
+  const monthName = now.toLocaleString('en-IN', {month:'long', year:'numeric'});
+  if(!monthOrders.length) { showToast('No orders this month to delete!','err'); return; }
+  ubConfirmDialog(
+    `⚠️ Delete ALL ${monthOrders.length} orders from ${monthName}?\n\nThis CANNOT be undone. Download the report first!`,
+    async () => {
+      const statusEl = document.getElementById('reportStatus');
+      if(statusEl) statusEl.innerHTML = '<span style="color:#E8B96A;">⏳ Deleting orders...</span>';
+      let deleted = 0;
+      for(const o of monthOrders) {
+        try {
+          ORDERS = ORDERS.filter(x => x.id !== o.id);
+          if(db) await db.collection('orders').doc(o.id).delete().catch(()=>{});
+          deleted++;
+        } catch(e) {}
+      }
+      if(statusEl) statusEl.innerHTML = `<span style="color:#34D399;">✅ Deleted ${deleted} orders from ${monthName}!</span>`;
+      showToast(`🗑 ${deleted} orders deleted!`, 'ok');
+      renderAdminTab();
+    }
+  );
+}
+
 function exportData(){
   const blob=new Blob([JSON.stringify({products:PRODS,categories:CATS,orders:ORDERS,settings:CFG,exported:new Date().toISOString()},null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
@@ -9657,6 +9992,73 @@ function buildSettingsTab(){
         </div>
       </div>
       <button class="abtn" onclick="saveLoyaltySettings()">💾 Save Loyalty Settings</button>
+    </div>
+  </div>
+
+  <!-- 🎨 LUXURY THEME SELECTOR -->
+  <div class="acard" style="margin-bottom:16px;border-left:3px solid #C8923A;">
+    <h3>🎨 Store Theme — Applied to All Customers</h3>
+    <div class="asub">Choose a luxury theme — it applies instantly to every customer who visits your store</div>
+    <div class="theme-grid" id="adminThemeGrid">
+      ${[
+        {id:'default',   label:'Classic Bakery',   bg:'#3B1F0E', accent:'#C8923A', text:'#FDF6EC'},
+        {id:'midnight',  label:'Midnight Purple',  bg:'#0D0A1A', accent:'#C8B4FF', text:'#F0E8FF'},
+        {id:'rosegold',  label:'Rose Gold',        bg:'#4A1520', accent:'#E8A0B0', text:'#FDF0F0'},
+        {id:'emerald',   label:'Emerald Garden',   bg:'#064E3B', accent:'#34D399', text:'#F0FDF4'},
+        {id:'royal',     label:'Royal Gold',       bg:'#1A0A4A', accent:'#F5C040', text:'#FEF9F0'},
+        {id:'obsidian',  label:'Black Diamond',    bg:'#0A0A0A', accent:'#FFD700', text:'#F8F8F8'},
+        {id:'sakura',    label:'Sakura Blossom',   bg:'#3D0020', accent:'#FF80A0', text:'#FFF5F8'},
+        {id:'ocean',     label:'Ocean Blue',       bg:'#002040', accent:'#00A8E8', text:'#F0F8FF'},
+        {id:'sunset',    label:'Sunset Orange',    bg:'#3A1500', accent:'#FF8C00', text:'#FFF8F0'},
+        {id:'lavender',  label:'Lavender Dream',   bg:'#2D1060', accent:'#A080F0', text:'#F8F5FF'},
+      ].map(t => {
+        const cur = localStorage.getItem('ub_theme') || 'default';
+        return `<div class="theme-swatch ${cur===t.id?'active':''}"
+          style="background:${t.bg};color:${t.text};border-color:${cur===t.id?t.accent:'transparent'};"
+          onclick="ubApplyTheme('${t.id}')"
+          title="${t.label}">
+          <div style="width:32px;height:32px;border-radius:50%;background:${t.accent};margin:0 auto 6px;box-shadow:0 4px 12px rgba(0,0,0,.3);"></div>
+          <div style="font-size:9px;line-height:1.3;">${t.label}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:rgba(253,246,236,.35);">
+      💡 Theme is saved to Firebase — all customers see the same theme instantly on next page load
+    </div>
+  </div>
+
+  <!-- 📊 MONTHLY REPORT & AUTO-CLEANUP -->
+  <div class="acard" style="margin-bottom:16px;border-left:3px solid #34D399;">
+    <h3>📊 Monthly Order Report</h3>
+    <div class="asub">Generate an Excel report of this month's orders — download it, and optionally clear processed orders</div>
+    <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="af-group">
+        <label>Owner Email (for report reference)</label>
+        <input class="af-inp" id="s_report_email" value="${localStorage.getItem('ub_report_email')||'udayabakeryb@gmail.com'}" placeholder="owner@email.com">
+      </div>
+      <div class="af-group">
+        <label>Owner WhatsApp</label>
+        <input class="af-inp" id="s_report_wa" value="${localStorage.getItem('ub_report_wa')||'919845406712'}" placeholder="91XXXXXXXXXX">
+      </div>
+    </div>
+    <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:rgba(253,246,236,.6);">
+      📅 Current month: <strong style="color:#34D399;">${new Date().toLocaleString('en-IN',{month:'long',year:'numeric'})}</strong> &nbsp;|&nbsp;
+      Total orders: <strong style="color:#34D399;">${(()=>{ try{ const now=new Date(); return (JSON.parse(localStorage.getItem('ub_orders_cache')||'[]').filter(o=>{ const d=new Date(o.timestamp||o.createdAt||Date.now()); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear(); }).length)||'(loading)'; }catch(e){ return '...'; } })()}</strong> orders this month
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="abtn" onclick="ubGenerateMonthlyReport(false)" style="background:linear-gradient(135deg,#065F46,#059669);">
+        📥 Download XL Report
+      </button>
+      <button class="abtn" onclick="ubGenerateMonthlyReport(true)" style="background:linear-gradient(135deg,#1D4ED8,#2563EB);">
+        📤 Download & Send WhatsApp
+      </button>
+      <button class="abtn-del" onclick="ubDeleteMonthlyOrders()" style="padding:12px 18px;border-radius:12px;">
+        🗑 Delete This Month's Orders
+      </button>
+    </div>
+    <div id="reportStatus" style="margin-top:10px;font-size:12px;color:rgba(253,246,236,.5);"></div>
+    <div style="margin-top:8px;font-size:11px;color:rgba(253,246,236,.3);">
+      ⚠️ Deleting orders removes them from all points — export & backup first!
     </div>
   </div>
 
