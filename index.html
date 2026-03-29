@@ -5217,9 +5217,73 @@ let adminPass = null; // plain-text password removed — see hashPass() below
 
 // Note: Duplicate save() removed — use the save() defined above which persists to localStorage as Firebase backup.
 
-// ═══════════════════════════════════════
-//  NAV
-// ═══════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  🌐 SMART KANNADA AUTO-TRANSLATION FOR PRODUCT NAMES
+//  Used when admin hasn't filled nameKn — translates common
+//  bakery words automatically so ALL products show in Kannada
+// ═══════════════════════════════════════════════════════
+const KN_WORD_MAP = {
+  // Cakes
+  'cake': 'ಕೇಕ್', 'cakes': 'ಕೇಕ್', 'chocolate': 'ಚಾಕೊಲೇಟ್',
+  'vanilla': 'ವೆನಿಲ್ಲಾ', 'strawberry': 'ಸ್ಟ್ರಾಬೆರಿ', 'mango': 'ಮಾವು',
+  'wedding': 'ಮದುವೆ', 'birthday': 'ಹುಟ್ಟುಹಬ್ಬ', 'anniversary': 'ವಾರ್ಷಿಕೋತ್ಸವ',
+  'black forest': 'ಬ್ಲ್ಯಾಕ್ ಫಾರೆಸ್ಟ್', 'red velvet': 'ರೆಡ್ ವೆಲ್ವೆಟ್',
+  'butterscotch': 'ಬಟರ್‌ಸ್ಕಾಚ್', 'pineapple': 'ಅನಾನಸ್', 'fruit': 'ಹಣ್ಣು',
+  'classic': 'ಕ್ಲಾಸಿಕ್', 'dream': 'ಕನಸು', 'royal': 'ರಾಯಲ್',
+  'photo': 'ಫೋಟೋ', 'print': 'ಪ್ರಿಂಟ್', 'theme': 'ಥೀಮ್',
+  'designer': 'ಡಿಸೈನರ್', 'premium': 'ಪ್ರೀಮಿಯಂ', 'custom': 'ಕಸ್ಟಮ್',
+  // Puffs & Pastries
+  'puff': 'ಪಫ್', 'puffs': 'ಪಫ್', 'egg': 'ಮೊಟ್ಟೆ',
+  'chicken': 'ಚಿಕನ್', 'veg': 'ವೆಜ್', 'vegetable': 'ತರಕಾರಿ',
+  'paneer': 'ಪನೀರ್', 'masala': 'ಮಸಾಲಾ', 'spicy': 'ಖಾರ',
+  'pastry': 'ಪೇಸ್ಟ್ರಿ', 'cream': 'ಕ್ರೀಮ್', 'croissant': 'ಕ್ರಾಸಾಂ',
+  'butter': 'ಬೆಣ್ಣೆ', 'cheese': 'ಚೀಸ್', 'mushroom': 'ಅಣಬೆ',
+  // Sweets
+  'laddoo': 'ಲಡ್ಡು', 'laddu': 'ಲಡ್ಡು', 'besan': 'ಬೇಸನ್',
+  'rava': 'ರವಾ', 'gulab': 'ಗುಲಾಬ್', 'jamun': 'ಜಾಮೂನ್',
+  'barfi': 'ಬರ್ಫಿ', 'halwa': 'ಹಲ್ವಾ', 'kheer': 'ಖೀರ್',
+  'sweet': 'ಸಿಹಿ', 'mithai': 'ಮಿಠಾಯಿ',
+  // Snacks
+  'chakli': 'ಚಕ್ಲಿ', 'sev': 'ಸೇವ್', 'mixture': 'ಮಿಕ್ಸ್ಚರ್',
+  'namkeen': 'ನಮ್ಕೀನ್', 'biscuit': 'ಬಿಸ್ಕತ್', 'khari': 'ಖಾರಿ',
+  'rusk': 'ರಸ್ಕ್', 'bread': 'ಬ್ರೆಡ್', 'loaf': 'ಲೋಫ್',
+  'roll': 'ರೋಲ್', 'bun': 'ಬನ್', 'toast': 'ಟೋಸ್ಟ್',
+  'moong': 'ಮೂಂಗ್', 'dal': 'ದಾಲ್', 'bombay': 'ಬಾಂಬೆ',
+  'thin': 'ತೆಳು', 'crispy': 'ಕರಕರೆ', 'spiced': 'ಮಸಾಲೆ',
+  // Seasonal
+  'diwali': 'ದೀಪಾವಳಿ', 'christmas': 'ಕ್ರಿಸ್ಮಸ್', 'plum': 'ಪ್ಲಮ್',
+  'box': 'ಪೆಟ್ಟಿಗೆ', 'assorted': 'ಮಿಶ್ರ', 'festive': 'ಹಬ್ಬದ',
+  'special': 'ವಿಶೇಷ', 'seasonal': 'ಋತು',
+  // Generic
+  'milk': 'ಹಾಲಿನ', 'dinner': 'ಡಿನ್ನರ್', 'rice': 'ಅಕ್ಕಿ',
+  'soft': 'ಮೃದು', 'fresh': 'ತಾಜಾ', 'homemade': 'ಮನೆಯ',
+};
+
+function ubAutoTranslateKn(englishName) {
+  if(!englishName) return '';
+  let result = englishName;
+  // Replace word by word (case-insensitive, whole words only)
+  Object.entries(KN_WORD_MAP).forEach(([en, kn]) => {
+    const re = new RegExp('\\b' + en + '\\b', 'gi');
+    result = result.replace(re, kn);
+  });
+  return result;
+}
+
+// Get best display name for a product in current language
+function ubGetProductName(p, lang) {
+  if(!lang) lang = currentLang;
+  if(lang !== 'kn') return p.name; // Always English when en selected
+  if(p.nameKn && p.nameKn.trim()) return p.nameKn; // Use saved Kannada name
+  return ubAutoTranslateKn(p.name); // Auto-translate missing Kannada names
+}
+
+function ubGetProductDesc(p, lang) {
+  if(!lang) lang = currentLang;
+  if(lang !== 'kn') return p.desc;
+  if(p.descKn && p.descKn.trim()) return p.descKn;
+  return p.desc; // Fall back to English desc if no Kannada desc
+}
 let _scrollTick=false;
 window.addEventListener('scroll',()=>{
   if(!_scrollTick){
@@ -6937,7 +7001,7 @@ function renderProds(){
   // Feature 12: Filter out seasonal items outside their active window
   const todayISO = new Date().toISOString().split('T')[0];
   list = list.filter(p=>{
-    if(!p.seasonStart && !p.seasonEnd) return true; // no restriction
+    if(!p.seasonStart && !p.seasonEnd) return true;
     const afterStart = !p.seasonStart || todayISO >= p.seasonStart;
     const beforeEnd  = !p.seasonEnd   || todayISO <= p.seasonEnd;
     return afterStart && beforeEnd;
@@ -6946,19 +7010,23 @@ function renderProds(){
   // Apply search filter
   if(searchQuery.trim()){
     list = list.map(p=>({p, score:scoreProduct(p, searchQuery)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).map(x=>x.p);
-    // Show search bar
     document.getElementById('searchResultsBar').classList.add('visible');
     document.getElementById('searchQueryLabel').textContent = `"${searchQuery}"`;
     document.getElementById('productsTitle').innerHTML = `Search Results for <em>"${searchQuery}"</em>`;
   } else {
     document.getElementById('searchResultsBar').classList.remove('visible');
-    const catName = selCat==='all' ? 'All Products' : CATS.find(c=>c.id===selCat)?.name || '';
-    document.getElementById('productsTitle').innerHTML = selCat==='all' ? 'Our <em>Delicious</em> Products' : `${catName} <em>— Fresh & Delicious</em>`;
+    const _isKnTitle = currentLang === 'kn';
+    const catObj = CATS.find(c=>c.id===selCat);
+    const catNameDisplay = catObj
+      ? (_isKnTitle ? (catObj.nameKn || getCatNameKn(catObj.name)) : catObj.name)
+      : '';
+    document.getElementById('productsTitle').innerHTML = selCat==='all'
+      ? (_isKnTitle ? 'ನಮ್ಮ <em>ರುಚಿಕರ</em> ಉತ್ಪನ್ನಗಳು' : 'Our <em>Delicious</em> Products')
+      : `${catNameDisplay} <em>— ${_isKnTitle ? 'ತಾಜಾ & ರುಚಿಕರ' : 'Fresh & Delicious'}</em>`;
   }
 
   const grid = document.getElementById('productGrid');
   if(!list.length){
-    // Bug 15 fix: different message for empty catalogue vs no search results
     if(PRODS.length === 0){
       grid.innerHTML = `<div class="no-results"><div class="nr-icon">🍰</div><h3>Loading menu...</h3><p>Our fresh items are on their way. <a href="#" onclick="location.reload()" style="color:var(--gold)">Tap to refresh</a> if this takes too long.</p></div>`;
     } else {
@@ -6971,12 +7039,20 @@ function renderProds(){
     const cat = CATS.find(c=>c.id===p.cat);
     const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy" decoding="async" style="cursor:pointer;" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='flex')">` : `<div class="pimg-emoji">${p.emoji}</div>`;
     const _isKn = currentLang === 'kn';
-    const pDisplayName = _isKn && p.nameKn ? p.nameKn : p.name;
-    const pDisplayDesc = _isKn && p.descKn ? p.descKn : p.desc;
+
+    // ── SMART LANGUAGE DISPLAY ──
+    // Uses helper: shows saved nameKn, or auto-translates, or falls back to English
+    const pDisplayName = ubGetProductName(p, currentLang);
+    const pDisplayDesc = ubGetProductDesc(p, currentLang);
+
+    // Category label also in correct language
+    const catDisplayName = cat
+      ? (_isKn ? (cat.nameKn || getCatNameKn(cat.name)) : cat.name)
+      : (p.cat || '');
+
     const pname = searchQuery ? highlight(pDisplayName, searchQuery) : pDisplayName;
     const hasFlavours = p.flavours && p.flavours.length > 0;
     const flvLabel = hasFlavours ? `<div class="flv-img-label" id="fl-${p.id}"></div>` : '';
-    // Reorder flavours so defaultFlavour is first, store on p BEFORE building overlays
     if(hasFlavours){
       const list = [...p.flavours];
       if(p.defaultFlavour){
@@ -6987,21 +7063,20 @@ function renderProds(){
       p._displayFlavours = list;
     }
     const cardFlvList = p._displayFlavours || p.flavours || [];
-    // Build overlays using _displayFlavours order so IDs match chip indices
     const flvOverlays = hasFlavours ? cardFlvList.map((f,i)=>{
       if(!f.image) return '';
       return `<img class="flv-img-overlay" id="fi-${p.id}-${i}" src="${f.image}" alt="${f.name}" loading="lazy" onerror="this.style.opacity='0'">`;
     }).join('') : '';
     const flavourHtml = hasFlavours ? `
-      <div class="varlabel" style="margin-top:6px;">Select Flavour:</div>
+      <div class="varlabel" style="margin-top:6px;">${_isKn ? 'ಫ್ಲೇವರ್ ಆಯ್ಕೆ ಮಾಡಿ:' : 'Select Flavour:'}</div>
       <div class="vchips" id="pf-${p.id}">${cardFlvList.map((f,i)=>`<span class="vc ${i===0?'sel':''}" onclick="selFlv('${p.id}',${i})" style="background:${i===0?'var(--gold)':''};color:${i===0?'#fff':''}">${f.name}${f.extra>0?` +₹${f.extra}`:''}</span>`).join('')}</div>` : '';
     const _pOos = p.inStock===false;
     return `<div class="product-card" id="pc-${p.id}" style="${_pOos?'opacity:.5;pointer-events:none;':''}">
-      ${_pOos?'<div style="position:absolute;top:9px;left:9px;z-index:6;background:#EF4444;color:#fff;font-size:9px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;">Out of Stock</div>':''}
+      ${_pOos?'<div style="position:absolute;top:9px;left:9px;z-index:6;background:#EF4444;color:#fff;font-size:9px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;">${_isKn?"ಸ್ಟಾಕ್ ಇಲ್ಲ":"Out of Stock"}</div>':''}
       <button class="ub-wish-btn ${ubIsWished(p.id)?'loved':''}" onclick="ubToggleWish(${p.id});event.stopPropagation();" title="Save to Wishlist">${ubIsWished(p.id)?'❤️':'🤍'}</button>
       <div class="pimg-wrap" onclick="openQAModal('${p.id}')" style="cursor:pointer;">${imgH}${flvOverlays}${flvLabel}${p.badge?`<span class="pbadge">${p.badge}</span>`:''}</div>
       <div class="pbody">
-        <div class="pcat">${cat?cat.name:p.cat}</div>
+        <div class="pcat">${catDisplayName}</div>
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
           <div class="pname" style="flex:1;">${pname}</div>
         </div>
@@ -7009,11 +7084,11 @@ function renderProds(){
         <div class="pdesc">${pDisplayDesc}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
           ${((p._displayFlavours&&p._displayFlavours[0]?.variants?.length)?p._displayFlavours[0].variants:p.variants).map(v=>`<span style="font-size:11px;background:var(--cream-dark);color:var(--text-mid);padding:3px 8px;border-radius:20px;">${v.label}</span>`).join('')}
-          ${hasFlavours?`<span style="font-size:11px;background:rgba(200,146,58,.12);color:var(--gold);padding:3px 8px;border-radius:20px;">${p.flavours.length} flavours</span>`:''}
+          ${hasFlavours?`<span style="font-size:11px;background:rgba(200,146,58,.12);color:var(--gold);padding:3px 8px;border-radius:20px;">${p.flavours.length} ${_isKn?'ಫ್ಲೇವರ್‌ಗಳು':'flavours'}</span>`:''}
         </div>
         <div class="pfoot">
           <div class="pprice" id="pp-${p.id}">${(()=>{const dfl=(p._displayFlavours&&p._displayFlavours[0]?.variants?.length)?p._displayFlavours[0].variants:p.variants;const dv=dfl[0];if(!dv)return '';const _fs=ubGetFlashSale();const _op=dv.price;const _dp=_fs?Math.round(_op*(1-_fs.pct/100)):_op;return _fs?`<span style="text-decoration:line-through;opacity:.5;font-size:12px;">₹${_op}</span> <span style="color:#EF4444;font-weight:800;">₹${_dp}</span> <small>/ ${dv.label}</small>`:`₹${_op} <small>/ ${dv.label}</small>`})()}</div>
-          <button class="btn-add" onclick="openQAModal('${p.id}')">+ Add</button>
+          <button class="btn-add" onclick="openQAModal('${p.id}')">${_isKn ? '+ ಸೇರಿಸಿ' : '+ Add'}</button>
         </div>
       </div>
     </div>`;
