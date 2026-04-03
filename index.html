@@ -225,16 +225,366 @@ body.theme-lavender {
 body.theme-lavender nav { background: rgba(248,245,255,0.97) !important; }
 body.theme-lavender .ann-bar { background: linear-gradient(90deg,#2D1060,#5530A0,#A080F0,#5530A0,#2D1060) !important; background-size:300% 100% !important; }
 
-/* Admin theme panel */
-.theme-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-top: 14px; }
-.theme-swatch {
-  border-radius: 14px; padding: 10px 6px; cursor: pointer;
-  border: 2.5px solid transparent; text-align: center; transition: all .25s;
-  font-size: 10px; font-weight: 700; letter-spacing: .3px;
+/* ══ LUXURY THEME SELECTOR ══ */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(5,1fr);
+  gap: 12px;
+  margin-top: 18px;
 }
-.theme-swatch.active { border-color: #E8B96A !important; box-shadow: 0 0 0 3px rgba(200,146,58,.3); transform: scale(1.06); }
-.theme-swatch:hover { transform: scale(1.05); box-shadow: 0 6px 18px rgba(0,0,0,.2); }
-@media(max-width:600px){ .theme-grid { grid-template-columns: repeat(2,1fr); } }
+.theme-swatch {
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all .3s cubic-bezier(.22,1,.36,1);
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+}
+.theme-swatch:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 12px 32px rgba(0,0,0,.4);
+}
+.theme-swatch.active {
+  border-color: #E8B96A !important;
+  box-shadow: 0 0 0 3px rgba(200,146,58,.35), 0 12px 28px rgba(0,0,0,.4);
+  transform: translateY(-3px) scale(1.04);
+}
+.theme-swatch.active::after {
+  content: '✓';
+  position: absolute;
+  top: 6px; right: 7px;
+  width: 18px; height: 18px;
+  background: #E8B96A;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 800;
+  color: #1A0800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 18px;
+  text-align: center;
+}
+.tsw-preview {
+  width: 100%;
+  height: 60px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tsw-preview-orb {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.35);
+  box-shadow: 0 3px 10px rgba(0,0,0,.3);
+  position: relative; z-index: 1;
+}
+.tsw-preview-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  position: absolute;
+  opacity: .7;
+}
+.tsw-label {
+  padding: 7px 6px 8px;
+  text-align: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+@media(max-width:600px){
+  .theme-grid { grid-template-columns: repeat(2,1fr); }
+  .tsw-preview { height: 50px; }
+}
+
+/* ══ LUXURY ADMIN CARD UPGRADES ══ */
+.acard {
+  background: linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.02) 100%) !important;
+  border: 1px solid rgba(200,146,58,.14) !important;
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.acard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200,146,58,.35), transparent);
+}
+.acard h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  color: #E8B96A;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.acard .asub {
+  font-size: 11px;
+  color: rgba(253,246,236,.35);
+  margin-bottom: 14px;
+  letter-spacing: .2px;
+}
+/* Luxury KPI cards */
+.kcard {
+  background: linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.02)) !important;
+  border: 1px solid rgba(200,146,58,.14) !important;
+  border-radius: 16px !important;
+  padding: 18px 16px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  transition: all .25s !important;
+}
+.kcard::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(200,146,58,.3), transparent);
+}
+.kcard:hover {
+  border-color: rgba(200,146,58,.3) !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,.25) !important;
+  transform: translateY(-2px) !important;
+}
+.kval {
+  font-family: 'Cormorant Garamond','Playfair Display',serif !important;
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  color: #F0DEC8 !important;
+  line-height: 1 !important;
+  margin: 8px 0 !important;
+  letter-spacing: -.5px !important;
+}
+.klbl {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 1.5px !important;
+  text-transform: uppercase !important;
+  color: rgba(200,146,58,.6) !important;
+}
+
+/* ══ VIDEO SECTION CSS — CUSTOMER SIDE ══ */
+#cakeVideos {
+  padding: 90px 0 70px;
+  background: linear-gradient(160deg, #110600 0%, #0A0300 40%, #180900 100%);
+  position: relative;
+  overflow: hidden;
+}
+#cakeVideos::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 40%, rgba(200,146,58,.1) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 70% at 85% 60%, rgba(107,58,37,.12) 0%,transparent 55%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C8923A' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.videos-section-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+.videos-header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+.videos-header .vbadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg,rgba(200,146,58,.18),rgba(200,146,58,.08));
+  border: 1px solid rgba(200,146,58,.3);
+  color: #E8B96A;
+  font-family: 'Jost', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  border-radius: 50px;
+  margin-bottom: 20px;
+}
+.videos-header .vbadge::before { content: '✦'; color: rgba(200,146,58,.6); }
+.videos-header h2 {
+  font-family: 'Cormorant Garamond','Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 700;
+  color: #FDF6EC;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  letter-spacing: -.5px;
+}
+.videos-header h2 em { color: #E8B96A; font-style: italic; }
+.videos-header p {
+  font-size: 15px;
+  color: rgba(253,246,236,.45);
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.75;
+}
+.videos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+}
+@media(max-width:640px) { .videos-grid { grid-template-columns: 1fr; gap: 20px; } }
+.video-card {
+  background: linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  border: 1px solid rgba(200,146,58,.15);
+  border-radius: 22px;
+  overflow: hidden;
+  transition: all .38s cubic-bezier(.22,1,.36,1);
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,.25);
+}
+.video-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(200,146,58,.45);
+  box-shadow: 0 28px 64px rgba(0,0,0,.45), 0 0 0 1px rgba(200,146,58,.18);
+}
+.video-thumb-wrap {
+  position: relative;
+  padding-top: 56.25%;
+  background: #080200;
+  overflow: hidden;
+}
+.video-thumb-wrap img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .45s ease;
+}
+.video-card:hover .video-thumb-wrap img { transform: scale(1.06); }
+.video-thumb-wrap .vplay-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(to top, rgba(10,4,0,.7) 0%, rgba(0,0,0,.1) 60%);
+  transition: background .3s;
+}
+.video-card:hover .vplay-overlay { background: linear-gradient(to top,rgba(10,4,0,.5) 0%,transparent 60%); }
+.vplay-btn {
+  width: 58px; height: 58px;
+  background: linear-gradient(135deg, rgba(200,146,58,.95), rgba(160,98,58,.9));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 8px 30px rgba(200,146,58,.55), 0 0 0 8px rgba(200,146,58,.12);
+  transition: all .25s;
+  padding-left: 3px;
+}
+.video-card:hover .vplay-btn {
+  transform: scale(1.15);
+  box-shadow: 0 12px 38px rgba(200,146,58,.65), 0 0 0 12px rgba(200,146,58,.1);
+}
+.vcdate-tag {
+  position: absolute; top: 10px; left: 12px; z-index: 3;
+  background: rgba(10,4,0,.75);
+  border: 1px solid rgba(200,146,58,.25);
+  border-radius: 8px;
+  padding: 3px 9px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(200,146,58,.85);
+}
+.video-card-body { padding: 18px 20px 22px; }
+.video-card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px; font-weight: 700;
+  color: #F0DEC8;
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+.video-card-desc {
+  font-size: 13px;
+  color: rgba(253,246,236,.42);
+  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.video-card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 14px; padding-top: 12px;
+  border-top: 1px solid rgba(200,146,58,.1);
+}
+.video-card-footer span {
+  font-size: 11px; color: rgba(200,146,58,.6);
+  font-weight: 700; letter-spacing: .5px;
+  display: flex; align-items: center; gap: 5px;
+}
+.vwatch-btn {
+  background: linear-gradient(135deg, rgba(200,146,58,.2), rgba(200,146,58,.08));
+  border: 1px solid rgba(200,146,58,.3);
+  color: #E8B96A;
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+  letter-spacing: .5px;
+}
+.vwatch-btn:hover { background: rgba(200,146,58,.35); border-color: rgba(200,146,58,.6); }
+.videos-empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: rgba(253,246,236,.25);
+  grid-column: 1 / -1;
+}
+.videos-empty .ve-icon { font-size: 60px; margin-bottom: 18px; display: block; }
+.videos-empty p { font-size: 14px; line-height: 1.7; max-width: 320px; margin: 0 auto; }
+
+/* Video Lightbox */
+.vlb-bg {
+  position: fixed; inset: 0; z-index: 9500;
+  background: rgba(0,0,0,.93);
+  display: none; align-items: center; justify-content: center;
+  padding: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.vlb-bg.open { display: flex; animation: fadeIn .2s ease; }
+.vlb-box {
+  background: linear-gradient(145deg,#120700,#0C0400);
+  border: 1px solid rgba(200,146,58,.22);
+  border-radius: 24px;
+  overflow: hidden;
+  width: 100%; max-width: 860px;
+  box-shadow: 0 50px 120px rgba(0,0,0,.8), 0 0 0 1px rgba(200,146,58,.08);
+  position: relative;
+}
+.vlb-frame { position: relative; padding-top: 56.25%; }
+.vlb-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+.vlb-close {
+  position: absolute; top: 12px; right: 12px; z-index: 10;
+  width: 36px; height: 36px;
+  background: rgba(0,0,0,.75); border: 1px solid rgba(255,255,255,.15);
+  border-radius: 50%; color: #fff; font-size: 16px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.vlb-close:hover { background: rgba(200,146,58,.35); border-color: rgba(200,146,58,.5); }
+.vlb-info { padding: 18px 22px 20px; }
+.vlb-info h3 { font-family: 'Playfair Display',serif; font-size: 17px; color: #E8B96A; margin-bottom: 5px; }
+.vlb-info p { font-size: 13px; color: rgba(253,246,236,.45); line-height: 1.6; }
 .notif-prompt{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:3500;background:linear-gradient(135deg,var(--choco),var(--choco-mid));color:var(--cream);border-radius:20px;padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 32px rgba(0,0,0,.3);max-width:360px;width:90%;animation:slideUp .4s cubic-bezier(.34,1.56,.64,1);}
 @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(30px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
 .notif-prompt-icon{font-size:28px;flex-shrink:0;}
@@ -3819,6 +4169,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
     <ul class="nav-links">
       <li><a href="#categories">Menu</a></li>
       <li><a href="#products">Shop</a></li>
+      <li><a href="#cakeVideos" style="display:flex;align-items:center;gap:5px;">🎬 Videos</a></li>
       <li><a href="#reviews">Reviews</a></li>
       <li><a href="#contact">Contact</a></li>
       <li id="navAdminLink"><a href="javascript:void(0)" onclick="event.preventDefault();openAdmin();" style="color:var(--gold);font-weight:700;">👑 Admin</a></li>
@@ -3852,6 +4203,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
   </div>
   <a href="#categories" onclick="toggleMob()">🎂 Menu</a>
   <a href="#products" onclick="toggleMob()">🛍️ Shop</a>
+  <a href="#cakeVideos" onclick="toggleMob()">🎬 Videos</a>
   <a href="#reviews" onclick="toggleMob()">⭐ Reviews</a>
   <a href="#contact" onclick="toggleMob()">📍 Contact</a>
   <a href="javascript:void(0)" onclick="event.preventDefault();toggleMob();setTimeout(openTrackModal,180);">📦 Track Order</a>
@@ -3862,6 +4214,8 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
 <!-- HERO -->
 <section id="hero">
   <div class="hero-glow"></div>
+  <!-- Luxury mesh overlay -->
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(200,146,58,.07) 0%,transparent 60%);pointer-events:none;z-index:0;" aria-hidden="true"></div>
   <!-- Floating Particles -->
   <div class="hero-particles" aria-hidden="true">
     <div class="hero-particle" style="left:10%;bottom:10%;width:6px;height:6px;background:rgba(200,146,58,.5);--dur:9s;--delay:0s;--dist:-180px;--op:.5;"></div>
@@ -3879,16 +4233,30 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
       <span class="hero-label anim-fade-up" style="animation-delay:.1s">✦ Belman's Finest Bakery</span>
       <h1 class="hero-title anim-fade-up" style="animation-delay:.2s">Baked with <em>Love</em>,<br>Crafted with <em>Passion</em></h1>
       <p class="hero-desc anim-fade-up" style="animation-delay:.3s">From dreamy wedding cakes to crispy chaklis — every bite tells a story of tradition, quality and joy in the heart of Belman.</p>
-      <!-- HERO SEARCH -->
 
       <div class="hero-btns anim-fade-up" style="animation-delay:.4s">
         <a href="#products" class="btn-primary">🛒 Order Now</a>
         <a href="#categories" class="btn-outline">Explore Menu ↓</a>
       </div>
-      <div class="anim-fade-up" style="animation-delay:.5s;margin-top:6px;">
-        <button onclick="openCakeBuilder()" style="background:linear-gradient(135deg,rgba(200,146,58,.18),rgba(200,146,58,.08));border:2px solid rgba(200,146,58,.5);color:var(--choco);border-radius:50px;padding:13px 28px;font-family:Jost,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;">
+      <div class="anim-fade-up" style="animation-delay:.5s;margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="openCakeBuilder()" style="background:linear-gradient(135deg,rgba(200,146,58,.18),rgba(200,146,58,.08));border:2px solid rgba(200,146,58,.5);color:var(--choco);border-radius:50px;padding:13px 24px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .3s;">
           🎂 Build Your Own Cake
         </button>
+        <a href="#cakeVideos" style="background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.18);color:var(--choco);border-radius:50px;padding:13px 22px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;text-decoration:none;transition:all .3s;backdrop-filter:blur(6px);">
+          ▶ Watch Us Bake
+        </a>
+      </div>
+      <!-- Trust badges row -->
+      <div class="anim-fade-up" style="animation-delay:.65s;margin-top:20px;display:flex;flex-wrap:wrap;gap:12px;">
+        <div style="display:flex;align-items:center;gap:6px;background:rgba(200,146,58,.1);border:1px solid rgba(200,146,58,.22);border-radius:24px;padding:6px 14px;">
+          <span style="font-size:14px;">⭐</span><span style="font-size:11px;font-weight:700;color:var(--gold-light);letter-spacing:.3px;">4.9 Rating</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;background:rgba(200,146,58,.1);border:1px solid rgba(200,146,58,.22);border-radius:24px;padding:6px 14px;">
+          <span style="font-size:14px;">🎂</span><span style="font-size:11px;font-weight:700;color:var(--gold-light);letter-spacing:.3px;">500+ Happy Customers</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;background:rgba(200,146,58,.1);border:1px solid rgba(200,146,58,.22);border-radius:24px;padding:6px 14px;">
+          <span style="font-size:14px;">🚚</span><span style="font-size:11px;font-weight:700;color:var(--gold-light);letter-spacing:.3px;">Same Day Delivery</span>
+        </div>
       </div>
       <!-- Mobile-only hero visual row -->
       <div class="mob-hero-visual">
@@ -3898,7 +4266,12 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
       </div>
     </div>
     <div class="hero-visual">
-      <div class="hero-ring"><div class="hero-cake">🎂</div></div>
+      <div class="hero-ring" style="position:relative;">
+        <div class="hero-cake">🎂</div>
+        <!-- Orbit rings -->
+        <div style="position:absolute;inset:-20px;border-radius:50%;border:1px solid rgba(200,146,58,.15);pointer-events:none;"></div>
+        <div style="position:absolute;inset:-40px;border-radius:50%;border:1px dashed rgba(200,146,58,.08);pointer-events:none;"></div>
+      </div>
       <div class="hero-badge b1"><span class="num">500+</span>Happy Customers</div>
       <div class="hero-badge b2"><span class="num">10+</span>Yrs of Baking</div>
     </div>
@@ -4098,6 +4471,37 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
     </div>
   </div>
 </section>
+
+<!-- CAKE MAKING VIDEOS SECTION -->
+<section id="cakeVideos">
+  <div class="videos-section-inner">
+    <div class="videos-header">
+      <div class="vbadge">Watch Us Bake</div>
+      <h2>Behind the <em>Sweet Magic</em></h2>
+      <p>Go behind the scenes at Udaya Bakery — watch our skilled bakers craft each cake with love, tradition, and pure passion.</p>
+    </div>
+    <div class="videos-grid" id="customerVideosGrid">
+      <div class="videos-empty">
+        <span class="ve-icon">🎬</span>
+        <p>Our baking videos are coming soon!<br>Check back for a delicious glimpse into our kitchen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO LIGHTBOX -->
+<div class="vlb-bg" id="videoLightboxBg" onclick="ubCloseVideoLightbox(event)">
+  <div class="vlb-box">
+    <button class="vlb-close" onclick="ubCloseVideoLightbox(null)" aria-label="Close video">✕</button>
+    <div class="vlb-frame">
+      <iframe id="vlbIframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+    <div class="vlb-info">
+      <h3 id="vlbTitle"></h3>
+      <p id="vlbDesc"></p>
+    </div>
+  </div>
+</div>
 
 <!-- CONTACT -->
 <section id="contact">
@@ -4498,6 +4902,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
         <button class="atab" onclick="switchTab('broadcast')" id="at-broadcast">📢 Broadcast</button>
         <button class="atab" onclick="switchTab('analytics')" id="at-analytics">📈 Analytics</button>
         <button class="atab" onclick="switchTab('cakebuilder')" id="at-cakebuilder">🎂 Cake Builder</button>
+        <button class="atab" onclick="switchTab('videos')" id="at-videos">🎬 Cake Videos</button>
       </div>
     </div>
     
@@ -8570,6 +8975,7 @@ function renderAdminTab(){
   else if(adminTab==='broadcast') el.innerHTML = buildBroadcastTab();
   else if(adminTab==='analytics') el.innerHTML = buildAnalyticsTab();
   else if(adminTab==='cakebuilder') el.innerHTML = buildCakeBuilderAdminTab();
+  else if(adminTab==='videos') el.innerHTML = buildVideosAdminTab();
 }
 
 // ── DASHBOARD ──
@@ -9660,15 +10066,10 @@ function ubApplyTheme(themeId) {
     if(db) db.collection('config').doc('theme').set({ themeId, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{});
   } catch(e) {}
   document.querySelectorAll('.theme-swatch').forEach((el, i) => {
-    el.classList.toggle('active', UB_THEMES[i] === themeId);
-    if(UB_THEMES[i] === themeId) {
-      const c = el.querySelector('div')?.style.background||'#C8923A';
-      el.style.borderColor = c;
-      el.style.boxShadow = '0 0 0 3px rgba(200,146,58,.3)';
-    } else {
-      el.style.borderColor = 'transparent';
-      el.style.boxShadow = '';
-    }
+    const tId = ['default','midnight','rosegold','emerald','royal','obsidian','sakura','ocean','sunset','lavender'][i];
+    const dots = ['#E8B96A','#C8B4FF','#F5C8D4','#34D399','#FFE080','#FFE84D','#FF80A0','#60C8F5','#FFB84D','#C8B0FF'];
+    el.classList.toggle('active', tId === themeId);
+    el.style.borderColor = (tId === themeId) ? (dots[i] || '#E8B96A') : 'transparent';
   });
   showToast('🎨 Theme applied to all customers!', 'ok');
 }
@@ -10076,29 +10477,33 @@ function buildSettingsTab(){
     <div class="asub">Choose a luxury theme — it applies instantly to every customer who visits your store</div>
     <div class="theme-grid" id="adminThemeGrid">
       ${[
-        {id:'default',   label:'Classic Bakery',   bg:'#3B1F0E', accent:'#C8923A', text:'#FDF6EC'},
-        {id:'midnight',  label:'Midnight Purple',  bg:'#0D0A1A', accent:'#C8B4FF', text:'#F0E8FF'},
-        {id:'rosegold',  label:'Rose Gold',        bg:'#4A1520', accent:'#E8A0B0', text:'#FDF0F0'},
-        {id:'emerald',   label:'Emerald Garden',   bg:'#064E3B', accent:'#34D399', text:'#F0FDF4'},
-        {id:'royal',     label:'Royal Gold',       bg:'#1A0A4A', accent:'#F5C040', text:'#FEF9F0'},
-        {id:'obsidian',  label:'Black Diamond',    bg:'#0A0A0A', accent:'#FFD700', text:'#F8F8F8'},
-        {id:'sakura',    label:'Sakura Blossom',   bg:'#3D0020', accent:'#FF80A0', text:'#FFF5F8'},
-        {id:'ocean',     label:'Ocean Blue',       bg:'#002040', accent:'#00A8E8', text:'#F0F8FF'},
-        {id:'sunset',    label:'Sunset Orange',    bg:'#3A1500', accent:'#FF8C00', text:'#FFF8F0'},
-        {id:'lavender',  label:'Lavender Dream',   bg:'#2D1060', accent:'#A080F0', text:'#F8F5FF'},
+        {id:'default',  label:'Classic Bakery',  bg:'linear-gradient(135deg,#3B1F0E,#6B3A25)', accent:'#C8923A', dot:'#E8B96A', text:'#FDF6EC', icon:'🎂'},
+        {id:'midnight', label:'Midnight',        bg:'linear-gradient(135deg,#0D0A1A,#1A1530)', accent:'#9B7FD4', dot:'#C8B4FF', text:'#F0E8FF', icon:'🌙'},
+        {id:'rosegold', label:'Rose Gold',       bg:'linear-gradient(135deg,#4A1520,#8B3A4A)', accent:'#E8A0B0', dot:'#F5C8D4', text:'#FDF0F0', icon:'🌸'},
+        {id:'emerald',  label:'Emerald',         bg:'linear-gradient(135deg,#064E3B,#065F46)', accent:'#059669', dot:'#34D399', text:'#F0FDF4', icon:'🌿'},
+        {id:'royal',    label:'Royal Gold',      bg:'linear-gradient(135deg,#1A0A4A,#2D1580)', accent:'#F5C040', dot:'#FFE080', text:'#FEF9F0', icon:'👑'},
+        {id:'obsidian', label:'Black Diamond',   bg:'linear-gradient(135deg,#0A0A0A,#1A1A1A)', accent:'#FFD700', dot:'#FFE84D', text:'#F8F8F8', icon:'💎'},
+        {id:'sakura',   label:'Sakura',          bg:'linear-gradient(135deg,#3D0020,#801040)', accent:'#C04070', dot:'#FF80A0', text:'#FFF5F8', icon:'🌺'},
+        {id:'ocean',    label:'Ocean',           bg:'linear-gradient(135deg,#002040,#003C6A)', accent:'#005A9E', dot:'#60C8F5', text:'#F0F8FF', icon:'🌊'},
+        {id:'sunset',   label:'Sunset',          bg:'linear-gradient(135deg,#3A1500,#7A3000)', accent:'#C05000', dot:'#FFB84D', text:'#FFF8F0', icon:'🌅'},
+        {id:'lavender', label:'Lavender',        bg:'linear-gradient(135deg,#2D1060,#5530A0)', accent:'#8060D0', dot:'#C8B0FF', text:'#F8F5FF', icon:'🪻'},
       ].map(t => {
         const cur = localStorage.getItem('ub_theme') || 'default';
-        return `<div class="theme-swatch ${cur===t.id?'active':''}"
-          style="background:${t.bg};color:${t.text};border-color:${cur===t.id?t.accent:'transparent'};"
-          onclick="ubApplyTheme('${t.id}')"
-          title="${t.label}">
-          <div style="width:32px;height:32px;border-radius:50%;background:${t.accent};margin:0 auto 6px;box-shadow:0 4px 12px rgba(0,0,0,.3);"></div>
-          <div style="font-size:9px;line-height:1.3;">${t.label}</div>
+        return `<div class="theme-swatch ${cur===t.id?'active':''}" onclick="ubApplyTheme('${t.id}')" title="${t.label}" style="border-color:${cur===t.id?t.dot:'transparent'};">
+          <div class="tsw-preview" style="background:${t.bg};">
+            <div class="tsw-preview-dot" style="background:${t.accent};top:8px;left:10px;"></div>
+            <div class="tsw-preview-dot" style="background:rgba(255,255,255,.15);bottom:8px;right:8px;width:14px;height:14px;"></div>
+            <div class="tsw-preview-orb" style="background:${t.dot};">
+              <span style="font-size:13px;line-height:1;">${t.icon}</span>
+            </div>
+          </div>
+          <div class="tsw-label" style="background:${t.bg};color:${t.text};">${t.label}</div>
         </div>`;
       }).join('')}
     </div>
-    <div style="margin-top:12px;font-size:11px;color:rgba(253,246,236,.35);">
-      💡 Theme is saved to Firebase — all customers see the same theme instantly on next page load
+    <div style="margin-top:14px;display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(253,246,236,.35);">
+      <span style="width:8px;height:8px;border-radius:50%;background:#4ADE80;flex-shrink:0;"></span>
+      Theme syncs to Firebase — all customers see your chosen theme instantly
     </div>
   </div>
 
@@ -12482,6 +12887,272 @@ function cbAdminRemoveDesign(i){var t=getCbDesigns();t.splice(i,1);localStorage.
 async function cbAdminUploadDesignImg(i,input){var file=input.files[0];if(!file)return;var st=document.getElementById('cbD_imgstatus_'+i),ui=document.getElementById('cbD_img_'+i);if(st)st.textContent='Uploading...';try{var url=await uploadToImageBB(file);if(ui)ui.value=url;if(st){st.textContent='Uploaded! Save Designs to apply.';st.style.color='#4ADE80';}showToast('Design image uploaded!','ok');}catch(e){var r=new FileReader();r.onload=function(ev){if(ui)ui.value=ev.target.result;if(st){st.textContent='Ready (saved locally)';st.style.color='#4ADE80';}};r.readAsDataURL(file);}}
 function cbAdminPreviewDesignUrl(i){var url=(document.getElementById('cbD_img_'+i)||{value:''}).value||'';var st=document.getElementById('cbD_imgstatus_'+i);if(st){st.textContent=url?'URL set - Save Designs to apply':'Upload or paste URL';if(url)st.style.color='#4ADE80';}}
 
+// ══════════════════════════════════════════════════════════
+//  🎬 CAKE VIDEOS — Admin + Customer
+// ══════════════════════════════════════════════════════════
+
+function ubGetVideos(){
+  try{ return JSON.parse(localStorage.getItem('ub_videos')||'[]'); }catch(e){ return []; }
+}
+function ubSaveVideos(arr){
+  localStorage.setItem('ub_videos', JSON.stringify(arr));
+  // Sync to Firestore so all customers see new videos
+  try{
+    if(db) db.collection('config').doc('cakeVideos').set({ videos: arr, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{});
+  }catch(e){}
+}
+function ubLoadVideosFromDB(){
+  if(!db) return;
+  db.collection('config').doc('cakeVideos').get().then(doc=>{
+    if(doc.exists && doc.data().videos){
+      const vids = doc.data().videos;
+      localStorage.setItem('ub_videos', JSON.stringify(vids));
+      ubRenderCustomerVideos();
+    }
+  }).catch(()=>{});
+}
+
+// Extract YouTube video ID from various URL formats
+function ubYtId(url){
+  if(!url) return '';
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/))([A-Za-z0-9_\-]{11})/);
+  return m ? m[1] : '';
+}
+// Get YouTube thumbnail
+function ubYtThumb(id){ return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : ''; }
+// Get embeddable URL
+function ubYtEmbed(id){ return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : ''; }
+
+// ── ADMIN: Build Videos Tab ──
+function buildVideosAdminTab(){
+  const videos = ubGetVideos();
+  const videoRows = videos.map((v,i) => {
+    const ytId = ubYtId(v.url);
+    const thumb = ytId ? ubYtThumb(ytId) : '';
+    const date = v.postedAt ? new Date(v.postedAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—';
+    return `
+    <div style="display:flex;align-items:flex-start;gap:14px;background:rgba(255,255,255,.03);border:1px solid rgba(200,146,58,.14);border-radius:16px;padding:14px 16px;margin-bottom:12px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(200,146,58,.2),transparent);"></div>
+      ${thumb ? `<div style="width:88px;height:60px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#080200;">
+        <img src="${thumb}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px;>🎬</div>'">
+      </div>` : `<div style="width:88px;height:60px;border-radius:10px;background:rgba(200,146,58,.08);border:1px dashed rgba(200,146,58,.25);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">🎬</div>`}
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:'Playfair Display',serif;font-size:14px;color:#F0DEC8;font-weight:700;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${v.title||'Untitled Video'}</div>
+        <div style="font-size:11px;color:rgba(253,246,236,.4);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${v.desc||'No description'}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span style="background:rgba(200,146,58,.1);border:1px solid rgba(200,146,58,.2);color:#E8B96A;border-radius:8px;padding:2px 9px;font-size:10px;font-weight:700;letter-spacing:.5px;">📅 ${date}</span>
+          ${ytId ? `<span style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#4ADE80;border-radius:8px;padding:2px 9px;font-size:10px;font-weight:700;">▶ YouTube</span>` : `<span style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#F87171;border-radius:8px;padding:2px 9px;font-size:10px;font-weight:700;">⚠ Invalid URL</span>`}
+          ${v.visible===false ? `<span style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#F87171;border-radius:8px;padding:2px 9px;font-size:10px;font-weight:700;">Hidden</span>` : `<span style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#4ADE80;border-radius:8px;padding:2px 9px;font-size:10px;font-weight:700;">✓ Visible</span>`}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+        <button onclick="ubToggleVideoVisible(${i})" style="background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.22);border-radius:8px;padding:6px 11px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;white-space:nowrap;">${v.visible===false?'👁 Show':'🙈 Hide'}</button>
+        <button onclick="ubDeleteVideo(${i})" style="background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:6px 11px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🗑 Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+  <div style="max-width:860px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;flex-wrap:wrap;gap:10px;">
+      <div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">🎬 Cake Making Videos</h2>
+        <p style="font-size:12px;color:rgba(253,246,236,.38);">Post YouTube videos of your baking process — customers see them on the website</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="background:rgba(200,146,58,.1);border:1px solid rgba(200,146,58,.2);color:#E8B96A;border-radius:10px;padding:5px 12px;font-size:11px;font-weight:700;">${videos.length} Video${videos.length!==1?'s':''}</span>
+        <span style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#4ADE80;border-radius:10px;padding:5px 12px;font-size:11px;font-weight:700;">${videos.filter(v=>v.visible!==false).length} Visible</span>
+      </div>
+    </div>
+
+    <!-- ADD NEW VIDEO CARD -->
+    <div style="background:linear-gradient(135deg,rgba(200,146,58,.08),rgba(200,146,58,.03));border:1.5px solid rgba(200,146,58,.25);border-radius:20px;padding:22px;margin-bottom:24px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(200,146,58,.5),transparent);"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+        <div style="width:38px;height:38px;background:linear-gradient(135deg,#C8923A,#9A5C1A);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎬</div>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:16px;color:#E8B96A;font-weight:700;">Post a New Video</div>
+          <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:1px;">Share a YouTube link — it'll appear in the "Watch Us Bake" section</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div class="af-group" style="grid-column:1/-1;">
+          <label style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(200,146,58,.7);text-transform:uppercase;display:block;margin-bottom:6px;">YouTube Video URL *</label>
+          <input class="af-inp" id="vid_url" placeholder="https://www.youtube.com/watch?v=... or youtu.be/..." oninput="ubPreviewVideoThumb()" style="font-size:13px;">
+        </div>
+        <div class="af-group">
+          <label style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(200,146,58,.7);text-transform:uppercase;display:block;margin-bottom:6px;">Video Title *</label>
+          <input class="af-inp" id="vid_title" placeholder="e.g. How We Make Our Wedding Cakes" style="font-size:13px;">
+        </div>
+        <div class="af-group">
+          <label style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(200,146,58,.7);text-transform:uppercase;display:block;margin-bottom:6px;">Short Description</label>
+          <input class="af-inp" id="vid_desc" placeholder="e.g. Watch our bakers craft a 3-tier wedding cake..." style="font-size:13px;">
+        </div>
+      </div>
+      <!-- Thumb preview -->
+      <div id="vid_thumb_preview" style="display:none;margin-bottom:14px;">
+        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(200,146,58,.7);text-transform:uppercase;margin-bottom:8px;">📺 Video Preview</div>
+        <div style="display:flex;align-items:center;gap:12px;background:rgba(0,0,0,.25);border-radius:12px;padding:10px;">
+          <img id="vid_thumb_img" src="" style="width:100px;height:66px;border-radius:8px;object-fit:cover;border:1px solid rgba(200,146,58,.2);" onerror="this.parentElement.style.display='none'">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#4ADE80;margin-bottom:3px;">✓ Valid YouTube URL detected</div>
+            <div style="font-size:11px;color:rgba(253,246,236,.4);">Thumbnail loaded successfully</div>
+          </div>
+        </div>
+      </div>
+      <button onclick="ubAdminAddVideo()" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:12px;padding:12px 28px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 6px 22px rgba(200,146,58,.35);transition:all .2s;display:flex;align-items:center;gap:8px;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 10px 28px rgba(200,146,58,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 22px rgba(200,146,58,.35)'">
+        <span style="font-size:16px;">🎬</span> Post Video to Website
+      </button>
+    </div>
+
+    <!-- TIPS CARD -->
+    <div style="background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 18px;margin-bottom:22px;display:flex;gap:12px;align-items:flex-start;">
+      <span style="font-size:22px;flex-shrink:0;">💡</span>
+      <div style="font-size:12px;color:rgba(253,246,236,.4);line-height:1.75;">
+        <strong style="color:rgba(253,246,236,.65);">Tips for great baking videos:</strong><br>
+        Paste any YouTube link (full URL or short youtu.be link). Videos appear in the <em>"Watch Us Bake"</em> section on your website. You can hide/show any video without deleting it. Customers click to watch in a full-screen player.
+      </div>
+    </div>
+
+    <!-- VIDEO LIST -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;color:#E8B96A;">Posted Videos (${videos.length})</div>
+      ${videos.length>0 ? `<button onclick="ubRenderCustomerVideos()" style="background:rgba(74,222,128,.08);color:#4ADE80;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:6px 14px;font-family:Jost,sans-serif;font-size:11px;font-weight:700;cursor:pointer;">🔄 Refresh Customer View</button>` : ''}
+    </div>
+    ${videos.length === 0
+      ? `<div style="text-align:center;padding:52px 20px;border:1.5px dashed rgba(200,146,58,.18);border-radius:18px;">
+          <div style="font-size:52px;margin-bottom:14px;">🎬</div>
+          <div style="font-family:'Playfair Display',serif;font-size:16px;color:rgba(253,246,236,.5);margin-bottom:6px;">No videos posted yet</div>
+          <div style="font-size:12px;color:rgba(253,246,236,.28);">Paste a YouTube link above to get started</div>
+        </div>`
+      : videoRows
+    }
+  </div>`;
+}
+
+// Preview thumbnail as URL is typed
+window.ubPreviewVideoThumb = function(){
+  const url = (document.getElementById('vid_url')||{value:''}).value.trim();
+  const ytId = ubYtId(url);
+  const preview = document.getElementById('vid_thumb_preview');
+  const img = document.getElementById('vid_thumb_img');
+  if(ytId && preview && img){
+    img.src = ubYtThumb(ytId);
+    preview.style.display = 'block';
+  } else if(preview){
+    preview.style.display = 'none';
+  }
+};
+
+window.ubAdminAddVideo = function(){
+  const url   = (document.getElementById('vid_url')||{value:''}).value.trim();
+  const title = (document.getElementById('vid_title')||{value:''}).value.trim();
+  const desc  = (document.getElementById('vid_desc')||{value:''}).value.trim();
+  if(!url){ showToast('Please enter a YouTube URL','err'); return; }
+  if(!title){ showToast('Please enter a video title','err'); return; }
+  const ytId = ubYtId(url);
+  if(!ytId){ showToast('⚠️ Could not detect YouTube video ID. Please check the URL.','err'); return; }
+  const videos = ubGetVideos();
+  videos.unshift({ id: 'vid_'+Date.now(), url, title, desc, ytId, visible: true, postedAt: new Date().toISOString() });
+  ubSaveVideos(videos);
+  ubRenderCustomerVideos();
+  showToast('🎬 Video posted! Customers can now watch it.','ok');
+  // Clear form
+  ['vid_url','vid_title','vid_desc'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  const pv = document.getElementById('vid_thumb_preview'); if(pv) pv.style.display='none';
+  renderAdminTab();
+};
+
+window.ubDeleteVideo = function(i){
+  const videos = ubGetVideos();
+  if(!confirm('Delete "' + (videos[i]?.title||'this video') + '"?')) return;
+  videos.splice(i,1);
+  ubSaveVideos(videos);
+  ubRenderCustomerVideos();
+  showToast('🗑 Video deleted','ok');
+  renderAdminTab();
+};
+
+window.ubToggleVideoVisible = function(i){
+  const videos = ubGetVideos();
+  if(!videos[i]) return;
+  videos[i].visible = (videos[i].visible === false) ? true : false;
+  ubSaveVideos(videos);
+  ubRenderCustomerVideos();
+  showToast(videos[i].visible ? '✓ Video is now visible to customers' : '👁 Video hidden from customers','ok');
+  renderAdminTab();
+};
+
+// ── CUSTOMER: Render Videos Grid ──
+function ubRenderCustomerVideos(){
+  const grid = document.getElementById('customerVideosGrid');
+  if(!grid) return;
+  const videos = ubGetVideos().filter(v => v.visible !== false);
+  if(!videos.length){
+    grid.innerHTML = `<div class="videos-empty"><span class="ve-icon">🎬</span><p>Our baking videos are coming soon!<br>Check back for a delicious glimpse into our kitchen.</p></div>`;
+    return;
+  }
+  grid.innerHTML = videos.map((v,i) => {
+    const ytId = v.ytId || ubYtId(v.url);
+    const thumb = ubYtThumb(ytId);
+    const date = v.postedAt ? new Date(v.postedAt).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '';
+    return `
+    <div class="video-card" onclick="ubOpenVideoLightbox(${i})">
+      <div class="video-thumb-wrap">
+        <img src="${thumb}" alt="${v.title||'Baking video'}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'225\' style=\'background:%230A0300\'><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'40\'>🎬</text></svg>'">
+        <div class="vplay-overlay">
+          <div class="vplay-btn">▶</div>
+        </div>
+        ${date ? `<div class="vcdate-tag">${date}</div>` : ''}
+      </div>
+      <div class="video-card-body">
+        <div class="video-card-title">${v.title||'Baking Video'}</div>
+        ${v.desc ? `<div class="video-card-desc">${v.desc}</div>` : ''}
+        <div class="video-card-footer">
+          <span>🎬 Udaya Bakery</span>
+          <button class="vwatch-btn">Watch Now ▶</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  // Store visible videos array for lightbox
+  window._ubVisibleVideos = videos;
+}
+
+window.ubOpenVideoLightbox = function(i){
+  const videos = window._ubVisibleVideos || ubGetVideos().filter(v=>v.visible!==false);
+  const v = videos[i]; if(!v) return;
+  const ytId = v.ytId || ubYtId(v.url);
+  if(!ytId){ window.open(v.url,'_blank'); return; }
+  const iframe = document.getElementById('vlbIframe');
+  const title  = document.getElementById('vlbTitle');
+  const desc   = document.getElementById('vlbDesc');
+  const bg     = document.getElementById('videoLightboxBg');
+  if(!iframe||!bg) return;
+  if(iframe) iframe.src = ubYtEmbed(ytId);
+  if(title) title.textContent = v.title||'';
+  if(desc) desc.textContent = v.desc||'';
+  bg.classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+window.ubCloseVideoLightbox = function(e){
+  if(e && e.target !== document.getElementById('videoLightboxBg')) return;
+  const bg = document.getElementById('videoLightboxBg');
+  const iframe = document.getElementById('vlbIframe');
+  if(bg) bg.classList.remove('open');
+  if(iframe) iframe.src = ''; // stop video
+  document.body.style.overflow = '';
+};
+
+// Load videos on page init
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(()=>{
+    ubLoadVideosFromDB();
+    ubRenderCustomerVideos();
+  }, 1200);
+});
+
 </script>
 
 
@@ -13011,6 +13682,7 @@ function _injectSidebar(){
     <button class="sni" onclick="switchTab('addprod')" id="ubsn-addprod"><span class="ic">➕</span>Add Product</button>
     <button class="sni" onclick="switchTab('cats')" id="ubsn-cats"><span class="ic">🏷️</span>Categories</button>
     <button class="sni" onclick="switchTab('cakebuilder')" id="ubsn-cakebuilder"><span class="ic">🎂</span>Cake Builder</button>
+    <button class="sni" onclick="switchTab('videos')" id="ubsn-videos"><span class="ic">🎬</span>Cake Videos</button>
     <div class="snsp"></div>
     <div class="snl">OPERATIONS</div>
     <button class="sni" onclick="switchTab('orders')" id="ubsn-orders"><span class="ic">📋</span>Orders<span id="ubsn-obadge" class="snbadge" style="display:none;"></span></button>
@@ -13537,6 +14209,7 @@ const TABS=[
   {i:'⚙️',l:'Settings',s:'Config',t:'settings'},{i:'📊',l:'Reports',s:'Sales',t:'reports'},
   {i:'👥',l:'Customers',s:'List',t:'customers'},{i:'📢',l:'Broadcast',s:'WhatsApp',t:'broadcast'},
   {i:'📈',l:'Analytics',s:'Insights',t:'analytics'},{i:'🎂',l:'Cake Builder',s:'Builder',t:'cakebuilder'},
+  {i:'🎬',l:'Cake Videos',s:'Post videos',t:'videos'},
 ];
 let _ci=0, _cr=[];
 
