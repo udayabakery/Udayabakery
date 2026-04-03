@@ -745,6 +745,7 @@ body.dark-mode .nav-search input{background:rgba(255,255,255,.06);color:#F0DEC8;
 body.dark-mode .nav-search input::placeholder{color:rgba(200,168,130,.35);}
 .nav-search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--gold);pointer-events:none;}
 #voiceSearchBtn.listening{animation:voicePulse 1s infinite;color:#e53e3e;}
+#mobVoiceBtn.listening{animation:voicePulse 1s infinite;color:#e53e3e;}
 @keyframes voicePulse{0%,100%{transform:translateY(-50%) scale(1);}50%{transform:translateY(-50%) scale(1.3);}}
 .search-dropdown{
   position:absolute;top:calc(100% + 10px);left:0;right:0;
@@ -945,8 +946,8 @@ section{padding:64px 0;contain:layout;}
 .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px;}
 .product-card{background:var(--cream);border-radius:22px;overflow:hidden;position:relative;box-shadow:0 4px 16px var(--shadow);transition:transform .25s,box-shadow .25s;contain:layout style;}
 .product-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px var(--shadow);}
-.pimg-wrap{width:100%;min-height:140px;max-height:320px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--cream-dark),var(--pink));display:flex;align-items:center;justify-content:center;}
-.pimg-wrap img{width:100%;height:auto;max-height:320px;min-height:140px;object-fit:contain;object-position:center;display:block;transition:transform .3s;background:var(--cream);}
+.pimg-wrap{width:100%;height:200px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--cream-dark),var(--pink));display:flex;align-items:center;justify-content:center;}
+.pimg-wrap img{width:100%;height:200px;object-fit:cover;object-position:center;display:block;transition:transform .3s;background:var(--cream);}
 .product-card:hover .pimg-wrap img{transform:scale(1.03);}
 .pimg-emoji{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:76px;}
 /* Flavour image overlay */
@@ -1606,8 +1607,8 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
   /* Products - 2 per row on mobile */
   .product-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;}
   .product-card{border-radius:14px!important;}
-  .pimg-wrap{min-height:110px!important;max-height:220px!important;height:auto!important;}
-  .pimg-wrap img{min-height:110px!important;max-height:220px!important;}
+  .pimg-wrap{height:160px!important;min-height:unset!important;max-height:unset!important;}
+  .pimg-wrap img{height:160px!important;min-height:unset!important;max-height:unset!important;}
   .pimg-emoji{font-size:52px!important;}
   .pbody{padding:10px 10px!important;}
   .pcat{font-size:9px!important;}
@@ -3046,13 +3047,14 @@ body.dark-mode .mob-bottom-nav { background: rgba(15,6,1,.97) !important; border
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  height: 200px !important;
 }
 .pimg-wrap img {
   width: 100% !important;
-  height: auto !important;
-  min-height: 110px !important;
-  max-height: 320px !important;
-  object-fit: contain !important;
+  height: 200px !important;
+  min-height: unset !important;
+  max-height: unset !important;
+  object-fit: cover !important;
   object-position: center !important;
   background: var(--cream) !important;
 }
@@ -4101,6 +4103,37 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
 </head>
 <body>
 
+<!-- ══ SPLASH SCREEN ══ -->
+<div id="ubSplash" style="position:fixed;inset:0;z-index:99999;background:#1A0A02;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;">
+  <style>
+    @keyframes ubScaleIn{from{transform:scale(0.3);opacity:0;}to{transform:scale(1);opacity:1;}}
+    @keyframes ubFadeUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+    @keyframes ubGlow{0%,100%{text-shadow:0 0 20px rgba(200,146,58,.5);}50%{text-shadow:0 0 60px rgba(200,146,58,.9),0 0 100px rgba(200,146,58,.4);}}
+    @keyframes ubSplashOut{to{opacity:0;transform:scale(1.04);pointer-events:none;}}
+    @keyframes ubRingPulse{0%{transform:scale(1);opacity:.6;}100%{transform:scale(2.5);opacity:0;}}
+    #splashUB{font-family:'Playfair Display',Georgia,serif;font-size:96px;font-weight:700;color:#E8B96A;animation:ubScaleIn .7s cubic-bezier(.34,1.56,.64,1) forwards,ubGlow 2s ease-in-out 0.7s infinite;letter-spacing:-2px;line-height:1;position:relative;z-index:2;}
+    #splashName{font-family:'Playfair Display',Georgia,serif;font-size:32px;font-weight:400;color:#FDF6EC;letter-spacing:6px;text-transform:uppercase;opacity:0;animation:ubFadeUp .6s ease .9s forwards;}
+    #splashSub{font-family:'Jost',sans-serif;font-size:11px;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:rgba(200,146,58,.7);opacity:0;animation:ubFadeUp .5s ease 1.2s forwards;margin-top:4px;}
+    #splashRing{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(200,146,58,.4);animation:ubRingPulse 1.4s ease-out .4s infinite;}
+    #splashRing2{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(200,146,58,.2);animation:ubRingPulse 1.4s ease-out .7s infinite;}
+  </style>
+  <div style="position:relative;display:flex;align-items:center;justify-content:center;width:160px;height:160px;">
+    <div id="splashRing"></div>
+    <div id="splashRing2"></div>
+    <div id="splashUB">UB</div>
+  </div>
+  <div id="splashName" style="margin-top:18px;">Udaya Bakery</div>
+  <div id="splashSub">Artisan Bakes · Belman</div>
+</div>
+<script>
+(function(){
+  setTimeout(function(){
+    var s=document.getElementById('ubSplash');
+    if(s){s.style.transition='opacity .55s ease, transform .55s ease';s.style.opacity='0';s.style.transform='scale(1.04)';setTimeout(function(){s.style.display='none';},560);}
+  },2400);
+})();
+</script>
+
 <noscript>
   <div style="position:fixed;inset:0;z-index:99999;background:#FDF6EC;display:flex;align-items:center;justify-content:center;text-align:center;font-family:sans-serif;padding:20px;">
     <div>
@@ -4191,8 +4224,9 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
     </div>
   </div>
   <!-- SEARCH ROW: only shown on mobile as 2nd row -->
-  <div class="nav-search-mobile" id="navSearchMobile">
-    <input type="text" placeholder="Search cakes, puffs, chakli..." autocomplete="off" oninput="liveSearch(this.value)" onfocus="liveSearch(this.value)" onblur="setTimeout(()=>closeSD(),200)">
+  <div class="nav-search-mobile" id="navSearchMobile" style="position:relative;">
+    <input type="text" id="mobSearchInput" placeholder="Search cakes, puffs, chakli..." autocomplete="off" oninput="liveSearchMob(this.value)" onfocus="liveSearchMob(this.value)" onblur="setTimeout(()=>closeSD(),200)">
+    <button id="mobVoiceBtn" onclick="startMobVoiceSearch()" title="Voice Search" style="position:absolute;right:40px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;color:var(--gold);padding:0;line-height:1;z-index:2;" aria-label="Voice Search">🎤</button>
     <span class="nav-search-icon-mob">🔍</span>
   </div>
 </nav>
@@ -4246,18 +4280,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
           ▶ Watch Us Bake
         </a>
       </div>
-      <!-- Trust badges row -->
-      <div class="anim-fade-up" style="animation-delay:.65s;margin-top:20px;display:flex;flex-wrap:wrap;gap:12px;">
-        <div style="display:flex;align-items:center;gap:6px;background:rgba(200,146,58,.1);border:1px solid rgba(200,146,58,.22);border-radius:24px;padding:6px 14px;">
-          <span style="font-size:14px;">⭐</span><span style="font-size:11px;font-weight:700;color:var(--gold-light);letter-spacing:.3px;">4.9 Rating</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;background:rgba(200,146,58,.1);border:1px solid rgba(200,146,58,.22);border-radius:24px;padding:6px 14px;">
-          <span style="font-size:14px;">🎂</span><span style="font-size:11px;font-weight:700;color:var(--gold-light);letter-spacing:.3px;">500+ Happy Customers</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;background:rgba(200,146,58,.1);border:1px solid rgba(200,146,58,.22);border-radius:24px;padding:6px 14px;">
-          <span style="font-size:14px;">🚚</span><span style="font-size:11px;font-weight:700;color:var(--gold-light);letter-spacing:.3px;">Same Day Delivery</span>
-        </div>
-      </div>
+
       <!-- Mobile-only hero visual row -->
       <div class="mob-hero-visual">
         <div class="mob-hero-badge"><span class="mob-hero-icon">🎂</span></div>
@@ -7027,6 +7050,15 @@ function scoreProduct(p, q){
 
 function liveSearch(q){
   const dd = document.getElementById('searchDropdown');
+  // Update product grid too
+  searchQuery = q || '';
+  if(typeof renderProds === 'function') renderProds();
+  const sb = document.getElementById('searchResultsBar');
+  const ql = document.getElementById('searchQueryLabel');
+  if(sb && ql){
+    if(q && q.trim()){ql.textContent='"'+q+'"';sb.classList.add('visible');}
+    else{sb.classList.remove('visible');}
+  }
   if(!q || q.trim().length < 1){dd.classList.remove('open');return;}
   const results = PRODS.map(p=>({p, score:scoreProduct(p,q)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,8);
   if(!results.length){
@@ -7059,6 +7091,55 @@ function highlight(text, q){
 
 function closeSD(){ document.getElementById('searchDropdown').classList.remove('open'); }
 
+// ── MOBILE SEARCH (syncs with product grid via same liveSearch + renderProds) ──
+function liveSearchMob(q){
+  // Mirror value into desktop input so dropdown & product filter both work
+  const desktopInput = document.getElementById('navSearchInput');
+  if(desktopInput) desktopInput.value = q;
+  liveSearch(q);
+  // Also update product grid
+  searchQuery = q;
+  if(typeof renderProds === 'function') renderProds();
+  const sb = document.getElementById('searchResultsBar');
+  const ql = document.getElementById('searchQueryLabel');
+  if(sb && ql){
+    if(q && q.trim()){
+      ql.textContent = '"' + q + '"';
+      sb.classList.add('visible');
+    } else {
+      sb.classList.remove('visible');
+    }
+  }
+}
+
+// ── MOBILE VOICE SEARCH ──
+function startMobVoiceSearch(){
+  const btn = document.getElementById('mobVoiceBtn');
+  const input = document.getElementById('mobSearchInput');
+  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){
+    showToast('⚠️ Voice search not supported on this browser','err'); return;
+  }
+  if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    btn.textContent = '⏳';
+    showToast('🎤 Allow microphone for voice search...','ok');
+    navigator.mediaDevices.getUserMedia({audio:true})
+      .then(stream => {
+        stream.getTracks().forEach(t => t.stop());
+        _doVoiceRecognition(btn, input, true);
+      })
+      .catch(err => {
+        btn.textContent = '🎤';
+        if(err.name==='NotAllowedError'||err.name==='PermissionDeniedError'){
+          showToast('⚠️ Microphone blocked. Enable in browser settings → Microphone → Allow','err');
+        } else {
+          showToast('⚠️ Could not access microphone: '+err.message,'err');
+        }
+      });
+  } else {
+    _doVoiceRecognition(btn, input, true);
+  }
+}
+
 // ── VOICE SEARCH ──
 function startVoiceSearch(){
   const btn = document.getElementById('voiceSearchBtn');
@@ -7077,7 +7158,7 @@ function startVoiceSearch(){
         // Permission granted — stop the stream immediately (we only needed the permission)
         stream.getTracks().forEach(t => t.stop());
         // Now start speech recognition
-        _doVoiceRecognition(btn, input);
+        _doVoiceRecognition(btn, input, false);
       })
       .catch(err => {
         btn.textContent = '🎤';
@@ -7089,11 +7170,11 @@ function startVoiceSearch(){
       });
   } else {
     // Fallback: no getUserMedia, try directly
-    _doVoiceRecognition(btn, input);
+    _doVoiceRecognition(btn, input, false);
   }
 }
 
-function _doVoiceRecognition(btn, input){
+function _doVoiceRecognition(btn, input, isMobile){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const rec = new SR();
   rec.lang = 'en-IN';
@@ -7126,10 +7207,14 @@ function _doVoiceRecognition(btn, input){
     });
     const displayText = bestText.charAt(0).toUpperCase() + bestText.slice(1);
     input.value = displayText;
-    liveSearch(displayText);
-    searchQuery = displayText;
-    selCat = 'all';
-    renderProds();
+    if(isMobile){
+      liveSearchMob(displayText);
+    } else {
+      liveSearch(displayText);
+      searchQuery = displayText;
+      selCat = 'all';
+      renderProds();
+    }
     const prodSec = document.getElementById('products');
     if(prodSec) setTimeout(()=>prodSec.scrollIntoView({behavior:'smooth', block:'start'}), 200);
     btn.classList.remove('listening');
