@@ -18,6 +18,11 @@
 <link rel="icon" href="https://udayabakery.github.io/Udayabakery/logo.png" type="image/png">
 <meta name="theme-color" content="#3B1F0E">
 <link rel="canonical" href="https://udayabakery.github.io/Udayabakery/">
+<!-- SECURITY: Content Security Policy — reduces XSS risk -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org; frame-src https://www.google.com https://maps.google.com; object-src 'none'; base-uri 'self';">
+<!-- SECURITY: Prevent clickjacking and MIME sniffing -->
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Image CDN preconnects for faster category/product image loading -->
@@ -42,10 +47,73 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-/* ── PERFORMANCE OPTIMIZATIONS ── */
-.product-grid{contain:layout;}
-/* pimg-wrap: no contain:strict — it breaks image rendering on some mobile browsers */
-.pimg-wrap{overflow:hidden;}
+
+/* ══════════════════════════════════════
+   🚀 PERFORMANCE — Zero Lag on All Mobiles
+   ══════════════════════════════════════ */
+
+/* GPU-accelerate scrollable containers */
+body{-webkit-overflow-scrolling:touch;}
+
+/* Product grid: layout containment + content-visibility for off-screen cards */
+.product-grid{contain:layout;will-change:auto;}
+.product-card{
+  contain:layout style;
+  /* content-visibility: auto tells browser to skip rendering off-screen cards */
+  content-visibility:auto;
+  contain-intrinsic-size:0 360px; /* estimated card height — prevents layout shift */
+}
+
+/* Category cards: paint containment */
+.cat-card-main{contain:layout paint;}
+.cc-img-wrap{overflow:hidden;contain:layout paint;}
+
+/* Images: prevent layout recalc on load */
+img{display:block;}
+.pimg-wrap{overflow:hidden;position:relative;}
+.pimg-wrap img{width:100%;height:100%;object-fit:cover;}
+
+/* Reduce paint areas — use transform instead of top/left for animations */
+.nav-search-icon,.nav-search-icon-mob,
+#voiceSearchBtn,#mobVoiceBtn{transform:translateZ(0);}
+
+/* Throttle expensive transitions on low-end devices */
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
+}
+
+/* Stop battery-draining continuous animations on mobile scroll */
+.marquee-track{animation-play-state:running;}
+body.ub-scrolling .marquee-track,
+body.ub-scrolling .hero-ring,
+body.ub-scrolling .hero-ring::before{animation-play-state:paused!important;}
+
+/* Prevent tap delay on all interactive elements */
+a,button,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+
+/* Optimize font rendering */
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed;}
+
+/* Cart sidebar: GPU layer */
+.cart-sidebar{transform:translateZ(0);backface-visibility:hidden;}
+
+/* Modal overlays: GPU layer */
+.modal,.qa-modal-bg,.cart-overlay{transform:translateZ(0);}
+
+/* Skeleton loading for product images */
+.pimg-wrap::before{
+  content:'';display:block;position:absolute;inset:0;
+  background:linear-gradient(90deg,var(--cream-dark) 25%,var(--cream) 50%,var(--cream-dark) 75%);
+  background-size:200% 100%;
+  animation:ubSkel 1.4s ease infinite;
+  z-index:0;
+}
+.pimg-wrap.img-loaded::before,.pimg-wrap img+*,.pimg-wrap.has-img::before{display:none;}
+@keyframes ubSkel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Hide skeleton once image loads */
+.pimg-wrap img{position:relative;z-index:1;}
+.pimg-emoji{position:relative;z-index:1;}
 
 
 
@@ -727,7 +795,8 @@ body.dark-mode nav.scrolled{background:rgba(10,4,0,.99)!important;}
   width:100%;
   border:1.5px solid rgba(200,146,58,.2);
   border-radius:60px;
-  padding:10px 72px 10px 20px;
+  /* right padding: 16px gap + 26px search icon + 8px gap + 28px mic + 12px = 90px total */
+  padding:10px 90px 10px 20px;
   font-family:'Plus Jakarta Sans','Jost',sans-serif;
   font-size:13px;font-weight:500;
   color:var(--choco);
@@ -743,7 +812,10 @@ body.dark-mode nav.scrolled{background:rgba(10,4,0,.99)!important;}
 .nav-search input::placeholder{color:rgba(92,53,32,.45);font-weight:400;}
 body.dark-mode .nav-search input{background:rgba(255,255,255,.06);color:#F0DEC8;border-color:rgba(200,146,58,.15);}
 body.dark-mode .nav-search input::placeholder{color:rgba(200,168,130,.35);}
-.nav-search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--gold);pointer-events:none;}
+/* 🔍 search icon — rightmost */
+.nav-search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--gold);pointer-events:none;z-index:2;}
+/* 🎤 voice button — left of search icon with clear gap */
+#voiceSearchBtn{position:absolute;right:42px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--gold);padding:0;line-height:1;z-index:2;}
 #voiceSearchBtn.listening{animation:voicePulse 1s infinite;color:#e53e3e;}
 #mobVoiceBtn.listening{animation:voicePulse 1s infinite;color:#e53e3e;}
 @keyframes voicePulse{0%,100%{transform:translateY(-50%) scale(1);}50%{transform:translateY(-50%) scale(1.3);}}
@@ -752,7 +824,7 @@ body.dark-mode .nav-search input::placeholder{color:rgba(200,168,130,.35);}
   background:var(--white);
   border-radius:20px;
   box-shadow:0 16px 48px rgba(59,31,14,.14);
-  z-index:999;display:none;overflow:hidden;
+  z-index:9999;display:none;overflow:hidden;
   border:1.5px solid var(--cream-dark);
   max-height:400px;overflow-y:auto;
 }
@@ -1516,7 +1588,8 @@ footer{background:var(--choco);padding:50px 0 24px;}
   width:100%;
   border:1.5px solid rgba(200,146,58,.2);
   border-radius:60px;
-  padding:9px 44px 9px 18px;
+  /* room for 🔍 at right:14px and 🎤 at right:42px */
+  padding:9px 80px 9px 18px;
   font-family:'Plus Jakarta Sans','Jost',sans-serif;
   font-size:13px;font-weight:500;
   color:var(--choco);
@@ -1526,7 +1599,10 @@ footer{background:var(--choco);padding:50px 0 24px;}
 }
 body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#F0DEC8;border-color:rgba(200,146,58,.15);}
 .nav-search-mobile input:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 4px rgba(200,146,58,.1);}
-.nav-search-icon-mob{position:absolute;right:26px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--gold);pointer-events:none;}
+/* 🔍 rightmost icon */
+.nav-search-icon-mob{position:absolute;right:26px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--gold);pointer-events:none;z-index:2;}
+/* 🎤 voice button left of search icon */
+#mobVoiceBtn{position:absolute;right:54px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;color:var(--gold);padding:0;line-height:1;z-index:2;}
 
 /* ── MOB MENU LANG BUTTON ── */
 .mob-menu-lang{
@@ -1850,7 +1926,8 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
     padding:0!important;
   }
   .hero-visual,.hero-ring,.hero-cake,.hero-badge{display:none!important;}
-  .hero-btns{justify-content:center!important;flex-wrap:wrap!important;gap:8px!important;margin-bottom:8px!important;}
+  .hero-btns{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin-bottom:8px!important;}
+  .hero-secondary-btns{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;}
   .btn-primary{padding:12px 20px!important;font-size:13px!important;border-radius:50px!important;}
   .btn-outline{padding:12px 18px!important;font-size:13px!important;border-radius:50px!important;}
   #hero button[onclick*="cakeBuilder"]{
@@ -2165,7 +2242,8 @@ body::after {
   background: rgba(255,255,255,.8) !important;
   font-family: 'Plus Jakarta Sans', sans-serif !important;
   font-size: 13px !important;
-  padding: 10px 72px 10px 20px !important;
+  /* keep 90px right padding so mic 🎤 and 🔍 don't overlap */
+  padding: 10px 90px 10px 20px !important;
   transition: all .3s var(--enhance-transition) !important;
 }
 .nav-search input:focus {
@@ -4209,8 +4287,8 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
     </ul>
     <!-- SMART SEARCH (desktop only inline, mobile goes to row 2) -->
     <div class="nav-search" id="navSearchWrap">
-      <input type="text" id="navSearchInput" placeholder="Search cakes, puffs, chakli..." autocomplete="off" aria-label="Search products" oninput="liveSearch(this.value)" onfocus="liveSearch(this.value)" onblur="setTimeout(()=>closeSD(),200)">
-      <button id="voiceSearchBtn" onclick="startVoiceSearch()" title="Voice Search" style="position:absolute;right:36px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--gold);padding:0;line-height:1;z-index:2;" aria-label="Voice Search">🎤</button>
+      <input type="text" id="navSearchInput" placeholder="Search cakes, puffs, chakli..." autocomplete="off" aria-label="Search products" oninput="liveSearchDebounced(this.value)" onfocus="liveSearch(this.value)" onblur="setTimeout(()=>closeSD(),200)" onkeydown="if(event.key==='Enter'){event.preventDefault();ubCommitSearch(this.value);}">
+      <button id="voiceSearchBtn" onclick="startVoiceSearch()" title="Voice Search" aria-label="Voice Search">🎤</button>
       <span class="nav-search-icon">🔍</span>
       <div class="search-dropdown" id="searchDropdown"></div>
     </div>
@@ -4225,9 +4303,11 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
   </div>
   <!-- SEARCH ROW: only shown on mobile as 2nd row -->
   <div class="nav-search-mobile" id="navSearchMobile" style="position:relative;">
-    <input type="text" id="mobSearchInput" placeholder="Search cakes, puffs, chakli..." autocomplete="off" oninput="liveSearchMob(this.value)" onfocus="liveSearchMob(this.value)" onblur="setTimeout(()=>closeSD(),200)">
-    <button id="mobVoiceBtn" onclick="startMobVoiceSearch()" title="Voice Search" style="position:absolute;right:40px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;color:var(--gold);padding:0;line-height:1;z-index:2;" aria-label="Voice Search">🎤</button>
+    <input type="text" id="mobSearchInput" placeholder="Search cakes, puffs, chakli..." autocomplete="off" oninput="liveSearchMobDebounced(this.value)" onfocus="liveSearchMob(this.value)" onblur="setTimeout(()=>closeSD(),200)" onkeydown="if(event.key==='Enter'){event.preventDefault();ubCommitSearch(this.value);}">
+    <button id="mobVoiceBtn" onclick="startMobVoiceSearch()" title="Voice Search" aria-label="Voice Search">🎤</button>
     <span class="nav-search-icon-mob">🔍</span>
+    <!-- Mobile search dropdown — shown below the mobile search bar -->
+    <div class="search-dropdown" id="mobSearchDropdown" style="left:14px;right:14px;"></div>
   </div>
 </nav>
 <div class="mob-menu" id="mobMenu">
@@ -4268,15 +4348,15 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
       <h1 class="hero-title anim-fade-up" style="animation-delay:.2s">Baked with <em>Love</em>,<br>Crafted with <em>Passion</em></h1>
       <p class="hero-desc anim-fade-up" style="animation-delay:.3s">From dreamy wedding cakes to crispy chaklis — every bite tells a story of tradition, quality and joy in the heart of Belman.</p>
 
-      <div class="hero-btns anim-fade-up" style="animation-delay:.4s">
-        <a href="#products" class="btn-primary">🛒 Order Now</a>
-        <a href="#categories" class="btn-outline">Explore Menu ↓</a>
+      <div class="hero-btns anim-fade-up" style="animation-delay:.4s;display:grid;grid-template-columns:1fr 1fr;">
+        <a href="#products" class="btn-primary" style="justify-content:center;">🛒 Order Now</a>
+        <a href="#categories" class="btn-outline" style="justify-content:center;">Explore Menu ↓</a>
       </div>
-      <div class="anim-fade-up" style="animation-delay:.5s;margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
-        <button onclick="openCakeBuilder()" style="background:linear-gradient(135deg,rgba(200,146,58,.18),rgba(200,146,58,.08));border:2px solid rgba(200,146,58,.5);color:var(--choco);border-radius:50px;padding:13px 24px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .3s;">
+      <div class="anim-fade-up hero-secondary-btns" style="animation-delay:.5s;margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button onclick="openCakeBuilder()" style="background:linear-gradient(135deg,rgba(200,146,58,.18),rgba(200,146,58,.08));border:2px solid rgba(200,146,58,.5);color:var(--choco);border-radius:50px;padding:13px 16px;font-family:Jost,sans-serif;font-size:13.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .3s;width:100%;">
           🎂 Build Your Own Cake
         </button>
-        <a href="#cakeVideos" style="background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.18);color:var(--choco);border-radius:50px;padding:13px 22px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;text-decoration:none;transition:all .3s;backdrop-filter:blur(6px);">
+        <a href="#cakeVideos" style="background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.18);color:var(--choco);border-radius:50px;padding:13px 16px;font-family:Jost,sans-serif;font-size:13.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;transition:all .3s;backdrop-filter:blur(6px);width:100%;">
           ▶ Watch Us Bake
         </a>
       </div>
@@ -4920,6 +5000,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
         <button class="atab" onclick="switchTab('orders')" id="at-orders">📋 Orders <span id="orderPendBadge" style="display:none;background:#EF4444;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-left:4px;"></span></button>
         <button class="atab" onclick="switchTab('payments')" id="at-payments">💳 Payments</button>
         <button class="atab" onclick="switchTab('settings')" id="at-settings">⚙️ Settings</button>
+        <button class="atab" onclick="switchTab('designer')" id="at-designer" style="background:linear-gradient(135deg,rgba(200,146,58,.25),rgba(200,146,58,.1));border-color:rgba(200,146,58,.4)!important;">🎨 Website Designer</button>
         <button class="atab" onclick="switchTab('reports')" id="at-reports">📊 Reports</button>
         <button class="atab" onclick="switchTab('customers')" id="at-customers">👥 Customers</button>
         <button class="atab" onclick="switchTab('broadcast')" id="at-broadcast">📢 Broadcast</button>
@@ -5159,6 +5240,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       initFirebaseOrders();
       loadBrandingFromDB();   // sync logo & brand name from Firestore
       startBrandingListener(); // live updates when admin changes logo
+      ubStartConfigListener(); // live sync of all admin settings to all customers
     } else {
       setTimeout(startFirebaseSync, 1500); // retry if SDK not ready
     }
@@ -5348,20 +5430,130 @@ function startProductListener(){
   });
 }
 
-// ── Auto-reconnect when tab becomes visible again (mobile background fix) ──
+// ── AUTO-RECONNECT WHEN TAB BECOMES VISIBLE (mobile background fix) ──
 document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState === 'visible' && db){
-    if(!_prodUnsubscribe){
-      startProductListener();
-    }
+    if(!_prodUnsubscribe) startProductListener();
+    ubStartConfigListener(); // re-attach config listener if dropped
   }
 });
-// Also reconnect on window focus (Android Chrome sometimes needs this)
 window.addEventListener('focus', ()=>{
-  if(db && !_prodUnsubscribe){
-    startProductListener();
-  }
+  if(db && !_prodUnsubscribe) startProductListener();
 });
+
+// ══════════════════════════════════════════════════════════════
+//  🔴 LIVE CONFIG SYNC — All admin settings sync to ALL customers
+//  via Firestore config/siteConfig document.
+//  Admin saves → Firestore → all visitors get it instantly.
+// ══════════════════════════════════════════════════════════════
+let _configUnsubscribe = null;
+
+function ubStartConfigListener(){
+  if(!db || _configUnsubscribe) return;
+  _configUnsubscribe = db.collection('config').doc('siteConfig').onSnapshot(doc => {
+    if(!doc.exists) return;
+    const d = doc.data();
+
+    // ── Announcement Banner ──
+    if(typeof d.announcement !== 'undefined'){
+      ANNOUNCEMENT = d.announcement;
+      localStorage.setItem('ub_announcement', JSON.stringify(ANNOUNCEMENT));
+      const bar = document.getElementById('annBar');
+      const txt = document.getElementById('annBarText');
+      if(bar && txt){
+        if(ANNOUNCEMENT.active && ANNOUNCEMENT.text){
+          txt.textContent = ANNOUNCEMENT.text;
+          bar.style.display = '';
+        } else {
+          bar.style.display = 'none';
+        }
+      }
+    }
+
+    // ── Business Hours ──
+    if(d.bizHours){
+      BIZ_HOURS = d.bizHours;
+      localStorage.setItem('ub_hours', JSON.stringify(BIZ_HOURS));
+      checkBusinessHours();
+    }
+
+    // ── Delivery Config (fee, min order) ──
+    if(d.deliveryCfg){
+      CFG = {...CFG, ...d.deliveryCfg};
+      LS.set('ub_cfg', CFG);
+    }
+
+    // ── Store Active/Closed ──
+    if(typeof d.storeActive !== 'undefined'){
+      const isActive = d.storeActive !== false;
+      localStorage.setItem('ub_store_active', isActive ? '1' : '0');
+      const closedBanner = document.getElementById('storeClosedBanner');
+      if(closedBanner) closedBanner.style.display = isActive ? 'none' : 'flex';
+      // Disable checkout button when store is off
+      const checkoutBtns = document.querySelectorAll('.btn-checkout, #checkoutBtn');
+      checkoutBtns.forEach(b => {
+        if(!isActive){ b.disabled = true; b.title = 'Store is currently closed'; }
+        else { b.disabled = false; b.title = ''; }
+      });
+    }
+
+    // ── Flash Sale ──
+    if(typeof d.flashSale !== 'undefined'){
+      if(d.flashSale && d.flashSale.active && new Date(d.flashSale.end) > new Date()){
+        localStorage.setItem('ub_flash_sale', JSON.stringify(d.flashSale));
+      } else {
+        localStorage.removeItem('ub_flash_sale');
+      }
+      if(typeof renderProds === 'function') renderProds();
+    }
+
+    // ── Coupons ──
+    if(d.coupons){
+      localStorage.setItem('ub_coupons', JSON.stringify(d.coupons));
+      // Merge into runtime COUPONS object
+      Object.assign(COUPONS, d.coupons);
+    }
+
+    // ── Loyalty Settings ──
+    if(typeof d.loyaltyOn !== 'undefined') localStorage.setItem('ub_loyalty_on', d.loyaltyOn ? '1' : '0');
+    if(d.loyaltyEarn) localStorage.setItem('ub_loyalty_earn', d.loyaltyEarn);
+    if(d.loyaltyRedeem) localStorage.setItem('ub_loyalty_redeem', d.loyaltyRedeem);
+
+    // ── Theme ──
+    if(d.themeId){
+      const current = document.body.className.match(/theme-(\w+)/)?.[1] || 'default';
+      if(d.themeId !== current){
+        document.body.classList.forEach(c => { if(c.startsWith('theme-')) document.body.classList.remove(c); });
+        if(d.themeId !== 'default') document.body.classList.add('theme-'+d.themeId);
+        localStorage.setItem('ub_theme', d.themeId);
+      }
+    }
+
+    // ── Site Design (colors, fonts, shapes) ──
+    if(d.siteDesign){
+      localStorage.setItem('ub_design', JSON.stringify(d.siteDesign));
+      ubApplyDesign(d.siteDesign);
+    }
+
+  }, e => {
+    console.warn('[UB Config] Listener error — will retry:', e);
+    _configUnsubscribe = null;
+    setTimeout(() => ubStartConfigListener(), 4000);
+  });
+}
+
+// ── SAVE ALL ADMIN SETTINGS TO FIRESTORE (called from every save button) ──
+async function ubSaveConfigToFirestore(patch){
+  if(!db || !adminLoggedIn) return false;
+  try {
+    await db.collection('config').doc('siteConfig').set(patch, {merge: true});
+    return true;
+  } catch(e){
+    console.warn('[UB Config] Save failed:', e);
+    showToast('⚠️ Could not sync to cloud — saved locally only', 'err');
+    return false;
+  }
+}
 async function loadOrdersFromDB(){
   if(!db) return;
   try {
@@ -5856,6 +6048,7 @@ function applyAnnouncement(){
 function saveAnnouncement(){
   localStorage.setItem('ub_announcement', JSON.stringify(ANNOUNCEMENT));
   applyAnnouncement();
+  ubSaveConfigToFirestore({announcement: ANNOUNCEMENT});
 }
 
 function saveAnnouncementAdmin(){
@@ -5864,14 +6057,14 @@ function saveAnnouncementAdmin(){
   if(textEl) ANNOUNCEMENT.text = textEl.value.trim();
   if(activeEl) ANNOUNCEMENT.active = activeEl.checked;
   saveAnnouncement();
-  showToast('✅ Banner updated!', 'ok');
+  showToast('✅ Banner updated & synced to all customers!', 'ok');
 }
 
 function removeAnnouncementAdmin(){
   ANNOUNCEMENT = {active: false, text: ''};
   saveAnnouncement();
   renderAdminTab();
-  showToast('🗑 Announcement banner removed!', 'ok');
+  showToast('🗑 Announcement banner removed for all customers!', 'ok');
 }
 
 function toggleAnnouncement(){
@@ -7019,38 +7212,211 @@ window.addEventListener('load', ()=>{
 // ═══════════════════════════════════════
 //  SEARCH ENGINE
 // ═══════════════════════════════════════
+// ── XSS SANITIZER — strips HTML tags from any user-supplied string before innerHTML use ──
+function ubSanitize(str){
+  if(typeof str !== 'string') return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML; // browser-escaped, safe to put in innerHTML
+}
+
+// ── ENTER KEY SEARCH — scrolls to products section and shows results ──
+function ubCommitSearch(q){
+  if(!q || !q.trim()) return;
+  searchQuery = q.trim();
+  closeSD();
+  if(typeof renderProds === 'function') renderProds();
+  const sec = document.getElementById('products') || document.getElementById('productGrid');
+  if(sec) sec.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ── DEBOUNCE — prevents search running on every single keystroke ──
+// Waits 180ms after user stops typing before running search
+function _ubDebounce(fn, delay){
+  let t;
+  return function(...args){
+    clearTimeout(t);
+    t = setTimeout(()=>fn.apply(this,args), delay);
+  };
+}
+const liveSearchDebounced   = _ubDebounce(liveSearch, 180);
+const liveSearchMobDebounced = _ubDebounce(liveSearchMob, 180);
+
+// ── SCROLL: pause animations while scrolling to save CPU ──
+let _ubScrollEndTimer;
+window.addEventListener('scroll', ()=>{
+  document.body.classList.add('ub-scrolling');
+  clearTimeout(_ubScrollEndTimer);
+  _ubScrollEndTimer = setTimeout(()=>document.body.classList.remove('ub-scrolling'), 150);
+}, {passive:true});
+
 let searchQuery = '';
+
+// ══════════════════════════════════════════════
+//  🔍 FUZZY SEARCH ENGINE — typo tolerance + Kannada support
+// ══════════════════════════════════════════════
+
+// Levenshtein distance — measures how many letter changes needed
+function _levenshtein(a, b){
+  if(!a) return b.length; if(!b) return a.length;
+  const m=a.length, n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i?j?0:j:i));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+
+// Fuzzy match — returns 0-100 score, tolerates typos
+// "Venil" → "Vanilla" ✅  "choc" → "chocolate" ✅  "ven" → "vanilla" ✅
+function _fuzzyScore(query, target){
+  if(!query||!target) return 0;
+  const q=query.toLowerCase().trim();
+  const t=target.toLowerCase().trim();
+  if(!q||!t) return 0;
+  // Exact match
+  if(t===q) return 100;
+  // Contains full query
+  if(t.includes(q)) return 85;
+  // Query starts with same letters (prefix)
+  if(t.startsWith(q)) return 80;
+  // Partial word match — any word in target starts with query
+  if(t.split(/\s+/).some(w=>w.startsWith(q))) return 75;
+  // Partial: query is contained in any word
+  if(t.split(/\s+/).some(w=>w.includes(q))) return 65;
+  // Fuzzy: if query length >= 3, allow 1 typo; >= 5, allow 2 typos
+  if(q.length >= 3){
+    const maxDist = q.length >= 5 ? 2 : 1;
+    // Check against each word in target
+    const words = t.split(/\s+/);
+    for(const w of words){
+      if(Math.abs(w.length - q.length) <= maxDist+1){
+        const dist = _levenshtein(q, w.substring(0, Math.max(q.length, w.length)));
+        if(dist <= maxDist) return Math.max(30, 60 - dist*15);
+      }
+      // Also check if query matches start of word with typos
+      if(w.length >= q.length){
+        const dist = _levenshtein(q, w.substring(0, q.length));
+        if(dist <= maxDist) return Math.max(25, 55 - dist*15);
+      }
+    }
+    // Fallback: check against full target string start
+    const dist = _levenshtein(q, t.substring(0, q.length + 2));
+    if(dist <= maxDist) return Math.max(20, 50 - dist*15);
+  }
+  return 0;
+}
+
+// Kannada transliteration map — common phonetic spellings → Kannada words
+// Customer types "vanila" → matches "ವೆನಿಲ್ಲಾ"
+const _KN_PHONETIC = {
+  'vanilla':['ವೆನಿಲ್ಲಾ','vanila','vanilia','vennila','venil','venila'],
+  'chocolate':['ಚಾಕೊಲೇಟ್','choclate','choco','choklet','chocolat'],
+  'cake':['ಕೇಕ್','kek','kayk'],
+  'puff':['ಪಫ್','paf','paff'],
+  'chakli':['ಚಕ್ಲಿ','chakali','chakle','chakkli'],
+  'laddoo':['ಲಡ್ಡು','laddu','ladu','ladoo','laddo'],
+  'sweet':['ಸಿಹಿ','mithai','meethai'],
+  'bread':['ಬ್ರೆಡ್','bred','brade'],
+  'pastry':['ಪೇಸ್ಟ್ರಿ','pastri','pastrie'],
+  'biscuit':['ಬಿಸ್ಕತ್','biskit','biskut'],
+  'rusk':['ರಸ್ಕ್','raask'],
+  'croissant':['ಕ್ರಾಸಾಂ','croisant','cruasant','croisent'],
+  'wedding':['ಮದುವೆ','maduve','marriage'],
+  'birthday':['ಹುಟ್ಟುಹಬ್ಬ','huttuhabbada','janmadin'],
+  'egg':['ಮೊಟ್ಟೆ','motte','anda'],
+  'chicken':['ಚಿಕನ್','chikin','chikan'],
+  'paneer':['ಪನೀರ್','paner','panir'],
+  'cream':['ಕ್ರೀಮ್','kreem','creme'],
+  'gulab':['ಗುಲಾಬ್','gulabi'],
+  'jamun':['ಜಾಮೂನ್','jamon'],
+  'besan':['ಬೇಸನ್','besana'],
+  'rava':['ರವಾ','rawa','suji'],
+  'mixture':['ಮಿಕ್ಸ್ಚರ್','mikschar','mikscher'],
+  'sev':['ಸೇವ್','shev'],
+  'namkeen':['ನಮ್ಕೀನ್','namkin','nimkin'],
+  'diwali':['ದೀಪಾವಳಿ','deepavali','dipavali'],
+  'christmas':['ಕ್ರಿಸ್ಮಸ್','xmas','x-mas'],
+};
+
+// Reverse map: alias → canonical english word
+const _ALIAS_MAP = {};
+Object.entries(_KN_PHONETIC).forEach(([canonical, aliases])=>{
+  aliases.forEach(a=>{ _ALIAS_MAP[a.toLowerCase()] = canonical; });
+  // also map Kannada script to English
+  _ALIAS_MAP[canonical.toLowerCase()] = canonical;
+});
+
+// Expand query: "venil" → ["venil","vanilla"], "ven" → ["ven","vanilla"]
+function _expandQuery(q){
+  const ql = q.toLowerCase().trim();
+  const results = new Set([ql]);
+  // Direct alias
+  if(_ALIAS_MAP[ql]) results.add(_ALIAS_MAP[ql]);
+  // Fuzzy alias match — find closest alias
+  for(const [alias, canonical] of Object.entries(_ALIAS_MAP)){
+    if(alias.length >= 3 && ql.length >= 3){
+      if(alias.startsWith(ql) || ql.startsWith(alias.substring(0,ql.length))){
+        results.add(canonical);
+      }
+      if(_levenshtein(ql, alias) <= (ql.length >= 5 ? 2 : 1)){
+        results.add(canonical);
+      }
+    }
+  }
+  return [...results];
+}
 
 function scoreProduct(p, q){
   if(!q) return 0;
   const ql = q.toLowerCase().trim();
-  const words = ql.split(/\s+/);
-  let score = 0;
-  const nameL = p.name.toLowerCase();
-  const descL = p.desc.toLowerCase();
-  const catName = (CATS.find(c=>c.id===p.cat)?.name||'').toLowerCase();
-  const tagsStr = (p.tags||[]).join(' ').toLowerCase();
-  // Variant labels — includes flavour names like "Chocolate", "Vanilla", etc.
-  const varLabels = (p.variants||[]).map(v=>(v.label||'')+(v.flavour||'')).join(' ').toLowerCase();
-  // Exact name match = highest
-  if(nameL===ql) score+=100;
-  if(nameL.includes(ql)) score+=60;
-  // Check if query matches any variant/flavour label exactly
-  if(varLabels.includes(ql)) score+=55;
-  // Word-by-word
-  words.forEach(w=>{
-    if(nameL.includes(w)) score+=30;
-    if(tagsStr.includes(w)) score+=25;
-    if(varLabels.includes(w)) score+=22; // flavour/variant match
-    if(catName.includes(w)) score+=20;
-    if(descL.includes(w)) score+=10;
-  });
-  return score;
+  if(!ql) return 0;
+
+  // Expand query to handle typos and Kannada phonetics
+  const queries = _expandQuery(ql);
+  let best = 0;
+
+  for(const eq of queries){
+    const words = eq.split(/\s+/).filter(w=>w.length>1);
+    const nameL     = (p.name||'').toLowerCase();
+    const nameKnL   = (p.nameKn||'').toLowerCase();
+    const descL     = (p.desc||'').toLowerCase();
+    const descKnL   = (p.descKn||'').toLowerCase();
+    const catName   = (CATS.find(c=>c.id===p.cat)?.name||'').toLowerCase();
+    const tagsStr   = (p.tags||[]).join(' ').toLowerCase();
+    const varLabels = (p.variants||[]).map(v=>(v.label||'')+(v.flavour||'')).join(' ').toLowerCase();
+    const flavNames = (p.flavours||[]).map(f=>(f.name||'')).join(' ').toLowerCase();
+
+    let score = 0;
+    // Full fuzzy score against name (highest weight)
+    const nameScore = _fuzzyScore(eq, nameL);
+    score = Math.max(score, nameScore);
+    score = Math.max(score, _fuzzyScore(eq, nameKnL) * 0.9);
+
+    // Word-by-word fuzzy
+    words.forEach(w=>{
+      score = Math.max(score, _fuzzyScore(w, nameL) * 0.9);
+      score = Math.max(score, _fuzzyScore(w, nameKnL) * 0.85);
+      score = Math.max(score, _fuzzyScore(w, varLabels) * 0.8);
+      score = Math.max(score, _fuzzyScore(w, flavNames) * 0.8);
+      score = Math.max(score, _fuzzyScore(w, tagsStr) * 0.7);
+      score = Math.max(score, _fuzzyScore(w, catName) * 0.65);
+      score = Math.max(score, _fuzzyScore(w, descL) * 0.4);
+      score = Math.max(score, _fuzzyScore(w, descKnL) * 0.35);
+    });
+
+    // Also try full phrase against tags/variants
+    score = Math.max(score, _fuzzyScore(eq, tagsStr) * 0.75);
+    score = Math.max(score, _fuzzyScore(eq, varLabels) * 0.8);
+    score = Math.max(score, _fuzzyScore(eq, flavNames) * 0.8);
+
+    best = Math.max(best, score);
+  }
+  // Only return results with meaningful match (>15 score)
+  return best > 15 ? best : 0;
 }
 
 function liveSearch(q){
   const dd = document.getElementById('searchDropdown');
-  // Update product grid too
   searchQuery = q || '';
   if(typeof renderProds === 'function') renderProds();
   const sb = document.getElementById('searchResultsBar');
@@ -7060,51 +7426,96 @@ function liveSearch(q){
     else{sb.classList.remove('visible');}
   }
   if(!q || q.trim().length < 1){dd.classList.remove('open');return;}
-  const results = PRODS.map(p=>({p, score:scoreProduct(p,q)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,8);
+
+  // If PRODS not yet loaded from Firebase, retry
+  if(!PRODS || PRODS.length === 0){
+    dd.innerHTML = `<div class="sd-empty">⏳ Loading products…</div>`;
+    dd.classList.add('open');
+    setTimeout(()=>{ if(document.getElementById('navSearchInput')?.value === q) liveSearch(q); }, 800);
+    return;
+  }
+
+  const results = PRODS.map(p=>({p, score:scoreProduct(p,q)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,10);
+
   if(!results.length){
-    dd.innerHTML = `<div class="sd-empty">😔 No results for "<strong>${q}</strong>"<br><small>Try: egg puff, cake, chakli, laddoo</small></div>`;
+    // Show "did you mean" if query has possible expanded form
+    const expanded = _expandQuery(q.toLowerCase().trim()).filter(e=>e!==q.toLowerCase().trim());
+    const didYouMean = expanded.length > 0 ? `<div style="margin-top:6px;font-size:12px;color:var(--gold);">Did you mean: ${expanded.map(e=>`<span style="cursor:pointer;text-decoration:underline;" onclick="document.getElementById('navSearchInput').value='${e}';document.getElementById('mobSearchInput')&&(document.getElementById('mobSearchInput').value='${e}');liveSearch('${e}');">${e}</span>`).join(', ')}</div>` : '';
+    dd.innerHTML = `<div class="sd-empty">😔 No results for "<strong>${ubSanitize(q)}</strong>"<br><small>Try: ಕೇಕ್, vanilla, egg puff, chakli, laddoo</small>${didYouMean}</div>`;
     dd.classList.add('open'); return;
   }
-  dd.innerHTML = results.map(({p})=>{
+
+  // Detect if this was a fuzzy/typo match — show correction hint
+  const topScore = results[0].score;
+  const isExact = topScore >= 75;
+  const topName = results[0].p.name;
+  const correctionHint = (!isExact && results.length > 0)
+    ? `<div style="padding:8px 16px 2px;font-size:11px;color:var(--gold);border-bottom:1px solid var(--cream-dark);">🔍 Showing results for <em>"${ubSanitize(topName.split(' ')[0])}"</em></div>`
+    : '';
+
+  dd.innerHTML = correctionHint + results.map(({p})=>{
     const cat = CATS.find(c=>c.id===p.cat);
     const _sdKn = currentLang === 'kn';
     const sdName = _sdKn && p.nameKn ? p.nameKn : p.name;
-    const imgH = p.image ? `<img src="${p.image}" alt="" loading="lazy" decoding="async">` : `${p.emoji}`;
+    const imgH = p.image
+      ? `<img src="${p.image}" alt="${p.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" onerror="this.parentElement.innerHTML='<span style=\\'font-size:26px;line-height:1;\\'>${p.emoji||'🎂'}</span>'">`
+      : `<span style="font-size:26px;line-height:1;">${p.emoji||'🎂'}</span>`;
+    const priceLabel = p.variants && p.variants[0] ? `from ₹${p.variants[0].price} / ${p.variants[0].label}` : '';
+    const priceVal   = p.variants && p.variants[0] ? `₹${p.variants[0].price}` : '';
     return `<div class="sd-item" onclick="selectSearchResult(${p.id})">
-      <div class="sd-img">${imgH}</div>
+      <div class="sd-img" style="width:56px;height:56px;border-radius:12px;overflow:hidden;background:var(--cream);flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--cream-dark);">${imgH}</div>
       <div class="sd-info">
         <div class="sd-tag">${cat?.name||p.cat}</div>
         <div class="sd-name">${highlight(sdName,q)}</div>
-        <div class="sd-cat">from ₹${p.variants[0].price} / ${p.variants[0].label}</div>
+        <div class="sd-cat">${priceLabel}</div>
       </div>
-      <div class="sd-price">₹${p.variants[0].price}</div>
+      <div class="sd-price">${priceVal}</div>
     </div>`;
   }).join('');
   dd.classList.add('open');
 }
 
 function highlight(text, q){
-  if(!q) return text;
-  const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
-  return text.replace(re,'<mark style="background:rgba(200,146,58,.25);border-radius:3px;padding:0 2px;">$1</mark>');
+  if(!q) return ubSanitize(text);
+  // Sanitize both text and query before using in innerHTML
+  const safeText = ubSanitize(text);
+  const safeQ = ubSanitize(q);
+  const re = new RegExp(`(${safeQ.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return safeText.replace(re,'<mark style="background:rgba(200,146,58,.25);border-radius:3px;padding:0 2px;">$1</mark>');
 }
 
-function closeSD(){ document.getElementById('searchDropdown').classList.remove('open'); }
+// closeSD defined below in liveSearchMob section
 
 // ── MOBILE SEARCH (syncs with product grid via same liveSearch + renderProds) ──
 function liveSearchMob(q){
   // Mirror value into desktop input so dropdown & product filter both work
   const desktopInput = document.getElementById('navSearchInput');
   if(desktopInput) desktopInput.value = q;
+  // Populate mobile dropdown
   liveSearch(q);
-  // Also update product grid
+  // Also copy dropdown content to mobile dropdown
+  const mobDd = document.getElementById('mobSearchDropdown');
+  const desDd = document.getElementById('searchDropdown');
+  if(mobDd && desDd){
+    mobDd.innerHTML = desDd.innerHTML;
+    if(desDd.classList.contains('open')) mobDd.classList.add('open');
+    else mobDd.classList.remove('open');
+    // Wire onclick in mobile dropdown items to use the same selectSearchResult
+    mobDd.querySelectorAll('.sd-item').forEach(el=>{
+      el.addEventListener('click', function(){
+        const desEl = desDd.querySelector('.sd-item[onclick="'+el.getAttribute('onclick')+'"]');
+        if(el.getAttribute('onclick')) el.onclick = new Function(el.getAttribute('onclick'));
+      });
+    });
+  }
+  // Update product grid
   searchQuery = q;
   if(typeof renderProds === 'function') renderProds();
   const sb = document.getElementById('searchResultsBar');
   const ql = document.getElementById('searchQueryLabel');
   if(sb && ql){
     if(q && q.trim()){
-      ql.textContent = '"' + q + '"';
+      ql.textContent = '"' + ubSanitize(q) + '"';
       sb.classList.add('visible');
     } else {
       sb.classList.remove('visible');
@@ -7112,7 +7523,10 @@ function liveSearchMob(q){
   }
 }
 
-// ── MOBILE VOICE SEARCH ──
+function closeSD(){
+  document.getElementById('searchDropdown')?.classList.remove('open');
+  document.getElementById('mobSearchDropdown')?.classList.remove('open');
+}// ── MOBILE VOICE SEARCH ──
 function startMobVoiceSearch(){
   const btn = document.getElementById('mobVoiceBtn');
   const input = document.getElementById('mobSearchInput');
@@ -7583,8 +7997,32 @@ function renderProds(){
       </div>
     </div>`;
   }).join('');
+  // Mark image wraps that have images (hides skeleton shimmer)
+  grid.querySelectorAll('.pimg-wrap img').forEach(img=>{
+    if(img.complete) img.closest('.pimg-wrap')?.classList.add('img-loaded');
+    else img.addEventListener('load',()=>img.closest('.pimg-wrap')?.classList.add('img-loaded'),{once:true});
+  });
   });
 }
+
+// Debounced renderProds — Firebase real-time updates won't spam re-render
+// Immediate=true for user actions (category click), debounced for data changes
+let _renderProdsTimer;
+const _renderProdsOrig = renderProds;
+renderProds = function(immediate){
+  if(immediate){ _renderProdsOrig(); return; }
+  clearTimeout(_renderProdsTimer);
+  _renderProdsTimer = setTimeout(_renderProdsOrig, 80);
+};
+
+// Debounced renderCats — same idea
+let _renderCatsTimer;
+const _renderCatsOrig = renderCats;
+renderCats = function(immediate){
+  if(immediate){ _renderCatsOrig(); return; }
+  clearTimeout(_renderCatsTimer);
+  _renderCatsTimer = setTimeout(_renderCatsOrig, 80);
+};
 
 function selV(pid,vi){
   document.querySelectorAll(`#pv-${pid} .vc`).forEach((c,i)=>c.classList.toggle('sel',i===vi));
@@ -8892,17 +9330,25 @@ async function _sha256(str){
   } catch(e){ return str; }
 }
 
-// Initialise hashes on page load
+// Initialise hashes on page load — credentials verified via SHA-256 hash comparison only
 (async function _initAdminHashes(){
   _adminUserHash = localStorage.getItem('ub_admin_user_hash');
   _adminPassHash = localStorage.getItem('ub_admin_pass_hash');
   if(!_adminUserHash){
+    // First run: set default username hash. Admin should change via Settings.
     _adminUserHash = await _sha256('UdayaKunder');
     localStorage.setItem('ub_admin_user_hash', _adminUserHash);
   }
   if(!_adminPassHash){
-    // Default password removed for security — admin must set password via Firestore or first-run setup.
-    console.warn('Admin password hash not set. Please configure admin credentials in Firestore.');
+    // SECURITY: No default password — admin must set one via Settings > Change Password.
+    // If hash missing, login will fail safely.
+    console.warn('[UB Security] Admin password hash not configured. Set it via Admin > Settings > Change Password.');
+  }
+  // SECURITY CHECK: detect if default credentials are still in use and warn
+  const defaultUserHash = await _sha256('UdayaKunder');
+  const defaultPassHash = await _sha256('Udaya0519');
+  if(_adminPassHash === defaultPassHash){
+    console.warn('[UB Security] ⚠️ Default admin password is still set. Please change it immediately via Admin > Settings > Change Password.');
   }
 })();
 
@@ -9061,6 +9507,7 @@ function renderAdminTab(){
   else if(adminTab==='analytics') el.innerHTML = buildAnalyticsTab();
   else if(adminTab==='cakebuilder') el.innerHTML = buildCakeBuilderAdminTab();
   else if(adminTab==='videos') el.innerHTML = buildVideosAdminTab();
+  else if(adminTab==='designer'){ el.innerHTML = buildDesignerTab(); ubInitDesigner(); }
 }
 
 // ── DASHBOARD ──
@@ -10718,16 +11165,19 @@ function ubSaveFlashSale(){
   const end=document.getElementById('flashEnd')?.value;
   if(!pct||!end){showToast('Enter discount % and end time','err');return;}
   if(new Date(end)<=new Date()){showToast('End time must be in the future','err');return;}
-  localStorage.setItem('ub_flash_sale',JSON.stringify({pct,end,active:true}));
-  showToast('Flash Sale activated! '+pct+'% off until '+new Date(end).toLocaleTimeString('en-IN'),'ok');
+  const sale = {pct,end,active:true};
+  localStorage.setItem('ub_flash_sale',JSON.stringify(sale));
+  ubSaveConfigToFirestore({flashSale: sale});
+  showToast('🔥 Flash Sale activated for ALL customers! '+pct+'% off until '+new Date(end).toLocaleTimeString('en-IN'),'ok');
   ubRefreshSettingsLive();
-  renderProds(); // update prices on product cards immediately
+  renderProds();
 }
 function ubClearFlashSale(){
   localStorage.removeItem('ub_flash_sale');
-  showToast('Flash sale removed','ok');
+  ubSaveConfigToFirestore({flashSale: {active: false, end: new Date().toISOString(), pct: 0}});
+  showToast('Flash sale removed for all customers','ok');
   ubRefreshSettingsLive();
-  renderProds(); // restore prices immediately
+  renderProds();
 }
 function saveHours(){
   const enabled = document.getElementById('bh_enabled').checked;
@@ -10738,8 +11188,9 @@ function saveHours(){
   BIZ_HOURS = {enabled, mon:{open:wo,close:wc}, tue:{open:wo,close:wc}, wed:{open:wo,close:wc},
     thu:{open:wo,close:wc}, fri:{open:wo,close:wc}, sat:{open:wo,close:wc}, sun:{open:so,close:sc}};
   localStorage.setItem('ub_hours', JSON.stringify(BIZ_HOURS));
+  ubSaveConfigToFirestore({bizHours: BIZ_HOURS});
   checkBusinessHours();
-  showToast('✅ Business hours saved!','ok');
+  showToast('✅ Business hours saved & synced to all customers!','ok');
 }
 
 function saveSettings(){
@@ -10747,7 +11198,9 @@ function saveSettings(){
   CFG.base=parseFloat(document.getElementById('s_base').value)||70;
   CFG.perKm=parseFloat(document.getElementById('s_rate').value)||15;
   CFG.minOrder=parseFloat(document.getElementById('s_minorder').value)||0;
-  save(); showToast('✅ Settings saved!','ok');
+  save();
+  ubSaveConfigToFirestore({deliveryCfg: CFG});
+  showToast('✅ Delivery settings saved & synced to all customers!','ok');
 }
 function saveLoyaltySettings(){
   const enabled = document.getElementById('loy_enabled')?.checked;
@@ -10756,7 +11209,8 @@ function saveLoyaltySettings(){
   localStorage.setItem('ub_loyalty_on', enabled ? '1' : '0');
   localStorage.setItem('ub_loyalty_earn', earn);
   localStorage.setItem('ub_loyalty_redeem', redeem);
-  showToast(enabled ? `✅ Loyalty points ON — ₹${earn} spent = 1 pt, ${redeem} pts = ₹10 off` : '🚫 Loyalty points disabled', 'ok');
+  ubSaveConfigToFirestore({loyaltyOn: !!enabled, loyaltyEarn: earn, loyaltyRedeem: redeem});
+  showToast(enabled ? `✅ Loyalty points ON — synced to all customers!` : '🚫 Loyalty points disabled for all customers', 'ok');
   renderAdminTab();
 }
 async function changePass(){
@@ -14295,6 +14749,7 @@ const TABS=[
   {i:'👥',l:'Customers',s:'List',t:'customers'},{i:'📢',l:'Broadcast',s:'WhatsApp',t:'broadcast'},
   {i:'📈',l:'Analytics',s:'Insights',t:'analytics'},{i:'🎂',l:'Cake Builder',s:'Builder',t:'cakebuilder'},
   {i:'🎬',l:'Cake Videos',s:'Post videos',t:'videos'},
+  {i:'🎨',l:'Website Designer',s:'Colors, fonts, layout',t:'designer'},
 ];
 let _ci=0, _cr=[];
 
@@ -14368,6 +14823,456 @@ if(_loginEl){
   }).observe(_loginEl,{attributes:true,attributeFilter:['style']});
   if(getComputedStyle(_loginEl).display!=='none') setTimeout(_initParticles,300);
 }
+
+// ══════════════════════════════════════════════════════════════
+//  🎨 WEBSITE DESIGNER TAB — Live visual editor for owner
+//  Change colors, fonts, buttons, cards, hero, nav — all sync
+//  to Firestore and apply to every customer instantly.
+// ══════════════════════════════════════════════════════════════
+
+// Default design config — what the site looks like out of the box
+const UB_DESIGN_DEFAULTS = {
+  // Colors
+  colorPrimary:   '#3B1F0E', // main dark color (nav, buttons)
+  colorAccent:    '#C8923A', // gold accent
+  colorBg:        '#FDF6EC', // page background
+  colorCard:      '#FDF6EC', // product card background
+  colorText:      '#2A1208', // body text
+  colorBtn:       '#3B1F0E', // add-to-cart button
+  colorBtnText:   '#FDF6EC', // button text
+  // Fonts
+  fontHeading:    'Playfair Display',
+  fontBody:       'Jost',
+  // Shape & size
+  cardRadius:     '22',    // px
+  btnRadius:      '26',    // px
+  cardShadow:     '1',     // 0=none 1=soft 2=strong
+  // Nav style
+  navStyle:       'light', // light | glass | solid
+  // Hero
+  heroVisible:    true,
+  heroBg:         '#FDF6EC',
+  // Announcement bar
+  annBgColor:     '#3B1F0E',
+  // Button style
+  btnStyle:       'filled', // filled | outline | gradient
+  // Product card style
+  cardStyle:      'shadow', // shadow | flat | border
+};
+
+// Load saved design from localStorage (Firestore syncs on load)
+function ubGetDesign(){
+  try { return {...UB_DESIGN_DEFAULTS, ...(JSON.parse(localStorage.getItem('ub_design')||'{}'))}; }
+  catch(e){ return {...UB_DESIGN_DEFAULTS}; }
+}
+
+// Apply design vars to :root CSS
+function ubApplyDesign(d){
+  const r = document.documentElement.style;
+  r.setProperty('--choco',      d.colorPrimary);
+  r.setProperty('--gold',       d.colorAccent);
+  r.setProperty('--gold-light', d.colorAccent + 'CC');
+  r.setProperty('--cream',      d.colorBg);
+  r.setProperty('--white',      d.colorCard);
+  r.setProperty('--text-dark',  d.colorText);
+
+  // Card radius
+  document.querySelectorAll('.product-card').forEach(el=>el.style.borderRadius = d.cardRadius+'px');
+  document.querySelectorAll('.btn-add,.btn-checkout').forEach(el=>el.style.borderRadius = d.btnRadius+'px');
+
+  // Card shadow
+  const shadows = {'0':'none','1':'0 4px 16px rgba(59,31,14,.1)','2':'0 8px 32px rgba(59,31,14,.25)'};
+  document.querySelectorAll('.product-card').forEach(el=>el.style.boxShadow = shadows[d.cardShadow]||shadows['1']);
+
+  // Card style
+  if(d.cardStyle==='flat')   document.querySelectorAll('.product-card').forEach(el=>{ el.style.boxShadow='none'; el.style.border='none'; });
+  if(d.cardStyle==='border') document.querySelectorAll('.product-card').forEach(el=>{ el.style.boxShadow='none'; el.style.border='1.5px solid rgba(59,31,14,.15)'; });
+
+  // Button style
+  document.querySelectorAll('.btn-add').forEach(el=>{
+    if(d.btnStyle==='gradient'){ el.style.background=`linear-gradient(135deg,${d.colorBtn},${d.colorAccent})`; el.style.border='none'; }
+    else if(d.btnStyle==='outline'){ el.style.background='transparent'; el.style.border=`2px solid ${d.colorBtn}`; el.style.color=d.colorBtn; }
+    else { el.style.background=d.colorBtn; el.style.color=d.colorBtnText; el.style.border='none'; }
+  });
+
+  // Font
+  const fontMap = {
+    'Playfair Display': "'Playfair Display', serif",
+    'Jost': "'Jost', sans-serif",
+    'Plus Jakarta Sans': "'Plus Jakarta Sans', sans-serif",
+    'Cormorant Garamond': "'Cormorant Garamond', serif",
+    'Georgia': 'Georgia, serif',
+    'Arial': 'Arial, sans-serif',
+    'DM Sans': "'DM Sans', sans-serif",
+  };
+  document.querySelectorAll('.pname,.qa-name,.section-title').forEach(el=>el.style.fontFamily = fontMap[d.fontHeading]||fontMap['Playfair Display']);
+  document.querySelectorAll('.pdesc,.pcat,.sd-name').forEach(el=>el.style.fontFamily = fontMap[d.fontBody]||fontMap['Jost']);
+
+  // Nav style
+  const nav = document.getElementById('mainNav');
+  if(nav){
+    if(d.navStyle==='glass'){ nav.style.background='rgba(255,255,255,0.72)'; nav.style.backdropFilter='blur(16px)'; }
+    else if(d.navStyle==='solid'){ nav.style.background=d.colorPrimary; }
+    else { nav.style.background=''; nav.style.backdropFilter=''; }
+  }
+
+  // Hero visibility
+  const hero = document.getElementById('hero');
+  if(hero) hero.style.display = d.heroVisible===false ? 'none' : '';
+}
+
+// Save design to localStorage + Firestore + apply live
+function ubSaveDesign(patch){
+  const current = ubGetDesign();
+  const updated = {...current, ...patch};
+  localStorage.setItem('ub_design', JSON.stringify(updated));
+  ubApplyDesign(updated);
+  ubSaveConfigToFirestore({siteDesign: updated});
+  showToast('🎨 Design updated for all customers!', 'ok');
+}
+
+// Load design from Firestore config on startup
+function ubLoadDesignFromConfig(d){
+  if(d.siteDesign){
+    localStorage.setItem('ub_design', JSON.stringify(d.siteDesign));
+    ubApplyDesign(d.siteDesign);
+  }
+}
+
+// Apply design on page load
+(function(){ ubApplyDesign(ubGetDesign()); })();
+
+function buildDesignerTab(){
+  const d = ubGetDesign();
+  const fontOptions = ['Playfair Display','Jost','Plus Jakarta Sans','Cormorant Garamond','DM Sans','Georgia','Arial'];
+  return `
+  <div style="max-width:800px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+    <div>
+      <h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">🎨 Website Designer</h2>
+      <p style="color:rgba(253,246,236,.45);font-size:13px;">Edit your website live — changes apply instantly to all customers</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button onclick="ubDesignerReset()" style="background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:9px 16px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">↺ Reset to Default</button>
+      <button onclick="ubDesignerPreview()" style="background:rgba(200,146,58,.14);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:9px 16px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">👁 Preview Site</button>
+    </div>
+  </div>
+
+  <!-- LIVE MINI PREVIEW -->
+  <div class="acard" style="margin-bottom:16px;border-left:3px solid #E8B96A;">
+    <h3>👁 Live Preview</h3>
+    <div class="asub">See how your site looks as you edit</div>
+    <div id="ubDesignerPreviewBox" style="margin-top:14px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(200,146,58,.2);background:#fff;">
+      <div id="ubPreviewNav" style="padding:12px 18px;display:flex;align-items:center;gap:12px;transition:all .3s;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:14px;">🎂</div>
+        <div>
+          <div id="ubPreviewBname" style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--choco);">${localStorage.getItem('ub_bname')||'Udaya Bakery'}</div>
+          <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);">${localStorage.getItem('ub_btag')||'Artisan Bakes'}</div>
+        </div>
+      </div>
+      <div style="padding:14px 18px;background:var(--cream);display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div id="ubPreviewCard" style="background:var(--white);border-radius:${d.cardRadius}px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,.08);">
+          <div style="width:100%;height:60px;background:linear-gradient(135deg,var(--cream-dark),var(--cream));border-radius:${Math.max(0,parseInt(d.cardRadius)-4)}px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px;">🎂</div>
+          <div style="font-size:11px;color:var(--text-mid);margin-bottom:2px;">Cakes</div>
+          <div id="ubPreviewCardName" style="font-size:13px;font-weight:700;color:var(--choco);margin-bottom:6px;">Vanilla Cake</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:13px;font-weight:700;color:var(--choco);">₹400</span>
+            <button id="ubPreviewBtn" style="background:var(--choco);color:var(--cream);border:none;padding:5px 12px;border-radius:${d.btnRadius}px;font-size:11px;font-weight:700;cursor:default;">+ Add</button>
+          </div>
+        </div>
+        <div style="background:var(--white);border-radius:${d.cardRadius}px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,.08);">
+          <div style="width:100%;height:60px;background:linear-gradient(135deg,var(--cream-dark),var(--cream));border-radius:${Math.max(0,parseInt(d.cardRadius)-4)}px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px;">🥚</div>
+          <div style="font-size:11px;color:var(--text-mid);margin-bottom:2px;">Puffs</div>
+          <div style="font-size:13px;font-weight:700;color:var(--choco);margin-bottom:6px;">Egg Puff</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:13px;font-weight:700;color:var(--choco);">₹18</span>
+            <button style="background:var(--choco);color:var(--cream);border:none;padding:5px 12px;border-radius:${d.btnRadius}px;font-size:11px;font-weight:700;cursor:default;">+ Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK THEMES -->
+  <div class="acard" style="margin-bottom:16px;">
+    <h3>🖼️ Quick Themes</h3>
+    <div class="asub">One-tap complete theme presets — changes everything at once</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px;" id="adminThemeGrid">
+      ${[
+        {id:'default',  label:'Classic',    bg:'linear-gradient(135deg,#3B1F0E,#6B3A25)', accent:'#C8923A', text:'#FDF6EC', icon:'🎂'},
+        {id:'midnight', label:'Midnight',   bg:'linear-gradient(135deg,#0D0A1A,#1A1530)', accent:'#9B7FD4', text:'#F0E8FF', icon:'🌙'},
+        {id:'rosegold', label:'Rose Gold',  bg:'linear-gradient(135deg,#4A1520,#8B3A4A)', accent:'#E8A0B0', text:'#FDF0F0', icon:'🌸'},
+        {id:'emerald',  label:'Emerald',    bg:'linear-gradient(135deg,#064E3B,#065F46)', accent:'#34D399', text:'#F0FDF4', icon:'🌿'},
+        {id:'royal',    label:'Royal',      bg:'linear-gradient(135deg,#1A0A4A,#2D1580)', accent:'#F5C040', text:'#FEF9F0', icon:'👑'},
+        {id:'obsidian', label:'Obsidian',   bg:'linear-gradient(135deg,#0A0A0A,#1A1A1A)', accent:'#FFD700', text:'#F8F8F8', icon:'💎'},
+        {id:'sakura',   label:'Sakura',     bg:'linear-gradient(135deg,#3D0020,#801040)', accent:'#FF80A0', text:'#FFF5F8', icon:'🌺'},
+        {id:'ocean',    label:'Ocean',      bg:'linear-gradient(135deg,#002040,#003C6A)', accent:'#00A8E8', text:'#F0F8FF', icon:'🌊'},
+        {id:'sunset',   label:'Sunset',     bg:'linear-gradient(135deg,#3A1500,#7A3000)', accent:'#FF8C00', text:'#FFF8F0', icon:'🌅'},
+        {id:'lavender', label:'Lavender',   bg:'linear-gradient(135deg,#2D1060,#5530A0)', accent:'#A080F0', text:'#F8F5FF', icon:'🪻'},
+      ].map(t => {
+        const cur = localStorage.getItem('ub_theme') || 'default';
+        return `<div class="theme-swatch ${cur===t.id?'active':''}" onclick="ubApplyTheme('${t.id}')" title="${t.label}" style="border-color:${cur===t.id?t.accent:'transparent'};">
+          <div class="tsw-preview" style="background:${t.bg};">
+            <div class="tsw-preview-orb" style="background:${t.accent};"><span style="font-size:13px;line-height:1;">${t.icon}</span></div>
+          </div>
+          <div class="tsw-label" style="background:${t.bg};color:${t.text};">${t.label}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <!-- COLORS -->
+  <div class="acard" style="margin-bottom:16px;">
+    <h3>🎨 Custom Colors</h3>
+    <div class="asub">Pick your own exact colors — overrides the theme preset</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;">
+      ${[
+        {key:'colorPrimary', label:'Primary Color', hint:'Nav, buttons, headings', val:d.colorPrimary},
+        {key:'colorAccent',  label:'Accent / Gold',  hint:'Highlights, prices, icons', val:d.colorAccent},
+        {key:'colorBg',      label:'Page Background', hint:'Main background color', val:d.colorBg},
+        {key:'colorCard',    label:'Card Background', hint:'Product card color', val:d.colorCard},
+        {key:'colorText',    label:'Body Text',       hint:'Main text color', val:d.colorText},
+        {key:'colorBtn',     label:'Button Color',    hint:'Add to cart button', val:d.colorBtn},
+      ].map(c=>`
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(200,146,58,.1);border-radius:12px;padding:10px 14px;">
+          <input type="color" value="${c.val}" id="dc_${c.key}"
+            oninput="ubDesignerLivePreview('${c.key}',this.value)"
+            onchange="ubSaveDesign({${c.key}:this.value})"
+            style="width:44px;height:44px;border:none;border-radius:10px;cursor:pointer;padding:2px;background:none;flex-shrink:0;">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:rgba(253,246,236,.9);">${c.label}</div>
+            <div style="font-size:11px;color:rgba(253,246,236,.35);">${c.hint}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- FONTS -->
+  <div class="acard" style="margin-bottom:16px;">
+    <h3>✍️ Fonts</h3>
+    <div class="asub">Choose typefaces for headings and body text</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+      <div class="af-group">
+        <label>Heading Font (product names, titles)</label>
+        <select class="af-inp" id="dc_fontHeading" onchange="ubSaveDesign({fontHeading:this.value})">
+          ${fontOptions.map(f=>`<option value="${f}" ${d.fontHeading===f?'selected':''}>${f}</option>`).join('')}
+        </select>
+        <div style="margin-top:8px;font-size:18px;font-weight:700;color:rgba(253,246,236,.7);" id="fontHeadingPreview" style="font-family:'${d.fontHeading}',serif;">Vanilla Dream Cake</div>
+      </div>
+      <div class="af-group">
+        <label>Body Font (descriptions, labels)</label>
+        <select class="af-inp" id="dc_fontBody" onchange="ubSaveDesign({fontBody:this.value})">
+          ${fontOptions.map(f=>`<option value="${f}" ${d.fontBody===f?'selected':''}>${f}</option>`).join('')}
+        </select>
+        <div style="margin-top:8px;font-size:13px;color:rgba(253,246,236,.6);" id="fontBodyPreview">Fresh cream filled sponge cake with fruit topping.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHAPES & STYLE -->
+  <div class="acard" style="margin-bottom:16px;">
+    <h3>⬛ Shapes & Style</h3>
+    <div class="asub">Card corners, button style, shadow depth</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+      <div class="af-group">
+        <label>Card Corner Radius: <strong id="cardRadiusVal">${d.cardRadius}px</strong></label>
+        <input type="range" min="0" max="40" value="${d.cardRadius}" id="dc_cardRadius"
+          oninput="document.getElementById('cardRadiusVal').textContent=this.value+'px';ubDesignerLivePreview('cardRadius',this.value)"
+          onchange="ubSaveDesign({cardRadius:this.value})"
+          style="width:100%;accent-color:var(--gold);margin-top:8px;">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(253,246,236,.3);margin-top:2px;"><span>Sharp</span><span>Round</span></div>
+      </div>
+      <div class="af-group">
+        <label>Button Corner Radius: <strong id="btnRadiusVal">${d.btnRadius}px</strong></label>
+        <input type="range" min="0" max="40" value="${d.btnRadius}" id="dc_btnRadius"
+          oninput="document.getElementById('btnRadiusVal').textContent=this.value+'px';ubDesignerLivePreview('btnRadius',this.value)"
+          onchange="ubSaveDesign({btnRadius:this.value})"
+          style="width:100%;accent-color:var(--gold);margin-top:8px;">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(253,246,236,.3);margin-top:2px;"><span>Sharp</span><span>Pill</span></div>
+      </div>
+      <div class="af-group">
+        <label>Card Style</label>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          ${['shadow','flat','border'].map(s=>`<button onclick="ubSaveDesign({cardStyle:'${s}'})" style="flex:1;padding:8px;border-radius:8px;border:1.5px solid ${d.cardStyle===s?'var(--gold)':'rgba(200,146,58,.2)'};background:${d.cardStyle===s?'rgba(200,146,58,.15)':'rgba(255,255,255,.04)'};color:${d.cardStyle===s?'#E8B96A':'rgba(253,246,236,.6)'};font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-transform:capitalize;">${s}</button>`).join('')}
+        </div>
+      </div>
+      <div class="af-group">
+        <label>Button Style</label>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          ${['filled','gradient','outline'].map(s=>`<button onclick="ubSaveDesign({btnStyle:'${s}'})" style="flex:1;padding:8px;border-radius:8px;border:1.5px solid ${d.btnStyle===s?'var(--gold)':'rgba(200,146,58,.2)'};background:${d.btnStyle===s?'rgba(200,146,58,.15)':'rgba(255,255,255,.04)'};color:${d.btnStyle===s?'#E8B96A':'rgba(253,246,236,.6)'};font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-transform:capitalize;">${s}</button>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV & HERO -->
+  <div class="acard" style="margin-bottom:16px;">
+    <h3>🧭 Navigation & Hero</h3>
+    <div class="asub">Control the top bar style and the big hero banner</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+      <div class="af-group">
+        <label>Nav Bar Style</label>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          ${['light','glass','solid'].map(s=>`<button onclick="ubSaveDesign({navStyle:'${s}'})" style="flex:1;padding:8px;border-radius:8px;border:1.5px solid ${d.navStyle===s?'var(--gold)':'rgba(200,146,58,.2)'};background:${d.navStyle===s?'rgba(200,146,58,.15)':'rgba(255,255,255,.04)'};color:${d.navStyle===s?'#E8B96A':'rgba(253,246,236,.6)'};font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-transform:capitalize;">${s}</button>`).join('')}
+        </div>
+      </div>
+      <div class="af-group">
+        <label>Hero Banner</label>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button onclick="ubSaveDesign({heroVisible:true})" style="flex:1;padding:8px;border-radius:8px;border:1.5px solid ${d.heroVisible!==false?'var(--gold)':'rgba(200,146,58,.2)'};background:${d.heroVisible!==false?'rgba(200,146,58,.15)':'rgba(255,255,255,.04)'};color:${d.heroVisible!==false?'#E8B96A':'rgba(253,246,236,.6)'};font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✅ Show</button>
+          <button onclick="ubSaveDesign({heroVisible:false})" style="flex:1;padding:8px;border-radius:8px;border:1.5px solid ${d.heroVisible===false?'var(--gold)':'rgba(200,146,58,.2)'};background:${d.heroVisible===false?'rgba(200,146,58,.15)':'rgba(255,255,255,.04)'};color:${d.heroVisible===false?'#E8B96A':'rgba(253,246,236,.6)'};font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">🚫 Hide</button>
+        </div>
+        <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:6px;">Hide hero to show products immediately when page loads</div>
+      </div>
+      <div class="af-group">
+        <label>Shadow Depth</label>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          ${[['0','None'],['1','Soft'],['2','Strong']].map(([v,l])=>`<button onclick="ubSaveDesign({cardShadow:'${v}'})" style="flex:1;padding:8px;border-radius:8px;border:1.5px solid ${d.cardShadow===v?'var(--gold)':'rgba(200,146,58,.2)'};background:${d.cardShadow===v?'rgba(200,146,58,.15)':'rgba(255,255,255,.04)'};color:${d.cardShadow===v?'#E8B96A':'rgba(253,246,236,.6)'};font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">${l}</button>`).join('')}
+        </div>
+      </div>
+      <div class="af-group">
+        <label>Announcement Bar Color</label>
+        <input type="color" value="${d.annBgColor||'#3B1F0E'}" id="dc_annBgColor"
+          oninput="ubDesignerLivePreview('annBgColor',this.value)"
+          onchange="ubSaveDesign({annBgColor:this.value})"
+          style="width:100%;height:44px;border:none;border-radius:10px;cursor:pointer;padding:2px;background:none;margin-top:8px;">
+      </div>
+    </div>
+  </div>
+
+  <!-- BAKERY IDENTITY -->
+  <div class="acard" style="margin-bottom:16px;">
+    <h3>🏪 Bakery Identity</h3>
+    <div class="asub">Name, tagline and logo shown in the nav bar</div>
+    <div style="margin-top:14px;">
+      <div class="af-group"><label>Bakery Name</label><input class="af-inp" id="des_bname" value="${localStorage.getItem('ub_bname')||'Udaya Bakery'}" placeholder="Your Bakery Name" oninput="ubDesignerLivePreview('bname',this.value)"></div>
+      <div class="af-group"><label>Tagline</label><input class="af-inp" id="des_btag" value="${localStorage.getItem('ub_btag')||'Artisan Bakes'}" placeholder="e.g. Fresh Baked Daily" oninput="ubDesignerLivePreview('btag',this.value)"></div>
+      <button class="abtn" onclick="ubDesignerSaveBranding()" style="margin-top:4px;">💾 Save Name & Tagline</button>
+    </div>
+  </div>
+
+  </div>`;
+}
+
+function ubInitDesigner(){
+  // Apply current design to preview box
+  const d = ubGetDesign();
+  ubDesignerUpdatePreview(d);
+}
+
+function ubDesignerLivePreview(key, val){
+  // Update preview box in real time while dragging slider / picking color
+  const d = ubGetDesign();
+  d[key] = val;
+  ubDesignerUpdatePreview(d);
+
+  // Also update the live site (not saved yet)
+  const r = document.documentElement.style;
+  if(key==='colorPrimary') r.setProperty('--choco', val);
+  if(key==='colorAccent'){ r.setProperty('--gold', val); r.setProperty('--gold-light', val+'CC'); }
+  if(key==='colorBg') r.setProperty('--cream', val);
+  if(key==='colorCard') r.setProperty('--white', val);
+  if(key==='colorText') r.setProperty('--text-dark', val);
+  if(key==='cardRadius'){
+    document.querySelectorAll('.product-card').forEach(el=>el.style.borderRadius=val+'px');
+    const previewCard = document.getElementById('ubPreviewCard');
+    if(previewCard) previewCard.style.borderRadius = val+'px';
+    const previewBtn = document.getElementById('ubPreviewBtn');
+    if(previewBtn) previewBtn.style.borderRadius = val+'px';
+  }
+  if(key==='btnRadius'){
+    document.querySelectorAll('.btn-add,.btn-checkout').forEach(el=>el.style.borderRadius=val+'px');
+    const previewBtn = document.getElementById('ubPreviewBtn');
+    if(previewBtn) previewBtn.style.borderRadius = val+'px';
+  }
+  if(key==='annBgColor'){
+    const bar = document.getElementById('annBar');
+    if(bar) bar.style.background = val;
+  }
+  if(key==='bname'){
+    const el = document.getElementById('logoTextEl');
+    if(el){ const span = el.querySelector('span'); el.childNodes[0].textContent = val; }
+    const prev = document.getElementById('ubPreviewBname');
+    if(prev) prev.textContent = val;
+  }
+  if(key==='btag'){
+    const el = document.getElementById('logoTextEl');
+    if(el){ const span = el.querySelector('span'); if(span) span.textContent = val; }
+  }
+}
+
+function ubDesignerUpdatePreview(d){
+  const nav = document.getElementById('ubPreviewNav');
+  const card = document.getElementById('ubPreviewCard');
+  const btn = document.getElementById('ubPreviewBtn');
+  const cardName = document.getElementById('ubPreviewCardName');
+  if(!nav) return;
+
+  nav.style.background = d.navStyle==='glass' ? 'rgba(255,255,255,0.72)'
+    : d.navStyle==='solid' ? d.colorPrimary
+    : d.colorBg;
+  if(card){
+    card.style.background = d.colorCard;
+    card.style.borderRadius = d.cardRadius+'px';
+    const shadows = {'0':'none','1':'0 4px 12px rgba(0,0,0,.08)','2':'0 8px 24px rgba(0,0,0,.18)'};
+    card.style.boxShadow = shadows[d.cardShadow]||shadows['1'];
+    if(d.cardStyle==='flat'){ card.style.boxShadow='none'; card.style.border='none'; }
+    if(d.cardStyle==='border'){ card.style.boxShadow='none'; card.style.border='1.5px solid rgba(0,0,0,.1)'; }
+  }
+  if(btn){
+    btn.style.borderRadius = d.btnRadius+'px';
+    if(d.btnStyle==='gradient') btn.style.background=`linear-gradient(135deg,${d.colorBtn||d.colorPrimary},${d.colorAccent})`;
+    else if(d.btnStyle==='outline'){ btn.style.background='transparent'; btn.style.border=`2px solid ${d.colorBtn||d.colorPrimary}`; btn.style.color=d.colorBtn||d.colorPrimary; }
+    else { btn.style.background=d.colorBtn||d.colorPrimary; btn.style.color=d.colorBtnText||'#fff'; btn.style.border='none'; }
+  }
+  if(cardName){
+    const fontMap={'Playfair Display':"'Playfair Display',serif",'Jost':"'Jost',sans-serif",'Plus Jakarta Sans':"'Plus Jakarta Sans',sans-serif",'Cormorant Garamond':"'Cormorant Garamond',serif",'Georgia':'Georgia,serif','Arial':'Arial,sans-serif','DM Sans':"'DM Sans',sans-serif"};
+    cardName.style.fontFamily = fontMap[d.fontHeading]||fontMap['Playfair Display'];
+    cardName.style.color = d.colorText||d.colorPrimary;
+  }
+}
+
+function ubDesignerSaveBranding(){
+  const name = document.getElementById('des_bname')?.value.trim() || 'Udaya Bakery';
+  const tag  = document.getElementById('des_btag')?.value.trim()  || 'Artisan Bakes';
+  localStorage.setItem('ub_bname', name);
+  localStorage.setItem('ub_btag', tag);
+  const textEl = document.getElementById('logoTextEl');
+  if(textEl){ textEl.innerHTML = `${ubSanitize(name)}<span>${ubSanitize(tag)}</span>`; }
+  // Save to Firestore branding doc (same as existing branding save)
+  try {
+    if(db) db.collection('categories').doc('ubBranding').set({bname:name, btag:tag},{merge:true}).catch(()=>{});
+  } catch(e){}
+  showToast('✅ Bakery name saved for all customers!', 'ok');
+}
+
+function ubDesignerReset(){
+  if(!confirm('Reset all design changes to default? This cannot be undone.')) return;
+  localStorage.removeItem('ub_design');
+  ubApplyDesign(UB_DESIGN_DEFAULTS);
+  ubSaveConfigToFirestore({siteDesign: UB_DESIGN_DEFAULTS});
+  // Reset all inline styles set by designer
+  document.querySelectorAll('.product-card,.btn-add,.btn-checkout').forEach(el=>{
+    el.style.borderRadius=''; el.style.boxShadow=''; el.style.background=''; el.style.border=''; el.style.color='';
+  });
+  const nav = document.getElementById('mainNav');
+  if(nav){ nav.style.background=''; nav.style.backdropFilter=''; }
+  // Reset CSS vars to default
+  const r = document.documentElement.style;
+  ['--choco','--gold','--gold-light','--cream','--white','--text-dark'].forEach(v=>r.removeProperty(v));
+  showToast('↺ Design reset to default for all customers!', 'ok');
+  renderAdminTab(); // re-render designer
+}
+
+function ubDesignerPreview(){
+  closeAdmin();
+  showToast('👁 Previewing your site — open Admin to keep editing', 'ok');
+}
+
+// Hook into config listener to apply design when Firestore updates
+const _ubOrigConfigListener = ubStartConfigListener;
+// Patch the config listener handler to also call ubLoadDesignFromConfig
+const _ubOrigOnConfigSnap = ubLoadDesignFromConfig;
 
 })(); // end IIFE
 </script>
