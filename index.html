@@ -19,7 +19,7 @@
 <meta name="theme-color" content="#3B1F0E">
 <link rel="canonical" href="https://udayabakery.github.io/Udayabakery/">
 <!-- SECURITY: Content Security Policy — reduces XSS risk -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org; frame-src https://www.google.com https://maps.google.com; object-src 'none'; base-uri 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com; object-src 'none'; base-uri 'self';">
 <!-- SECURITY: Prevent clickjacking and MIME sniffing -->
 <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -82,7 +82,16 @@ img{display:block;}
   *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
 }
 
-/* Stop battery-draining continuous animations on mobile scroll */
+/* Broken image emoji fallback */
+.pimg-wrap .pimg-emoji-fb{
+  position:absolute;inset:0;display:none;
+  align-items:center;justify-content:center;
+  font-size:76px;z-index:2;
+  background:linear-gradient(135deg,var(--cream-dark),var(--pink));
+}
+@media(max-width:600px){
+  .pimg-wrap .pimg-emoji-fb{font-size:52px;}
+}
 .marquee-track{animation-play-state:running;}
 body.ub-scrolling .marquee-track,
 body.ub-scrolling .hero-ring,
@@ -4597,7 +4606,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
   <div class="vlb-box">
     <button class="vlb-close" onclick="ubCloseVideoLightbox(null)" aria-label="Close video">✕</button>
     <div class="vlb-frame">
-      <iframe id="vlbIframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <iframe id="vlbIframe" src="" allow="autoplay; encrypted-media; fullscreen" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
     <div class="vlb-info">
       <h3 id="vlbTitle"></h3>
@@ -6522,7 +6531,7 @@ function renderRecentlyViewed(){
     const _rvKn = currentLang === 'kn';
     const rvName = _rvKn && p.nameKn ? p.nameKn : p.name;
     const rvDesc = _rvKn && p.descKn ? p.descKn : p.desc;
-    const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy" decoding="async">` : `<div class="pimg-emoji">${p.emoji}</div>`;
+    const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy" decoding="async" onload="this.closest('.pimg-wrap').classList.add('img-loaded','has-img')" onerror="this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');var _e=_w.querySelector('.pimg-emoji');if(_e)_e.style.display='flex';}">` : `<div class="pimg-emoji">${p.emoji}</div>`;
     const defFlvForCard = (hasFlavours && p._displayFlavours && p._displayFlavours[0]?.variants?.length) ? p._displayFlavours[0] : null;
     const cardVariants = defFlvForCard ? defFlvForCard.variants : p.variants;
     const defV = cardVariants[0];
@@ -7941,7 +7950,7 @@ function renderProds(){
   requestAnimationFrame(()=>{
   grid.innerHTML = list.map(p=>{
     const cat = CATS.find(c=>c.id===p.cat);
-    const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy" decoding="async" style="cursor:pointer;" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='flex')">` : `<div class="pimg-emoji">${p.emoji}</div>`;
+    const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy" decoding="async" style="cursor:pointer;" onload="this.closest('.pimg-wrap').classList.add('img-loaded','has-img')" onerror="this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');var _e=_w.querySelector('.pimg-emoji-fb');if(_e)_e.style.display='flex';}"><div class="pimg-emoji pimg-emoji-fb" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:76px;">${p.emoji}</div>` : `<div class="pimg-emoji">${p.emoji}</div>`;
     const _isKn = currentLang === 'kn';
 
     // ── SMART LANGUAGE DISPLAY ──
@@ -15290,6 +15299,20 @@ function ubDesignerPreview(){
 const _ubOrigConfigListener = ubStartConfigListener;
 // Patch the config listener handler to also call ubLoadDesignFromConfig
 const _ubOrigOnConfigSnap = ubLoadDesignFromConfig;
+
+// ── EXPOSE DESIGNER FUNCTIONS GLOBALLY ──
+// These are defined inside this IIFE so we explicitly attach them to window
+window.buildDesignerTab       = buildDesignerTab;
+window.ubInitDesigner         = ubInitDesigner;
+window.ubDesignerLivePreview  = ubDesignerLivePreview;
+window.ubDesignerUpdatePreview= ubDesignerUpdatePreview;
+window.ubSaveDesign           = ubSaveDesign;
+window.ubGetDesign            = ubGetDesign;
+window.ubApplyDesign          = ubApplyDesign;
+window.ubLoadDesignFromConfig = ubLoadDesignFromConfig;
+window.ubDesignerSaveBranding = ubDesignerSaveBranding;
+window.ubDesignerReset        = ubDesignerReset;
+window.ubDesignerPreview      = ubDesignerPreview;
 
 })(); // end IIFE
 </script>
