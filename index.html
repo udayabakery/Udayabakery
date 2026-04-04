@@ -9507,7 +9507,20 @@ function renderAdminTab(){
   else if(adminTab==='analytics') el.innerHTML = buildAnalyticsTab();
   else if(adminTab==='cakebuilder') el.innerHTML = buildCakeBuilderAdminTab();
   else if(adminTab==='videos') el.innerHTML = buildVideosAdminTab();
-  else if(adminTab==='designer'){ el.innerHTML = buildDesignerTab(); ubInitDesigner(); }
+  else if(adminTab==='designer'){
+    try {
+      el.innerHTML = buildDesignerTab();
+      ubInitDesigner();
+    } catch(e) {
+      console.error('Designer tab error:', e);
+      el.innerHTML = `<div style="padding:40px;text-align:center;">
+        <div style="font-size:48px;margin-bottom:16px;">🎨</div>
+        <div style="color:#F87171;font-size:15px;font-weight:700;margin-bottom:8px;">Designer failed to load</div>
+        <div style="color:rgba(253,246,236,.5);font-size:13px;margin-bottom:20px;">${e.message||'Unknown error'}</div>
+        <button onclick="renderAdminTab()" style="background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:10px 20px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">🔄 Try Again</button>
+      </div>`;
+    }
+  }
 }
 
 // ── DASHBOARD ──
@@ -10603,6 +10616,10 @@ function ubApplyTheme(themeId) {
     el.classList.toggle('active', tId === themeId);
     el.style.borderColor = (tId === themeId) ? (dots[i] || '#E8B96A') : 'transparent';
   });
+  // If designer tab is open, re-render it to reflect new theme
+  if(typeof adminTab !== 'undefined' && adminTab === 'designer') {
+    try { renderAdminTab(); } catch(e) {}
+  }
   showToast('🎨 Theme applied to all customers!', 'ok');
 }
 
@@ -15057,7 +15074,7 @@ function buildDesignerTab(){
         <select class="af-inp" id="dc_fontHeading" onchange="ubSaveDesign({fontHeading:this.value})">
           ${fontOptions.map(f=>`<option value="${f}" ${d.fontHeading===f?'selected':''}>${f}</option>`).join('')}
         </select>
-        <div style="margin-top:8px;font-size:18px;font-weight:700;color:rgba(253,246,236,.7);" id="fontHeadingPreview" style="font-family:'${d.fontHeading}',serif;">Vanilla Dream Cake</div>
+        <div style="margin-top:8px;font-size:18px;font-weight:700;color:rgba(253,246,236,.7);font-family:'${d.fontHeading}',serif;" id="fontHeadingPreview">Vanilla Dream Cake</div>
       </div>
       <div class="af-group">
         <label>Body Font (descriptions, labels)</label>
