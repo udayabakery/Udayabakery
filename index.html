@@ -525,121 +525,221 @@ body.theme-lavender .ann-bar { background: linear-gradient(90deg,#2D1060,#5530A0
   margin: 0 auto;
   line-height: 1.75;
 }
+/* ── REEL SWIPE FEED ── */
 .videos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 28px;
-}
-@media(max-width:640px) { .videos-grid { grid-template-columns: 1fr; gap: 20px; } }
-.video-card {
-  background: linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
-  border: 1px solid rgba(200,146,58,.15);
-  border-radius: 22px;
-  overflow: hidden;
-  transition: all .38s cubic-bezier(.22,1,.36,1);
-  cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0,0,0,.25);
-}
-.video-card:hover {
-  transform: translateY(-8px);
-  border-color: rgba(200,146,58,.45);
-  box-shadow: 0 28px 64px rgba(0,0,0,.45), 0 0 0 1px rgba(200,146,58,.18);
-}
-.video-thumb-wrap {
+  display: block;
   position: relative;
-  padding-top: 56.25%;
+}
+
+/* Reel feed container */
+.ub-reel-feed {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  height: 72vh;
+  max-height: 640px;
+  min-height: 400px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
   background: #080200;
+  box-shadow: 0 24px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(200,146,58,.18);
+  touch-action: pan-y;
+  user-select: none;
+}
+
+/* Reel slides wrapper – slides stack HORIZONTALLY */
+.ub-reel-track {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  transition: transform .38s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+
+/* Each reel slide */
+.ub-reel-slide {
+  flex: 0 0 100%;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
   overflow: hidden;
 }
-.video-thumb-wrap img {
-  position: absolute; inset: 0;
+
+.ub-reel-slide img {
   width: 100%; height: 100%;
   object-fit: cover;
-  transition: transform .45s ease;
+  display: block;
+  pointer-events: none;
 }
-.video-card:hover .video-thumb-wrap img { transform: scale(1.06); }
-.video-thumb-wrap .vplay-overlay {
-  position: absolute; inset: 0; z-index: 2;
-  display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(to top, rgba(10,4,0,.7) 0%, rgba(0,0,0,.1) 60%);
-  transition: background .3s;
+
+/* Dark gradient overlay at bottom */
+.ub-reel-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top,
+    rgba(10,4,0,.9) 0%,
+    rgba(10,4,0,.35) 38%,
+    transparent 65%
+  );
+  z-index: 2;
 }
-.video-card:hover .vplay-overlay { background: linear-gradient(to top,rgba(10,4,0,.5) 0%,transparent 60%); }
-.vplay-btn {
-  width: 58px; height: 58px;
-  background: linear-gradient(135deg, rgba(200,146,58,.95), rgba(160,98,58,.9));
+
+/* Play button centered */
+.ub-reel-play {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg,rgba(200,146,58,.92),rgba(160,98,58,.88));
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-  box-shadow: 0 8px 30px rgba(200,146,58,.55), 0 0 0 8px rgba(200,146,58,.12);
-  transition: all .25s;
-  padding-left: 3px;
+  font-size: 22px;
+  padding-left: 4px;
+  box-shadow: 0 8px 32px rgba(200,146,58,.5), 0 0 0 10px rgba(200,146,58,.1);
+  z-index: 3;
+  transition: transform .2s, box-shadow .2s;
+  pointer-events: none;
 }
-.video-card:hover .vplay-btn {
-  transform: scale(1.15);
-  box-shadow: 0 12px 38px rgba(200,146,58,.65), 0 0 0 12px rgba(200,146,58,.1);
+.ub-reel-slide:hover .ub-reel-play {
+  transform: translate(-50%,-50%) scale(1.12);
+  box-shadow: 0 12px 40px rgba(200,146,58,.65), 0 0 0 14px rgba(200,146,58,.1);
 }
-.vcdate-tag {
-  position: absolute; top: 10px; left: 12px; z-index: 3;
-  background: rgba(10,4,0,.75);
+
+/* Date badge top-left */
+.ub-reel-date {
+  position: absolute; top: 14px; left: 14px;
+  background: rgba(10,4,0,.72);
   border: 1px solid rgba(200,146,58,.25);
   border-radius: 8px;
-  padding: 3px 9px;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: rgba(200,146,58,.85);
+  padding: 3px 10px;
+  font-size: 9px; font-weight: 800;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  color: rgba(200,146,58,.88);
+  z-index: 4;
 }
-.video-card-body { padding: 18px 20px 22px; }
-.video-card-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 17px; font-weight: 700;
-  color: #F0DEC8;
-  margin-bottom: 8px;
-  line-height: 1.35;
+
+/* Left/right tap zones */
+.ub-reel-tap-left,
+.ub-reel-tap-right {
+  position: absolute; top: 0; bottom: 0;
+  width: 30%; z-index: 5;
 }
-.video-card-desc {
-  font-size: 13px;
-  color: rgba(253,246,236,.42);
-  line-height: 1.7;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.ub-reel-tap-left  { left: 0; }
+.ub-reel-tap-right { right: 0; }
+
+/* Info at bottom of each reel */
+.ub-reel-info {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 22px 20px 28px;
+  z-index: 4;
 }
-.video-card-footer {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: 14px; padding-top: 12px;
-  border-top: 1px solid rgba(200,146,58,.1);
-}
-.video-card-footer span {
-  font-size: 11px; color: rgba(200,146,58,.6);
-  font-weight: 700; letter-spacing: .5px;
+.ub-reel-channel {
+  font-size: 11px; font-weight: 700;
+  color: rgba(200,146,58,.75);
+  letter-spacing: .5px;
+  margin-bottom: 6px;
   display: flex; align-items: center; gap: 5px;
 }
-.vwatch-btn {
-  background: linear-gradient(135deg, rgba(200,146,58,.2), rgba(200,146,58,.08));
-  border: 1px solid rgba(200,146,58,.3);
-  color: #E8B96A;
-  border-radius: 10px;
-  padding: 6px 14px;
-  font-family: 'Jost', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all .2s;
-  letter-spacing: .5px;
+.ub-reel-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-weight: 700;
+  color: #FDF6EC;
+  line-height: 1.3;
+  margin-bottom: 10px;
 }
-.vwatch-btn:hover { background: rgba(200,146,58,.35); border-color: rgba(200,146,58,.6); }
+.ub-reel-watch {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg,rgba(200,146,58,.22),rgba(200,146,58,.08));
+  border: 1px solid rgba(200,146,58,.35);
+  color: #E8B96A;
+  border-radius: 50px;
+  padding: 7px 18px;
+  font-family: 'Jost',sans-serif;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer;
+  transition: background .2s;
+  letter-spacing: .4px;
+  position: relative; z-index: 6;
+}
+.ub-reel-watch:hover { background: rgba(200,146,58,.38); }
+
+/* Left / Right nav chevron buttons */
+.ub-reel-nav-left,
+.ub-reel-nav-right {
+  position: absolute; top: 50%; z-index: 6;
+  transform: translateY(-50%);
+  width: 36px; height: 36px;
+  background: rgba(10,4,0,.55);
+  border: 1px solid rgba(200,146,58,.25);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: #E8B96A;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background .2s, transform .15s;
+}
+.ub-reel-nav-left  { left: 12px; }
+.ub-reel-nav-right { right: 12px; }
+.ub-reel-nav-left:hover  { background: rgba(200,146,58,.25); transform: translateY(-50%) scale(1.1); }
+.ub-reel-nav-right:hover { background: rgba(200,146,58,.25); transform: translateY(-50%) scale(1.1); }
+.ub-reel-nav-left[disabled],
+.ub-reel-nav-right[disabled] { opacity: .22; pointer-events: none; }
+
+/* Dot indicators */
+.ub-reel-dots {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.ub-reel-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(200,146,58,.25);
+  transition: background .25s, transform .25s;
+  cursor: pointer;
+}
+.ub-reel-dot.active {
+  background: #C8923A;
+  transform: scale(1.5);
+}
+
+/* Swipe hint animation */
+@keyframes ubSwipeHint {
+  0%   { transform: translateX(-50%) translateX(0); opacity: .8; }
+  30%  { transform: translateX(-50%) translateX(-14px); opacity: 1; }
+  60%  { transform: translateX(-50%) translateX(0); opacity: .8; }
+  100% { transform: translateX(-50%) translateX(0); opacity: .8; }
+}
+.ub-swipe-hint {
+  position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+  z-index: 7;
+  text-align: center;
+  animation: ubSwipeHint 1.8s ease 1.2s 2 forwards;
+  pointer-events: none;
+}
+.ub-swipe-hint span {
+  display: block; font-size: 22px; margin-bottom: 2px;
+}
+.ub-swipe-hint p {
+  font-size: 10px; font-weight: 700;
+  color: rgba(253,246,236,.55);
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+
 .videos-empty {
   text-align: center;
   padding: 80px 20px;
   color: rgba(253,246,236,.25);
-  grid-column: 1 / -1;
 }
 .videos-empty .ve-icon { font-size: 60px; margin-bottom: 18px; display: block; }
 .videos-empty p { font-size: 14px; line-height: 1.7; max-width: 320px; margin: 0 auto; }
+
+/* Hide old card styles */
+.video-card, .video-thumb-wrap, .video-card-body,
+.video-card-title, .video-card-desc, .video-card-footer,
+.vwatch-btn, .vcdate-tag, .vplay-btn, .vplay-overlay { display: none !important; }
 
 /* Video Lightbox */
 .vlb-bg {
@@ -13693,6 +13793,9 @@ window.ubToggleVideoVisible = function(i){
 };
 
 // ── CUSTOMER: Render Videos Grid ──
+/* ── REEL FEED STATE ── */
+let _ubReelIndex = 0;
+
 function ubRenderCustomerVideos(){
   const grid = document.getElementById('customerVideosGrid');
   if(!grid) return;
@@ -13701,34 +13804,110 @@ function ubRenderCustomerVideos(){
     grid.innerHTML = `<div class="videos-empty"><span class="ve-icon">🎬</span><p>Our baking videos are coming soon!<br>Check back for a delicious glimpse into our kitchen.</p></div>`;
     return;
   }
-  grid.innerHTML = videos.map((v,i) => {
+  window._ubVisibleVideos = videos;
+  _ubReelIndex = 0;
+
+  const slides = videos.map((v,i) => {
     const ytId = v.ytId || ubYtId(v.url);
     const thumb = ubYtThumb(ytId);
     const date = v.postedAt ? new Date(v.postedAt).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '';
     return `
-    <div class="video-card" onclick="ubOpenVideoLightbox(${i})">
-      <div class="video-thumb-wrap">
-        <img src="${thumb}" alt="${v.title||'Baking video'}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'225\' style=\'background:%230A0300\'><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'40\'>🎬</text></svg>'">
-        <div class="vplay-overlay">
-          <div class="vplay-btn">▶</div>
-        </div>
-        ${date ? `<div class="vcdate-tag">${date}</div>` : ''}
-      </div>
-      <div class="video-card-body">
-        <div class="video-card-title">${v.title||'Baking Video'}</div>
-        ${v.desc ? `<div class="video-card-desc">${v.desc}</div>` : ''}
-        <div class="video-card-footer">
-          <span>🎬 Udaya Bakery</span>
-          <button class="vwatch-btn">Watch Now ▶</button>
-        </div>
+    <div class="ub-reel-slide" data-idx="${i}">
+      <img src="${thumb}" alt="${v.title||'Baking video'}" loading="lazy"
+        onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'640\' style=\'background:%230A0300\'><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'60\'>🎬</text></svg>'">
+      <div class="ub-reel-overlay"></div>
+      <div class="ub-reel-play">▶</div>
+      ${date ? `<div class="ub-reel-date">${date}</div>` : ''}
+      <div class="ub-reel-info">
+        <div class="ub-reel-channel">🎬 Udaya Bakery</div>
+        <div class="ub-reel-title">${v.title||'Baking Video'}</div>
+        <button class="ub-reel-watch" onclick="ubOpenVideoLightbox(${i},event)">Watch Now ▶</button>
       </div>
     </div>`;
   }).join('');
-  // Store visible videos array for lightbox
-  window._ubVisibleVideos = videos;
+
+  const dots = videos.map((_,i) =>
+    `<div class="ub-reel-dot${i===0?' active':''}" onclick="ubReelGoTo(${i})"></div>`
+  ).join('');
+
+  grid.innerHTML = `
+    <div class="ub-reel-feed" id="ubReelFeed">
+      <div class="ub-reel-track" id="ubReelTrack">${slides}</div>
+      <button class="ub-reel-nav-left"  id="ubReelLeft"  onclick="ubReelGoTo(_ubReelIndex-1)" title="Previous" disabled>‹</button>
+      <button class="ub-reel-nav-right" id="ubReelRight" onclick="ubReelGoTo(_ubReelIndex+1)" title="Next">›</button>
+      ${videos.length > 1 ? `<div class="ub-swipe-hint"><span>👈</span><p>Swipe left</p></div>` : ''}
+    </div>
+    ${videos.length > 1 ? `<div class="ub-reel-dots" id="ubReelDots">${dots}</div>` : ''}
+  `;
+
+  // Tap center of slide opens lightbox
+  document.querySelectorAll('.ub-reel-slide').forEach(el => {
+    el.addEventListener('click', function(e){
+      if(e.target.classList.contains('ub-reel-watch')) return;
+      ubOpenVideoLightbox(parseInt(this.dataset.idx), e);
+    });
+  });
+
+  ubReelInitSwipe();
+  ubReelUpdateNav();
 }
 
-window.ubOpenVideoLightbox = function(i){
+window.ubReelGoTo = function(idx){
+  const videos = window._ubVisibleVideos || [];
+  if(idx < 0 || idx >= videos.length) return;
+  _ubReelIndex = idx;
+  const track = document.getElementById('ubReelTrack');
+  if(track) track.style.transform = `translateX(-${idx * 100}%)`;
+  ubReelUpdateNav();
+};
+
+function ubReelUpdateNav(){
+  const videos = window._ubVisibleVideos || [];
+  const left  = document.getElementById('ubReelLeft');
+  const right = document.getElementById('ubReelRight');
+  if(left)  left.disabled  = _ubReelIndex <= 0;
+  if(right) right.disabled = _ubReelIndex >= videos.length - 1;
+  document.querySelectorAll('.ub-reel-dot').forEach((d,i) => {
+    d.classList.toggle('active', i === _ubReelIndex);
+  });
+}
+
+function ubReelInitSwipe(){
+  const feed = document.getElementById('ubReelFeed');
+  if(!feed) return;
+  let startX = 0, startY = 0, dragging = false;
+
+  // Touch swipe — horizontal
+  feed.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    dragging = true;
+  }, {passive:true});
+
+  feed.addEventListener('touchend', e => {
+    if(!dragging) return;
+    dragging = false;
+    const dx = startX - e.changedTouches[0].clientX;
+    const dy = Math.abs(startY - e.changedTouches[0].clientY);
+    if(Math.abs(dx) < 40 || dy > Math.abs(dx)) return; // ignore short or vertical swipes
+    ubReelGoTo(_ubReelIndex + (dx > 0 ? 1 : -1));
+  }, {passive:true});
+
+  // Mouse drag for desktop
+  let mouseStartX = 0, mouseDragging = false;
+  feed.addEventListener('mousedown', e => { mouseStartX = e.clientX; mouseDragging = true; });
+  feed.addEventListener('mouseup', e => {
+    if(!mouseDragging) return;
+    mouseDragging = false;
+    const dx = mouseStartX - e.clientX;
+    if(Math.abs(dx) < 30) return;
+    ubReelGoTo(_ubReelIndex + (dx > 0 ? 1 : -1));
+  });
+  feed.addEventListener('mouseleave', () => { mouseDragging = false; });
+}
+
+window.ubOpenVideoLightbox = function(i, evt){
+  if(evt) evt.stopPropagation();
   const videos = window._ubVisibleVideos || ubGetVideos().filter(v=>v.visible!==false);
   const v = videos[i]; if(!v) return;
   const ytId = v.ytId || ubYtId(v.url);
@@ -13738,9 +13917,9 @@ window.ubOpenVideoLightbox = function(i){
   const desc   = document.getElementById('vlbDesc');
   const bg     = document.getElementById('videoLightboxBg');
   if(!iframe||!bg) return;
-  if(iframe) iframe.src = ubYtEmbed(ytId);
+  iframe.src = ubYtEmbed(ytId);
   if(title) title.textContent = v.title||'';
-  if(desc) desc.textContent = v.desc||'';
+  if(desc)  desc.textContent  = v.desc||'';
   bg.classList.add('open');
   document.body.style.overflow = 'hidden';
 };
@@ -13750,7 +13929,7 @@ window.ubCloseVideoLightbox = function(e){
   const bg = document.getElementById('videoLightboxBg');
   const iframe = document.getElementById('vlbIframe');
   if(bg) bg.classList.remove('open');
-  if(iframe) iframe.src = ''; // stop video
+  if(iframe) iframe.src = '';
   document.body.style.overflow = '';
 };
 
