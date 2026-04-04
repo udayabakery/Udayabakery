@@ -56,12 +56,11 @@ html{scroll-behavior:smooth;}
 body{-webkit-overflow-scrolling:touch;}
 
 /* Product grid: layout containment + content-visibility for off-screen cards */
-.product-grid{contain:layout;will-change:auto;}
+.product-grid{contain:layout style;will-change:auto;}
 .product-card{
-  contain:layout style;
-  /* content-visibility: auto tells browser to skip rendering off-screen cards */
+  contain:layout style paint;
   content-visibility:auto;
-  contain-intrinsic-size:0 360px; /* estimated card height — prevents layout shift */
+  contain-intrinsic-size:auto 420px;
 }
 
 /* Category cards: paint containment */
@@ -97,6 +96,19 @@ body.ub-scrolling .marquee-track,
 body.ub-scrolling .hero-ring,
 body.ub-scrolling .hero-ring::before{animation-play-state:paused!important;}
 
+/* ── MOBILE SCROLL PERFORMANCE ── */
+body.ub-scrolling *{transition-duration:0ms!important;}
+body.ub-scrolling .product-card{transform:none!important;box-shadow:none!important;}
+body.ub-scrolling .pimg-wrap::before{animation-play-state:paused!important;}
+/* GPU layers for fixed elements */
+.float-wa,.float-call,.float-cart,.fab-admin{will-change:transform;transform:translateZ(0);}
+.mob-bottom-nav{will-change:transform;}
+/* Remove expensive hover box-shadow during paint */
+@media (hover:none){
+  .product-card:hover{transform:none!important;box-shadow:inherit!important;}
+  .logo:hover .logo-icon{transform:none!important;}
+}
+
 /* Prevent tap delay on all interactive elements */
 a,button,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 
@@ -127,7 +139,7 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed;}
 
 
 /* ── ANNOUNCEMENT BANNER ── */
-.ann-bar{background:linear-gradient(90deg,var(--choco),var(--choco-mid),var(--gold),var(--choco-mid),var(--choco));background-size:300% 100%;animation:annGrad 6s linear infinite;padding:9px 16px;text-align:center;position:relative;z-index:901;display:flex;align-items:center;justify-content:center;gap:10px;}
+.ann-bar{background:var(--choco);padding:9px 16px;text-align:center;position:relative;z-index:901;display:flex;align-items:center;justify-content:center;gap:10px;}
 @keyframes annGrad{0%{background-position:0% 50%}100%{background-position:300% 50%}}
 .ann-bar-text{color:#fff;font-family:Jost,sans-serif;font-size:13px;font-weight:600;letter-spacing:.3px;}
 .ann-bar-close{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.2);border:none;color:#fff;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
@@ -759,21 +771,20 @@ body{font-family:'DM Sans','Jost',sans-serif;background:var(--cream);color:var(-
 /* ── NAV COMPLETE REDESIGN ── */
 nav{
   position:fixed;top:0;width:100%;z-index:900;
-  transition:all .4s cubic-bezier(.22,1,.36,1);
+  transition:background .3s ease, box-shadow .3s ease;
   padding:0;
-  background:rgba(253,246,236,0.92);
-  backdrop-filter:blur(24px) saturate(200%);
-  -webkit-backdrop-filter:blur(24px) saturate(200%);
+  background:rgba(253,246,236,0.97);
   border-bottom:1px solid rgba(200,146,58,.12);
-  box-shadow:0 1px 0 rgba(200,146,58,.08),0 4px 24px rgba(59,31,14,.07);
-  will-change:background;
+  box-shadow:0 1px 0 rgba(200,146,58,.08),0 2px 12px rgba(59,31,14,.06);
+  will-change:transform;
+  transform:translateZ(0);
 }
 nav.scrolled{
   background:rgba(253,246,236,.98);
   box-shadow:0 1px 0 rgba(200,146,58,.15),0 8px 32px rgba(59,31,14,.12);
 }
-body.dark-mode nav{background:rgba(12,5,0,.94)!important;border-bottom-color:rgba(200,146,58,.1)!important;}
-body.dark-mode nav.scrolled{background:rgba(10,4,0,.99)!important;}
+body.dark-mode nav{background:rgba(12,5,0,.98)!important;border-bottom-color:rgba(200,146,58,.1)!important;}
+body.dark-mode nav.scrolled{background:rgba(10,4,0,1)!important;}
 
 .nav-inner{
   max-width:1300px;margin:auto;
@@ -1713,7 +1724,7 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
 /* ══════════════════════════════════
    MOBILE BOTTOM NAV BAR
 ══════════════════════════════════ */
-.mob-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:850;background:var(--white);border-top:1.5px solid var(--cream-dark);padding:4px 0 env(safe-area-inset-bottom,4px);box-shadow:0 -4px 24px rgba(59,31,14,.13);backdrop-filter:blur(8px);}
+.mob-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:850;background:var(--white);border-top:1.5px solid var(--cream-dark);padding:4px 0 env(safe-area-inset-bottom,4px);box-shadow:0 -2px 12px rgba(59,31,14,.1);transform:translateZ(0);will-change:transform;}
 .mob-bottom-nav .mbn-items{display:flex;justify-content:space-around;align-items:center;height:56px;}
 .mbn-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 10px;cursor:pointer;border-radius:16px;transition:all .18s ease;flex:1;background:none;border:none;color:var(--text-mid);touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative;min-height:52px;}
 .mbn-item:active{transform:scale(.92);background:var(--cream-dark);}
@@ -5250,6 +5261,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       loadBrandingFromDB();   // sync logo & brand name from Firestore
       startBrandingListener(); // live updates when admin changes logo
       ubStartConfigListener(); // live sync of all admin settings to all customers
+      ubStartVideosListener(); // real-time video sync to all customers
     } else {
       setTimeout(startFirebaseSync, 1500); // retry if SDK not ready
     }
@@ -5553,13 +5565,17 @@ function ubStartConfigListener(){
 
 // ── SAVE ALL ADMIN SETTINGS TO FIRESTORE (called from every save button) ──
 async function ubSaveConfigToFirestore(patch){
-  if(!db || !adminLoggedIn) return false;
+  if(!db) return false;
+  if(!adminLoggedIn) return false; // silently skip — not an error
   try {
     await db.collection('config').doc('siteConfig').set(patch, {merge: true});
     return true;
   } catch(e){
     console.warn('[UB Config] Save failed:', e);
-    showToast('⚠️ Could not sync to cloud — saved locally only', 'err');
+    // Only show toast for real write errors, not auth issues
+    if(e.code !== 'permission-denied'){
+      showToast('⚠️ Could not sync to cloud — saved locally only', 'err');
+    }
     return false;
   }
 }
@@ -7256,7 +7272,7 @@ let _ubScrollEndTimer;
 window.addEventListener('scroll', ()=>{
   document.body.classList.add('ub-scrolling');
   clearTimeout(_ubScrollEndTimer);
-  _ubScrollEndTimer = setTimeout(()=>document.body.classList.remove('ub-scrolling'), 150);
+  _ubScrollEndTimer = setTimeout(()=>document.body.classList.remove('ub-scrolling'), 250);
 }, {passive:true});
 
 let searchQuery = '';
@@ -13461,9 +13477,21 @@ function ubGetVideos(){
 }
 function ubSaveVideos(arr){
   localStorage.setItem('ub_videos', JSON.stringify(arr));
-  // Sync to Firestore so all customers see new videos
+  // Sync to Firestore so ALL customers on ALL devices see the videos
   try{
-    if(db) db.collection('config').doc('cakeVideos').set({ videos: arr, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{});
+    if(db){
+      db.collection('config').doc('cakeVideos').set({
+        videos: arr,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(()=>{
+        showToast('✅ Video saved — visible to all customers!', 'ok');
+      }).catch(e=>{
+        console.warn('Video sync failed:', e);
+        showToast('⚠️ Saved locally only — check internet', 'err');
+      });
+    } else {
+      showToast('⚠️ Saved locally only — Firebase not connected', 'err');
+    }
   }catch(e){}
 }
 function ubLoadVideosFromDB(){
@@ -13475,6 +13503,22 @@ function ubLoadVideosFromDB(){
       ubRenderCustomerVideos();
     }
   }).catch(()=>{});
+}
+
+// Real-time listener — all devices update instantly when admin adds/removes a video
+let _videosUnsubscribe = null;
+function ubStartVideosListener(){
+  if(!db) return;
+  if(_videosUnsubscribe) _videosUnsubscribe(); // detach old listener
+  try {
+    _videosUnsubscribe = db.collection('config').doc('cakeVideos').onSnapshot(doc=>{
+      if(doc.exists && doc.data().videos){
+        const vids = doc.data().videos;
+        localStorage.setItem('ub_videos', JSON.stringify(vids));
+        ubRenderCustomerVideos(); // refresh video grid on all devices instantly
+      }
+    }, ()=>{}); // ignore errors silently
+  } catch(e){}
 }
 
 // Extract YouTube video ID from various URL formats
@@ -13710,13 +13754,7 @@ window.ubCloseVideoLightbox = function(e){
   document.body.style.overflow = '';
 };
 
-// Load videos on page init
-document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(()=>{
-    ubLoadVideosFromDB();
-    ubRenderCustomerVideos();
-  }, 1200);
-});
+// Videos are loaded via ubStartVideosListener() called in startFirebaseSync()
 
 </script>
 
@@ -14953,8 +14991,13 @@ function ubSaveDesign(patch){
   const updated = {...current, ...patch};
   localStorage.setItem('ub_design', JSON.stringify(updated));
   ubApplyDesign(updated);
-  ubSaveConfigToFirestore({siteDesign: updated});
-  showToast('🎨 Design updated for all customers!', 'ok');
+  // Use window scope to access adminLoggedIn from main script
+  if(typeof window.ubSaveConfigToFirestore === 'function'){
+    window.ubSaveConfigToFirestore({siteDesign: updated});
+  } else {
+    ubSaveConfigToFirestore({siteDesign: updated});
+  }
+  showToast('🎨 Design updated!', 'ok');
 }
 
 // Load design from Firestore config on startup
@@ -15313,6 +15356,8 @@ window.ubLoadDesignFromConfig = ubLoadDesignFromConfig;
 window.ubDesignerSaveBranding = ubDesignerSaveBranding;
 window.ubDesignerReset        = ubDesignerReset;
 window.ubDesignerPreview      = ubDesignerPreview;
+// Also expose Firestore save so designer IIFE can reach adminLoggedIn scope
+window.ubSaveConfigToFirestore = ubSaveConfigToFirestore;
 
 })(); // end IIFE
 </script>
