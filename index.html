@@ -19,7 +19,7 @@
 <meta name="theme-color" content="#3B1F0E">
 <link rel="canonical" href="https://udayabakery.github.io/Udayabakery/">
 <!-- SECURITY: Content Security Policy — reduces XSS risk -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http: https://*.firebasestorage.app https://*.firebasestorage.googleapis.com https://firebasestorage.googleapis.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org https://*.firebasestorage.app https://firebasestorage.googleapis.com https://*.firebasestorage.googleapis.com; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com; object-src 'none'; base-uri 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com; object-src 'none'; base-uri 'self';">
 <!-- SECURITY: Prevent clickjacking and MIME sniffing -->
 <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -59,7 +59,8 @@ body{-webkit-overflow-scrolling:touch;}
 .product-grid{contain:layout style;will-change:auto;}
 .product-card{
   contain:layout style paint;
-  /* content-visibility:auto removed — conflicts with loading=lazy on Android/WebView */
+  content-visibility:auto;
+  contain-intrinsic-size:auto 420px;
 }
 
 /* Category cards: paint containment */
@@ -98,7 +99,7 @@ body.ub-scrolling .hero-ring::before{animation-play-state:paused!important;}
 /* ── MOBILE SCROLL PERFORMANCE ── */
 body.ub-scrolling *{transition-duration:0ms!important;}
 body.ub-scrolling .product-card{transform:none!important;box-shadow:none!important;}
-/* skeleton removed */
+body.ub-scrolling .pimg-wrap::before{animation-play-state:paused!important;}
 /* GPU layers for fixed elements */
 .float-wa,.float-call,.float-cart,.fab-admin{will-change:transform;transform:translateZ(0);}
 .mob-bottom-nav{will-change:transform;}
@@ -121,11 +122,19 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed;}
 .modal,.qa-modal-bg,.cart-overlay{transform:translateZ(0);}
 
 /* Skeleton loading for product images */
-/* Skeleton shimmer removed — was causing z-index conflicts hiding product images */
-/* pimg-wrap background acts as placeholder while image loads */
-.pimg-wrap.img-loaded::before{display:none;}
-.pimg-wrap img{position:absolute;inset:0;width:100%!important;height:100%!important;object-fit:cover;display:block;}
-.pimg-emoji{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.pimg-wrap::before{
+  content:'';display:block;position:absolute;inset:0;
+  background:linear-gradient(90deg,var(--cream-dark) 25%,var(--cream) 50%,var(--cream-dark) 75%);
+  background-size:200% 100%;
+  animation:ubSkel 1.4s ease infinite;
+  z-index:0;
+}
+.pimg-wrap.img-loaded::before,.pimg-wrap img+*,.pimg-wrap.has-img::before{display:none;}
+@keyframes ubSkel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Hide skeleton once image loads */
+.pimg-wrap img{position:relative;z-index:1;}
+.pimg-emoji{position:relative;z-index:1;}
 
 
 
@@ -1129,8 +1138,8 @@ section{padding:64px 0;contain:layout;}
 .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px;}
 .product-card{background:var(--cream);border-radius:22px;overflow:hidden;position:relative;box-shadow:0 4px 16px var(--shadow);transition:transform .25s,box-shadow .25s;contain:layout style;}
 .product-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px var(--shadow);}
-.pimg-wrap{width:100%;height:200px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--cream-dark),var(--pink));display:block;}
-.pimg-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .3s;}
+.pimg-wrap{width:100%;height:200px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--cream-dark),var(--pink));display:flex;align-items:center;justify-content:center;}
+.pimg-wrap img{width:100%;height:200px;object-fit:cover;object-position:center;display:block;transition:transform .3s;background:var(--cream);}
 .product-card:hover .pimg-wrap img{transform:scale(1.03);}
 .pimg-emoji{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:76px;}
 /* Flavour image overlay */
@@ -1791,14 +1800,12 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
   .cc-emoji{font-size:26px!important;margin-bottom:5px!important;}
   .cc-name{font-size:10px!important;}
 
-  /* Products - 2 per row on mobile — ALL cards same height */
+  /* Products - 2 per row on mobile */
   .product-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;}
   .product-card{border-radius:14px!important;}
-  .pimg-wrap{height:160px!important;min-height:160px!important;max-height:160px!important;overflow:hidden!important;}
-  .pimg-wrap img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;}
-  /* Emoji placeholder: same fixed height so broken/no-image cards match */
-  .pimg-emoji{font-size:52px!important;width:100%!important;height:160px!important;min-height:160px!important;max-height:160px!important;display:flex!important;align-items:center!important;justify-content:center!important;}
-  .pimg-emoji-fb{font-size:52px!important;height:160px!important;min-height:160px!important;}
+  .pimg-wrap{height:160px!important;min-height:unset!important;max-height:unset!important;}
+  .pimg-wrap img{height:160px!important;min-height:unset!important;max-height:unset!important;}
+  .pimg-emoji{font-size:52px!important;}
   .pbody{padding:10px 10px!important;}
   .pcat{font-size:9px!important;}
   .pname{font-size:13px!important;margin-bottom:4px!important;}
@@ -3235,32 +3242,19 @@ body.dark-mode .mob-bottom-nav { background: rgba(15,6,1,.97) !important; border
   overflow: hidden !important;
   border-radius: 0 !important;
   position: relative !important;
-  display: block !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   height: 200px !important;
-  min-height: 200px !important;
-  max-height: 200px !important;
 }
 .pimg-wrap img {
-  position: absolute !important;
-  inset: 0 !important;
   width: 100% !important;
-  height: 100% !important;
+  height: 200px !important;
   min-height: unset !important;
   max-height: unset !important;
   object-fit: cover !important;
   object-position: center !important;
-  display: block !important;
-}
-/* Emoji placeholder: must match wrap height so card size is always consistent */
-.pimg-wrap .pimg-emoji {
-  width: 100% !important;
-  height: 200px !important;
-  min-height: 200px !important;
-  max-height: 200px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 76px !important;
+  background: var(--cream) !important;
 }
 .pimg-wrap::after {
   content: '' !important;
@@ -5495,16 +5489,9 @@ function startProductListener(){
   if(_prodUnsubscribe){ try{ _prodUnsubscribe(); }catch(e){} _prodUnsubscribe=null; }
   if(_catUnsubscribe){ try{ _catUnsubscribe(); }catch(e){} _catUnsubscribe=null; }
 
-  // ── PRODUCTS listener — includeMetadataChanges:false so only server writes
-  //    trigger re-renders; hasPendingWrites guard ensures ALL devices (not just
-  //    the owner's phone) see deletions/updates the instant Firestore confirms.
-  _prodUnsubscribe = db.collection('products').onSnapshot(
-    { includeMetadataChanges: false },
-    snap=>{
+  // ── PRODUCTS listener ──
+  _prodUnsubscribe = db.collection('products').onSnapshot(snap=>{
     clearTimeout(_listenerRetryTimer);
-    // If snapshot still comes from local cache (offline), skip it so we don't
-    // temporarily hide deleted products on other phones before server confirms.
-    if(snap.metadata && snap.metadata.fromCache) return;
     snap.docChanges().forEach(change=>{
       const fp = {...change.doc.data(), id: change.doc.id};
       const idx = PRODS.findIndex(p=>String(p.id)===String(fp.id));
@@ -5524,12 +5511,9 @@ function startProductListener(){
     _listenerRetryTimer = setTimeout(()=>startProductListener(), 3000);
   });
 
-  // ── CATEGORIES listener — server-only so deletions propagate instantly ──
+  // ── CATEGORIES listener ──
   let _catsInitialized = false;
-  _catUnsubscribe = db.collection('categories').onSnapshot(
-    { includeMetadataChanges: false },
-    snap=>{
-    if(snap.metadata && snap.metadata.fromCache) return;
+  _catUnsubscribe = db.collection('categories').onSnapshot(snap=>{
     // On first snapshot, REPLACE the hardcoded CATS array entirely with
     // whatever is in Firestore — this is the fix for deleted categories
     // reappearing on reload.
@@ -8082,7 +8066,7 @@ function renderProds(){
   requestAnimationFrame(()=>{
   grid.innerHTML = list.map(p=>{
     const cat = CATS.find(c=>c.id===p.cat);
-    const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="eager" decoding="async" onload="this.closest('.pimg-wrap').classList.add('img-loaded')" onerror="if(!this.dataset.retried){this.dataset.retried='1';var s=this.src;this.src='';setTimeout(()=>{this.src=s;},400);return;}this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');var _e=_w.querySelector('.pimg-emoji-fb');if(_e)_e.style.cssText='display:flex;position:absolute;inset:0;align-items:center;justify-content:center;font-size:76px;background:linear-gradient(135deg,var(--cream-dark),var(--pink));z-index:2;';}"><div class="pimg-emoji pimg-emoji-fb" style="display:none;">${p.emoji}</div>` : `<div class="pimg-emoji">${p.emoji}</div>`;
+    const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy" decoding="async" style="cursor:pointer;" onload="this.closest('.pimg-wrap').classList.add('img-loaded','has-img')" onerror="this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');var _e=_w.querySelector('.pimg-emoji-fb');if(_e)_e.style.display='flex';}"><div class="pimg-emoji pimg-emoji-fb" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:76px;">${p.emoji}</div>` : `<div class="pimg-emoji">${p.emoji}</div>`;
     const _isKn = currentLang === 'kn';
 
     // ── SMART LANGUAGE DISPLAY ──
@@ -8140,27 +8124,8 @@ function renderProds(){
   }).join('');
   // Mark image wraps that have images (hides skeleton shimmer)
   grid.querySelectorAll('.pimg-wrap img').forEach(img=>{
-    if(img.complete && img.naturalWidth > 0){
-      img.closest('.pimg-wrap')?.classList.add('img-loaded');
-    }
-  });
-  // Auto-show default flavour image on initial render
-  grid.querySelectorAll('.product-card').forEach(card=>{
-    const pid = card.id.replace('pc-','');
-    const p = PRODS.find(x=>String(x.id)===String(pid));
-    if(p && p.flavours && p.flavours.length > 0){
-      const flvArr = p._displayFlavours || p.flavours;
-      const hasAnyFlvImg = flvArr.some(f=>f.image);
-      if(hasAnyFlvImg){
-        const firstIdx = flvArr.findIndex(f=>f.image);
-        if(firstIdx > -1){
-          const imgEl = document.getElementById(`fi-${pid}-${firstIdx}`);
-          if(imgEl) imgEl.classList.add('visible');
-          const labelEl = document.getElementById(`fl-${pid}`);
-          if(labelEl){ labelEl.textContent=flvArr[firstIdx].name; labelEl.classList.add('visible'); }
-        }
-      }
-    }
+    if(img.complete) img.closest('.pimg-wrap')?.classList.add('img-loaded');
+    else img.addEventListener('load',()=>img.closest('.pimg-wrap')?.classList.add('img-loaded'),{once:true});
   });
   });
 }
