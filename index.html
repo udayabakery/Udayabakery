@@ -125,7 +125,7 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed;}
 /* pimg-wrap background acts as placeholder while image loads */
 .pimg-wrap.img-loaded::before{display:none;}
 .pimg-wrap img{position:absolute;inset:0;width:100%!important;height:100%!important;object-fit:cover;display:block;}
-.pimg-emoji{position:relative;}
+.pimg-emoji{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
 
 
 
@@ -8142,6 +8142,24 @@ function renderProds(){
   grid.querySelectorAll('.pimg-wrap img').forEach(img=>{
     if(img.complete && img.naturalWidth > 0){
       img.closest('.pimg-wrap')?.classList.add('img-loaded');
+    }
+  });
+  // Auto-show default flavour image on initial render
+  grid.querySelectorAll('.product-card').forEach(card=>{
+    const pid = card.id.replace('pc-','');
+    const p = PRODS.find(x=>String(x.id)===String(pid));
+    if(p && p.flavours && p.flavours.length > 0){
+      const flvArr = p._displayFlavours || p.flavours;
+      const hasAnyFlvImg = flvArr.some(f=>f.image);
+      if(hasAnyFlvImg){
+        const firstIdx = flvArr.findIndex(f=>f.image);
+        if(firstIdx > -1){
+          const imgEl = document.getElementById(`fi-${pid}-${firstIdx}`);
+          if(imgEl) imgEl.classList.add('visible');
+          const labelEl = document.getElementById(`fl-${pid}`);
+          if(labelEl){ labelEl.textContent=flvArr[firstIdx].name; labelEl.classList.add('visible'); }
+        }
+      }
     }
   });
   });
