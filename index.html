@@ -1800,12 +1800,14 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
   .cc-emoji{font-size:26px!important;margin-bottom:5px!important;}
   .cc-name{font-size:10px!important;}
 
-  /* Products - 2 per row on mobile */
+  /* Products - 2 per row on mobile — ALL cards same height */
   .product-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;}
   .product-card{border-radius:14px!important;}
-  .pimg-wrap{height:160px!important;min-height:unset!important;max-height:unset!important;}
-  .pimg-wrap img{height:160px!important;min-height:unset!important;max-height:unset!important;}
-  .pimg-emoji{font-size:52px!important;}
+  .pimg-wrap{height:160px!important;min-height:160px!important;max-height:160px!important;overflow:hidden!important;}
+  .pimg-wrap img{height:160px!important;min-height:unset!important;max-height:160px!important;width:100%!important;object-fit:cover!important;}
+  /* Emoji placeholder: same fixed height so broken/no-image cards match */
+  .pimg-emoji{font-size:52px!important;width:100%!important;height:160px!important;min-height:160px!important;max-height:160px!important;display:flex!important;align-items:center!important;justify-content:center!important;}
+  .pimg-emoji-fb{font-size:52px!important;height:160px!important;min-height:160px!important;}
   .pbody{padding:10px 10px!important;}
   .pcat{font-size:9px!important;}
   .pname{font-size:13px!important;margin-bottom:4px!important;}
@@ -3246,15 +3248,28 @@ body.dark-mode .mob-bottom-nav { background: rgba(15,6,1,.97) !important; border
   align-items: center !important;
   justify-content: center !important;
   height: 200px !important;
+  min-height: 200px !important;
+  max-height: 200px !important;
 }
 .pimg-wrap img {
   width: 100% !important;
   height: 200px !important;
   min-height: unset !important;
-  max-height: unset !important;
+  max-height: 200px !important;
   object-fit: cover !important;
   object-position: center !important;
   background: var(--cream) !important;
+}
+/* Emoji placeholder: must match wrap height so card size is always consistent */
+.pimg-wrap .pimg-emoji {
+  width: 100% !important;
+  height: 200px !important;
+  min-height: 200px !important;
+  max-height: 200px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 76px !important;
 }
 .pimg-wrap::after {
   content: '' !important;
@@ -5489,9 +5504,16 @@ function startProductListener(){
   if(_prodUnsubscribe){ try{ _prodUnsubscribe(); }catch(e){} _prodUnsubscribe=null; }
   if(_catUnsubscribe){ try{ _catUnsubscribe(); }catch(e){} _catUnsubscribe=null; }
 
-  // ── PRODUCTS listener ──
-  _prodUnsubscribe = db.collection('products').onSnapshot(snap=>{
+  // ── PRODUCTS listener — includeMetadataChanges:false so only server writes
+  //    trigger re-renders; hasPendingWrites guard ensures ALL devices (not just
+  //    the owner's phone) see deletions/updates the instant Firestore confirms.
+  _prodUnsubscribe = db.collection('products').onSnapshot(
+    { includeMetadataChanges: false },
+    snap=>{
     clearTimeout(_listenerRetryTimer);
+    // If snapshot still comes from local cache (offline), skip it so we don't
+    // temporarily hide deleted products on other phones before server confirms.
+    if(snap.metadata && snap.metadata.fromCache) return;
     snap.docChanges().forEach(change=>{
       const fp = {...change.doc.data(), id: change.doc.id};
       const idx = PRODS.findIndex(p=>String(p.id)===String(fp.id));
@@ -5511,9 +5533,12 @@ function startProductListener(){
     _listenerRetryTimer = setTimeout(()=>startProductListener(), 3000);
   });
 
-  // ── CATEGORIES listener ──
+  // ── CATEGORIES listener — server-only so deletions propagate instantly ──
   let _catsInitialized = false;
-  _catUnsubscribe = db.collection('categories').onSnapshot(snap=>{
+  _catUnsubscribe = db.collection('categories').onSnapshot(
+    { includeMetadataChanges: false },
+    snap=>{
+    if(snap.metadata && snap.metadata.fromCache) return;
     // On first snapshot, REPLACE the hardcoded CATS array entirely with
     // whatever is in Firestore — this is the fix for deleted categories
     // reappearing on reload.
@@ -8066,7 +8091,7 @@ function renderProds(){
   requestAnimationFrame(()=>{
   grid.innerHTML = list.map(p=>{
     const cat = CATS.find(c=>c.id===p.cat);
-    const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy" decoding="async" style="cursor:pointer;" onload="this.closest('.pimg-wrap').classList.add('img-loaded','has-img')" onerror="this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');var _e=_w.querySelector('.pimg-emoji-fb');if(_e)_e.style.display='flex';}"><div class="pimg-emoji pimg-emoji-fb" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:76px;">${p.emoji}</div>` : `<div class="pimg-emoji">${p.emoji}</div>`;
+    const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy" decoding="async" style="cursor:pointer;" onload="this.closest('.pimg-wrap').classList.add('img-loaded','has-img')" onerror="this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded','has-img');var _e=_w.querySelector('.pimg-emoji-fb');if(_e){_e.style.display='flex';}}"><div class="pimg-emoji pimg-emoji-fb" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:76px;background:linear-gradient(135deg,var(--cream-dark),var(--pink));z-index:2;">${p.emoji}</div>` : `<div class="pimg-emoji" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:76px;">${p.emoji}</div>`;
     const _isKn = currentLang === 'kn';
 
     // ── SMART LANGUAGE DISPLAY ──
