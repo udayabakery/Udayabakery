@@ -19,7 +19,7 @@
 <meta name="theme-color" content="#3B1F0E">
 <link rel="canonical" href="https://udayabakery.github.io/Udayabakery/">
 <!-- SECURITY: Content Security Policy — reduces XSS risk -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com; object-src 'none'; base-uri 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http: https://*.firebasestorage.app https://*.firebasestorage.googleapis.com https://firebasestorage.googleapis.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org https://*.firebasestorage.app https://firebasestorage.googleapis.com https://*.firebasestorage.googleapis.com; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com; object-src 'none'; base-uri 'self';">
 <!-- SECURITY: Prevent clickjacking and MIME sniffing -->
 <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -8090,7 +8090,7 @@ function renderProds(){
   requestAnimationFrame(()=>{
   grid.innerHTML = list.map(p=>{
     const cat = CATS.find(c=>c.id===p.cat);
-    const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="eager" decoding="async" style="cursor:pointer;position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block;" onload="var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');_w.style.background='none';}" onerror="this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');var _e=_w.querySelector('.pimg-emoji-fb');if(_e){_e.style.cssText='display:flex;position:absolute;inset:0;align-items:center;justify-content:center;font-size:76px;background:linear-gradient(135deg,var(--cream-dark),var(--pink));z-index:2;';}}"><div class="pimg-emoji pimg-emoji-fb" style="display:none;">${p.emoji}</div>` : `<div class="pimg-emoji" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:76px;position:relative;z-index:1;">${p.emoji}</div>`;
+    const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="eager" decoding="async" style="cursor:pointer;" onload="this.closest('.pimg-wrap').classList.add('img-loaded')" onerror="if(!this.dataset.retried){this.dataset.retried='1';var s=this.src;this.src='';setTimeout(()=>{this.src=s;},400);return;}this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');var _e=_w.querySelector('.pimg-emoji-fb');if(_e)_e.style.cssText='display:flex;position:absolute;inset:0;align-items:center;justify-content:center;font-size:76px;background:linear-gradient(135deg,var(--cream-dark),var(--pink));z-index:2;';}"><div class="pimg-emoji pimg-emoji-fb" style="display:none;">${p.emoji}</div>` : `<div class="pimg-emoji">${p.emoji}</div>`;
     const _isKn = currentLang === 'kn';
 
     // ── SMART LANGUAGE DISPLAY ──
@@ -8149,8 +8149,7 @@ function renderProds(){
   // Mark image wraps that have images (hides skeleton shimmer)
   grid.querySelectorAll('.pimg-wrap img').forEach(img=>{
     if(img.complete && img.naturalWidth > 0){
-      var _w = img.closest('.pimg-wrap');
-      if(_w){ _w.classList.add('img-loaded'); _w.style.background='none'; }
+      img.closest('.pimg-wrap')?.classList.add('img-loaded');
     }
   });
   });
