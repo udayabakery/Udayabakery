@@ -132,7 +132,8 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed;}
 @keyframes ubSkel{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
 /* Hide skeleton once image loads */
-.pimg-wrap img{position:relative;z-index:1;}
+/* NOTE: do NOT use position:relative+z-index on img — collapses height in Android flex containers */
+.pimg-wrap img{position:absolute;inset:0;width:100%!important;height:100%!important;object-fit:cover;z-index:1;}
 .pimg-emoji{position:relative;z-index:1;}
 
 
@@ -1138,7 +1139,7 @@ section{padding:64px 0;contain:layout;}
 .product-card{background:var(--cream);border-radius:22px;overflow:hidden;position:relative;box-shadow:0 4px 16px var(--shadow);transition:transform .25s,box-shadow .25s;contain:layout style;}
 .product-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px var(--shadow);}
 .pimg-wrap{width:100%;height:200px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--cream-dark),var(--pink));display:flex;align-items:center;justify-content:center;}
-.pimg-wrap img{width:100%;height:200px;object-fit:cover;object-position:center;display:block;transition:transform .3s;background:var(--cream);}
+.pimg-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .3s;z-index:1;}
 .product-card:hover .pimg-wrap img{transform:scale(1.03);}
 .pimg-emoji{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:76px;}
 /* Flavour image overlay */
@@ -1803,7 +1804,7 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
   .product-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;}
   .product-card{border-radius:14px!important;}
   .pimg-wrap{height:160px!important;min-height:160px!important;max-height:160px!important;overflow:hidden!important;}
-  .pimg-wrap img{height:160px!important;min-height:unset!important;max-height:160px!important;width:100%!important;object-fit:cover!important;}
+  .pimg-wrap img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;}
   /* Emoji placeholder: same fixed height so broken/no-image cards match */
   .pimg-emoji{font-size:52px!important;width:100%!important;height:160px!important;min-height:160px!important;max-height:160px!important;display:flex!important;align-items:center!important;justify-content:center!important;}
   .pimg-emoji-fb{font-size:52px!important;height:160px!important;min-height:160px!important;}
@@ -3251,13 +3252,15 @@ body.dark-mode .mob-bottom-nav { background: rgba(15,6,1,.97) !important; border
   max-height: 200px !important;
 }
 .pimg-wrap img {
+  position: absolute !important;
+  inset: 0 !important;
   width: 100% !important;
-  height: 200px !important;
+  height: 100% !important;
   min-height: unset !important;
-  max-height: 200px !important;
+  max-height: unset !important;
   object-fit: cover !important;
   object-position: center !important;
-  background: var(--cream) !important;
+  z-index: 1 !important;
 }
 /* Emoji placeholder: must match wrap height so card size is always consistent */
 .pimg-wrap .pimg-emoji {
@@ -8090,7 +8093,7 @@ function renderProds(){
   requestAnimationFrame(()=>{
   grid.innerHTML = list.map(p=>{
     const cat = CATS.find(c=>c.id===p.cat);
-    const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="eager" decoding="async" style="cursor:pointer;" onload="this.closest('.pimg-wrap').classList.add('img-loaded')" onerror="if(!this.dataset.retried){this.dataset.retried='1';var s=this.src;this.src='';setTimeout(()=>{this.src=s;},400);return;}this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');var _e=_w.querySelector('.pimg-emoji-fb');if(_e)_e.style.cssText='display:flex;position:absolute;inset:0;align-items:center;justify-content:center;font-size:76px;background:linear-gradient(135deg,var(--cream-dark),var(--pink));z-index:2;';}"><div class="pimg-emoji pimg-emoji-fb" style="display:none;">${p.emoji}</div>` : `<div class="pimg-emoji">${p.emoji}</div>`;
+    const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="eager" decoding="async" onload="this.closest('.pimg-wrap').classList.add('img-loaded')" onerror="if(!this.dataset.retried){this.dataset.retried='1';var s=this.src;this.src='';setTimeout(()=>{this.src=s;},400);return;}this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');var _e=_w.querySelector('.pimg-emoji-fb');if(_e)_e.style.cssText='display:flex;position:absolute;inset:0;align-items:center;justify-content:center;font-size:76px;background:linear-gradient(135deg,var(--cream-dark),var(--pink));z-index:2;';}"><div class="pimg-emoji pimg-emoji-fb" style="display:none;">${p.emoji}</div>` : `<div class="pimg-emoji">${p.emoji}</div>`;
     const _isKn = currentLang === 'kn';
 
     // ── SMART LANGUAGE DISPLAY ──
