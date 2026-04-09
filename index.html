@@ -121,6 +121,63 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed;}
 /* Modal overlays: GPU layer */
 .modal,.qa-modal-bg,.cart-overlay{transform:translateZ(0);}
 
+/* ══ CART MICRO-FEEDBACK: Scale pulse on float cart button ══ */
+@keyframes ubCartPulse{
+  0%{transform:translateZ(0) scale(1);}
+  30%{transform:translateZ(0) scale(1.28);}
+  55%{transform:translateZ(0) scale(0.92);}
+  75%{transform:translateZ(0) scale(1.12);}
+  100%{transform:translateZ(0) scale(1);}
+}
+.float-cart.cart-added{animation:ubCartPulse .55s cubic-bezier(.34,1.56,.64,1);}
+
+/* ══ ADMIN: NEW ORDER BADGE ══ */
+@keyframes ubPulseGold{
+  0%,100%{box-shadow:0 0 0 0 rgba(200,146,58,.7);}
+  60%{box-shadow:0 0 0 8px rgba(200,146,58,0);}
+}
+.order-new-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#E8B96A,#C8923A);
+  color:#fff;font-size:9px;font-weight:900;
+  letter-spacing:.8px;text-transform:uppercase;
+  padding:3px 8px;border-radius:20px;margin-left:7px;
+  animation:ubPulseGold 1.2s ease infinite;
+  vertical-align:middle;flex-shrink:0;
+}
+
+/* ══ ADMIN: SOLD-OUT TOGGLE in product table ══ */
+.ub-sold-toggle{
+  position:relative;display:inline-flex;align-items:center;
+  width:38px;height:22px;cursor:pointer;flex-shrink:0;
+}
+.ub-sold-toggle input{opacity:0;width:0;height:0;position:absolute;}
+.ub-sold-track{
+  position:absolute;inset:0;background:rgba(74,222,128,.25);
+  border-radius:20px;transition:background .2s;border:1.5px solid rgba(74,222,128,.4);
+}
+.ub-sold-toggle input:checked ~ .ub-sold-track{background:rgba(239,68,68,.25);border-color:rgba(239,68,68,.4);}
+.ub-sold-knob{
+  position:absolute;left:3px;top:50%;transform:translateY(-50%);
+  width:14px;height:14px;background:#4ADE80;border-radius:50%;
+  transition:left .2s,background .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);
+}
+.ub-sold-toggle input:checked ~ .ub-sold-track ~ .ub-sold-knob,
+.ub-sold-toggle input:checked + .ub-sold-track + .ub-sold-knob{left:19px;background:#F87171;}
+
+/* ══ CATEGORY GRID SKELETON ══ */
+.cat-card-main.ub-skel .cc-img-wrap{position:relative;overflow:hidden;}
+.cc-img-wrap::before{
+  content:'';display:block;position:absolute;inset:0;
+  background:linear-gradient(90deg,var(--cream-dark) 25%,var(--cream) 50%,var(--cream-dark) 75%);
+  background-size:200% 100%;animation:imgShimmer 1.4s infinite;border-radius:14px;z-index:1;
+}
+.cc-img-wrap.img-loaded::before{opacity:0;animation:none;pointer-events:none;}
+
+/* ══ ADMIN: LOW STOCK HIGHLIGHT ══ */
+.ub-low-stock-row td{background:rgba(239,68,68,.07)!important;}
+.ub-low-stock-badge{display:inline-flex;align-items:center;gap:3px;background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:2px 7px;font-size:10px;font-weight:800;letter-spacing:.5px;}
+
 /* Skeleton loading for product images */
 .pimg-wrap::before{
   content:'';display:block;position:absolute;inset:0;
@@ -1138,7 +1195,7 @@ section{padding:64px 0;contain:layout;}
 .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px;}
 .product-card{background:var(--cream);border-radius:22px;overflow:hidden;position:relative;box-shadow:0 4px 16px var(--shadow);transition:transform .25s,box-shadow .25s;contain:layout style;}
 .product-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px var(--shadow);}
-.pimg-wrap{width:100%;height:200px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--cream-dark),var(--pink));display:flex;align-items:center;justify-content:center;}
+.pimg-wrap{width:100%;height:200px;aspect-ratio:1/1;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--cream-dark),var(--pink));display:flex;align-items:center;justify-content:center;}
 .pimg-wrap img{width:100%;height:200px;object-fit:cover;object-position:center;display:block;transition:transform .3s;background:var(--cream);}
 .product-card:hover .pimg-wrap img{transform:scale(1.03);}
 .pimg-emoji{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:76px;}
@@ -6478,7 +6535,7 @@ function qaAddToCart(){
 
   updateBadge();
   updateMobBadge();
-  saveCart();
+  saveCart(); ubCartBounce();
   showToast(`${p.emoji||'🎂'} ${p.name} added!`,'ok');
 
   // Update "X in cart" label
@@ -7977,6 +8034,8 @@ function _ubCloseAuthModal(){
 function _ubCloseAdmin(){
   document.getElementById('adminOverlay').style.display = 'none';
   stopAdminAlert();
+  // ── Memory management: unsubscribe order listener when admin closes ──
+  if(typeof _orderUnsubscribe === 'function'){ try{ _orderUnsubscribe(); }catch(e){} _orderUnsubscribe = null; }
 }
 function _ubCloseProfilePage(){
   const el = document.getElementById('ubProfilePage');
@@ -8265,7 +8324,7 @@ function addCart(pid){
   const ex = cart.find(c=>c.key===key);
   if(ex) ex.qty++;
   else cart.push({key, pid, name:p.name, emoji:p.emoji, image:p.image||'', flvImage:p.image||'', flvName:'', variant:v.label, price:v.price, qty:1});
-  saveCart(); updateBadge();
+  saveCart(); updateBadge(); ubCartBounce();
   showToast(`${p.emoji} ${p.name} (${v.label}) added!`, 'ok');
 }
 function updateBadge(){
@@ -9801,17 +9860,25 @@ function buildProdsTab(){
   </div>
   <div style="overflow-x:auto;">
   <table class="aptable">
-    <thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Variants</th><th>Actions</th></tr></thead>
+    <thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Variants</th><th>Stock</th><th>Actions</th></tr></thead>
     <tbody>${PRODS.map(p=>{
       const cat = CATS.find(c=>c.id===p.cat);
-      return `<tr>
+      const isOos = p.inStock===false;
+      return `<tr class="${isOos?'ub-low-stock-row':''}">
         <td><div style="width:46px;height:46px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:22px;">${p.image?`<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;">`:`${p.emoji}`}</div></td>
-        <td><div style="font-weight:600;color:rgba(253,246,236,.87);max-width:160px;">${p.name}${p.badge?`<span style="display:inline-block;background:rgba(200,146,58,.2);color:#E8B96A;font-size:9px;padding:1px 6px;border-radius:6px;margin-left:5px;font-weight:700;">${p.badge}</span>`:''}</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:2px;">₹${p.price} base</div></td>
+        <td><div style="font-weight:600;color:rgba(253,246,236,.87);max-width:160px;">${p.name}${p.badge?`<span style="display:inline-block;background:rgba(200,146,58,.2);color:#E8B96A;font-size:9px;padding:1px 6px;border-radius:6px;margin-left:5px;font-weight:700;">${p.badge}</span>`:''}</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:2px;">₹${p.price} base</div>${isOos?'<span class="ub-low-stock-badge">⊘ Out of Stock</span>':''}</td>
         <td style="white-space:nowrap;">${cat?cat.emoji+' '+cat.name:p.cat}</td>
         <td style="max-width:180px;">${p.variants.map(v=>`<span style="display:inline-block;background:rgba(200,146,58,.1);border-radius:6px;padding:2px 8px;margin:2px;font-size:11px;color:rgba(253,246,236,.6);">${v.label}: ₹${v.price}</span>`).join('')}</td>
+        <td>
+          <label class="ub-sold-toggle" title="${isOos?'Click to restore stock':'Click to mark Sold Out'}">
+            <input type="checkbox" ${isOos?'checked':''} onchange="ubToggleStock(${p.id})">
+            <div class="ub-sold-track"></div>
+            <div class="ub-sold-knob"></div>
+          </label>
+          <div style="font-size:9px;color:${isOos?'#F87171':'#4ADE80'};text-align:center;margin-top:3px;font-weight:700;">${isOos?'SOLD OUT':'IN STOCK'}</div>
+        </td>
         <td style="white-space:nowrap;display:flex;gap:5px;align-items:center;">
           <button class="abtn-edit" onclick="startEdit(${p.id})" style="padding:6px 10px;">✏️</button>
-          <button onclick="ubToggleStock(${p.id})" title="${p.inStock===false?'Mark In Stock':'Mark Out of Stock'}" style="border:none;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer;font-family:Jost,sans-serif;${p.inStock===false?'background:rgba(239,68,68,.18);color:#F87171;':'background:rgba(74,222,128,.14);color:#4ADE80;'}">${p.inStock===false?'❌ OOS':'✅ Live'}</button>
           <button class="abtn-del" onclick="delProd(${p.id})" style="padding:6px 10px;">🗑</button>
         </td>
       </tr>`;}).join('')}
@@ -9891,7 +9958,7 @@ function buildAddProdTab(){
     </div><!-- /flavourSection -->
     <div class="af-group"><label>Description *</label><textarea class="af-ta" id="pf_desc" placeholder="Describe taste, ingredients, occasion...">${p?esc(p.desc):''}</textarea></div>
     <div class="af-row">
-      <div class="af-group"><label>Base Price (₹) *</label><input class="af-inp" id="pf_price" type="number" value="${p?p.price:''}" placeholder="450" min="0"></div>
+      <div class="af-group"><label>Base Price (₹) *</label><input class="af-inp" id="pf_price" type="number" value="${p?p.price:''}" placeholder="450" min="0" step="0.01" oninput="this.value=this.value.replace(/[^0-9.]/g,'')"></div>
       <div class="af-group"><label>Search Tags</label><input class="af-inp" id="pf_tags" value="${p&&p.tags?p.tags.join(', '):''}" placeholder="chocolate, birthday cake, puff..."></div>
     </div>
     <!-- Pre-order lead time & seasonal availability -->
@@ -10507,7 +10574,7 @@ function buildOrderCard(o){
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.06);">
       <div>
         <div style="font-size:10px;color:rgba(253,246,236,.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Order ID</div>
-        <div style="font-family:Playfair Display,serif;font-size:15px;color:#E8B96A;font-weight:700;">${o.id}</div>
+        <div style="font-family:Playfair Display,serif;font-size:15px;color:#E8B96A;font-weight:700;">${o.id}${(()=>{const _now=Date.now();const _oTs=o.createdAt||(new Date(o.timestamp||0).getTime());return (_now-_oTs)<1800000?'<span class="order-new-badge">NEW</span>':'';})()} </div>
         <div style="font-size:11px;color:rgba(253,246,236,.3);margin-top:2px;">⏰ ${o.timestamp||'—'}</div>
       </div>
       <div style="text-align:right;">
@@ -11095,13 +11162,60 @@ function buildSettingsTab(){
     <div class="af-group"><label>Minimum Order Amount (₹) <span style="color:rgba(253,246,236,.4);font-size:11px;">— 0 means no minimum</span></label><input class="af-inp" type="number" id="s_minorder" value="${CFG.minOrder||0}" min="0"></div>
     <button class="abtn" onclick="saveSettings()">💾 Save Settings</button>
   </div>
-  <div class="acard">
-    <h3>🔐 Change Password</h3>
-    <div class="asub">Update admin login password</div>
-    <div class="af-group"><label>Current Password</label><input class="af-inp" type="password" id="s_curr" placeholder="Current password"></div>
-    <div class="af-group"><label>New Password</label><input class="af-inp" type="password" id="s_new" placeholder="New password (min 6 chars)"></div>
-    <div class="af-group"><label>Confirm New Password</label><input class="af-inp" type="password" id="s_conf" placeholder="Confirm new password"></div>
-    <button class="abtn" onclick="changePass()">🔐 Update Password</button>
+  <!-- ══ ADMIN CREDENTIALS CARD ══ -->
+  <div class="acard" style="border-left:3px solid #C8923A;">
+    <h3>🔐 Admin Login Credentials</h3>
+    <div class="asub">Change your admin username and/or password. You must enter your current password to save any changes.</div>
+
+    <!-- Current password (always required) -->
+    <div style="background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.18);border-radius:14px;padding:16px 18px;margin:16px 0 14px;">
+      <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(200,146,58,.7);margin-bottom:10px;">🔑 Verify Identity</div>
+      <div class="af-group" style="margin-bottom:0;">
+        <label>Current Password *</label>
+        <div style="position:relative;">
+          <input class="af-inp" type="password" id="s_curr" placeholder="Enter your current password" style="padding-right:44px;">
+          <button onclick="ubToggleFieldVis('s_curr','s_curr_eye')" type="button" style="position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;padding:0;color:rgba(253,246,236,.45);" id="s_curr_eye">👁️</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change Username -->
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px 18px;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(200,146,58,.7);">👤 Change Username</div>
+        <div style="font-size:11px;color:rgba(253,246,236,.3);">Leave blank to keep current</div>
+      </div>
+      <div class="af-group" style="margin-bottom:0;">
+        <label>New Username</label>
+        <input class="af-inp" type="text" id="s_new_user" placeholder="Enter new username" autocomplete="off" style="letter-spacing:.5px;">
+      </div>
+    </div>
+
+    <!-- Change Password -->
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px 18px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(200,146,58,.7);">🔒 Change Password</div>
+        <div style="font-size:11px;color:rgba(253,246,236,.3);">Leave blank to keep current</div>
+      </div>
+      <div class="af-group">
+        <label>New Password <span style="opacity:.45;font-size:10px;">(min 6 characters)</span></label>
+        <div style="position:relative;">
+          <input class="af-inp" type="password" id="s_new" placeholder="Enter new password" style="padding-right:44px;">
+          <button onclick="ubToggleFieldVis('s_new','s_new_eye')" type="button" style="position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;padding:0;color:rgba(253,246,236,.45);" id="s_new_eye">👁️</button>
+        </div>
+      </div>
+      <div class="af-group" style="margin-bottom:0;">
+        <label>Confirm New Password</label>
+        <div style="position:relative;">
+          <input class="af-inp" type="password" id="s_conf" placeholder="Re-enter new password" style="padding-right:44px;">
+          <button onclick="ubToggleFieldVis('s_conf','s_conf_eye')" type="button" style="position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;padding:0;color:rgba(253,246,236,.45);" id="s_conf_eye">👁️</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="credMsg" style="display:none;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:12px;"></div>
+    <button class="abtn" onclick="ubSaveCredentials()" style="width:100%;justify-content:center;background:linear-gradient(135deg,#C8923A,#9A5C1A);box-shadow:0 6px 20px rgba(200,146,58,.3);">🔐 Save Credentials</button>
+    <div style="margin-top:10px;font-size:11px;color:rgba(253,246,236,.25);text-align:center;">Stored as SHA-256 hashes — never as plain text</div>
   </div>
   </div>
   <div class="acard" style="margin-top:0;">
@@ -11355,22 +11469,81 @@ function saveLoyaltySettings(){
   showToast(enabled ? `✅ Loyalty points ON — synced to all customers!` : '🚫 Loyalty points disabled for all customers', 'ok');
   renderAdminTab();
 }
-async function changePass(){
-  const curr=(document.getElementById('s_curr')?.value||'').trim();
-  const n=(document.getElementById('s_new')?.value||'').trim();
-  const c=(document.getElementById('s_conf')?.value||'').trim();
-  if(n!==c){showToast('❌ Passwords do not match!','err');return;}
-  if(n.length<6){showToast('⚠️ Minimum 6 characters','err');return;}
-  const currHash = await _sha256(curr);
-  const storedP = localStorage.getItem('ub_admin_pass_hash') || _adminPassHash;
-  if(currHash !== storedP){showToast('❌ Wrong current password!','err');return;}
-  const newHash = await _sha256(n);
-  localStorage.setItem('ub_admin_pass_hash', newHash);
-  _adminPassHash = newHash;
-  showToast('✅ Password updated securely!','ok');
-  // Clear fields
-  ['s_curr','s_new','s_conf'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+// ── TOGGLE PASSWORD VISIBILITY IN SETTINGS ──
+function ubToggleFieldVis(inputId, eyeId){
+  const inp = document.getElementById(inputId);
+  const eye = document.getElementById(eyeId);
+  if(!inp) return;
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  if(eye) eye.textContent = inp.type === 'password' ? '👁️' : '🙈';
 }
+
+// ── SAVE ADMIN CREDENTIALS (username and/or password) ──
+async function ubSaveCredentials(){
+  const curr     = (document.getElementById('s_curr')?.value||'').trim();
+  const newUser  = (document.getElementById('s_new_user')?.value||'').trim();
+  const newPass  = (document.getElementById('s_new')?.value||'').trim();
+  const confPass = (document.getElementById('s_conf')?.value||'').trim();
+
+  const credMsg = document.getElementById('credMsg');
+  function showCredMsg(msg, ok){
+    if(!credMsg) return;
+    credMsg.style.display = 'block';
+    credMsg.style.background = ok ? 'rgba(74,222,128,.1)' : 'rgba(239,68,68,.1)';
+    credMsg.style.border = ok ? '1px solid rgba(74,222,128,.25)' : '1px solid rgba(239,68,68,.25)';
+    credMsg.style.color = ok ? '#4ADE80' : '#F87171';
+    credMsg.textContent = msg;
+    if(ok) setTimeout(()=>{ if(credMsg) credMsg.style.display='none'; }, 4000);
+  }
+
+  // Must provide current password
+  if(!curr){ showCredMsg('⚠️ Please enter your current password to verify', false); return; }
+
+  // Nothing to change?
+  if(!newUser && !newPass){ showCredMsg('⚠️ Enter a new username and/or new password to update', false); return; }
+
+  // Verify current password
+  const currHash  = await _sha256(curr);
+  const storedP   = localStorage.getItem('ub_admin_pass_hash') || _adminPassHash;
+  if(currHash !== storedP){ showCredMsg('❌ Wrong current password — try again', false); return; }
+
+  // Validate new password if provided
+  if(newPass){
+    if(newPass.length < 6){ showCredMsg('⚠️ New password must be at least 6 characters', false); return; }
+    if(newPass !== confPass){ showCredMsg('❌ New passwords do not match', false); return; }
+  }
+
+  // Apply username change
+  if(newUser){
+    if(newUser.length < 3){ showCredMsg('⚠️ Username must be at least 3 characters', false); return; }
+    const uHash = await _sha256(newUser);
+    localStorage.setItem('ub_admin_user_hash', uHash);
+    _adminUserHash = uHash;
+  }
+
+  // Apply password change
+  if(newPass){
+    const pHash = await _sha256(newPass);
+    localStorage.setItem('ub_admin_pass_hash', pHash);
+    _adminPassHash = pHash;
+    // Re-derive AES key from new password hash
+    await UB_SECURE.init(pHash);
+  }
+
+  // Clear all fields
+  ['s_curr','s_new_user','s_new','s_conf'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  // Reset eye icons
+  ['s_curr_eye','s_new_eye','s_conf_eye'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent='👁️'; });
+  ['s_curr','s_new','s_conf'].forEach(id=>{ const el=document.getElementById(id); if(el) el.type='password'; });
+
+  const what = newUser && newPass ? 'Username & password' : newUser ? 'Username' : 'Password';
+  showCredMsg(`✅ ${what} updated successfully! Use new credentials next time you log in.`, true);
+  showToast(`✅ ${what} updated securely!`, 'ok');
+}
+
+// Keep old changePass as alias for any existing calls
+async function changePass(){ ubSaveCredentials(); }
+
 
 async function saveUPISettings(){
   if(!adminLoggedIn){ showToast('Admin login required','err'); return; }
@@ -11559,6 +11732,7 @@ function ubShowConfirm(order){
   const bg = document.getElementById('ubOrderConfirmBg');
   bg.style.display = 'flex';
   _ubPush('confirm');
+  ubPlayOrderDing(); // 🎵 Order success sound
   // Re-animate the inner card
   const card = bg.querySelector('div');
   card.style.animation = 'none';
@@ -13039,6 +13213,34 @@ function ubConfirmDialog(message, onConfirm){
   dlg.querySelector('#ubDlgCancel').onclick = ()=>dlg.remove();
   dlg.querySelector('#ubDlgConfirm').onclick = ()=>{ dlg.remove(); onConfirm(); };
   dlg.onclick = (e)=>{ if(e.target===dlg) dlg.remove(); };
+}
+
+// ═══ CART MICRO-FEEDBACK ═══
+function ubCartBounce(){
+  const btn = document.getElementById('floatCartBtn');
+  if(!btn) return;
+  btn.classList.remove('cart-added');
+  // force reflow so re-adding the class re-triggers the animation
+  void btn.offsetWidth;
+  btn.classList.add('cart-added');
+  btn.addEventListener('animationend', ()=>btn.classList.remove('cart-added'), {once:true});
+}
+
+// ═══ ORDER SUCCESS SOUND ("ding") ═══
+function ubPlayOrderDing(){
+  try{
+    const ac = new(window.AudioContext||window.webkitAudioContext)();
+    // Pleasant 3-note ascending ding
+    [[523,.0,.5],[659,.18,.5],[784,.36,.7]].forEach(([hz,t,vol])=>{
+      const o=ac.createOscillator(), g=ac.createGain();
+      o.type='sine'; o.frequency.value=hz;
+      g.gain.setValueAtTime(0,ac.currentTime+t);
+      g.gain.linearRampToValueAtTime(vol,ac.currentTime+t+.06);
+      g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+.55);
+      o.connect(g); g.connect(ac.destination);
+      o.start(ac.currentTime+t); o.stop(ac.currentTime+t+.6);
+    });
+  }catch(e){}
 }
 
 // ═══ TOAST ═══
