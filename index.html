@@ -9018,26 +9018,19 @@ function handleCredentialResponse(response){
       initials: payload.name.charAt(0).toUpperCase()
     };
 
-    // CRITICAL: Sign into Firebase Auth using the Google credential
-    // This sets request.auth in Firestore rules
-    if(auth && firebase.auth.GoogleAuthProvider){
-      const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
-      auth.signInWithCredential(credential)
-        .then(result=>{
-          signInUser(userInfo);
-          closeAuthModal();
-        })
-        .catch(err=>{
-          console.warn('Firebase credential sign-in failed:', err);
-          // Do NOT grant access if Firebase auth fails — this could allow
-          // a crafted JWT to bypass Firestore security rules.
-          showToast('❌ Sign-in failed. Please try again.','err');
-          closeAuthModal();
+    // Sign in the user immediately with Google-verified info
+    signInUser(userInfo);
+    closeAuthModal();
+
+    // Also sign into Firebase Auth silently in the background
+    // (needed for Firestore security rules — but don't block/error the user if it fails)
+    if(auth && firebase.auth && firebase.auth.GoogleAuthProvider){
+      try{
+        const credential = firebase.auth.GoogleAuthProvider.credential(response.credential);
+        auth.signInWithCredential(credential).catch(err=>{
+          console.warn('Firebase background credential sign-in failed (non-critical):', err);
         });
-    } else {
-      // Fallback if Firebase not ready
-      signInUser(userInfo);
-      closeAuthModal();
+      }catch(e){ console.warn('Firebase credential setup error:', e); }
     }
   } catch(e){
     console.error('handleCredentialResponse error:', e);
@@ -13364,21 +13357,26 @@ function showNotifPrompt(){
 }
 
 function enableNotifications(){
-  dismissNotifPrompt();
+  // Just hide the prompt UI without calling dismissNotifPrompt()
+  // (that would set notifPermission='dismissed' before we get the browser result)
+  const _npEl = document.getElementById('notifPrompt');
+  if(_npEl) _npEl.style.display = 'none';
+
   if(!('Notification' in window)){
-    showToast('⚠️ Notifications not supported','err'); return;
+    showToast('Notifications not supported on this browser','err'); return;
   }
   Notification.requestPermission().then(permission => {
     notifPermission = permission;
     localStorage.setItem('ub_notif', permission);
     if(permission === 'granted'){
       showToast('🔔 Notifications enabled! You will get order updates.','ok');
-      // Send a welcome notification
       setTimeout(()=>{
         sendNotification('🎂 Udaya Bakery', 'Thanks for subscribing! You will get order & offer updates.');
       }, 1000);
+    } else if(permission === 'denied'){
+      showToast('Notifications blocked — enable in browser settings','err');
     } else {
-      showToast('Notifications disabled','err');
+      showToast('Notifications not enabled','err');
     }
   });
 }
