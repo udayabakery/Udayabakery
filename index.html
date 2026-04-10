@@ -5903,6 +5903,11 @@ async function saveProdToDB(prod){
   const id = prod.id ? String(prod.id) : String(Date.now());
   const isNew = !prod.id || prod.id === 'null';
   const data = {...prod, id};
+  // CRITICAL: Never save base64 data URLs to Firestore — they are device-local,
+  // won't show on other devices, and will exceed Firestore's 1MB document limit.
+  if(data.image && data.image.startsWith('data:')){
+    data.image = '';
+  }
   if(isNew) data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
   // merge:true keeps existing fields (like createdAt) when updating
   await db.collection('products').doc(id).set(data, {merge: true});
@@ -9441,6 +9446,12 @@ function openAdmin(){
   // auto-grant admin without re-entering password — the Google session already verified identity.
   if(!adminLoggedIn && currentUser && currentUser.email === OWNER_EMAIL){
     adminLoggedIn = true;
+    // ── FIX: Show floating admin button for owner auto-login via Google ──
+    const _fab = document.querySelector('.fab-admin');
+    if(_fab) _fab.classList.add('owner-visible');
+    const _navAdm=document.getElementById('navAdminLink'); if(_navAdm) _navAdm.style.display='';
+    const _mobAdm=document.getElementById('mobAdminLink'); if(_mobAdm) _mobAdm.style.display='';
+    const _footAdm=document.getElementById('footerAdminLink'); if(_footAdm) _footAdm.style.display='';
   }
   document.getElementById('adminOverlay').style.display = 'block';
   // Small delay before pushing state to avoid popstate race on Android Chrome
@@ -9637,6 +9648,8 @@ function doLogout(){
   _stopAdminIdle();
   UB_SECURE.clear(); // Wipe AES key from memory — encrypted data stays but unreadable
   localStorage.removeItem('ub_admin_logged_in');
+  // ── FIX: Close the entire admin overlay immediately on logout ──
+  document.getElementById('adminOverlay').style.display = 'none';
   document.getElementById('adminDashScreen').style.display = 'none';
   document.getElementById('adminLoginScreen').style.display = 'flex';
   const au=document.getElementById('aUser'); if(au) au.value='';
@@ -10393,20 +10406,33 @@ async function saveProd(existId){
       try {
         let finalImageUrl = imageUrl;
         if(imgFileToUpload){
+          // CRITICAL FIX: If image upload fails, do NOT save base64 to Firestore.
+          // base64 is device-local and too large for Firestore (1MB limit).
+          // Show error and save without image so at least product data is saved.
           try {
+            showToast('⏳ Uploading image to cloud…','ok');
             finalImageUrl = await uploadToImageBB(imgFileToUpload);
             // Update local state with real image URL
             const idx2 = PRODS.findIndex(p=>String(p.id)===id);
             if(idx2>-1){ PRODS[idx2].image = finalImageUrl; renderProds(); }
+            showToast('✅ Image uploaded! Visible on all devices.','ok');
           } catch(imgErr){
             console.warn('Image upload failed:', imgErr);
-            finalImageUrl = imageUrl;
+            // Save product WITHOUT image rather than save a broken base64 URL
+            finalImageUrl = '';
+            const idx2 = PRODS.findIndex(p=>String(p.id)===id);
+            if(idx2>-1){ PRODS[idx2].image = ''; renderProds(); }
+            showToast('⚠️ Image upload failed! Product saved without image. Please edit the product and re-upload the image.','err');
           }
+        }
+        // Never save base64 data URLs to Firestore — strip them out
+        if(finalImageUrl && finalImageUrl.startsWith('data:')){
+          finalImageUrl = '';
         }
         await saveProdToDB({...prodData, id, image:finalImageUrl});
       } catch(e){
         console.error('Background save error:', e);
-        showToast('⚠️ Cloud sync failed — data saved locally','err');
+        showToast('⚠️ Cloud sync failed — please check internet and try again','err');
       }
     })();
 
@@ -11618,10 +11644,18 @@ async function saveLogo(){
       try {
         logoUrl = await uploadToImageBB(pendingLogoFile);
       } catch(imgErr){
-        // Fall back to base64 if ImageBB fails
-        logoUrl = data;
-        console.warn('ImageBB upload failed, using base64:', imgErr);
+        // CRITICAL FIX: Never fall back to base64 for Firestore — it won't work on other devices.
+        console.warn('ImageBB upload failed:', imgErr);
+        if(statusEl) statusEl.textContent = '❌ Upload failed — check your internet and try again';
+        showToast('❌ Logo image upload failed. Please check your connection and try again.','err');
+        return;
       }
+    }
+    // Never save base64 data URLs to Firestore
+    if(logoUrl && logoUrl.startsWith('data:')){
+      showToast('❌ Cannot save logo — image upload to cloud failed. Please retry.','err');
+      if(statusEl) statusEl.textContent = '❌ Cloud upload required. Please try again.';
+      return;
     }
     // Save to localStorage (for this device)
     localStorage.setItem('ub_logo', logoUrl);
