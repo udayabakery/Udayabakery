@@ -16,8 +16,12 @@
 <meta name="twitter:description" content="Fresh cakes, egg puffs, chaklis & more. Order online for home delivery in Belman!">
 <meta name="twitter:image" content="https://udayabakery.github.io/Udayabakery/logo.png">
 <link rel="icon" href="https://udayabakery.github.io/Udayabakery/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="https://udayabakery.github.io/Udayabakery/logo.png">
+<link rel="manifest" href="/Udayabakery/manifest.json">
 <meta name="theme-color" content="#3B1F0E">
 <link rel="canonical" href="https://udayabakery.github.io/Udayabakery/">
+<!-- Preload logo for faster LCP -->
+<link rel="preload" href="https://udayabakery.github.io/Udayabakery/logo.png" as="image">
 <!-- SECURITY: Content Security Policy — reduces XSS risk -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com; object-src 'none'; base-uri 'self';">
 <!-- SECURITY: Prevent clickjacking and MIME sniffing -->
@@ -30,9 +34,12 @@
 <link rel="dns-prefetch" href="https://i.ibb.co">
 <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
 <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com">
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+<!-- Fonts: core UI fonts loaded immediately; decorative font loaded lazily -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+<!-- Cormorant Garamond: loaded after page paint (used for hero/logo decorative text) -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <!-- Firebase SDK - defer so page always loads even if Firebase fails -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js" defer></script>
@@ -113,7 +120,7 @@ body.ub-scrolling .pimg-wrap::before{animation-play-state:paused!important;}
 a,button,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 
 /* Optimize font rendering */
-body{-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed;}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 
 /* Cart sidebar: GPU layer */
 .cart-sidebar{transform:translateZ(0);backface-visibility:hidden;}
@@ -922,7 +929,7 @@ body.dark-mode .coupon-banner-title{color:var(--choco);}
 .dark-toggle{background:none;border:1.5px solid var(--cream-dark);border-radius:50px;padding:6px 10px;cursor:pointer;font-size:16px;color:var(--choco);transition:all .2s;display:flex;align-items:center;}
 .dark-toggle:hover{border-color:var(--gold);background:rgba(200,146,58,.1);}
 
-body{font-family:'DM Sans','Jost',sans-serif;background:var(--cream);color:var(--text-dark);overflow-x:hidden;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+body{font-family:'Plus Jakarta Sans','Jost',sans-serif;background:var(--cream);color:var(--text-dark);overflow-x:hidden;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--cream-dark);}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px;}
 
 /* ── NAV COMPLETE REDESIGN ── */
@@ -4390,12 +4397,27 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
 </script>
 
 <noscript>
-  <div style="position:fixed;inset:0;z-index:99999;background:#FDF6EC;display:flex;align-items:center;justify-content:center;text-align:center;font-family:sans-serif;padding:20px;">
-    <div>
-      <div style="font-size:52px;margin-bottom:16px;">🎂</div>
-      <h2 style="font-family:Georgia,serif;font-size:24px;color:#3B1F0E;margin-bottom:8px;">Udaya Bakery</h2>
-      <p style="color:#5C3520;font-size:15px;margin-bottom:16px;">Please enable JavaScript in your browser to use our online ordering system.</p>
-      <p style="color:#5C3520;font-size:14px;">You can still reach us on <a href="https://wa.me/919845406712" style="color:#C8923A;font-weight:bold;">WhatsApp: +91 98454 06712</a></p>
+  <div style="position:fixed;inset:0;z-index:99999;background:#FDF6EC;overflow-y:auto;font-family:'Georgia',serif;padding:0;">
+    <div style="max-width:480px;margin:0 auto;padding:32px 20px 48px;">
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="font-size:64px;margin-bottom:12px;">🎂</div>
+        <h1 style="font-size:26px;color:#3B1F0E;margin-bottom:4px;">Udaya Bakery</h1>
+        <p style="color:#A0623A;font-size:15px;font-style:italic;margin:0;">Artisan Bakes & Sweet Delights</p>
+      </div>
+      <div style="background:#fff;border-radius:16px;padding:20px 18px;margin-bottom:16px;box-shadow:0 4px 16px rgba(59,31,14,.1);">
+        <h2 style="font-size:15px;color:#3B1F0E;margin-bottom:12px;letter-spacing:.5px;text-transform:uppercase;font-family:sans-serif;">📍 Find Us</h2>
+        <p style="color:#5C3520;font-size:14px;line-height:1.7;margin:0;">Udaya Bakery, Belman,<br>Karkala Taluk, Udupi District,<br>Karnataka – 574 232</p>
+      </div>
+      <div style="background:#fff;border-radius:16px;padding:20px 18px;margin-bottom:16px;box-shadow:0 4px 16px rgba(59,31,14,.1);">
+        <h2 style="font-size:15px;color:#3B1F0E;margin-bottom:12px;letter-spacing:.5px;text-transform:uppercase;font-family:sans-serif;">📞 Contact Us</h2>
+        <a href="tel:+919845406712" style="display:block;color:#C8923A;font-size:16px;font-weight:bold;text-decoration:none;margin-bottom:8px;">📲 +91 98454 06712</a>
+        <a href="https://wa.me/919845406712" style="display:block;color:#25D366;font-size:15px;font-weight:bold;text-decoration:none;">💬 WhatsApp Us</a>
+      </div>
+      <div style="background:#fff;border-radius:16px;padding:20px 18px;margin-bottom:20px;box-shadow:0 4px 16px rgba(59,31,14,.1);">
+        <h2 style="font-size:15px;color:#3B1F0E;margin-bottom:12px;letter-spacing:.5px;text-transform:uppercase;font-family:sans-serif;">🕐 Opening Hours</h2>
+        <p style="color:#5C3520;font-size:14px;line-height:1.8;margin:0;">Mon – Sat: 8:00 AM – 9:00 PM<br>Sunday: 8:00 AM – 8:00 PM</p>
+      </div>
+      <p style="text-align:center;color:#A0623A;font-size:13px;line-height:1.6;">To use our full online ordering system,<br>please <strong>enable JavaScript</strong> in your browser.</p>
     </div>
   </div>
 </noscript>
@@ -4844,26 +4866,26 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
 <!-- MOBILE BOTTOM NAV -->
 <div class="mob-bottom-nav" id="mobBottomNav">
   <div class="mbn-items">
-    <button class="mbn-item active" onclick="mbnGo('home')" id="mbnHome">
+    <button class="mbn-item active" onclick="mbnGo('home')" id="mbnHome" aria-label="Home">
       <div class="mbn-icon-wrap"><span class="mbn-icon">🏠</span></div>
       <span class="mbn-label">Home</span>
     </button>
-    <button class="mbn-item" onclick="mbnGo('menu')" id="mbnMenu">
+    <button class="mbn-item" onclick="mbnGo('menu')" id="mbnMenu" aria-label="Menu">
       <div class="mbn-icon-wrap"><span class="mbn-icon">🎂</span></div>
       <span class="mbn-label">Menu</span>
     </button>
-    <button class="mbn-item" onclick="mbnGo('cart')" id="mbnCart" style="position:relative;">
+    <button class="mbn-item" onclick="mbnGo('cart')" id="mbnCart" style="position:relative;" aria-label="Cart">
       <div class="mbn-icon-wrap" style="position:relative;">
         <span class="mbn-icon">🛒</span>
         <span class="mbn-cart-dot" id="mobCartBadge" style="display:none;">0</span>
       </div>
       <span class="mbn-label">Cart</span>
     </button>
-    <button class="mbn-item" onclick="mbnGo('track')" id="mbnTrack">
+    <button class="mbn-item" onclick="mbnGo('track')" id="mbnTrack" aria-label="Track Order">
       <div class="mbn-icon-wrap"><span class="mbn-icon">📦</span></div>
       <span class="mbn-label">Orders</span>
     </button>
-    <button class="mbn-item" onclick="mbnGo('profile')" id="mbnProfile">
+    <button class="mbn-item" onclick="mbnGo('profile')" id="mbnProfile" aria-label="Profile">
       <div class="mbn-icon-wrap"><span class="mbn-icon" id="mbnProfileIcon">👤</span></div>
       <span class="mbn-label" id="mbnProfileLabel">Profile</span>
     </button>
@@ -10410,23 +10432,24 @@ function startEdit(pid){
 async function delProd(pid){
   const _dp = PRODS.find(p=>String(p.id)===String(pid));
   const _dpName = _dp ? _dp.name : 'this product';
-  if(!confirm(`⚠️ Delete "${_dpName}"?\n\nThis cannot be undone.`)) return;
-  try {
-    PRODS = PRODS.filter(p=>String(p.id)!==String(pid));
-    renderProds(); renderAdminTab();
-    if(!db){ initFirebase(); }
-    if(db){
-      await db.collection('products').doc(String(pid)).delete();
-      showToast('Deleted!','ok');
+  ubConfirmDialog(`Delete "${_dpName}"?<br><small style="opacity:.7">This cannot be undone.</small>`, async ()=>{
+    try {
+      PRODS = PRODS.filter(p=>String(p.id)!==String(pid));
+      renderProds(); renderAdminTab();
+      if(!db){ initFirebase(); }
+      if(db){
+        await db.collection('products').doc(String(pid)).delete();
+        showToast('Deleted!','ok');
       } else {
-      alert('Firebase not connected. Please refresh and try again.');
+        alert('Firebase not connected. Please refresh and try again.');
+        loadProdsFromDB();
+      }
+    } catch(e){
+      console.error('Delete failed:', e);
+      alert('Delete failed: ' + (e.message||String(e)));
       loadProdsFromDB();
     }
-  } catch(e){
-    console.error('Delete failed:', e);
-    alert('Delete failed: ' + (e.message||String(e)));
-    loadProdsFromDB();
-  }
+  });
 }
 
 // ── CATEGORIES TAB ──
@@ -11671,17 +11694,17 @@ function exportData(){
   showToast('📤 Backup exported!','ok');
 }
 async function resetOrders(){
-  if(!confirm('⚠️ Clear ALL orders permanently?\n\nThis will delete from both local and Firebase. This cannot be undone.')) return;
-  // Delete from Firestore too
-  if(db){
-    try{
-      const snap = await db.collection('orders').limit(500).get();
-      const batch = db.batch();
-      snap.docs.forEach(doc => batch.delete(doc.ref));
-      await batch.commit();
-    }catch(e){ console.warn('Firestore order clear failed:', e); }
-  }
-  ORDERS=[]; save(); renderAdminTab(); showToast('🗑 All orders cleared','ok');
+  ubConfirmDialog('Clear ALL orders permanently?<br><small style="opacity:.7">This will delete from both local and Firebase. This cannot be undone.</small>', async ()=>{
+    if(db){
+      try{
+        const snap = await db.collection('orders').limit(500).get();
+        const batch = db.batch();
+        snap.docs.forEach(doc => batch.delete(doc.ref));
+        await batch.commit();
+      }catch(e){ console.warn('Firestore order clear failed:', e); }
+    }
+    ORDERS=[]; save(); renderAdminTab(); showToast('🗑 All orders cleared','ok');
+  });
 }
 function importBackup(input){
   const file = input.files[0];
@@ -11690,14 +11713,15 @@ function importBackup(input){
   reader.onload = e => {
     try{
       const data = JSON.parse(e.target.result);
-      if(!confirm(`⚠️ Import backup?\n\nThis will REPLACE all current products, categories & settings. Orders will be merged.\n\nContinue?`)) return;
-      if(data.products) PRODS = data.products;
-      if(data.categories) CATS = data.categories;
-      if(data.orders) ORDERS = [...ORDERS, ...data.orders.filter(o=>!ORDERS.find(x=>x.id===o.id))];
-      if(data.settings) Object.assign(CFG, data.settings);
-      save();
-      renderCats(); renderProds(); renderAdminTab();
-      showToast('✅ Backup imported successfully!','ok');
+      ubConfirmDialog('Import backup?<br><small style="opacity:.7">This will REPLACE all current products, categories & settings. Orders will be merged.</small>', ()=>{
+        if(data.products) PRODS = data.products;
+        if(data.categories) CATS = data.categories;
+        if(data.orders) ORDERS = [...ORDERS, ...data.orders.filter(o=>!ORDERS.find(x=>x.id===o.id))];
+        if(data.settings) Object.assign(CFG, data.settings);
+        save();
+        renderCats(); renderProds(); renderAdminTab();
+        showToast('✅ Backup imported successfully!','ok');
+      });
     }catch(err){
       showToast('❌ Invalid backup file!','err');
     }
@@ -12181,14 +12205,15 @@ function ubSendBroadcast(){
   ORDERS.forEach(o=>{ if(!o.phone)return; const k=o.phone.replace(/\D/g,'').slice(-10); if(!cm[k])cm[k]={name:o.name,phone:k}; });
   const toSend = selected.map(ph=>cm[ph]).filter(Boolean);
   if(!toSend.length){ showToast('No customers found!','err'); return; }
-  if(!confirm('Send to '+toSend.length+' customer(s) via WhatsApp?\n\nWhatsApp will open '+toSend.length+' times. Continue?')) return;
-  toSend.forEach((c,i)=>{
-    setTimeout(()=>{
-      const m=msg.replace(/\{name\}/g,c.name).replace(/Hello!/g,'Hello '+c.name+'!');
-      window.open('https://wa.me/91'+c.phone+'?text='+encodeURIComponent(m),'_blank');
-    }, i*1500);
+  ubConfirmDialog(`Send to ${toSend.length} customer(s) via WhatsApp?<br><small style="opacity:.7">WhatsApp will open ${toSend.length} time(s).</small>`, ()=>{
+    toSend.forEach((c,i)=>{
+      setTimeout(()=>{
+        const m=msg.replace(/\{name\}/g,c.name).replace(/Hello!/g,'Hello '+c.name+'!');
+        window.open('https://wa.me/91'+c.phone+'?text='+encodeURIComponent(m),'_blank');
+      }, i*1500);
+    });
+    showToast('📢 Sending to '+toSend.length+' customer(s)...','ok');
   });
-  showToast('📢 Sending to '+toSend.length+' customer(s)...','ok');
 }
 
 function ubBcSingle(){
@@ -13454,7 +13479,7 @@ function openCakeBuilder(){
   var dt=document.getElementById('cbDelivDate'); if(dt) dt.value='';
   document.body.style.overflow='hidden';
   var wrap=document.getElementById('cbCakeCanvasWrap');
-  if(wrap) wrap.innerHTML='<div class="cb-preview-empty">🎂</div><div style="font-size:12px;color:rgba(253,246,236,.3);">Select tiers & flavour to see your cake</div>';
+  if(wrap) wrap.innerHTML='<div style="text-align:center;padding:10px 0;"><div style="font-size:56px;opacity:.25;margin-bottom:8px;">🎂</div><div style="font-size:12px;color:rgba(253,246,236,.3);">Select tiers &amp; flavour to preview your cake</div></div>';
 }
 function closeCakeBuilder(){
   var modal=document.getElementById('cakeBuilderModal');
@@ -13501,6 +13526,18 @@ function cbRenderDesigns(){
 }
 function cbSelectDesign(id){cbState.design=id;cbRenderDesigns();cbUpdateSummary();cbUpdatePrice();cbRenderLivePreview();}
 
+// Real cake photo library keyed by flavour (for no-design state) and design (primary)
+var CB_FLAVOUR_PHOTOS = {
+  vanilla:      'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=600&q=85',
+  chocolate:    'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?w=600&q=85',
+  strawberry:   'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=85',
+  pineapple:    'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?w=600&q=85',
+  butterscotch: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=85',
+  redvelvet:    'https://images.unsplash.com/photo-1616541823729-00fe0aacd32c?w=600&q=85',
+  blackforest:  'https://images.unsplash.com/photo-1549312744-1116f7e6b6ad?w=600&q=85',
+  mango:        'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=85',
+};
+
 function cbRenderLivePreview(){
   var wrap=document.getElementById('cbCakeCanvasWrap');
   var detail=document.getElementById('cbPreviewDetail');
@@ -13508,51 +13545,43 @@ function cbRenderLivePreview(){
   var tier=getCbTiers().filter(function(t){return t.id===cbState.tier;})[0];
   var flavour=getCbFlavours().filter(function(f){return f.id===cbState.flavour;})[0];
   var design=getCbDesigns().filter(function(d){return d.id===cbState.design;})[0];
+
   if(!tier&&!flavour&&!design){
-    wrap.innerHTML='<div class="cb-preview-empty">🎂</div><div style="font-size:12px;color:rgba(253,246,236,.3);">Select tiers & flavour to see your cake</div>';
+    wrap.innerHTML='<div style="text-align:center;padding:10px 0;">'
+      +'<div style="font-size:56px;opacity:.25;margin-bottom:8px;">🎂</div>'
+      +'<div style="font-size:12px;color:rgba(253,246,236,.3);">Select tiers &amp; flavour to preview your cake</div>'
+      +'</div>';
     if(detail) detail.innerHTML=''; return;
   }
-  if(design&&design.image){
-    var badgesHtml='<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:10px;">';
-    if(tier)    badgesHtml+='<span style="background:rgba(255,255,255,.15);backdrop-filter:blur(4px);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:#fff;border:1px solid rgba(255,255,255,.2);">'+tier.emoji+' '+tier.label+'</span>';
-    if(flavour) badgesHtml+='<span style="background:rgba(255,255,255,.15);backdrop-filter:blur(4px);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:#fff;border:1px solid rgba(255,255,255,.2);">'+flavour.emoji+' '+flavour.name+'</span>';
-    badgesHtml+='<span style="background:rgba(200,146,58,.85);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:#fff;">'+design.icon+' '+design.name+'</span>';
-    badgesHtml+='</div>';
-    wrap.innerHTML='<div style="position:relative;width:100%;max-width:280px;margin:0 auto;border-radius:18px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.6);">'
-      +'<img src="'+design.image+'" alt="'+design.name+' Cake" style="width:100%;height:280px;object-fit:cover;display:block;">'
-      +'<div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,.65) 100%);pointer-events:none;"></div>'
-      +'<div style="position:absolute;bottom:12px;left:0;right:0;text-align:center;">'+badgesHtml+'</div>'
-      +'</div>';
-    if(detail) detail.innerHTML='';
-    return;
-  }
-  var numTiers=parseInt(tier?tier.id.replace('t',''):1);
-  var col=flavour?cbGetCol(flavour.id):CB_DEFAULT_COL;
-  var widths=[200,160,126,96],heights=[62,52,44,36];
-  var candleColors=['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#c084fc'];
-  var candlesHtml='<div style="display:flex;gap:7px;justify-content:center;align-items:flex-end;margin-bottom:0;">';
-  for(var c=0;c<Math.min(numTiers+1,5);c++){
-    candlesHtml+='<div style="position:relative;width:8px;height:'+(16+(c%2)*5)+'px;background:'+candleColors[c%5]+';border-radius:3px 3px 1px 1px;">'
-      +'<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-size:10px;">🔥</div></div>';
-  }
-  candlesHtml+='</div>';
-  var tiersHtml='';
-  for(var i=numTiers-1;i>=0;i--){
-    var w=widths[i]||80,h=heights[i]||36;
-    var bg='repeating-linear-gradient(0deg,'+col.bg+','+col.bg+' 9px,'+col.stripe+' 9px,'+col.stripe+' 18px)';
-    tiersHtml+='<div style="position:relative;width:'+w+'px;height:'+h+'px;background:'+bg+';border-radius:10px 10px 6px 6px;margin:0 auto;z-index:'+(i+2)+';box-shadow:0 4px 10px rgba(0,0,0,.45),inset 0 2px 0 rgba(255,255,255,.2);overflow:hidden;">'
-      +'<div style="position:absolute;top:0;left:0;right:0;height:10px;background:'+col.bg+';opacity:.7;border-radius:10px 10px 0 0;"></div>'
-      +(i===0?'<div style="position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.65);color:rgba(232,185,106,.9);font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;z-index:10;">'+(tier?tier.label:'Cake')+'</div>':'')
-      +'</div>';
-  }
-  var plateW=(widths[numTiers-1]||200)+24;
-  wrap.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:0;">'
-    +candlesHtml+'<div style="display:flex;flex-direction:column;align-items:center;gap:0;margin-bottom:10px;">'+tiersHtml+'</div>'
-    +'<div style="width:'+plateW+'px;height:14px;background:linear-gradient(135deg,#c8923a,#9a5c1a);border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,.45);"></div></div>'
-    +'<div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:8px;">Pick a design to see a real cake photo</div>';
-  var parts=[];
-  if(flavour) parts.push('<span style="background:rgba(255,255,255,.1);border-radius:20px;padding:2px 10px;display:inline-block;">'+flavour.emoji+' '+flavour.name+'</span>');
-  if(detail) detail.innerHTML='<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:6px;">'+parts.join('')+'</div>';
+
+  // Choose best photo: design image first, then flavour photo
+  var photoUrl = (design && design.image) ? design.image : (flavour ? (CB_FLAVOUR_PHOTOS[flavour.id]||CB_FLAVOUR_PHOTOS.vanilla) : CB_FLAVOUR_PHOTOS.vanilla);
+
+  // Build badge pills
+  var badgesHtml='<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:0;padding:10px 10px 0;">';
+  if(tier)    badgesHtml+='<span style="background:rgba(59,31,14,.75);backdrop-filter:blur(6px);border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;color:#E8B96A;border:1px solid rgba(200,146,58,.4);">'+tier.emoji+' '+tier.label+'</span>';
+  if(flavour) badgesHtml+='<span style="background:rgba(59,31,14,.75);backdrop-filter:blur(6px);border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;color:#fff;border:1px solid rgba(255,255,255,.15);">'+flavour.emoji+' '+flavour.name+'</span>';
+  if(design)  badgesHtml+='<span style="background:rgba(200,146,58,.88);border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;color:#fff;">'+design.icon+' '+design.name+'</span>';
+  badgesHtml+='</div>';
+
+  // Tier count label
+  var tierCount = tier ? parseInt(tier.id.replace('t','')) : 1;
+  var tierLabel = '';
+  if(tier) tierLabel = '<div style="position:absolute;top:10px;left:12px;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:800;color:#E8B96A;letter-spacing:.5px;">'+tier.emoji+' '+tier.label+'</div>';
+
+  // "Customize more" hint if no design picked
+  var hint = (!design&&flavour) ? '<div style="position:absolute;bottom:10px;right:12px;background:rgba(200,146,58,.85);border-radius:14px;padding:4px 10px;font-size:10px;font-weight:700;color:#fff;">Pick a design for styled photo</div>' : '';
+
+  wrap.innerHTML=
+    '<div style="position:relative;width:100%;max-width:300px;margin:0 auto;border-radius:20px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.65);background:#1a0a04;">'
+    +'<img src="'+photoUrl+'" alt="Cake Preview" style="width:100%;height:260px;object-fit:cover;display:block;transition:opacity .4s;" onerror="this.src=\'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=85\'">'
+    +'<div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.08) 0%,transparent 35%,transparent 55%,rgba(0,0,0,.72) 100%);pointer-events:none;"></div>'
+    +tierLabel
+    +hint
+    +'<div style="position:absolute;bottom:0;left:0;right:0;">'+badgesHtml+'<div style="height:10px;"></div></div>'
+    +'</div>';
+
+  if(detail) detail.innerHTML='';
 }
 
 function cbUpdateSummary(){
@@ -13608,22 +13637,32 @@ function cbAddToCart(){
   var tier=getCbTiers().filter(function(t){return t.id===cbState.tier;})[0];
   var flavour=getCbFlavours().filter(function(f){return f.id===cbState.flavour;})[0];
   var design=getCbDesigns().filter(function(d){return d.id===cbState.design;})[0];
-  if(!tier){showToast('Please select number of tiers','err');return;}
-  if(!flavour){showToast('Please select a flavour','err');return;}
-  if(!design){showToast('Please select a design theme','err');return;}
+  if(!tier){showToast('⚠️ Please select number of tiers','err');return;}
+  if(!flavour){showToast('⚠️ Please select a flavour','err');return;}
+  if(!design){showToast('⚠️ Please select a design theme','err');return;}
   var msg=(document.getElementById('cbCakeMsg')||{value:''}).value.trim();
   var date=(document.getElementById('cbDelivDate')||{value:''}).value;
   var total=tier.basePrice+(flavour.extraPrice||0)+(design.extraPrice||0);
-  CART.push({pid:'custom_cake_'+Date.now(),name:'Custom '+tier.label+' Cake',emoji:'🎂',
-    variant:tier.label+' - '+flavour.name+' - '+design.name+(msg?' - "'+msg+'"':''),
-    price:total,qty:1,isCustomCake:true,
-    cakeDetails:{tier:tier.label,flavour:flavour.name,design:design.name,msg:msg,
-      referenceImage:cbImgUploaded||cbState.imgDataUrl||'',delivDate:date}});
-  saveCart();renderCart();updateCartBadge();
-  closeCakeBuilder();openCart();
-  showToast('Custom cake added to cart!','ok');
-  cbSaveOrderForAdmin({tier:tier.label,flavour:flavour.name,design:design.name,msg:msg,
-    referenceImage:cbImgUploaded||cbState.imgDataUrl||'',delivDate:date},'Custom '+tier.label+' Cake',total);
+  var itemKey='custom_cake_'+Date.now();
+  var cakeName='Custom '+tier.label+' Cake';
+  var cakeVariant=tier.label+' · '+flavour.name+(design?' · '+design.name:'')+(msg?' · "'+msg+'"':'');
+  cart.push({
+    key:itemKey, pid:itemKey,
+    name:cakeName, emoji:'🎂',
+    image:'', flvImage:'', flvName:flavour.name,
+    variant:cakeVariant,
+    price:total, qty:1, isCustomCake:true,
+    cakeDetails:{tier:tier.label,flavour:flavour.name,design:design?design.name:'',msg:msg,
+      referenceImage:cbImgUploaded||cbState.imgDataUrl||'',delivDate:date}
+  });
+  saveCart();
+  updateBadge();
+  ubCartBounce();
+  closeCakeBuilder();
+  showToast('🎂 Custom cake added to cart!','ok');
+  openCart();
+  cbSaveOrderForAdmin({tier:tier.label,flavour:flavour.name,design:design?design.name:'',msg:msg,
+    referenceImage:cbImgUploaded||cbState.imgDataUrl||'',delivDate:date},cakeName,total);
 }
 
 function cbSendWhatsApp(){
@@ -13976,12 +14015,13 @@ window.ubAdminAddVideo = function(){
 
 window.ubDeleteVideo = function(i){
   const videos = ubGetVideos();
-  if(!confirm('Delete "' + (videos[i]?.title||'this video') + '"?')) return;
-  videos.splice(i,1);
-  ubSaveVideos(videos);
-  ubRenderCustomerVideos();
-  showToast('🗑 Video deleted','ok');
-  renderAdminTab();
+  ubConfirmDialog(`Delete "${videos[i]?.title||'this video'}"?`, ()=>{
+    videos.splice(i,1);
+    ubSaveVideos(videos);
+    ubRenderCustomerVideos();
+    showToast('🗑 Video deleted','ok');
+    renderAdminTab();
+  });
 };
 
 window.ubToggleVideoVisible = function(i){
@@ -14180,7 +14220,7 @@ window.ubCloseVideoLightbox = function(e){
       <!-- LIVE CAKE PREVIEW -->
       <div class="cb-live-preview" id="cbLivePreview">
         <div class="cb-preview-label">✦ Live Cake Preview</div>
-        <div id="cbCakeCanvasWrap"><div class="cb-preview-empty">🎂</div><div style="font-size:12px;color:rgba(253,246,236,.3);">Select tiers &amp; flavour to see your cake</div></div>
+        <div id="cbCakeCanvasWrap"><div style="text-align:center;padding:10px 0;"><div style="font-size:56px;opacity:.25;margin-bottom:8px;">🎂</div><div style="font-size:12px;color:rgba(253,246,236,.3);">Select tiers &amp; flavour to preview your cake</div></div></div>
         <div class="cb-preview-detail" id="cbPreviewDetail"></div>
       </div>
       <!-- SUMMARY -->
@@ -15697,21 +15737,20 @@ function ubDesignerSaveBranding(){
 }
 
 function ubDesignerReset(){
-  if(!confirm('Reset all design changes to default? This cannot be undone.')) return;
-  localStorage.removeItem('ub_design');
-  ubApplyDesign(UB_DESIGN_DEFAULTS);
-  ubSaveConfigToFirestore({siteDesign: UB_DESIGN_DEFAULTS});
-  // Reset all inline styles set by designer
-  document.querySelectorAll('.product-card,.btn-add,.btn-checkout').forEach(el=>{
-    el.style.borderRadius=''; el.style.boxShadow=''; el.style.background=''; el.style.border=''; el.style.color='';
+  ubConfirmDialog('Reset all design changes to default?<br><small style="opacity:.7">This cannot be undone.</small>', ()=>{
+    localStorage.removeItem('ub_design');
+    ubApplyDesign(UB_DESIGN_DEFAULTS);
+    ubSaveConfigToFirestore({siteDesign: UB_DESIGN_DEFAULTS});
+    document.querySelectorAll('.product-card,.btn-add,.btn-checkout').forEach(el=>{
+      el.style.borderRadius=''; el.style.boxShadow=''; el.style.background=''; el.style.border=''; el.style.color='';
+    });
+    const nav = document.getElementById('mainNav');
+    if(nav){ nav.style.background=''; nav.style.backdropFilter=''; }
+    const r = document.documentElement.style;
+    ['--choco','--gold','--gold-light','--cream','--white','--text-dark'].forEach(v=>r.removeProperty(v));
+    showToast('↺ Design reset to default for all customers!', 'ok');
+    renderAdminTab();
   });
-  const nav = document.getElementById('mainNav');
-  if(nav){ nav.style.background=''; nav.style.backdropFilter=''; }
-  // Reset CSS vars to default
-  const r = document.documentElement.style;
-  ['--choco','--gold','--gold-light','--cream','--white','--text-dark'].forEach(v=>r.removeProperty(v));
-  showToast('↺ Design reset to default for all customers!', 'ok');
-  renderAdminTab(); // re-render designer
 }
 
 function ubDesignerPreview(){
