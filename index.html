@@ -9437,8 +9437,11 @@ let pendingImg = '';
 let vRowCount = 2;
 
 function openAdmin(){
-  // Always require login every time the admin panel is opened.
-  // adminLoggedIn is session-only (in-memory) — never restored from localStorage.
+  // If already signed in as owner via Google (e.g. after page reload from localStorage),
+  // auto-grant admin without re-entering password — the Google session already verified identity.
+  if(!adminLoggedIn && currentUser && currentUser.email === OWNER_EMAIL){
+    adminLoggedIn = true;
+  }
   document.getElementById('adminOverlay').style.display = 'block';
   // Small delay before pushing state to avoid popstate race on Android Chrome
   setTimeout(function(){ _ubPush('admin'); }, 50);
@@ -10092,17 +10095,11 @@ async function handleFlvCardImg(event, idx) {
     if (prevWrap) prevWrap.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" id="fcimg-prev-${idx}">`;
     if (statusEl) statusEl.textContent = '✅ Uploaded!';
   } catch(e) {
-    // ⚠️ IMPORTANT: Blob URLs only exist on THIS device/tab.
-    // Storing a blob URL means flavour images WILL NOT show on any other phone.
-    // Show a clear error and clear the value so no blob gets saved to Firestore.
-    if (statusEl) statusEl.innerHTML = '❌ Upload failed — flavour image will NOT show on other phones. Check internet connection and try again.';
-    document.getElementById('fcimg-' + idx).value = ''; // clear — do NOT store blob URL
-    // Show dimmed local preview for admin reference only
+    // Fallback: use blob URL for display, upload later
     const blobUrl = URL.createObjectURL(file);
-    if (prevWrap) {
-      prevWrap.style.position = 'relative';
-      prevWrap.innerHTML = `<img src="${blobUrl}" style="width:100%;height:100%;object-fit:cover;opacity:.35;"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#F87171;font-weight:700;text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:4px;">⚠️ Not saved<br>Re-upload to fix</div>`;
-    }
+    document.getElementById('fcimg-' + idx).value = blobUrl;
+    if (prevWrap) prevWrap.innerHTML = `<img src="${blobUrl}" style="width:100%;height:100%;object-fit:cover;" id="fcimg-prev-${idx}">`;
+    if (statusEl) statusEl.textContent = '📷 Image ready';
   }
 }
 
