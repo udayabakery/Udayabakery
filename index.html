@@ -23,7 +23,7 @@
 <!-- Preload logo for faster LCP -->
 <link rel="preload" href="https://udayabakery.github.io/Udayabakery/logo.png" as="image">
 <!-- SECURITY: Content Security Policy — reduces XSS risk -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com; object-src 'none'; base-uri 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org https://api.imgbb.com https://i.ibb.co; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com; object-src 'none'; base-uri 'self';">
 <!-- SECURITY: Prevent clickjacking and MIME sniffing -->
 <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -5427,6 +5427,26 @@ initFirebase();
   });
 })();
 
+// ── EARLY OWNER FAB RESTORE: Show admin button immediately if owner was previously signed in ──
+// This runs before DOMContentLoaded to avoid the button appearing late (flash)
+(function _earlyOwnerFabRestore(){
+  try {
+    const stored = localStorage.getItem('ub_current_user');
+    if(!stored) return;
+    const u = JSON.parse(stored);
+    if(u && u.email === 'udayabakeryb@gmail.com'){
+      // Mark as owner so UI elements render correctly before Firebase auth fires
+      document.addEventListener('DOMContentLoaded', function(){
+        const fab = document.querySelector('.fab-admin');
+        if(fab) fab.classList.add('owner-visible');
+        const navAdm=document.getElementById('navAdminLink'); if(navAdm) navAdm.style.display='';
+        const mobAdm=document.getElementById('mobAdminLink'); if(mobAdm) mobAdm.style.display='';
+        const footAdm=document.getElementById('footerAdminLink'); if(footAdm) footAdm.style.display='';
+      }, {once:true});
+    }
+  } catch(e){}
+})();
+
 // ─── Show loading spinner on start ───
 document.addEventListener('DOMContentLoaded', ()=>{
   if(!db) initFirebase();
@@ -5962,13 +5982,42 @@ async function uploadToImageBB(file){
   // Always resize to 600×600 before uploading
   let uploadFile = file;
   try { uploadFile = await resizeImageTo600(file); } catch(e){ console.warn('Resize failed, uploading original:', e); }
-  const formData = new FormData();
-  formData.append('image', uploadFile);
-  formData.append('key', IMGBB_KEY);
-  const res = await fetch('https://api.imgbb.com/1/upload', {method:'POST', body:formData});
-  const data = await res.json();
-  if(data.success) return data.data.url;
-  throw new Error('ImageBB upload failed');
+
+  // Retry up to 3 times with increasing delays
+  const MAX_RETRIES = 3;
+  let lastError;
+  for(let attempt = 1; attempt <= MAX_RETRIES; attempt++){
+    try {
+      const formData = new FormData();
+      formData.append('image', uploadFile);
+      formData.append('key', IMGBB_KEY);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000); // 30s timeout
+      const res = await fetch('https://api.imgbb.com/1/upload', {
+        method: 'POST',
+        body: formData,
+        signal: controller.signal
+      });
+      clearTimeout(timeout);
+      if(!res.ok){
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      const data = await res.json();
+      if(data.success) return data.data.url;
+      // ImgBB returned an error in the response
+      const errMsg = data.error?.message || data.status_txt || 'Upload rejected';
+      throw new Error('ImgBB: ' + errMsg);
+    } catch(e){
+      lastError = e;
+      console.warn(`Image upload attempt ${attempt}/${MAX_RETRIES} failed:`, e.message);
+      if(attempt < MAX_RETRIES){
+        // Wait before retrying: 2s, then 4s
+        await new Promise(r => setTimeout(r, attempt * 2000));
+        if(attempt === 1) showToast(`⏳ Retrying image upload (${attempt+1}/${MAX_RETRIES})…`, 'ok');
+      }
+    }
+  }
+  throw new Error('Image upload failed after ' + MAX_RETRIES + ' attempts. ' + (lastError?.message||''));
 }
 
 // ─── SEED DEFAULT DATA ───
@@ -10432,7 +10481,8 @@ async function saveProd(existId){
         await saveProdToDB({...prodData, id, image:finalImageUrl});
       } catch(e){
         console.error('Background save error:', e);
-        showToast('⚠️ Cloud sync failed — please check internet and try again','err');
+        const errDetail = e?.message ? (' (' + e.message.substring(0,80) + ')') : '';
+        showToast('⚠️ Cloud sync failed' + errDetail + ' — tap to retry', 'err');
       }
     })();
 
