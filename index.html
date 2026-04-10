@@ -272,7 +272,7 @@ body.dark-mode .review-form-card{background:rgba(200,146,58,.05);border-color:rg
 @media(min-width:600px){.qa-modal-bg{align-items:center;}}
 .qa-modal{background:var(--white);border-radius:28px 28px 0 0;width:100%;max-width:480px;position:relative;max-height:92vh;max-height:92dvh;display:flex;flex-direction:column;overflow:hidden;}
 @media(min-width:600px){.qa-modal{border-radius:28px;}}
-.qa-img{width:100%;max-height:280px;height:auto;object-fit:contain;object-position:center;border-radius:28px 28px 0 0;background:var(--cream);flex-shrink:0;display:block;}
+.qa-img{width:100%;height:260px;object-fit:cover;object-position:center center;border-radius:28px 28px 0 0;background:var(--cream);flex-shrink:0;display:block;}
 .qa-img-emoji{width:100%;height:160px;display:flex;align-items:center;justify-content:center;font-size:72px;background:var(--cream);border-radius:28px 28px 0 0;}
 .qa-body{padding:20px 22px 0;}
 .qa-cat{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
@@ -3306,18 +3306,19 @@ body.dark-mode .mob-bottom-nav { background: rgba(15,6,1,.97) !important; border
   overflow: hidden !important;
   border-radius: 0 !important;
   position: relative !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  display: block !important;
+  width: 100% !important;
   height: 200px !important;
 }
 .pimg-wrap img {
+  position: absolute !important;
+  inset: 0 !important;
   width: 100% !important;
-  height: 200px !important;
+  height: 100% !important;
   min-height: unset !important;
   max-height: unset !important;
   object-fit: cover !important;
-  object-position: center !important;
+  object-position: center center !important;
   background: var(--cream) !important;
 }
 .pimg-wrap::after {
@@ -10091,11 +10092,17 @@ async function handleFlvCardImg(event, idx) {
     if (prevWrap) prevWrap.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" id="fcimg-prev-${idx}">`;
     if (statusEl) statusEl.textContent = '✅ Uploaded!';
   } catch(e) {
-    // Fallback: use blob URL for display, upload later
+    // ⚠️ IMPORTANT: Blob URLs only exist on THIS device/tab.
+    // Storing a blob URL means flavour images WILL NOT show on any other phone.
+    // Show a clear error and clear the value so no blob gets saved to Firestore.
+    if (statusEl) statusEl.innerHTML = '❌ Upload failed — flavour image will NOT show on other phones. Check internet connection and try again.';
+    document.getElementById('fcimg-' + idx).value = ''; // clear — do NOT store blob URL
+    // Show dimmed local preview for admin reference only
     const blobUrl = URL.createObjectURL(file);
-    document.getElementById('fcimg-' + idx).value = blobUrl;
-    if (prevWrap) prevWrap.innerHTML = `<img src="${blobUrl}" style="width:100%;height:100%;object-fit:cover;" id="fcimg-prev-${idx}">`;
-    if (statusEl) statusEl.textContent = '📷 Image ready';
+    if (prevWrap) {
+      prevWrap.style.position = 'relative';
+      prevWrap.innerHTML = `<img src="${blobUrl}" style="width:100%;height:100%;object-fit:cover;opacity:.35;"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#F87171;font-weight:700;text-align:center;background:rgba(0,0,0,.4);border-radius:8px;padding:4px;">⚠️ Not saved<br>Re-upload to fix</div>`;
+    }
   }
 }
 
