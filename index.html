@@ -3303,16 +3303,16 @@ body.dark-mode .mob-bottom-nav { background: rgba(15,6,1,.97) !important; border
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  height: 200px !important;
+  height: 220px !important;
 }
 .pimg-wrap img {
   width: 100% !important;
-  height: 200px !important;
+  height: 220px !important;
   min-height: unset !important;
   max-height: unset !important;
-  object-fit: contain !important;
+  object-fit: cover !important;
   object-position: center !important;
-  background: var(--cream) !important;
+  background: transparent !important;
 }
 .pimg-wrap::after {
   content: '' !important;
@@ -6345,9 +6345,9 @@ function openQAModal(pid){
   const cat = CATS.find(c=>c.id===p.cat);
   const hasFlavours = p.flavours && p.flavours.length > 0;
 
-  const mainImgSrc = p.image || '';
+  const mainImgSrc = p.image || (hasFlavours && p.flavours[0]?.image ? p.flavours[0].image : '');
   const imgHtml = mainImgSrc
-    ? `<img class="qa-img" id="qaMainImg" src="${mainImgSrc}" alt="${p.name}">`
+    ? `<img class="qa-img" id="qaMainImg" src="${mainImgSrc}" alt="${p.name}" style="width:100%;height:300px;object-fit:cover;object-position:center;border-radius:28px 28px 0 0;background:var(--cream);flex-shrink:0;display:block;">`
     : `<div class="qa-img-emoji" id="qaMainImg">${p.emoji}</div>`;
 
   const variantsHtml = `
@@ -6412,6 +6412,14 @@ function openQAModal(pid){
   document.getElementById('qaModalBg').classList.add('open');
   document.body.style.overflow = 'hidden';
   _ubPush('qa');
+
+  // Auto-show first flavour image in modal if available
+  if(hasFlavours && qaFlvList[0]?.image){
+    const imgEl = document.getElementById('qaMainImg');
+    if(imgEl && imgEl.tagName === 'IMG'){
+      imgEl.src = qaFlvList[0].image;
+    }
+  }
 }
 
 function qaPickV(vi){
@@ -8133,7 +8141,8 @@ function renderProds(){
   requestAnimationFrame(()=>{
   grid.innerHTML = list.map(p=>{
     const cat = CATS.find(c=>c.id===p.cat);
-    const imgH = p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy" decoding="async" style="cursor:pointer;" onload="this.closest('.pimg-wrap').classList.add('img-loaded','has-img')" onerror="this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');var _e=_w.querySelector('.pimg-emoji-fb');if(_e)_e.style.display='flex';}"><div class="pimg-emoji pimg-emoji-fb" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:76px;">${p.emoji}</div>` : `<div class="pimg-emoji">${p.emoji}</div>`;
+    const _cardBaseImg = p.image || ((p.flavours && p.flavours.length && p.flavours[0]?.image) ? p.flavours[0].image : '');
+    const imgH = _cardBaseImg ? `<img src="${_cardBaseImg}" alt="${p.name}" loading="lazy" decoding="async" style="cursor:pointer;" onload="this.closest('.pimg-wrap').classList.add('img-loaded','has-img')" onerror="this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');var _e=_w.querySelector('.pimg-emoji-fb');if(_e)_e.style.display='flex';}"><div class="pimg-emoji pimg-emoji-fb" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:76px;">${p.emoji}</div>` : `<div class="pimg-emoji">${p.emoji}</div>`;
     const _isKn = currentLang === 'kn';
 
     // ── SMART LANGUAGE DISPLAY ──
