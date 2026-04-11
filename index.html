@@ -19,7 +19,7 @@
 <meta name="theme-color" content="#3B1F0E">
 <link rel="canonical" href="https://udayabakery.github.io/Udayabakery/">
 <!-- SECURITY: Content Security Policy — reduces XSS risk -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com; object-src 'none'; base-uri 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org https://freeimage.host https://api.imgbb.com https://i.ibb.co https://*.ibb.co; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com; object-src 'none'; base-uri 'self';">
 <!-- SECURITY: Prevent clickjacking and MIME sniffing -->
 <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -70,7 +70,7 @@ body{-webkit-overflow-scrolling:touch;}
 /* Images: prevent layout recalc on load */
 img{display:block;}
 .pimg-wrap{overflow:hidden;position:relative;}
-.pimg-wrap img{width:100%;height:100%;object-fit:cover;}
+.pimg-wrap img{width:100%;height:100%;object-fit:cover;object-position:center;}
 
 /* Reduce paint areas — use transform instead of top/left for animations */
 .nav-search-icon,.nav-search-icon-mob,
@@ -1195,13 +1195,14 @@ section{padding:64px 0;contain:layout;}
 .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px;}
 .product-card{background:var(--cream);border-radius:22px;overflow:hidden;position:relative;box-shadow:0 4px 16px var(--shadow);transition:transform .25s,box-shadow .25s;contain:layout style;}
 .product-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px var(--shadow);}
-.pimg-wrap{width:100%;height:220px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--cream-dark),var(--pink));display:flex;align-items:center;justify-content:center;}
-.pimg-wrap img{width:100%;height:220px;object-fit:cover;object-position:center;display:block;transition:transform .3s;background:var(--cream);}
+.pimg-wrap{width:100%;height:220px;overflow:hidden;position:relative;background:var(--cream-dark);display:flex;align-items:center;justify-content:center;}
+.pimg-wrap img{width:100%;height:220px;object-fit:cover;object-position:center;display:block;transition:transform .3s;}
 .product-card:hover .pimg-wrap img{transform:scale(1.03);}
 .pimg-emoji{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:76px;}
 /* Flavour image overlay */
-.flv-img-overlay{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .45s ease;z-index:2;}
+.flv-img-overlay{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;transition:opacity .35s ease;z-index:2;}
 .flv-img-overlay.visible{opacity:1;}
+.flv-img-overlay.default-flv{opacity:1;}
 .flv-img-label{position:absolute;bottom:8px;right:10px;background:rgba(59,31,14,.85);color:var(--gold-light);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:20px;z-index:3;opacity:0;transition:opacity .3s;}
 .flv-img-label.visible{opacity:1;}
 .pbadge{position:absolute;top:10px;left:10px;background:var(--gold);color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:20px;}
@@ -1860,8 +1861,8 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
   /* Products - 2 per row on mobile */
   .product-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;}
   .product-card{border-radius:14px!important;}
-  .pimg-wrap{height:160px!important;min-height:unset!important;max-height:unset!important;}
-  .pimg-wrap img{height:160px!important;min-height:unset!important;max-height:unset!important;object-fit:cover!important;}
+  .pimg-wrap{height:180px!important;min-height:unset!important;max-height:unset!important;overflow:hidden!important;}
+  .pimg-wrap img{height:180px!important;min-height:unset!important;max-height:unset!important;object-fit:cover!important;object-position:center!important;}
   .pimg-emoji{font-size:52px!important;}
   .pbody{padding:10px 10px!important;}
   .pcat{font-size:9px!important;}
@@ -3309,7 +3310,7 @@ body.dark-mode .mob-bottom-nav { background: rgba(15,6,1,.97) !important; border
   height: 200px !important;
   min-height: unset !important;
   max-height: unset !important;
-  object-fit: cover !important;
+  object-fit: contain !important;
   object-position: center !important;
   background: var(--cream) !important;
 }
@@ -5363,8 +5364,8 @@ window.addEventListener('beforeunload', () => { UB_SECURE.clear(); });
 // Your real security is enforced by Firebase Security Rules in the Firebase Console.
 // IMPORTANT: Make sure your Firestore Security Rules restrict write/delete access
 // to authenticated admin users only. See: https://firebase.google.com/docs/rules
-// ImgBB key: consider rotating this periodically via https://api.imgbb.com/
-const IMGBB_KEY = '1c86b5aeb0459d2374d02a4ea4011fe0';
+// Freeimage.host API key
+const FREEIMAGE_KEY = '6d207e02198a847aa98d0a2a901485a5';
 const OWNER_EMAIL = 'udayabakeryb@gmail.com';
 
 // Safe Firebase init — if Firebase fails, products still show
@@ -5931,16 +5932,23 @@ function resizeImageTo600(file){
 }
 
 async function uploadToImageBB(file){
-  // Always resize to 600×600 before uploading
+  // Wrapper — now uses Freeimage.host
+  return uploadToFreeImage(file);
+}
+
+async function uploadToFreeImage(file){
+  // Always resize before uploading
   let uploadFile = file;
   try { uploadFile = await resizeImageTo600(file); } catch(e){ console.warn('Resize failed, uploading original:', e); }
   const formData = new FormData();
-  formData.append('image', uploadFile);
-  formData.append('key', IMGBB_KEY);
-  const res = await fetch('https://api.imgbb.com/1/upload', {method:'POST', body:formData});
+  formData.append('key', FREEIMAGE_KEY);
+  formData.append('action', 'upload');
+  formData.append('source', uploadFile);
+  formData.append('format', 'json');
+  const res = await fetch('https://freeimage.host/api/1/upload', {method:'POST', body:formData});
   const data = await res.json();
-  if(data.success) return data.data.url;
-  throw new Error('ImageBB upload failed');
+  if(data.status_code === 200 && data.image && data.image.url) return data.image.url;
+  throw new Error('Freeimage.host upload failed: ' + (data.status_txt||'unknown error'));
 }
 
 // ─── SEED DEFAULT DATA ───
@@ -8153,7 +8161,8 @@ function renderProds(){
     const cardFlvList = p._displayFlavours || p.flavours || [];
     const flvOverlays = hasFlavours ? cardFlvList.map((f,i)=>{
       if(!f.image) return '';
-      return `<img class="flv-img-overlay" id="fi-${p.id}-${i}" src="${f.image}" alt="${f.name}" loading="lazy" onerror="this.style.opacity='0'">`;
+      const isDefault = i === 0;
+      return `<img class="flv-img-overlay${isDefault?' default-flv':''}" id="fi-${p.id}-${i}" src="${f.image}" alt="${f.name}" loading="lazy" onerror="this.style.opacity='0'">`;
     }).join('') : '';
     const flavourHtml = hasFlavours ? `
       <div class="varlabel" style="margin-top:6px;">${_isKn ? 'ಫ್ಲೇವರ್ ಆಯ್ಕೆ ಮಾಡಿ:' : 'Select Flavour:'}</div>
@@ -8230,6 +8239,11 @@ function selFlv(pid,fi){
       if(el) el.classList.remove('visible');
     });
     if(hasAnyFlvImg){
+      // Remove default-flv from all first
+      flvArrImg.forEach((_,i)=>{
+        const el = document.getElementById(`fi-${pid}-${i}`);
+        if(el) el.classList.remove('default-flv');
+      });
       // Show selected flavour's image (index fi matches _displayFlavours order)
       const selFl = flvArrImg[fi];
       if(selFl && selFl.image){
@@ -10069,19 +10083,67 @@ async function handleFlvCardImg(event, idx) {
   if (!file) return;
   const statusEl = document.getElementById('fcimg-status-' + idx);
   const prevWrap = document.getElementById('fcimg-prev-wrap-' + idx);
+  const hiddenEl = document.getElementById('fcimg-' + idx);
   if (statusEl) statusEl.textContent = '⏳ Uploading...';
+
+  // Always resize to 600×600 first
+  let resizedFile = file;
+  try { resizedFile = await resizeImageTo600(file); } catch(e) {}
+
+  // Try uploading to freeimage.host
   try {
-    const url = await uploadToImageBB(file);
-    document.getElementById('fcimg-' + idx).value = url;
+    const url = await uploadToImageBB(resizedFile);
+    if (hiddenEl) hiddenEl.value = url;
     if (prevWrap) prevWrap.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" id="fcimg-prev-${idx}">`;
-    if (statusEl) statusEl.textContent = '✅ Uploaded!';
+    if (statusEl) { statusEl.textContent = '✅ Uploaded!'; statusEl.style.color = '#4ADE80'; }
   } catch(e) {
-    // Fallback: use blob URL for display, upload later
-    const blobUrl = URL.createObjectURL(file);
-    document.getElementById('fcimg-' + idx).value = blobUrl;
-    if (prevWrap) prevWrap.innerHTML = `<img src="${blobUrl}" style="width:100%;height:100%;object-fit:cover;" id="fcimg-prev-${idx}">`;
-    if (statusEl) statusEl.textContent = '📷 Image ready';
+    // Fallback: save as base64 so image is preserved locally
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const base64 = ev.target.result;
+      if (hiddenEl) hiddenEl.value = base64;
+      if (prevWrap) prevWrap.innerHTML = `<img src="${base64}" style="width:100%;height:100%;object-fit:cover;" id="fcimg-prev-${idx}">`;
+      if (statusEl) {
+        statusEl.innerHTML = '⚠️ Saved locally (internet upload failed). <strong>Save the product now</strong> to keep this image.';
+        statusEl.style.color = '#FBBF24';
+      }
+    };
+    reader.readAsDataURL(resizedFile);
   }
+}
+
+async function collectFlavourCardsAsync() {
+  const cards = document.querySelectorAll('[id^="fcard-"]');
+  const flavours = [];
+  for (const card of cards) {
+    const idx = card.id.replace('fcard-', '');
+    const name = (document.getElementById('fcname-' + idx)?.value||'').trim();
+    if (!name) continue;
+    let image = document.getElementById('fcimg-' + idx)?.value || '';
+    // If image is a base64 string, try to upload it now to get a real URL
+    if (image && image.startsWith('data:')) {
+      try {
+        const res = await fetch(image);
+        const blob = await res.blob();
+        const file = new File([blob], 'flavour.jpg', {type: blob.type||'image/jpeg'});
+        image = await uploadToImageBB(file);
+      } catch(e) {
+        // Keep base64 as fallback — will work on this device at least
+      }
+    }
+    const wrapEl = document.getElementById('fcwr-wrap-' + idx);
+    const variants = [];
+    if (wrapEl) {
+      wrapEl.querySelectorAll('[id^="fcwr-' + idx + '-"]').forEach(row => {
+        const wi = row.id.replace('fcwr-' + idx + '-', '');
+        const lbl = (document.getElementById('fcwl-' + idx + '-' + wi)?.value||'').trim();
+        const pr = parseFloat(document.getElementById('fcwp-' + idx + '-' + wi)?.value||'0')||0;
+        if (lbl) variants.push({label: lbl, price: pr});
+      });
+    }
+    flavours.push({name, image, variants, extras:{}, extra:0});
+  }
+  return flavours;
 }
 
 function collectFlavourCards() {
@@ -10336,9 +10398,9 @@ async function saveProd(existId){
     try { variants = collectVars(); } catch(ve){ alert('Variant error: '+ve.message); return; }
     if(!variants.length){ showToast('⚠️ Add at least one variant!','err'); return; }
 
-    // Collect flavours from flavour card builder
+    // Collect flavours from flavour card builder — async so base64 images get uploaded first
     let flavours = [];
-    try { flavours = collectFlavourCards()||[]; } catch(fe){ flavours=[]; }
+    try { flavours = await collectFlavourCardsAsync()||[]; } catch(fe){ flavours=[]; }
 
     // Use existing image URL or blob preview — don't wait for upload now
     let imageUrl = pendingImg || (editProd ? editProd.image : '')||'';
