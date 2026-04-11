@@ -265,7 +265,7 @@ body.dark-mode .review-form-card{background:rgba(200,146,58,.05);border-color:rg
 @media(min-width:600px){.qa-modal-bg{align-items:center;}}
 .qa-modal{background:var(--white);border-radius:28px 28px 0 0;width:100%;max-width:480px;position:relative;max-height:92vh;max-height:92dvh;display:flex;flex-direction:column;overflow:hidden;}
 @media(min-width:600px){.qa-modal{border-radius:28px;}}
-.qa-img{width:100%;height:300px;object-fit:cover;object-position:center;border-radius:28px 28px 0 0;background:var(--cream);flex-shrink:0;display:block;}
+.qa-img{width:100%;height:300px;object-fit:cover;object-position:center top;border-radius:28px 28px 0 0;background:#1a0e06;flex-shrink:0;display:block;}
 .qa-img-emoji{width:100%;height:160px;display:flex;align-items:center;justify-content:center;font-size:72px;background:var(--cream);border-radius:28px 28px 0 0;}
 .qa-body{padding:20px 22px 0;}
 .qa-cat{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
@@ -1195,8 +1195,8 @@ section{padding:64px 0;contain:layout;}
 .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px;}
 .product-card{background:var(--cream);border-radius:22px;overflow:hidden;position:relative;box-shadow:0 4px 16px var(--shadow);transition:transform .25s,box-shadow .25s;contain:layout style;}
 .product-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px var(--shadow);}
-.pimg-wrap{width:100%;height:220px;overflow:hidden;position:relative;background:var(--cream-dark);display:flex;align-items:center;justify-content:center;}
-.pimg-wrap img{width:100%;height:220px;object-fit:cover;object-position:center;display:block;transition:transform .3s;}
+.pimg-wrap{width:100%;height:220px;overflow:hidden;position:relative;background:#1a0e06;display:flex;align-items:center;justify-content:center;}
+.pimg-wrap img{width:100%;height:220px;object-fit:cover;object-position:center top;display:block;transition:transform .3s;}
 .product-card:hover .pimg-wrap img{transform:scale(1.03);}
 .pimg-emoji{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:76px;}
 /* Flavour image overlay */
@@ -1861,8 +1861,8 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
   /* Products - 2 per row on mobile */
   .product-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;}
   .product-card{border-radius:14px!important;}
-  .pimg-wrap{height:180px!important;min-height:unset!important;max-height:unset!important;overflow:hidden!important;}
-  .pimg-wrap img{height:180px!important;min-height:unset!important;max-height:unset!important;object-fit:cover!important;object-position:center!important;}
+  .pimg-wrap{height:180px!important;min-height:unset!important;max-height:unset!important;overflow:hidden!important;background:#1a0e06!important;}
+  .pimg-wrap img{height:180px!important;min-height:unset!important;max-height:unset!important;object-fit:cover!important;object-position:center top!important;}
   .pimg-emoji{font-size:52px!important;}
   .pbody{padding:10px 10px!important;}
   .pcat{font-size:9px!important;}
@@ -3301,9 +3301,10 @@ body.dark-mode .mob-bottom-nav { background: rgba(15,6,1,.97) !important; border
   border-radius: 0 !important;
   position: relative !important;
   display: flex !important;
-  align-items: center !important;
+  align-items: flex-start !important;
   justify-content: center !important;
   height: 220px !important;
+  background: #1a0e06 !important;
 }
 .pimg-wrap img {
   width: 100% !important;
@@ -3311,7 +3312,7 @@ body.dark-mode .mob-bottom-nav { background: rgba(15,6,1,.97) !important; border
   min-height: unset !important;
   max-height: unset !important;
   object-fit: cover !important;
-  object-position: center !important;
+  object-position: center top !important;
   background: transparent !important;
 }
 .pimg-wrap::after {
@@ -5911,8 +5912,8 @@ function resizeImageTo600(file){
       canvas.width = SIZE;
       canvas.height = SIZE;
       const ctx = canvas.getContext('2d');
-      // Fill background with white (so transparent PNGs look clean)
-      ctx.fillStyle = '#FFFFFF';
+      // Fill background with dark brown (matches card so no color gap if image has transparency)
+      ctx.fillStyle = '#1a0e06';
       ctx.fillRect(0, 0, SIZE, SIZE);
       // Scale image to FILL 600×600 (cover) — no white bars, crops edges slightly if needed
       const scale = Math.max(SIZE / img.width, SIZE / img.height);
@@ -6347,7 +6348,7 @@ function openQAModal(pid){
 
   const mainImgSrc = p.image || (hasFlavours && p.flavours[0]?.image ? p.flavours[0].image : '');
   const imgHtml = mainImgSrc
-    ? `<img class="qa-img" id="qaMainImg" src="${mainImgSrc}" alt="${p.name}" style="width:100%;height:300px;object-fit:cover;object-position:center;border-radius:28px 28px 0 0;background:var(--cream);flex-shrink:0;display:block;">`
+    ? `<img class="qa-img" id="qaMainImg" src="${mainImgSrc}" alt="${p.name}" style="width:100%;height:300px;object-fit:cover;object-position:center top;border-radius:28px 28px 0 0;background:#1a0e06;flex-shrink:0;display:block;">`
     : `<div class="qa-img-emoji" id="qaMainImg">${p.emoji}</div>`;
 
   const variantsHtml = `
