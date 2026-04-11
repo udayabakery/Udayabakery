@@ -70,7 +70,7 @@ body{-webkit-overflow-scrolling:touch;}
 /* Images: prevent layout recalc on load */
 img{display:block;}
 .pimg-wrap{overflow:hidden;position:relative;}
-.pimg-wrap img{width:100%;height:100%;object-fit:cover;}
+.pimg-wrap img{width:100%;height:100%;object-fit:contain;}
 
 /* Reduce paint areas — use transform instead of top/left for animations */
 .nav-search-icon,.nav-search-icon-mob,
@@ -5363,8 +5363,8 @@ window.addEventListener('beforeunload', () => { UB_SECURE.clear(); });
 // Your real security is enforced by Firebase Security Rules in the Firebase Console.
 // IMPORTANT: Make sure your Firestore Security Rules restrict write/delete access
 // to authenticated admin users only. See: https://firebase.google.com/docs/rules
-// ImgBB key: consider rotating this periodically via https://api.imgbb.com/
-const IMGBB_KEY = '1c86b5aeb0459d2374d02a4ea4011fe0';
+// Freeimage.host API key
+const FREEIMAGE_KEY = '6d207e02198a847aa98d0a2a901485a5';
 const OWNER_EMAIL = 'udayabakeryb@gmail.com';
 
 // Safe Firebase init — if Firebase fails, products still show
@@ -5931,16 +5931,23 @@ function resizeImageTo600(file){
 }
 
 async function uploadToImageBB(file){
-  // Always resize to 600×600 before uploading
+  // Wrapper — now uses Freeimage.host
+  return uploadToFreeImage(file);
+}
+
+async function uploadToFreeImage(file){
+  // Always resize before uploading
   let uploadFile = file;
   try { uploadFile = await resizeImageTo600(file); } catch(e){ console.warn('Resize failed, uploading original:', e); }
   const formData = new FormData();
-  formData.append('image', uploadFile);
-  formData.append('key', IMGBB_KEY);
-  const res = await fetch('https://api.imgbb.com/1/upload', {method:'POST', body:formData});
+  formData.append('key', FREEIMAGE_KEY);
+  formData.append('action', 'upload');
+  formData.append('source', uploadFile);
+  formData.append('format', 'json');
+  const res = await fetch('https://freeimage.host/api/1/upload', {method:'POST', body:formData});
   const data = await res.json();
-  if(data.success) return data.data.url;
-  throw new Error('ImageBB upload failed');
+  if(data.status_code === 200 && data.image && data.image.url) return data.image.url;
+  throw new Error('Freeimage.host upload failed: ' + (data.status_txt||'unknown error'));
 }
 
 // ─── SEED DEFAULT DATA ───
@@ -10076,11 +10083,15 @@ async function handleFlvCardImg(event, idx) {
     if (prevWrap) prevWrap.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" id="fcimg-prev-${idx}">`;
     if (statusEl) statusEl.textContent = '✅ Uploaded!';
   } catch(e) {
-    // Fallback: use blob URL for display, upload later
-    const blobUrl = URL.createObjectURL(file);
-    document.getElementById('fcimg-' + idx).value = blobUrl;
-    if (prevWrap) prevWrap.innerHTML = `<img src="${blobUrl}" style="width:100%;height:100%;object-fit:cover;" id="fcimg-prev-${idx}">`;
-    if (statusEl) statusEl.textContent = '📷 Image ready';
+    // Fallback: use base64 so image works on all devices (NOT blob URL)
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const base64 = ev.target.result;
+      document.getElementById('fcimg-' + idx).value = base64;
+      if (prevWrap) prevWrap.innerHTML = `<img src="${base64}" style="width:100%;height:100%;object-fit:cover;" id="fcimg-prev-${idx}">`;
+      if (statusEl) statusEl.textContent = '📷 Image ready (upload retry will happen on save)';
+    };
+    reader.readAsDataURL(file);
   }
 }
 
