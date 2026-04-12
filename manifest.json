@@ -1,0 +1,52 @@
+{
+  "name": "Udaya Bakery",
+  "short_name": "Udaya Bakery",
+  "description": "Fresh cakes, puffs, sweets & more. Order online for home delivery in Belman, Karnataka.",
+  "start_url": "/Udayabakery/",
+  "scope": "/Udayabakery/",
+  "display": "standalone",
+  "background_color": "#1A0A02",
+  "theme_color": "#3B1F0E",
+  "orientation": "portrait-primary",
+  "categories": ["food", "shopping"],
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/Udayabakery/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Udayabakery/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Order Now",
+      "short_name": "Order",
+      "description": "Go straight to the menu",
+      "url": "/Udayabakery/#products",
+      "icons": [{ "src": "/Udayabakery/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Track Order",
+      "short_name": "Track",
+      "description": "Track your order status",
+      "url": "/Udayabakery/#track",
+      "icons": [{ "src": "/Udayabakery/logo.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/Udayabakery/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Udaya Bakery Home"
+    }
+  ]
+}
