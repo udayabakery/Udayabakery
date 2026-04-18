@@ -24,7 +24,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Udaya Bakery">
 <!-- SECURITY: Content Security Policy — reduces XSS risk -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org https://freeimage.host https://api.imgbb.com https://i.ibb.co https://*.ibb.co; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com; object-src 'none'; base-uri 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com https://checkout.razorpay.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://checkout.razorpay.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org https://freeimage.host https://api.imgbb.com https://i.ibb.co https://*.ibb.co https://api.razorpay.com https://lumberjack.razorpay.com https://api.msg91.com; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com https://api.razorpay.com https://*.razorpay.com; object-src 'none'; base-uri 'self';">
 <!-- SECURITY: Prevent clickjacking and MIME sniffing -->
 <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -109,6 +109,14 @@ body.ub-scrolling .pimg-wrap::before{animation-play-state:paused!important;}
 
 /* Prevent tap delay on all interactive elements */
 a,button,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+
+/* ── iOS ZOOM FIX: inputs below 16px cause auto-zoom on iPhone ── */
+/* Applied only to customer-facing inputs (not admin panel) */
+input:not(.af-inp):not(.vr-inp):not(.af-ta):not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+textarea:not(.af-ta),
+select:not(.af-sel){
+  font-size: max(16px, 1em) !important;
+}
 
 /* Optimize font rendering */
 body{-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed;}
@@ -226,7 +234,7 @@ body.dark-mode footer{background:linear-gradient(135deg,#0A0400,#110800);}
 
 /* ── COUPON ── */
 .coupon-row{display:flex;gap:8px;align-items:center;margin:8px 0 4px;}
-.coupon-row input{flex:1;border:1.5px solid var(--cream-dark);border-radius:9px;padding:9px 12px;font-family:Jost,sans-serif;font-size:13px;background:var(--white);color:var(--choco);outline:none;text-transform:uppercase;letter-spacing:1px;}
+.coupon-row input{flex:1;border:1.5px solid var(--cream-dark);border-radius:9px;padding:9px 12px;font-family:Jost,sans-serif;font-size:16px;background:var(--white);color:var(--choco);outline:none;text-transform:uppercase;letter-spacing:1px;}
 .coupon-row input:focus{border-color:var(--gold);}
 .btn-apply-coupon{background:var(--choco);color:var(--cream);border:none;border-radius:9px;padding:9px 16px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .2s;}
 .btn-apply-coupon:hover{background:var(--gold);}
@@ -236,6 +244,22 @@ body.dark-mode footer{background:linear-gradient(135deg,#0A0400,#110800);}
 body.dark-mode .coupon-status.ok{background:rgba(74,222,128,.08);color:#4ade80;}
 body.dark-mode .coupon-status.err{background:rgba(239,68,68,.08);color:#f87171;}
 
+
+/* ── YOU MIGHT ALSO LIKE (inside product modal) ── */
+.qa-ymal{padding:0 22px 18px;}
+.qa-ymal-title{font-size:10px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--choco);opacity:.5;margin-bottom:10px;}
+.qa-ymal-scroll{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:none;}
+.qa-ymal-scroll::-webkit-scrollbar{display:none;}
+.qa-ymal-card{flex-shrink:0;width:110px;background:var(--cream);border:1.5px solid var(--cream-dark);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.qa-ymal-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px var(--shadow);}
+.qa-ymal-card:active{transform:scale(.97);}
+.qa-ymal-img{width:110px;height:80px;object-fit:cover;object-position:center top;background:var(--cream-dark);display:block;}
+.qa-ymal-emoji{width:110px;height:80px;display:flex;align-items:center;justify-content:center;font-size:36px;background:var(--cream-dark);}
+.qa-ymal-info{padding:7px 8px 9px;}
+.qa-ymal-name{font-family:Jost,sans-serif;font-size:11px;font-weight:700;color:var(--choco);line-height:1.3;margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.qa-ymal-price{font-size:10px;color:var(--gold);font-weight:700;}
+body.dark-mode .qa-ymal-card{background:#1E1006;border-color:#2A1A0E;}
+body.dark-mode .qa-ymal-img,.qa-ymal-emoji{background:#2A1A0E;}
 
 /* ── REVIEW SUBMIT FORM ── */
 .review-form-card{background:linear-gradient(135deg,rgba(200,146,58,.08),rgba(200,146,58,.04));border:1.5px solid rgba(200,146,58,.2);border-radius:20px;padding:24px;margin-top:28px;}
@@ -992,7 +1016,7 @@ body.dark-mode nav.scrolled{background:rgba(10,4,0,1)!important;}
   /* right padding: 16px gap + 26px search icon + 8px gap + 28px mic + 12px = 90px total */
   padding:10px 90px 10px 20px;
   font-family:'Plus Jakarta Sans','Jost',sans-serif;
-  font-size:13px;font-weight:500;
+  font-size:16px;font-weight:500;
   color:var(--choco);
   background:rgba(255,255,255,.7);
   outline:none;
@@ -1315,7 +1339,7 @@ section{padding:64px 0;contain:layout;}
 .adp-loc-text{font-size:13px;color:var(--text-mid);flex:1;}
 .adp-loc-text strong{color:var(--choco);display:block;font-size:13px;}
 .adp-manual{display:flex;gap:7px;margin-top:8px;}
-.adp-manual input{flex:1;border:1.5px solid var(--cream-dark);border-radius:9px;padding:8px 11px;font-family:Jost,sans-serif;font-size:13px;background:var(--white);color:var(--choco);outline:none;}
+.adp-manual input{flex:1;border:1.5px solid var(--cream-dark);border-radius:9px;padding:8px 11px;font-family:Jost,sans-serif;font-size:16px;background:var(--white);color:var(--choco);outline:none;}
 .adp-manual input:focus{border-color:var(--gold);}
 .adp-manual button{background:var(--choco);color:var(--cream);border:none;border-radius:9px;padding:8px 13px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
 .del-result-row{display:flex;justify-content:space-between;align-items:center;margin-top:9px;padding-top:9px;border-top:1px dashed var(--cream-dark);}
@@ -1342,7 +1366,7 @@ section{padding:64px 0;contain:layout;}
 .modal-close{position:absolute;top:15px;right:15px;background:none;border:none;font-size:21px;cursor:pointer;color:var(--choco);}
 .fg{margin-bottom:14px;}
 .fg label{display:block;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--choco);margin-bottom:5px;}
-.fg input,.fg textarea{width:100%;border:1.5px solid var(--cream-dark);border-radius:10px;padding:10px 13px;font-family:Jost,sans-serif;font-size:14px;color:var(--choco);background:var(--cream);outline:none;transition:border .2s;}
+.fg input,.fg textarea{width:100%;border:1.5px solid var(--cream-dark);border-radius:10px;padding:10px 13px;font-family:Jost,sans-serif;font-size:16px;color:var(--choco);background:var(--cream);outline:none;transition:border .2s;}
 .fg input:focus,.fg textarea:focus{border-color:var(--gold);}
 .fg textarea{height:74px;resize:none;}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -1787,7 +1811,7 @@ footer{background:var(--choco);padding:50px 0 24px;}
   /* room for 🔍 at right:14px and 🎤 at right:42px */
   padding:9px 80px 9px 18px;
   font-family:'Plus Jakarta Sans','Jost',sans-serif;
-  font-size:13px;font-weight:500;
+  font-size:16px;font-weight:500;
   color:var(--choco);
   background:rgba(255,255,255,.55);
   outline:none;
@@ -1978,8 +2002,11 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
 .toid-status{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;}
 .toid-status.pending{background:rgba(217,119,6,.15);color:#92400E;}
 .toid-status.confirmed{background:rgba(5,150,105,.15);color:#065F46;}
+.toid-status.preparing{background:rgba(168,85,247,.15);color:#7C3AED;}
+.toid-status.ready{background:rgba(251,146,60,.15);color:#C2410C;}
 .toid-status.out_for_delivery{background:rgba(59,130,246,.15);color:#1E40AF;}
 .toid-status.delivered{background:rgba(16,185,129,.15);color:#064E3B;}
+.toid-status.cancelled{background:rgba(239,68,68,.15);color:#991B1B;}
 .toid-status.cancelled{background:rgba(239,68,68,.15);color:#991B1B;}
 
 /* Tracking Timeline */
@@ -2013,7 +2040,7 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
 
 /* Track search */
 .track-search-wrap{display:flex;gap:9px;margin-bottom:22px;}
-.track-search-input{flex:1;border:1.5px solid var(--cream-dark);border-radius:14px;padding:12px 16px;font-family:Jost,sans-serif;font-size:14px;color:var(--choco);outline:none;transition:border .3s;}
+.track-search-input{flex:1;border:1.5px solid var(--cream-dark);border-radius:14px;padding:12px 16px;font-family:Jost,sans-serif;font-size:16px;color:var(--choco);outline:none;transition:border .3s;}
 .track-search-input:focus{border-color:var(--gold);}
 .track-search-btn{background:linear-gradient(135deg,var(--gold),var(--choco-mid));color:#fff;border:none;padding:12px 22px;border-radius:14px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
 .track-empty{text-align:center;padding:32px;color:var(--text-mid);}
@@ -2033,6 +2060,8 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
 .mord-status-badge{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;}
 .mord-status-badge.pending{background:rgba(217,119,6,.15);color:#92400E;}
 .mord-status-badge.confirmed{background:rgba(5,150,105,.15);color:#065F46;}
+.mord-status-badge.preparing{background:rgba(168,85,247,.15);color:#7C3AED;}
+.mord-status-badge.ready{background:rgba(251,146,60,.15);color:#C2410C;}
 .mord-status-badge.out_for_delivery{background:rgba(59,130,246,.15);color:#1E40AF;}
 .mord-status-badge.delivered{background:rgba(16,185,129,.15);color:#064E3B;}
 .mord-status-badge.cancelled{background:rgba(239,68,68,.15);color:#991B1B;}
@@ -2065,7 +2094,7 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
 .pm-method-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:8px;background:#5B2D8E;color:#fff;white-space:nowrap;}
 .pm-upi-input{display:none;margin-top:12px;}
 .pm-upi-input.show{display:block;}
-.upi-inp{width:100%;border:1.5px solid var(--cream-dark);border-radius:12px;padding:12px 14px;font-family:Jost,sans-serif;font-size:14px;color:var(--choco);outline:none;transition:border .3s;}
+.upi-inp{width:100%;border:1.5px solid var(--cream-dark);border-radius:12px;padding:12px 14px;font-family:Jost,sans-serif;font-size:16px;color:var(--choco);outline:none;transition:border .3s;}
 .upi-inp:focus{border-color:#5B2D8E;}
 .pm-pay-btn{width:100%;background:linear-gradient(135deg,#5B2D8E,#8B5CF6);color:#fff;border:none;padding:16px;border-radius:16px;font-family:Jost,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .3s;}
 .pm-pay-btn:hover{opacity:.9;transform:translateY(-1px);}
@@ -2233,6 +2262,8 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
 .obadge{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
 .obadge.pending{background:rgba(217,119,6,.18);color:#FCD34D;}
 .obadge.confirmed{background:rgba(5,150,105,.18);color:#34D399;}
+.obadge.preparing{background:rgba(168,85,247,.18);color:#C4B5FD;}
+.obadge.ready{background:rgba(251,146,60,.18);color:#FCA572;}
 .obadge.out_for_delivery{background:rgba(59,130,246,.18);color:#93C5FD;}
 .obadge.delivered{background:rgba(16,185,129,.18);color:#6EE7B7;}
 .obadge.cancelled{background:rgba(239,68,68,.18);color:#F87171;}
@@ -4817,10 +4848,10 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
         <span onclick="setRating(5)" data-v="5">★</span>
       </div>
       <div class="frow" style="gap:10px;margin-bottom:10px;">
-        <div class="fg"><input class="af-style-inp" type="text" id="revName" placeholder="Your Name *" style="width:100%;border:1.5px solid var(--cream-dark);border-radius:9px;padding:10px 14px;font-family:Jost,sans-serif;font-size:13px;background:var(--white);color:var(--choco);outline:none;"></div>
-        <div class="fg"><input class="af-style-inp" type="text" id="revLoc" placeholder="Your Location (e.g. Udupi)" style="width:100%;border:1.5px solid var(--cream-dark);border-radius:9px;padding:10px 14px;font-family:Jost,sans-serif;font-size:13px;background:var(--white);color:var(--choco);outline:none;"></div>
+        <div class="fg"><input class="af-style-inp" type="text" id="revName" placeholder="Your Name *" style="width:100%;border:1.5px solid var(--cream-dark);border-radius:9px;padding:10px 14px;font-family:Jost,sans-serif;font-size:16px;background:var(--white);color:var(--choco);outline:none;"></div>
+        <div class="fg"><input class="af-style-inp" type="text" id="revLoc" placeholder="Your Location (e.g. Udupi)" style="width:100%;border:1.5px solid var(--cream-dark);border-radius:9px;padding:10px 14px;font-family:Jost,sans-serif;font-size:16px;background:var(--white);color:var(--choco);outline:none;"></div>
       </div>
-      <textarea id="revText" placeholder="Tell us about your experience..." style="width:100%;border:1.5px solid var(--cream-dark);border-radius:9px;padding:10px 14px;font-family:Jost,sans-serif;font-size:13px;background:var(--white);color:var(--choco);outline:none;resize:vertical;min-height:80px;margin-bottom:12px;"></textarea>
+      <textarea id="revText" placeholder="Tell us about your experience..." style="width:100%;border:1.5px solid var(--cream-dark);border-radius:9px;padding:10px 14px;font-family:Jost,sans-serif;font-size:16px;background:var(--white);color:var(--choco);outline:none;resize:vertical;min-height:80px;margin-bottom:12px;"></textarea>
       <button onclick="submitReview()" style="background:linear-gradient(135deg,var(--gold),var(--choco-light));color:#fff;border:none;border-radius:10px;padding:11px 24px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">✨ Submit Review</button>
       <div class="review-submitted-msg" id="revSuccessMsg">
         <div style="font-size:40px;margin-bottom:8px;">🎉</div>
@@ -5212,7 +5243,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
     <div class="frow">
       <div class="fg">
         <label>📅 Delivery Date *</label>
-        <input type="date" id="custDate" style="width:100%;border:1.5px solid var(--cream-dark);border-radius:10px;padding:10px 14px;font-family:Jost,sans-serif;font-size:13px;background:var(--white);color:var(--choco);outline:none;" onchange="updateDeliveryLabel()">
+        <input type="date" id="custDate" style="width:100%;border:1.5px solid var(--cream-dark);border-radius:10px;padding:10px 14px;font-family:Jost,sans-serif;font-size:16px;background:var(--white);color:var(--choco);outline:none;" onchange="updateDeliveryLabel()">
       </div>
       <div class="fg">
         <label>⏰ Preferred Time *</label>
@@ -6659,6 +6690,30 @@ function openQAModal(pid){
   const _qaIsKn = currentLang === 'kn';
   const qaDisplayName = _qaIsKn && p.nameKn ? p.nameKn : p.name;
   const qaDisplayDesc = _qaIsKn && p.descKn ? p.descKn : p.desc;
+  // Build "You Might Also Like" HTML from relatedIds stored on product
+  let ymalHtml = '';
+  const relatedIds = Array.isArray(p.relatedIds) ? p.relatedIds : [];
+  const relatedProds = relatedIds.map(rid=>PRODS.find(x=>String(x.id)===String(rid))).filter(Boolean).filter(x=>x.inStock!==false);
+  if(relatedProds.length){
+    ymalHtml = `<div class="qa-ymal">
+      <div class="qa-ymal-title">✦ You Might Also Like</div>
+      <div class="qa-ymal-scroll">
+        ${relatedProds.map(rp=>{
+          const rpThumb = rp.image
+            ? `<img class="qa-ymal-img" src="${rp.image}" alt="${rp.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="qa-ymal-emoji" style="display:none;">${rp.emoji||'🎂'}</div>`
+            : `<div class="qa-ymal-emoji">${rp.emoji||'🎂'}</div>`;
+          return `<div class="qa-ymal-card" onclick="_ubCloseQAModal();setTimeout(()=>openQuickAdd(${rp.id}),120);">
+            ${rpThumb}
+            <div class="qa-ymal-info">
+              <div class="qa-ymal-name">${rp.name}</div>
+              <div class="qa-ymal-price">₹${rp.variants&&rp.variants[0]?rp.variants[0].price:rp.price}</div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
   document.getElementById('qaContent').innerHTML = `
     ${imgHtml}
     <div class="qa-body">
@@ -6668,7 +6723,8 @@ function openQAModal(pid){
       ${eggSelectorHtml}
       ${variantsHtml}
       ${flavoursHtml}
-    </div>`;
+    </div>
+    ${ymalHtml}`;
   // Footer is OUTSIDE scroll area — always visible
   const cartCount = cart.filter(c=>String(c.pid)===String(pid)).reduce((s,c)=>s+c.qty,0);
   document.getElementById('qaFooterSlot').innerHTML = `
@@ -7151,7 +7207,7 @@ function buildCouponList(){
     const isAdmin = !!adminCoupons[k];
     return `<div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.03);border-radius:10px;padding:10px 12px;margin-bottom:6px;">
       <span style="font-family:monospace;font-size:13px;font-weight:700;color:#E8B96A;flex:1;">${k}</span>
-      <span style="font-size:12px;color:rgba(253,246,236,.5);">${c.label||c.type}${c.expiry ? ' · exp ' + new Date(c.expiry).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : ''}</span>
+      <span style="font-size:12px;color:rgba(253,246,236,.5);">${c.label||c.type}${c.expiry ? ' · exp ' + new Date(c.expiry).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : ''}${c.minCart > 0 ? ' · min ₹'+c.minCart : ''}${c.oneTime||c.singleUse ? ' · 1x' : ''}</span>
       <button onclick="delAdminCoupon('${k}')" style="background:rgba(239,68,68,.15);color:#F87171;border:none;padding:4px 8px;border-radius:6px;font-size:11px;cursor:pointer;">✕</button>
     </div>`;
   }).join('');
@@ -7163,15 +7219,19 @@ function addAdminCoupon(){
   const val  = parseFloat(document.getElementById('nc_val').value||0);
   if(!code){ showToast('Enter a coupon code','err'); return; }
   const labels = {percent:`${val}% OFF`, flat:`₹${val} OFF`, freedel:'Free Delivery'};
-  const expiry = (document.getElementById('nc_expiry')?.value||'').trim();
+  const expiry   = (document.getElementById('nc_expiry')?.value||'').trim();
+  const minCart  = parseFloat(document.getElementById('nc_minCart')?.value||0)||0;
+  const oneTime  = document.getElementById('nc_oneTime')?.checked || false;
   const adminCoupons = JSON.parse(localStorage.getItem('ub_coupons')||'{}');
-  adminCoupons[code] = {type, value:val, label:labels[type], expiry: expiry||null};
+  adminCoupons[code] = {type, value:val, label:labels[type], expiry: expiry||null, minCart: minCart||0, oneTime: oneTime||false};
   localStorage.setItem('ub_coupons', JSON.stringify(adminCoupons));
   // Also add to runtime COUPONS
   COUPONS[code] = adminCoupons[code];
   document.getElementById('adminCouponList').innerHTML = buildCouponList();
   document.getElementById('nc_code').value='';
   document.getElementById('nc_val').value='';
+  if(document.getElementById('nc_minCart')) document.getElementById('nc_minCart').value='0';
+  if(document.getElementById('nc_oneTime')) document.getElementById('nc_oneTime').checked=false;
   showToast('✅ Coupon '+code+' added!','ok');
 }
 
@@ -7434,6 +7494,14 @@ function applyCoupon(){
   const merged = {...COUPONS, ...adminCoupons};
   const found = merged[code];
   if(!found){ showCouponStatus('❌ Invalid coupon code','err'); appliedCoupon=null; updateTotal(); return; }
+  // Check minimum cart value
+  if(found.minCart && found.minCart > 0){
+    const currentSub = cart.reduce((s,c)=>s+c.price*c.qty, 0);
+    if(currentSub < found.minCart){
+      showCouponStatus(`❌ This coupon requires a minimum order of ₹${found.minCart} (your cart: ₹${currentSub})`, 'err');
+      appliedCoupon=null; updateTotal(); return;
+    }
+  }
   // Check expiry
   if(found.expiry){
     const today = new Date(); today.setHours(0,0,0,0);
@@ -7443,13 +7511,37 @@ function applyCoupon(){
       appliedCoupon=null; updateTotal(); return;
     }
   }
-  // Bug 18 fix: check if one-time coupon was already used by this user
+  // Check if one-time coupon was already used by this user
   if(found.oneTime || found.singleUse){
     const usedCoupons = JSON.parse(localStorage.getItem('ub_used_coupons')||'[]');
     const userKey = (currentUser&&currentUser.email) ? currentUser.email : 'guest';
     if(usedCoupons.includes(userKey+'_'+code)){
       showCouponStatus('❌ This coupon has already been used','err');
       return;
+    }
+    // Also check Firestore by phone number (incognito-proof)
+    const phoneEl = document.getElementById('custPhone');
+    const cleanPh = (phoneEl?.value||'').replace(/\D/g,'').slice(-10);
+    if(db && cleanPh && cleanPh.length===10){
+      db.collection('used_coupons').doc(cleanPh+'_'+code).get().then(snap=>{
+        if(snap.exists){
+          showCouponStatus('❌ This coupon has already been used','err');
+          appliedCoupon=null; updateTotal();
+        } else {
+          // Firestore says not used — apply it now
+          appliedCoupon = {code, ...found};
+          var _em='';
+          if(found.expiry){ var _ed=new Date(found.expiry);_em=' · Valid till '+_ed.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); }
+          showCouponStatus('✅ '+found.label+' applied!'+_em,'ok');
+          updateTotal();
+        }
+      }).catch(()=>{
+        // Firestore unavailable — fall back to localStorage check only
+        appliedCoupon = {code, ...found};
+        showCouponStatus('✅ '+found.label+' applied!','ok');
+        updateTotal();
+      });
+      return; // wait for async Firestore check above
     }
   }
   appliedCoupon = {code, ...found};
@@ -7995,6 +8087,22 @@ function scoreProduct(p, q){
   return best > 15 ? best : 0;
 }
 
+// ── SEARCH SCORE CACHE — avoids scoring every product twice per keystroke ──
+let _ubScoreCache = {};   // key: "query|pid" → score
+let _ubScoreCacheQ = '';  // last query the cache was built for
+
+function _ubCachedScore(p, q){
+  if(q !== _ubScoreCacheQ){ _ubScoreCache = {}; _ubScoreCacheQ = q; }
+  const key = q + '|' + p.id;
+  if(key in _ubScoreCache) return _ubScoreCache[key];
+  const s = scoreProduct(p, q);
+  _ubScoreCache[key] = s;
+  return s;
+}
+
+// Clear cache whenever products are reloaded
+function _ubClearScoreCache(){ _ubScoreCache = {}; _ubScoreCacheQ = ''; }
+
 function liveSearch(q){
   const dd = document.getElementById('searchDropdown');
   searchQuery = q || '';
@@ -8015,7 +8123,7 @@ function liveSearch(q){
     return;
   }
 
-  const results = PRODS.map(p=>({p, score:scoreProduct(p,q)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,10);
+  const results = PRODS.map(p=>({p, score:_ubCachedScore(p,q)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,10);
 
   if(!results.length){
     // Show "did you mean" if query has possible expanded form
@@ -8073,16 +8181,32 @@ function liveSearch(q){
   dd.classList.add('open');
   // Wire touchstart+mousedown (fires before onblur closes dropdown)
   dd.querySelectorAll('.sd-item').forEach(function(el){
-    function _handleSDTap(e){
+    var _touchStartY = 0;
+    var _touchMoved = false;
+    el.addEventListener('touchstart', function(e){
+      _touchStartY = e.touches[0].clientY;
+      _touchMoved = false;
+    }, {passive:true});
+    el.addEventListener('touchmove', function(e){
+      if(Math.abs(e.touches[0].clientY - _touchStartY) > 8) _touchMoved = true;
+    }, {passive:true});
+    el.addEventListener('touchend', function(e){
+      if(_touchMoved) return; // user was scrolling — ignore
       e.preventDefault();
       var pid = el.getAttribute('data-pid');
       var flav = el.getAttribute('data-flav') || null;
       if(flav === '') flav = null;
       closeSD();
       selectSearchResult(pid, flav);
-    }
-    el.addEventListener('touchstart', _handleSDTap, {passive:false});
-    el.addEventListener('mousedown', _handleSDTap);
+    }, {passive:false});
+    el.addEventListener('mousedown', function(e){
+      e.preventDefault();
+      var pid = el.getAttribute('data-pid');
+      var flav = el.getAttribute('data-flav') || null;
+      if(flav === '') flav = null;
+      closeSD();
+      selectSearchResult(pid, flav);
+    });
   });
 }
 
@@ -8117,8 +8241,12 @@ function liveSearchMob(q){
       var _flav = el.getAttribute('data-flav') || null;
       if(_flav === '') _flav = null;
       if(!_pid) return;
-      // touchstart fires before blur — guarantees dropdown stays open when tapped
-      el.addEventListener('touchstart', function(e){
+      // touchend (not touchstart) so scrolling the list doesn't accidentally open a product
+      var _mTSY = 0, _mTMoved = false;
+      el.addEventListener('touchstart', function(e){ _mTSY = e.touches[0].clientY; _mTMoved = false; }, {passive:true});
+      el.addEventListener('touchmove', function(e){ if(Math.abs(e.touches[0].clientY - _mTSY) > 8) _mTMoved = true; }, {passive:true});
+      el.addEventListener('touchend', function(e){
+        if(_mTMoved) return;
         e.preventDefault();
         closeSD();
         selectSearchResult(_pid, _flav);
@@ -8531,7 +8659,7 @@ function submitCustomOrder(){
     document.getElementById('coPhone')?.focus(); return;
   }
   const msg='Hello Udaya Bakery! 🎂 I would like to place a *Custom Order*:%0A%0A*Name:* '+encodeURIComponent(name)+'%0A*Phone:* '+phone+'%0A*Order Details:* '+encodeURIComponent(desc)+(date?'%0A*Preferred Date:* '+date:'')+'%0A%0APlease confirm availability. Thank you!';
-  window.open('https://wa.me/919845406712?text='+msg,'_blank');
+  window.open('https://wa.me/919845406712?text='+msg,'_blank','noopener,noreferrer');
   closeCustomOrderModal();
   showToast('Redirecting to WhatsApp for custom order!','ok');
 }
@@ -8673,6 +8801,8 @@ function _ubClosePaymentModal(){
 //  PRODUCTS
 // ═══════════════════════════════════════
 function renderProds(){
+  // Clear score cache if query changed since last render
+  if(typeof _ubClearScoreCache === 'function' && searchQuery !== _ubScoreCacheQ) _ubClearScoreCache();
   // ── Flash Sale Banner Update ──
   const _fsData = ubGetFlashSale();
   const _fsBanner = document.getElementById('flashSaleBanner');
@@ -8700,7 +8830,7 @@ function renderProds(){
 
   // Apply search filter
   if(searchQuery.trim()){
-    list = list.map(p=>({p, score:scoreProduct(p, searchQuery)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).map(x=>x.p);
+    list = list.map(p=>({p, score:_ubCachedScore(p, searchQuery)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).map(x=>x.p);
     document.getElementById('searchResultsBar').classList.add('visible');
     document.getElementById('searchQueryLabel').textContent = `"${searchQuery}"`;
     document.getElementById('productsTitle').innerHTML = `Search Results for <em>"${searchQuery}"</em>`;
@@ -8774,7 +8904,7 @@ function renderProds(){
     return `<div class="product-card" id="pc-${p.id}" style="${_pOos?'opacity:.5;pointer-events:none;':''}">
       ${_pOos?`<div style="position:absolute;top:9px;left:9px;z-index:6;background:#EF4444;color:#fff;font-size:9px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;">${_isKn?'ಸ್ಟಾಕ್ ಇಲ್ಲ':'Out of Stock'}</div>`:''}
       <button class="ub-wish-btn ${ubIsWished(p.id)?'loved':''}" onclick="ubToggleWish(${p.id});event.stopPropagation();" title="Save to Wishlist">${ubIsWished(p.id)?'❤️':'🤍'}</button>
-      <div class="pimg-wrap" data-pid="${p.id}" data-flav="${_cardMatchedFlavourName ? (_cardMatchedFlavourName+'').replace(/"/g,'&quot;') : ''}" style="cursor:pointer;">${imgH}${flvOverlays}${flvLabel}${p.badge?`<span class="pbadge">${p.badge}</span>`:''}</div>
+      <div class="pimg-wrap" data-pid="${p.id}" data-flav="${_cardMatchedFlavourName ? (_cardMatchedFlavourName+'').replace(/"/g,'&quot;') : ''}" style="cursor:pointer;">${imgH}${flvOverlays}${flvLabel}${p.badge?`<span class="pbadge">${p.badge}</span>`:''}${p.advanceAmt>0?`<span style="position:absolute;bottom:8px;left:8px;z-index:6;background:linear-gradient(135deg,rgba(99,102,241,.92),rgba(79,70,229,.92));color:#fff;font-size:9px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.4px;backdrop-filter:blur(4px);">💳 ₹${p.advanceAmt} advance</span>`:''}${p.leadDays>0&&!p.advanceAmt?`<span style="position:absolute;bottom:8px;left:8px;z-index:6;background:rgba(0,0,0,.6);color:#FCD34D;font-size:9px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.4px;backdrop-filter:blur(4px);">⏳ ${p.leadDays}d pre-order</span>`:''}</div>
       <div class="pbody">
         <div class="pcat">${catDisplayName}</div>
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
@@ -9175,7 +9305,14 @@ function openOrderModal(prefillTime){
       const preNoticeText = document.getElementById('preOrderNoticeText');
       if(preNotice){
         preNotice.style.display = 'block';
-        if(preNoticeText) preNoticeText.textContent = 'This item needs at least ' + maxLead + ' day(s) advance notice. Earliest date: ' + dd + '/' + mm + '/' + yyyy + '. A 50% advance payment via UPI/PhonePe is required to confirm.';
+        const maxAdvPreview = cart.reduce((mx, ci) => {
+          const prod = PRODS.find(p => String(p.id) === String(ci.pid));
+          return Math.max(mx, (prod && prod.advanceAmt) ? parseInt(prod.advanceAmt) : 0);
+        }, 0);
+        const advNote = maxAdvPreview > 0
+          ? ` Advance of ₹${maxAdvPreview} via UPI/PhonePe is required to confirm.`
+          : ' A 50% advance payment via UPI/PhonePe is required to confirm.';
+        if(preNoticeText) preNoticeText.textContent = 'This item needs at least ' + maxLead + ' day(s) advance notice. Earliest date: ' + dd + '/' + mm + '/' + yyyy + '.' + advNote;
       }
     } else {
       const preNotice = document.getElementById('preOrderNotice');
@@ -9449,10 +9586,24 @@ function submitOrder(){
     walletDiscount: walletDisc
   };
   
+  // ── ADVANCE PAYMENT CHECK ──
+  // Find the highest advanceAmt required by any item in the cart
+  const maxAdvance = cart.reduce((mx, ci) => {
+    const prod = PRODS.find(p => String(p.id) === String(ci.id));
+    return Math.max(mx, (prod && prod.advanceAmt) ? parseInt(prod.advanceAmt) : 0);
+  }, 0);
+
   if(order.payMethod === 'phonepe'){
     pendingOrder = order;
     closeOrderModal();
     openPhonePeModal(total, order);
+  } else if(maxAdvance > 0){
+    // COD order but advance is required — intercept with advance UPI screen
+    order.advanceAmt = maxAdvance;
+    order.advancePaid = false;
+    pendingOrder = order;
+    closeOrderModal();
+    openAdvancePayModal(maxAdvance, total, order);
   } else {
     finalizeOrder(order, 'COD');
   }
@@ -9460,9 +9611,14 @@ function submitOrder(){
 
 // ═══ SMS ORDER CONFIRMATION (MSG91) ═══
 // Set your MSG91 Auth Key in admin Settings to enable SMS
-function ubSendSMS(phone, message){
-  const authKey = localStorage.getItem('ub_msg91_key')||'';
+async function ubSendSMS(phone, message){
+  const authKey = (await UB_SECURE.get('msg91_key')) || localStorage.getItem('ub_msg91_key') || '';
   if(!authKey) return; // skip if not configured
+  // Migrate old plain key to encrypted store
+  if(!await UB_SECURE.get('msg91_key') && localStorage.getItem('ub_msg91_key')){
+    await UB_SECURE.set('msg91_key', localStorage.getItem('ub_msg91_key'));
+    localStorage.removeItem('ub_msg91_key');
+  }
   const cleanPhone = '91' + phone.replace(/\D/g,'').slice(-10);
   // MSG91 Send SMS API (non-blocking, best-effort)
   fetch('https://api.msg91.com/api/v5/flow/', {
@@ -9523,9 +9679,19 @@ function finalizeOrder(order, payNote){
   }
   if(appliedCoupon && (appliedCoupon.oneTime || appliedCoupon.singleUse)){
     const usedCoupons = JSON.parse(localStorage.getItem('ub_used_coupons')||'[]');
-    const userKey = (currentUser&&currentUser.email) ? currentUser.email : 'guest';
-    usedCoupons.push(userKey+'_'+appliedCoupon.code);
+    const userKey = (currentUser&&currentUser.email) ? currentUser.email : order.phone || 'guest';
+    const couponKey = userKey+'_'+appliedCoupon.code;
+    if(!usedCoupons.includes(couponKey)) usedCoupons.push(couponKey);
     localStorage.setItem('ub_used_coupons', JSON.stringify(usedCoupons));
+    // Also persist to Firestore keyed by phone so incognito/device-switch can't bypass
+    const phoneKey = (order.phone||'').replace(/\D/g,'').slice(-10);
+    if(db && phoneKey){
+      db.collection('used_coupons').doc(phoneKey+'_'+appliedCoupon.code).set({
+        phone: phoneKey, code: appliedCoupon.code,
+        usedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        orderId: order.id
+      }).catch(()=>{});
+    }
   }
   appliedCoupon = null;
   showToast('🎉 Order placed!','ok');
@@ -9541,6 +9707,8 @@ function finalizeOrder(order, payNote){
     : `📍 ${order.addr}\n📏 ${order.dist}km\n`;
   if(order.time) msg+=`⏰ ${order.time}\n`;
   if(order.utrId) msg+=`💳 Payment: ${payNote} | UTR: ${order.utrId}\n\n*Items:*\n`;
+  else if(order.advancePaid && order.advanceMethod === 'razorpay') msg+=`💳 Advance ₹${order.advanceAmt} Paid via Razorpay · ID: ${order.advanceUtr||''}\n💵 Balance ₹${order.total - order.advanceAmt} on delivery\n\n*Items:*\n`;
+  else if(order.advancePaid) msg+=`💳 Advance ₹${order.advanceAmt} Paid via UPI · UTR: ${order.advanceUtr||''}\n💵 Balance ₹${order.total - order.advanceAmt} on delivery\n\n*Items:*\n`;
   else msg+=`💳 Payment: ${payNote}\n\n*Items:*\n`;
   order.items.forEach(c=>{msg+=`• ${c.emoji} ${c.name} (${c.variant}) ×${c.qty} = ₹${c.price*c.qty}\n`;});
   msg+=`\n🚚 Delivery: ${order.delivery===0?'FREE':'₹'+order.delivery}\n💰 *Total: ₹${order.total}*`;
@@ -9554,9 +9722,23 @@ function finalizeOrder(order, payNote){
     + (order.delivDate ? '📅 Delivery: ' + order.delivDate + (order.delivTime ? ' · ' + order.delivTime : '') + '\n' : '')
     + '\n🔗 Track your order:\n' + _link + '\n\nThank you! 🙏';
 
-  // Fire WhatsApp & Firebase in background — no await, no blocking
-  setTimeout(()=>{ try{ window.open(`https://wa.me/919845406712?text=${encodeURIComponent(msg)}`,'_blank'); }catch(e){} }, 300);
-  if(_cph.length===10) setTimeout(()=>{ try{ window.open(`https://wa.me/91${_cph}?text=${encodeURIComponent(_cm)}`,'_blank'); }catch(e){} }, 1800);
+  // Fire WhatsApp to owner (direct open — this is within the user gesture chain from "Place Order" tap)
+  setTimeout(()=>{ try{ window.open(`https://wa.me/919845406712?text=${encodeURIComponent(msg)}`,'_blank','noopener,noreferrer'); }catch(e){} }, 300);
+
+  // Customer confirmation: show a toast with a tap-to-send WhatsApp link instead of a blocked popup
+  if(_cph.length===10){
+    const _custWaUrl = `https://wa.me/91${_cph}?text=${encodeURIComponent(_cm)}`;
+    setTimeout(()=>{
+      // Show a 8-second toast with a tap link so customer can open their own WhatsApp
+      const toastEl = document.createElement('div');
+      toastEl.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:99999;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;padding:12px 20px;border-radius:16px;font-family:Jost,sans-serif;font-size:14px;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,.3);text-align:center;max-width:88vw;cursor:pointer;';
+      toastEl.innerHTML = `📱 <strong>Tap to receive your order confirmation on WhatsApp</strong>`;
+      toastEl.onclick = ()=>{ window.open(_custWaUrl,'_blank','noopener,noreferrer'); toastEl.remove(); };
+      document.body.appendChild(toastEl);
+      setTimeout(()=>toastEl.remove(), 8000);
+    }, 1200);
+  }
+
   // SMS confirmation (MSG91 — fires if admin has set the API key in Settings)
   if(_cph.length===10) setTimeout(()=>{ ubSendSMS(_cph, `Order ${order.id} confirmed! Total Rs.${order.total}. Track: ${window.location.origin+window.location.pathname}?track=${order.id}`); }, 2500);
   try{ if(db) db.collection('orders').doc(order.id).set({...order, createdAt: firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>console.warn('Firebase save failed:',e)); }catch(e){}
@@ -9690,6 +9872,79 @@ function confirmUPIPayment(total){
   onPaymentSuccess('UPI-'+utr);
 }
 
+// ── ADVANCE PAYMENT MODAL ──
+// Shows when a product requires partial advance via UPI before confirming COD order
+async function openAdvancePayModal(advAmt, fullTotal, order){
+  const modal = document.getElementById('phonePeModal');
+  const pmBody = document.getElementById('pmBody');
+  if(!modal || !pmBody) return;
+  modal.style.display = 'flex';
+
+  const ownerUPI = (await UB_SECURE.get('upi_id')) || localStorage.getItem('ub_upi_id') || '9845406712@ybl';
+  const ownerName = localStorage.getItem('ub_bname') || 'Udaya Bakery';
+  const upiLink = `upi://pay?pa=${encodeURIComponent(ownerUPI)}&pn=${encodeURIComponent(ownerName)}&am=${advAmt}&cu=INR&tn=${encodeURIComponent('Udaya Bakery Advance - ' + (order.id||''))}`;
+  const qrUrl = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(upiLink)}&choe=UTF-8`;
+  const balDue = fullTotal - advAmt;
+
+  pmBody.innerHTML = `
+    <div style="text-align:center;padding:10px 0;">
+      <div style="display:inline-block;background:linear-gradient(135deg,rgba(200,146,58,.18),rgba(200,146,58,.08));border:1px solid rgba(200,146,58,.35);border-radius:12px;padding:6px 18px;margin-bottom:14px;">
+        <span style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#C8923A;">💳 Advance Required</span>
+      </div>
+      <div style="font-family:Playfair Display,serif;font-size:20px;color:var(--choco);font-weight:700;margin-bottom:4px;">Pay ₹${advAmt} Advance via UPI</div>
+      <div style="font-size:12px;color:var(--text-mid);margin-bottom:4px;">This item requires an advance to confirm your order.</div>
+      <div style="font-size:12px;color:var(--text-mid);margin-bottom:16px;">Balance <strong style="color:var(--choco);">₹${balDue}</strong> will be collected on delivery.</div>
+
+      <div style="display:inline-block;padding:12px;background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.12);margin-bottom:14px;">
+        <img src="${qrUrl}" width="170" height="170" alt="UPI QR" style="display:block;border-radius:8px;">
+      </div>
+
+      <div style="font-size:12px;color:var(--text-mid);margin-bottom:6px;">UPI ID: <strong style="color:var(--choco);letter-spacing:.5px;">${ownerUPI}</strong></div>
+
+      <a href="${upiLink}" style="display:block;background:linear-gradient(135deg,#5B2D8E,#8B5CF6);color:#fff;text-decoration:none;padding:14px;border-radius:14px;font-family:Jost,sans-serif;font-size:15px;font-weight:700;margin:14px 0 10px;">
+        💜 Open PhonePe / GPay / Paytm — Pay ₹${advAmt}
+      </a>
+
+      <div style="background:var(--cream);border-radius:14px;padding:14px;margin-top:6px;text-align:left;">
+        <div style="font-size:12px;font-weight:700;color:var(--choco);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">After Payment — Enter UTR / Transaction ID</div>
+        <input type="text" id="utrInput" placeholder="e.g. 425612345678" maxlength="30"
+          style="width:100%;border:1.5px solid var(--cream-dark);border-radius:10px;padding:10px 14px;font-family:Jost,sans-serif;font-size:14px;color:var(--choco);outline:none;box-sizing:border-box;background:var(--white);"
+          oninput="this.value=this.value.replace(/[^0-9A-Za-z]/g,'')"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--cream-dark)'">
+        <div style="font-size:11px;color:var(--text-mid);margin-top:5px;opacity:.7;">Find UTR in your PhonePe/GPay transaction history</div>
+        <button onclick="confirmAdvancePayment(${advAmt}, ${fullTotal})"
+          style="width:100%;margin-top:10px;background:linear-gradient(135deg,var(--gold),var(--choco-light));color:#fff;border:none;border-radius:12px;padding:13px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">
+          ✅ Advance Paid — Confirm Order
+        </button>
+      </div>
+
+      <div style="margin-top:14px;">
+        <button onclick="closePhonePeModal()" style="background:none;border:none;color:var(--text-mid);font-family:Jost,sans-serif;font-size:13px;cursor:pointer;text-decoration:underline;">Cancel &amp; go back</button>
+      </div>
+    </div>`;
+}
+
+function confirmAdvancePayment(advAmt, fullTotal){
+  const utr = (document.getElementById('utrInput')?.value||'').trim();
+  if(!utr || utr.length < 6){
+    showToast('Please enter your UTR / Transaction ID 📋','err');
+    document.getElementById('utrInput')?.focus();
+    return;
+  }
+  if(pendingOrder){
+    pendingOrder.advancePaid = true;
+    pendingOrder.advanceUTR = utr;
+    pendingOrder.advanceAmt = advAmt;
+    // Rest is COD on delivery
+    finalizeOrder(pendingOrder, `Advance ₹${advAmt} via UPI · UTR:${utr} + COD ₹${fullTotal - advAmt} on delivery`);
+    pendingOrder = null;
+  }
+  closePhonePeModal();
+  showToast('✅ Advance paid! Order confirmed. Balance ₹' + (fullTotal - advAmt) + ' on delivery.', 'ok');
+}
+
+
+
 function onPaymentSuccess(txnId){
   let placedOrderId = null;
   if(pendingOrder){
@@ -9702,6 +9957,164 @@ function onPaymentSuccess(txnId){
   closePhonePeModal();
   // Open track modal and auto-show the just-placed order
   setTimeout(()=>openTrackModal(placedOrderId), 500);
+}
+
+// ══════════════════════════════════════════════
+//  💳 ADVANCE PAYMENT MODAL (for COD orders with advanceAmt > 0)
+// ══════════════════════════════════════════════
+function openAdvancePayModal(advanceAmt, total, order){
+  try{ localStorage.setItem('ub_pending_order_cart', JSON.stringify(cart)); }catch(e){}
+  document.getElementById('paymentModalBg').classList.add('open');
+  renderAdvancePayScreen(advanceAmt, total, order);
+  _ubPush('payment');
+}
+
+async function renderAdvancePayScreen(advanceAmt, total, order){
+  const pmBody = document.getElementById('pmBody');
+  const balance = total - advanceAmt;
+  const ownerUPI  = (await UB_SECURE.get('upi_id')) || localStorage.getItem('ub_upi_id') || '9845406712@ybl';
+  const ownerName = localStorage.getItem('ub_bname') || 'Udaya Bakery';
+  const rzpKey    = (await UB_SECURE.get('rzp_key_id')) || '';
+  const rzpOn     = localStorage.getItem('ub_rzp_enabled') === '1' && rzpKey;
+  const upiLink   = `upi://pay?pa=${encodeURIComponent(ownerUPI)}&pn=${encodeURIComponent(ownerName)}&am=${advanceAmt}&cu=INR&tn=${encodeURIComponent('Udaya Bakery Advance - ' + order.id)}`;
+  const qrUrl     = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(upiLink)}&choe=UTF-8`;
+
+  // Store rzpKey on window so the Razorpay handler can use it
+  window._advRzpKey = rzpKey;
+
+  const rzpBlock = rzpOn ? `
+    <div style="margin-bottom:16px;">
+      <button onclick="processRazorpayAdvance(${advanceAmt}, ${total})"
+        style="width:100%;background:linear-gradient(135deg,#1A1A6E,#3730A3);color:#fff;border:none;padding:15px;border-radius:14px;font-family:Jost,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
+        <span style="font-size:20px;">💳</span> Pay ₹${advanceAmt} via Razorpay
+      </button>
+      <div style="font-size:11px;color:var(--text-mid);margin-top:5px;text-align:center;">Cards · UPI · Net Banking · Wallets · EMI</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <div style="flex:1;height:1px;background:var(--cream-dark);"></div>
+      <span style="font-size:11px;color:var(--text-mid);font-weight:600;letter-spacing:.5px;">OR PAY VIA UPI</span>
+      <div style="flex:1;height:1px;background:var(--cream-dark);"></div>
+    </div>` : '';
+
+  pmBody.innerHTML = `
+    <div style="text-align:center;padding:10px 0;">
+      <div style="display:inline-block;background:linear-gradient(135deg,rgba(200,146,58,.15),rgba(200,146,58,.06));border:1.5px solid rgba(200,146,58,.3);border-radius:18px;padding:14px 24px;margin-bottom:16px;">
+        <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(200,146,58,.7);margin-bottom:4px;">Advance Required</div>
+        <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--choco);">₹${advanceAmt}</div>
+        <div style="font-size:11px;color:var(--text-mid);margin-top:4px;">Balance ₹${balance} paid on delivery</div>
+      </div>
+
+      ${rzpBlock}
+
+      <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--choco);font-weight:700;margin-bottom:4px;">Pay via UPI / QR</div>
+      <div style="font-size:12px;color:var(--text-mid);margin-bottom:14px;">Scan QR or tap below to open your UPI app</div>
+
+      <div style="display:inline-block;padding:12px;background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.12);margin-bottom:12px;">
+        <img src="${qrUrl}" width="180" height="180" alt="UPI QR Code" style="display:block;border-radius:8px;">
+      </div>
+
+      <div style="font-size:12px;color:var(--text-mid);margin-bottom:10px;">UPI ID: <strong style="color:var(--choco);letter-spacing:.5px;">${ownerUPI}</strong></div>
+
+      <a href="${upiLink}" style="display:block;background:linear-gradient(135deg,#5B2D8E,#8B5CF6);color:#fff;text-decoration:none;padding:14px;border-radius:14px;font-family:Jost,sans-serif;font-size:15px;font-weight:700;margin:6px 0 14px;">
+        💜 Open PhonePe / GPay / Paytm
+      </a>
+
+      <div style="background:var(--cream);border-radius:14px;padding:14px;text-align:left;">
+        <div style="font-size:12px;font-weight:700;color:var(--choco);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">After UPI Payment — Enter UTR / Transaction ID</div>
+        <input type="text" id="advUtrInput" placeholder="e.g. 425612345678" maxlength="30"
+          style="width:100%;border:1.5px solid var(--cream-dark);border-radius:10px;padding:10px 14px;font-family:Jost,sans-serif;font-size:14px;color:var(--choco);outline:none;box-sizing:border-box;background:var(--white);"
+          oninput="this.value=this.value.replace(/[^0-9A-Za-z]/g,'')"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--cream-dark)'">
+        <div style="font-size:11px;color:var(--text-mid);margin-top:5px;opacity:.7;">Find UTR in your PhonePe/GPay transaction history</div>
+        <button onclick="confirmAdvancePayment(${advanceAmt}, ${total})"
+          style="width:100%;margin-top:10px;background:linear-gradient(135deg,var(--gold),var(--choco-light));color:#fff;border:none;border-radius:12px;padding:13px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">
+          ✅ Advance Paid — Confirm Order
+        </button>
+      </div>
+
+      <div style="margin-top:14px;">
+        <button onclick="closePhonePeModal()" style="background:none;border:none;color:var(--text-mid);font-size:13px;cursor:pointer;font-family:Jost,sans-serif;text-decoration:underline;">Cancel & go back</button>
+      </div>
+    </div>`;
+}
+
+function confirmAdvancePayment(advanceAmt, total){
+  const utr = (document.getElementById('advUtrInput')?.value||'').trim();
+  if(!utr || utr.length < 6){
+    showToast('Please enter your UTR / Transaction ID 📋','err');
+    document.getElementById('advUtrInput')?.focus();
+    return;
+  }
+  if(pendingOrder){
+    pendingOrder.advancePaid = true;
+    pendingOrder.advanceUtr = 'ADV-' + utr;
+    pendingOrder.advanceAmt = advanceAmt;
+    pendingOrder.payNote = `Advance ₹${advanceAmt} paid via UPI · UTR: ${utr} · Balance ₹${total - advanceAmt} on delivery`;
+    const placedOrderId = pendingOrder.id;
+    finalizeOrder(pendingOrder, pendingOrder.payNote);
+    pendingOrder = null;
+    closePhonePeModal();
+    setTimeout(()=>openTrackModal(placedOrderId), 500);
+  }
+}
+
+function processRazorpayAdvance(advanceAmt, total){
+  const key = window._advRzpKey || '';
+  if(!key){ showToast('Razorpay not configured — use UPI below', 'err'); return; }
+  const ownerName = localStorage.getItem('ub_bname') || 'Udaya Bakery';
+  const orderId = pendingOrder ? pendingOrder.id : ('UB-ADV-' + Date.now());
+
+  function launchRzp(){
+    try {
+      const rzp = new window.Razorpay({
+        key: key,
+        amount: advanceAmt * 100, // paise
+        currency: 'INR',
+        name: ownerName,
+        description: `Advance for Order ${orderId}`,
+        notes: { order_id: orderId, type: 'advance' },
+        prefill: {
+          name:  pendingOrder ? pendingOrder.name  : '',
+          contact: pendingOrder ? pendingOrder.phone : ''
+        },
+        theme: { color: '#C8923A' },
+        handler: function(response){
+          // Payment successful — use Razorpay payment ID as UTR
+          const rzpPayId = response.razorpay_payment_id || ('RZP-' + Date.now());
+          if(pendingOrder){
+            pendingOrder.advancePaid   = true;
+            pendingOrder.advanceUtr    = rzpPayId;
+            pendingOrder.advanceAmt    = advanceAmt;
+            pendingOrder.advanceMethod = 'razorpay';
+            pendingOrder.payNote       = `Advance ₹${advanceAmt} paid via Razorpay · ID: ${rzpPayId} · Balance ₹${total - advanceAmt} on delivery`;
+            const placedOrderId = pendingOrder.id;
+            finalizeOrder(pendingOrder, pendingOrder.payNote);
+            pendingOrder = null;
+            closePhonePeModal();
+            setTimeout(()=>openTrackModal(placedOrderId), 500);
+          }
+        },
+        modal: {
+          ondismiss: function(){
+            showToast('Payment cancelled — try again or use UPI below', 'err');
+          }
+        }
+      });
+      rzp.open();
+    } catch(e){
+      showToast('Razorpay error: ' + e.message, 'err');
+    }
+  }
+
+  if(!window.Razorpay){
+    const s = document.createElement('script');
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    s.onload = launchRzp;
+    s.onerror = function(){ showToast('Could not load Razorpay — use UPI below', 'err'); };
+    document.head.appendChild(s);
+  } else {
+    launchRzp();
+  }
 }
 
 // ═══════════════════════════════════════
@@ -9934,7 +10347,7 @@ async function renderTrackContent(autoShowOrderId){
       <div class="my-orders-list">${userOrders.slice(0,5).map(o=>`
         <div class="mord-card" onclick="showOrderTracking('${o.id}')">
           <div class="mord-top">
-            <div><div class="mord-id">${o.id}</div><div class="mord-name">${o.name}</div></div>
+            <div><div class="mord-id">${o.id}</div><div class="mord-name">${ubSanitize(o.name||'')}</div>
             <div><div class="mord-date">${o.timestamp}</div><span class="mord-status-badge ${o.status}">${statusLabel(o.status)}</span></div>
           </div>
           <div class="mord-items-preview">${(o.items||[]).map(i=>`${i.emoji} ${i.name} ×${i.qty}`).join(' · ')}</div>
@@ -10004,7 +10417,7 @@ function searchTrackOrder(){
         <div class="my-orders-list">${phoneOrders.slice(0,5).map(o=>`
           <div class="mord-card" onclick="showOrderTracking('${o.id}')">
             <div class="mord-top">
-              <div><div class="mord-id">${o.id}</div><div class="mord-name">${o.name}</div></div>
+              <div><div class="mord-id">${o.id}</div><div class="mord-name">${ubSanitize(o.name||'')}</div>
               <div><div class="mord-date">${o.timestamp}</div><span class="mord-status-badge ${o.status}">${statusLabel(o.status)}</span></div>
             </div>
             <div class="mord-items-preview">${(o.items||[]).map(i=>`${i.emoji} ${i.name} ×${i.qty}`).join(' · ')}</div>
@@ -10476,6 +10889,15 @@ function renderAdminTab(){
           : '<div style="color:rgba(239,68,68,.7);">⚠️ No UPI ID set yet — customers cannot pay online until you add one.</div>';
       }
     });
+    // Async-populate MSG91 key status
+    UB_SECURE.get('msg91_key').then(k => {
+      const fallback = localStorage.getItem('ub_msg91_key') || '';
+      const active = k || fallback;
+      const lbl = document.getElementById('msg91_status');
+      if(lbl) lbl.innerHTML = active
+        ? `<span style="color:#4ADE80;">✅ Key saved securely (encrypted). Enter a new key above to update.</span>`
+        : `<span style="color:rgba(253,246,236,.35);">No key set — SMS confirmations are disabled.</span>`;
+    });
     return;
   }
   else if(adminTab==='reports')   el.innerHTML = buildReportsTab();
@@ -10535,6 +10957,17 @@ function buildDash(){
   const maxRev = Math.max(...days7.map(d=>d.rev), 1);
 
   return `
+  <!-- Firebase Security Rules reminder — shown until dismissed -->
+  ${!localStorage.getItem('ub_fb_rules_ok') ? `<div id="ub-fb-warn" style="background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);border-radius:14px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:12px;">
+    <span style="font-size:20px;flex-shrink:0;">🔐</span>
+    <div style="flex:1;">
+      <div style="font-size:13px;font-weight:700;color:#FCD34D;margin-bottom:3px;">Secure your Firebase Database</div>
+      <div style="font-size:12px;color:rgba(253,246,236,.5);line-height:1.6;">Your Firebase API key is public (required for web apps). Protect your data by setting <strong style="color:rgba(253,246,236,.75);">Firestore Security Rules</strong> in your Firebase Console → Firestore → Rules. Restrict reads/writes so only your app can access orders and products.</div>
+      <a href="https://console.firebase.google.com/project/udaya-bakery-a39f9/firestore/rules" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:8px;background:rgba(251,191,36,.15);color:#FCD34D;border:1px solid rgba(251,191,36,.3);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;text-decoration:none;">🔗 Open Firebase Rules →</a>
+    </div>
+    <button onclick="localStorage.setItem('ub_fb_rules_ok','1');document.getElementById('ub-fb-warn').remove();" style="background:none;border:none;color:rgba(253,246,236,.3);font-size:18px;cursor:pointer;flex-shrink:0;line-height:1;" title="Dismiss">✕</button>
+  </div>` : ''}
+
   <!-- Greeting -->
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
     <div>
@@ -10609,7 +11042,7 @@ function buildDash(){
     ORDERS.slice(0,6).map(o=>`
     <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);">
       <div style="flex:1;min-width:0;">
-        <div style="font-weight:600;color:rgba(253,246,236,.85);font-size:14px;">${o.name} <span style="color:#E8B96A;">₹${o.total}</span></div>
+        <div style="font-weight:600;color:rgba(253,246,236,.85);font-size:14px;">${ubSanitize(o.name||'')} <span style="color:#E8B96A;">₹${o.total}</span></div>
         <div style="font-size:11px;color:rgba(253,246,236,.32);margin-top:2px;">${o.id} · ${o.timestamp}</div>
         <div style="font-size:11px;color:rgba(253,246,236,.45);margin-top:2px;">${(o.items||[]).map(i=>`${i.emoji||'🎂'}${i.name}×${i.qty}`).join(', ')}</div>
       </div>
@@ -10794,13 +11227,21 @@ function buildAddProdTab(){
       <div class="af-group"><label>Base Price (₹) *</label><input class="af-inp" id="pf_price" type="number" value="${p?p.price:''}" placeholder="450" min="0" step="0.01" oninput="this.value=this.value.replace(/[^0-9.]/g,'')"></div>
       <div class="af-group"><label>Search Tags</label><input class="af-inp" id="pf_tags" value="${p&&p.tags?p.tags.join(', '):''}" placeholder="chocolate, birthday cake, puff..."></div>
     </div>
-    <!-- Pre-order lead time & seasonal availability -->
+    <!-- Pre-order lead time & advance payment -->
     <div class="af-row" style="margin-top:2px;">
       <div class="af-group">
         <label>⏳ Pre-order Lead Days <span style="color:rgba(253,246,236,.4);font-size:10px;">(0 = order same day)</span></label>
         <input class="af-inp" id="pf_leadDays" type="number" min="0" max="30" value="${p&&p.leadDays?p.leadDays:0}" placeholder="e.g. 3 for wedding cakes">
         <div style="font-size:11px;color:rgba(253,246,236,.3);margin-top:4px;">Blocks delivery dates within this many days (great for custom/wedding cakes)</div>
       </div>
+      <div class="af-group">
+        <label>💳 Advance Payment via UPI (₹) <span style="color:rgba(253,246,236,.4);font-size:10px;">(0 = not required)</span></label>
+        <input class="af-inp" id="pf_advanceAmt" type="number" min="0" value="${p&&p.advanceAmt?p.advanceAmt:0}" placeholder="e.g. 500 or 0 for none" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+        <div style="font-size:11px;color:rgba(253,246,236,.3);margin-top:4px;">Customer must pay this via UPI/PhonePe to confirm order. 0 = no advance needed.</div>
+      </div>
+    </div>
+    <!-- Seasonal availability -->
+    <div class="af-row" style="margin-top:2px;">
       <div class="af-group">
         <label>🎉 Seasonal: Show Only Between Dates <span style="color:rgba(253,246,236,.4);font-size:10px;">(leave blank = always show)</span></label>
         <div style="display:flex;gap:8px;align-items:center;">
@@ -10816,6 +11257,21 @@ function buildAddProdTab(){
   
 
   
+    <div class="af-group" style="margin-top:8px;">
+      <label>🔗 "You Might Also Like" Products <span style="font-size:10px;font-weight:400;opacity:.5;">(optional — shown inside this product's popup)</span></label>
+      <div style="font-size:11px;color:rgba(253,246,236,.35);margin-bottom:10px;">Tick other products to show them as recommendations when a customer views this product.</div>
+      <div id="ymal_picker" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;max-height:220px;overflow-y:auto;padding-right:4px;">
+        ${PRODS.filter(x=>!p||String(x.id)!==String(p.id)).map(x=>{
+          const checked = p&&Array.isArray(p.relatedIds)&&p.relatedIds.map(String).includes(String(x.id));
+          return `<label style="display:flex;align-items:center;gap:9px;padding:8px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(200,146,58,${checked?'.4':'.1'});border-radius:10px;cursor:pointer;transition:border .2s;" id="ymal_lbl_${x.id}">
+            <input type="checkbox" value="${x.id}" ${checked?'checked':''} onchange="ubYmalStyle(this)" style="width:15px;height:15px;accent-color:#E8B96A;cursor:pointer;flex-shrink:0;">
+            <span style="font-size:14px;flex-shrink:0;">${x.emoji||'🎂'}</span>
+            <span style="font-size:12px;font-weight:600;color:rgba(253,246,236,.8);line-height:1.3;">${x.name}</span>
+          </label>`;
+        }).join('')}
+      </div>
+    </div>
+
   <div style="display:flex;align-items:center;gap:10px;padding-bottom:30px;">
     <button class="abtn" onclick="saveProd(${p?p.id:'null'})" style="min-width:160px;">${p?'💾 Update Product':'✅ Save Product'}</button>
     <button class="abtn-sec" onclick="switchTab('products')">Cancel</button>
@@ -11273,8 +11729,11 @@ async function saveProd(existId){
     const defaultFlavour = (document.getElementById('pf_defaultFlavour')?.value||'').trim();
     const tags = (document.getElementById('pf_tags')?.value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean);
     const leadDays = parseInt(document.getElementById('pf_leadDays')?.value||'0')||0;
+    const advanceAmt = parseInt(document.getElementById('pf_advanceAmt')?.value||'0')||0;
     const seasonStart = (document.getElementById('pf_seasonStart')?.value||'').trim();
     const seasonEnd = (document.getElementById('pf_seasonEnd')?.value||'').trim();
+    // Collect "You Might Also Like" linked product IDs
+    const relatedIds = Array.from(document.querySelectorAll('#ymal_picker input[type=checkbox]:checked')).map(cb=>cb.value);
 
     if(!name){ showToast('⚠️ Product name is required!','err'); return; }
     if(!desc){ showToast('⚠️ Description is required!','err'); return; }
@@ -11298,7 +11757,7 @@ async function saveProd(existId){
       // Use first flavour's weights as base variants
       finalVariants = flavours[0].variants;
     }
-    const prodData = {cat, subcat, name, desc, emoji, price, variants:finalVariants||variants, flavours:flavours||[], badge, image:imageUrl||'', tags:tags||[], defaultFlavour:defaultFlavour||'', leadDays:leadDays||0, seasonStart:seasonStart||'', seasonEnd:seasonEnd||''};
+    const prodData = {cat, subcat, name, desc, emoji, price, variants:finalVariants||variants, flavours:flavours||[], badge, image:imageUrl||'', tags:tags||[], defaultFlavour:defaultFlavour||'', leadDays:leadDays||0, advanceAmt:advanceAmt||0, seasonStart:seasonStart||'', seasonEnd:seasonEnd||'', relatedIds:relatedIds||[]};
     // Egg pricing
     const eggPrices = collectEggPrices();
     if(eggPrices) prodData.eggPrices = eggPrices;
@@ -11349,6 +11808,10 @@ async function saveProd(existId){
     showToast('❌ ' + msg.substring(0,60), 'err');
     if(btn){ btn.textContent='✅ Save Product'; btn.disabled=false; }
   }
+}
+function ubYmalStyle(cb){
+  const lbl = document.getElementById('ymal_lbl_'+cb.value);
+  if(lbl) lbl.style.borderColor = cb.checked ? 'rgba(200,146,58,.4)' : 'rgba(200,146,58,.1)';
 }
 function startEdit(pid){
   editProd = PRODS.find(p=>String(p.id)===String(pid));
@@ -11568,7 +12031,7 @@ function buildOrdersTab(){
 
 function buildOrderCard(o){
   return `
-  <div class="acard order-card" data-id="${o.id}" data-status="${o.status}" data-name="${(o.name||'').toLowerCase()}" data-phone="${o.phone||''}" style="margin-bottom:16px;border-left:3px solid ${o.status==='pending'?'#FCD34D':o.status==='confirmed'?'#34D399':o.status==='out_for_delivery'?'#93C5FD':o.status==='delivered'?'#6EE7B7':'#F87171'};">
+  <div class="acard order-card" data-id="${o.id}" data-status="${o.status}" data-name="${(o.name||'').toLowerCase()}" data-phone="${o.phone||''}" style="margin-bottom:16px;border-left:3px solid ${o.status==='pending'?'#FCD34D':o.status==='confirmed'?'#34D399':o.status==='preparing'?'#C4B5FD':o.status==='ready'?'#FCA572':o.status==='out_for_delivery'?'#93C5FD':o.status==='delivered'?'#6EE7B7':'#F87171'};">
     <!-- Order Header -->
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
       <div id="ubcb-${o.id}" onclick="ubToggleBulk('${o.id}')" style="width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,.08);border:1.5px solid rgba(200,146,58,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:background .2s;"></div>
@@ -11588,30 +12051,31 @@ function buildOrderCard(o){
         <div style="font-family:Playfair Display,serif;font-size:26px;color:#E8B96A;margin-top:6px;line-height:1;">₹${o.total}</div>
         ${o.payMethod?`<div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:3px;">${o.payMethod==='phonepe'?'💜 PhonePe/UPI':'💵 Cash on Delivery'}</div>`:''}
         ${o.txnId?`<div style="font-size:10px;color:rgba(253,246,236,.25);margin-top:1px;">TXN: ${o.txnId}</div>`:''}
+        ${o.advancePaid?`<div style="margin-top:6px;display:inline-block;background:linear-gradient(135deg,rgba(74,222,128,.18),rgba(74,222,128,.08));border:1px solid rgba(74,222,128,.35);border-radius:8px;padding:4px 9px;font-size:10px;font-weight:800;color:#4ADE80;letter-spacing:.5px;text-transform:uppercase;">✅ ADV ₹${o.advanceAmt} PAID${o.advanceMethod==='razorpay'?' · RZP':' · UPI'}</div><div style="font-size:10px;color:rgba(253,246,236,.3);margin-top:2px;">Bal ₹${o.total-o.advanceAmt} on delivery</div>`:''}
       </div>
     </div>
     <!-- Customer Details -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.06);">
       <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px 14px;">
         <div style="font-size:10px;color:rgba(253,246,236,.3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">👤 Customer</div>
-        <div style="font-size:15px;font-weight:700;color:rgba(253,246,236,.9);margin-bottom:4px;">${o.name}</div>
-        <div style="font-size:13px;color:rgba(253,246,236,.6);margin-bottom:3px;">📞 <a href="tel:${o.phone}" style="color:#E8B96A;text-decoration:none;">${o.phone}</a></div>
+        <div style="font-size:15px;font-weight:700;color:rgba(253,246,236,.9);margin-bottom:4px;">${ubSanitize(o.name||'')}</div>
+        <div style="font-size:13px;color:rgba(253,246,236,.6);margin-bottom:3px;">📞 <a href="tel:${ubSanitize(o.phone||'')}" style="color:#E8B96A;text-decoration:none;">${ubSanitize(o.phone||'')}</a></div>
       </div>
       <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px 14px;">
         <div style="font-size:10px;color:rgba(253,246,236,.3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">📍 Delivery</div>
-        <div style="font-size:13px;color:rgba(253,246,236,.75);line-height:1.5;margin-bottom:4px;">${o.addr||'—'}</div>
+        <div style="font-size:13px;color:rgba(253,246,236,.75);line-height:1.5;margin-bottom:4px;">${ubSanitize(o.addr||'—')}</div>
         ${o.dist?`<div style="font-size:12px;color:rgba(253,246,236,.45);">📏 ${o.dist} km · ${o.delivery===0?'<span style="color:#4ADE80;font-weight:700;">FREE Delivery</span>':'<span style="color:#E8B96A;">₹'+o.delivery+' delivery</span>'}</div>`:''}
         ${o.delivDate?`<div style="margin-top:8px;background:rgba(200,146,58,.12);border:1px solid rgba(200,146,58,.3);border-radius:8px;padding:8px 10px;">
           <div style="font-size:10px;color:rgba(253,246,236,.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">📅 Requested Delivery</div>
-          <div style="font-size:13px;font-weight:700;color:#E8B96A;">${o.delivDate}</div>
-          ${o.delivTime?`<div style="font-size:12px;color:rgba(253,246,236,.6);margin-top:2px;">⏰ ${o.delivTime}</div>`:''}
+          <div style="font-size:13px;font-weight:700;color:#E8B96A;">${ubSanitize(o.delivDate)}</div>
+          ${o.delivTime?`<div style="font-size:12px;color:rgba(253,246,236,.6);margin-top:2px;">⏰ ${ubSanitize(o.delivTime)}</div>`:''}
         </div>`:o.time?`<div style="margin-top:8px;background:rgba(200,146,58,.12);border:1px solid rgba(200,146,58,.3);border-radius:8px;padding:8px 10px;">
           <div style="font-size:10px;color:rgba(253,246,236,.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">📅 Requested Delivery</div>
-          <div style="font-size:13px;font-weight:700;color:#E8B96A;">${o.time}</div>
+          <div style="font-size:13px;font-weight:700;color:#E8B96A;">${ubSanitize(o.time)}</div>
         </div>`:''}
       </div>
     </div>
-    ${o.note?`<div style="background:rgba(200,146,58,.08);border:1px solid rgba(200,146,58,.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:#E8B96A;">📝 <strong>Note:</strong> ${o.note}</div>`:''}
+    ${o.note?`<div style="background:rgba(200,146,58,.08);border:1px solid rgba(200,146,58,.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:#E8B96A;">📝 <strong>Note:</strong> ${ubSanitize(o.note)}</div>`:''}
     <!-- Order Items -->
     <div style="margin-bottom:14px;">
       <div style="font-size:10px;color:rgba(253,246,236,.3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">🛒 Order Items</div>
@@ -11944,7 +12408,7 @@ function ubGenerateMonthlyReport(sendWhatsApp) {
       + `📎 Excel report downloaded to device.\n`
       + `_${new Date().toLocaleString('en-IN')}_`;
     const cleanWa = waNum.replace(/\D/g,'');
-    setTimeout(()=>{ try{ window.open(`https://wa.me/${cleanWa}?text=${encodeURIComponent(waMsg)}`,'_blank'); }catch(e){} }, 900);
+    setTimeout(()=>{ try{ window.open(`https://wa.me/${cleanWa}?text=${encodeURIComponent(waMsg)}`,'_blank','noopener,noreferrer'); }catch(e){} }, 900);
   }
 }
 
@@ -12035,7 +12499,7 @@ function buildSettingsTab(){
   <div class="acard" style="margin-bottom:16px;">
     <h3>📱 SMS Order Confirmation (MSG91)</h3>
     <div class="asub">Optional — customers receive an SMS when their order is placed. Get your API key at msg91.com</div>
-    <div class="af-group" style="margin-top:12px;"><label>MSG91 Auth Key</label><input class="af-inp" id="s_msg91key" value="${localStorage.getItem('ub_msg91_key')||''}" placeholder="e.g. 413241TxxxxxXxxxx6363"></div>
+    <div class="af-group" style="margin-top:12px;"><label>MSG91 Auth Key</label><input class="af-inp" id="s_msg91key" type="password" value="" placeholder="Enter key to update (stored encrypted)" autocomplete="new-password"><div id="msg91_status" style="font-size:11px;margin-top:4px;color:rgba(253,246,236,.4);">Loading...</div></div>
     <div class="af-group"><label>MSG91 Template ID</label><input class="af-inp" id="s_msg91tpl" value="${localStorage.getItem('ub_msg91_tpl')||''}" placeholder="e.g. 654a1f2abc3d4e0023..."></div>
     <div style="background:rgba(200,146,58,.06);border-radius:10px;padding:10px 12px;font-size:12px;color:rgba(253,246,236,.5);margin-bottom:12px;">💡 Leave blank to disable SMS — WhatsApp confirmation still works without this. Your template variable <code style="background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;">{{var1}}</code> will receive the order summary.</div>
     <button class="abtn" onclick="ubSaveSmsSettings()">💾 Save SMS Settings</button>
@@ -12331,7 +12795,14 @@ function buildSettingsTab(){
         </select>
       </div>
       <div class="af-group"><label>Discount Value</label><input class="af-inp" type="number" id="nc_val" placeholder="e.g. 10" min="0"></div>
+      <div class="af-group"><label>Min Cart Value (₹) <span style="font-size:10px;color:rgba(253,246,236,.4);">(0 = no minimum)</span></label><input class="af-inp" type="number" id="nc_minCart" placeholder="e.g. 500" min="0" value="0"></div>
       <div class="af-group"><label>Expiry Date <span style="font-size:10px;color:rgba(253,246,236,.4);">(optional)</span></label><input class="af-inp" type="date" id="nc_expiry"></div>
+      <div class="af-group" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:rgba(253,246,236,.7);">
+          <input type="checkbox" id="nc_oneTime" style="width:18px;height:18px;accent-color:var(--gold);cursor:pointer;">
+          Single-use per customer
+        </label>
+      </div>
       <div style="display:flex;align-items:flex-end;grid-column:span 2;">
         <button class="abtn" onclick="addAdminCoupon()" style="width:100%;">➕ Add Coupon</button>
       </div>
@@ -12583,12 +13054,17 @@ async function saveUPISettings(){
   showToast('✅ UPI ID saved securely! Customers can now pay to ' + upi, 'ok');
 }
 
-function ubSaveSmsSettings(){
+async function ubSaveSmsSettings(){
   const key = (document.getElementById('s_msg91key')?.value||'').trim();
   const tpl = (document.getElementById('s_msg91tpl')?.value||'').trim();
-  localStorage.setItem('ub_msg91_key', key);
+  // Encrypt the auth key — it's a sensitive API credential
+  if(key) await UB_SECURE.set('msg91_key', key);
+  else await UB_SECURE.delete('msg91_key');
   localStorage.setItem('ub_msg91_tpl', tpl);
-  showToast(key ? '✅ SMS settings saved — customers will receive SMS confirmations!' : '✅ SMS disabled (key cleared)', 'ok');
+  // Clear the input after saving for security
+  const inp = document.getElementById('s_msg91key');
+  if(inp && key) inp.value = '';
+  showToast(key ? '✅ SMS settings saved securely — customers will receive SMS confirmations!' : '✅ SMS disabled (key cleared)', 'ok');
 }
 
 // ── LOGO FUNCTIONS ──
@@ -12897,7 +13373,7 @@ function buildReportsTab(){
           <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#4ADE80;">${todayOrd.filter(o=>o.status==='delivered').length}</div><div style="font-size:10px;color:rgba(253,246,236,.4);">Delivered</div></div>
           <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#E8B96A;">₹${todayRev.toLocaleString('en-IN')}</div><div style="font-size:10px;color:rgba(253,246,236,.4);">Revenue</div></div>
         </div>
-        ${todayOrd.slice(0,5).map(o=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;"><span style="color:rgba(253,246,236,.7);">${o.name}</span><span style="color:#E8B96A;font-weight:700;">₹${o.total}</span></div>`).join('')}
+        ${todayOrd.slice(0,5).map(o=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;"><span style="color:rgba(253,246,236,.7);">${ubSanitize(o.name||'')}</span><span style="color:#E8B96A;font-weight:700;">₹${o.total}</span></div>`).join('')}
         `}
   </div>
 
@@ -13413,7 +13889,7 @@ function ubAdminAddFreeCash(){
   // Send WhatsApp notification
   if(sendWa){
     const msg = `🎁 *Udaya Bakery — Free Cash Added!*\n\nHello! 🎂\n\nWe've added *₹${amt}* free cash to your wallet as a special reward!\n\n💰 Your wallet balance: *₹${newBal}*\n\n📝 ${note}\n\n👉 Use it on your next order: ${site}\n\n_(Minimum order applies to use wallet balance)_\n\n— Udaya Bakery 🙏`;
-    setTimeout(()=>{ window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`,'_blank'); }, 300);
+    setTimeout(()=>{ window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`,'_blank','noopener,noreferrer'); }, 300);
   }
   renderAdminTab();
 }
@@ -13450,7 +13926,7 @@ function ubAdminBulkFreeCash(){
         ORDERS.forEach(o=>{ if(!o.phone)return; const k=o.phone.replace(/\D/g,'').slice(-10); if(k===phone) cm2.name=o.name; });
         const name = cm2.name || 'Valued Customer';
         const msg = `🎁 *Udaya Bakery — Free Cash Added!*\n\nHello ${name}! 🎂\n\nWe've added *₹${amt}* free cash to your wallet as a special reward!\n\n💰 Your wallet balance: *₹${newBal}*\n\n📝 ${note}\n\n👉 Use it: ${site}\n\n— Udaya Bakery 🙏`;
-        window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+        window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`,'_blank','noopener,noreferrer');
       }, i * 1800);
     }
     i++;
@@ -13869,7 +14345,7 @@ function ubDownloadInvoice(orderId){
     <div class="grid2">
       <div class="info-card">
         <div class="lbl">👤 Customer</div>
-        <div class="val">${o.name}</div>
+        <div class="val">${ubSanitize(o.name||'')}
         <div class="sub">📞 ${o.phone}</div>
       </div>
       <div class="info-card">
@@ -15315,7 +15791,7 @@ window.ubOpenVideoLightbox = function(i, evt){
   const videos = window._ubVisibleVideos || ubGetVideos().filter(v=>v.visible!==false);
   const v = videos[i]; if(!v) return;
   const ytId = v.ytId || ubYtId(v.url);
-  if(!ytId){ window.open(v.url,'_blank'); return; }
+  if(!ytId){ window.open(v.url,'_blank','noopener,noreferrer'); return; }
   const iframe = document.getElementById('vlbIframe');
   const title  = document.getElementById('vlbTitle');
   const desc   = document.getElementById('vlbDesc');
@@ -15944,7 +16420,7 @@ window.ubToggleBell = function(e){
   drop.innerHTML = pend.length === 0
     ? '<div style="padding:14px;text-align:center;font-size:12px;color:rgba(253,246,236,.3);">No pending orders 🎉</div>'
     : `<div style="padding:9px 14px;font-size:10px;font-weight:700;color:rgba(253,246,236,.35);letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,.05);">🔔 PENDING ORDERS</div>`
-      + pend.slice(0,3).map(o=>`<div class="bditem" onclick="switchTab('orders');this.closest('.bell-drop').classList.remove('open');"><div style="font-size:13px;font-weight:700;color:rgba(253,246,236,.88);">${o.name} <span style="color:#E8B96A;">₹${o.total}</span></div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:1px;">${o.id}</div></div>`).join('')
+      + pend.slice(0,3).map(o=>`<div class="bditem" onclick="switchTab('orders');this.closest('.bell-drop').classList.remove('open');"><div style="font-size:13px;font-weight:700;color:rgba(253,246,236,.88);">${ubSanitize(o.name||'')} <span style="color:#E8B96A;">₹${o.total}</span></div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:1px;">${o.id}</div></div>`).join('')
       + (pend.length > 3 ? `<div style="padding:9px 14px;font-size:11px;color:#E8B96A;cursor:pointer;" onclick="switchTab('orders');">+${pend.length-3} more →</div>` : '');
   drop.classList.toggle('open');
 };
@@ -16079,7 +16555,7 @@ function _patchBuildDash(){
           <h3>📋 Recent Orders</h3><div class="asub">Latest activity</div>
           ${ORDERS.length===0?'<div style="text-align:center;padding:24px;font-size:32px;opacity:.2;">📭</div>':
           ORDERS.slice(0,4).map(o=>`<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);">
-            <div style="flex:1;min-width:0;"><div style="font-weight:600;color:rgba(253,246,236,.84);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.name}</div><div style="font-size:11px;color:#E8B96A;">₹${o.total}</div></div>
+            <div style="flex:1;min-width:0;"><div style="font-weight:600;color:rgba(253,246,236,.84);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ubSanitize(o.name||'')}</div><div style="font-size:11px;color:#E8B96A;">₹${o.total}</div></div>
             <span class="obadge ${o.status}" style="flex-shrink:0;">${statusLabel(o.status)}</span>
           </div>`).join('')}
           ${ORDERS.length>4?`<div style="margin-top:8px;"><button class="abtn-sec" onclick="switchTab('orders')" style="width:100%;font-size:12px;padding:7px;">View All ${ORDERS.length} →</button></div>`:''}
@@ -16122,7 +16598,7 @@ function _buildKanban(){
       <div class="kb-head" style="color:${col.c};border-bottom-color:${col.c}44;">${col.l}<span style="background:${col.c}18;border:1px solid ${col.c}30;border-radius:12px;padding:1px 7px;font-size:9px;">${ords.length}</span></div>
       ${ords.length===0?`<div style="text-align:center;padding:20px 8px;color:rgba(253,246,236,.18);font-size:11px;">Empty</div>`:''}
       ${ords.map(o=>`<div class="kb-card" draggable="true" ondragstart="ubKbDrag(event,'${o.id}')">
-        <div class="kkn">${o.name}</div>
+        <div class="kkn">${ubSanitize(o.name||'')}
         <div class="kkm">${(o.items||[]).length} item${(o.items||[]).length!==1?'s':''} · ${ago(o.timestamp)}</div>
         <div class="kka">₹${o.total}</div>
         <div class="kkbtns">
@@ -17147,6 +17623,43 @@ if('serviceWorker' in navigator){
       });
   });
 }
+
+// ── OFFLINE BANNER ──
+(function(){
+  var _offlineBanner = null;
+
+  function _showOfflineBanner(){
+    if(_offlineBanner) return;
+    _offlineBanner = document.createElement('div');
+    _offlineBanner.id = 'ub-offline-banner';
+    _offlineBanner.style.cssText = [
+      'position:fixed','bottom:72px','left:50%','transform:translateX(-50%)',
+      'z-index:99999','background:linear-gradient(135deg,#1a1a1a,#2d2d2d)',
+      'color:#fff','padding:12px 22px','border-radius:50px',
+      'font-family:Jost,sans-serif','font-size:14px','font-weight:600',
+      'box-shadow:0 8px 32px rgba(0,0,0,.45)','white-space:nowrap',
+      'display:flex','align-items:center','gap:10px',
+      'border:1px solid rgba(255,255,255,.1)'
+    ].join(';');
+    _offlineBanner.innerHTML = '<span style="font-size:18px;">📶</span> You\'re offline — some features may not work';
+    document.body.appendChild(_offlineBanner);
+  }
+
+  function _hideOfflineBanner(){
+    if(!_offlineBanner) return;
+    _offlineBanner.style.transition = 'opacity .4s,transform .4s';
+    _offlineBanner.style.opacity = '0';
+    _offlineBanner.style.transform = 'translateX(-50%) translateY(10px)';
+    setTimeout(function(){ if(_offlineBanner){ _offlineBanner.remove(); _offlineBanner=null; } }, 420);
+    // Show reconnect toast
+    if(typeof showToast === 'function') showToast('✅ Back online!', 'ok');
+  }
+
+  window.addEventListener('offline', _showOfflineBanner);
+  window.addEventListener('online',  _hideOfflineBanner);
+  // Check immediately in case page loaded while offline
+  if(!navigator.onLine) _showOfflineBanner();
+})();
 </script>
 </body>
 </html>
