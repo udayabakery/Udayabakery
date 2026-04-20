@@ -4763,19 +4763,6 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
   </div>
 </section>
 
-<!-- COMBO OFFERS SECTION -->
-<section id="ubComboSection" style="display:none;padding:60px 0 20px;">
-  <div class="container">
-    <div class="section-head center">
-      <span class="section-label">✦ Special Bundles</span>
-      <h2 class="section-title">🎁 Combo <em>Offers</em></h2>
-      <div class="divider center"></div>
-      <p class="section-desc">Curated bundles at unbeatable prices — crafted by our owner for you.</p>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-top:12px;" id="ubComboGrid"></div>
-  </div>
-</section>
-
 <!-- RECENTLY VIEWED -->
 <section id="recentlyViewed" style="display:none;padding:32px 0 0;">
   <div class="container">
@@ -4907,7 +4894,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
         <div class="faq-q"><span class="faq-q-text">What payment methods do you accept?</span><span class="faq-arrow">▼</span></div>
-        <div class="faq-a">We accept <strong>Cash on Delivery</strong>, <strong>UPI</strong> (Google Pay, PhonePe, Paytm), and <strong>Bank Transfer</strong>. Payment is collected at the time of delivery for COD orders.</div>
+        <div class="faq-a">We accept <strong>Cash on Delivery</strong> and <strong>Online Payment via Razorpay</strong> (Cards, UPI, Net Banking, Wallets). Razorpay supports Google Pay, PhonePe, Paytm and all major cards.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
         <div class="faq-q"><span class="faq-q-text">Can I cancel or modify my order?</span><span class="faq-arrow">▼</span></div>
@@ -5302,12 +5289,12 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
     <div class="payment-method-select">
       <div class="pms-label">💳 Payment Method</div>
       <div id="pickupPayNote" style="display:none;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:8px 12px;font-size:12px;color:#065F46;margin-bottom:10px;">
-        🏪 Store pickup requires <strong>online payment</strong> — Cash on Delivery not available for pickup orders.
+        🏪 Store pickup requires <strong>online payment</strong> — Cash on Delivery not available for pickup orders. Pay securely via Razorpay.
       </div>
       <div class="pms-options">
         <div class="pms-option sel" id="pms-phonepe" onclick="selectPayMethod('phonepe')">
-          <div class="pms-icon" style="background:linear-gradient(135deg,#5B2D8E,#8B5CF6);">💜</div>
-          <div><div class="pms-name">PhonePe / UPI</div><div class="pms-sub">Pay via UPI, PhonePe, GPay, Paytm</div></div>
+          <div class="pms-icon" style="background:linear-gradient(135deg,#3B3DBF,#6366F1);">💳</div>
+          <div><div class="pms-name">Pay Online (Razorpay)</div><div class="pms-sub">Cards, UPI, Net Banking, Wallets</div></div>
           <div class="pms-radio"></div>
         </div>
         <div class="pms-option" id="pms-cod" onclick="selectPayMethod('cod')">
@@ -5413,10 +5400,6 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
         <button class="atab" onclick="switchTab('cakebuilder')" id="at-cakebuilder">🎂 Cake Builder</button>
         <button class="atab" onclick="switchTab('videos')" id="at-videos">🎬 Cake Videos</button>
         <button class="atab" onclick="switchTab('policies')" id="at-policies">📜 Rules & Policy</button>
-        <button class="atab" onclick="switchTab('expenses')" id="at-expenses">💸 Expenses</button>
-        <button class="atab" onclick="switchTab('combos')" id="at-combos">🎁 Combo Offers</button>
-        <button class="atab" onclick="switchTab('reconciliation')" id="at-reconciliation">🧾 Reconciliation</button>
-        <button class="atab" onclick="switchTab('razorpay')" id="at-razorpay">💳 Razorpay</button>
       </div>
     </div>
     
@@ -5596,6 +5579,31 @@ initFirebase();
   ['ub_rzp_key_id','ub_rzp_key_secret','ub_pp_mid','ub_pp_salt'].forEach(k => {
     localStorage.removeItem(k);
   });
+})();
+
+// ── RAZORPAY AUTO-INIT: Pre-load API key into window._advRzpKey on startup ──
+// This ensures Razorpay payments work immediately without waiting for the advance modal
+(async function _ubRzpInit(){
+  try {
+    // Pre-seed the default live key if none is stored yet
+    var existingKey = await UB_SECURE.get('rzp_key_id');
+    if(!existingKey){
+      var defaultKey = 'rzp_live_SN4XuHOp4GbMFi';
+      await UB_SECURE.set('rzp_key_id', defaultKey);
+      localStorage.setItem('ub_rzp_enabled','1');
+      localStorage.setItem('ub_rzp_mode','live');
+      window._advRzpKey = defaultKey;
+    } else {
+      window._advRzpKey = existingKey;
+      // Auto-set mode from key prefix if not yet set
+      if(!localStorage.getItem('ub_rzp_mode')){
+        localStorage.setItem('ub_rzp_mode', existingKey.startsWith('rzp_live_') ? 'live' : 'test');
+      }
+      if(!localStorage.getItem('ub_rzp_enabled')){
+        localStorage.setItem('ub_rzp_enabled','1');
+      }
+    }
+  } catch(e){ window._advRzpKey = window._advRzpKey || ''; }
 })();
 
 // ─── Show loading spinner on start ───
@@ -6028,7 +6036,7 @@ function playOrderSound(){
 
 function sendAdminWhatsApp(order){
   const pickupLine = order.orderType==='pickup' ? '%0A🏪 *STORE PICKUP*' : `%0A📍 ${order.addr}%0A📏 ${order.dist||0}km`;
-  const msg = `🔔 *NEW ORDER — Udaya Bakery*%0A*Order: ${order.id}*%0A%0A👤 ${order.name}%0A📞 ${order.phone}${pickupLine}%0A💳 ${order.payMethod==='phonepe'?'PhonePe/UPI':'COD'}%0A%0A*Items:*%0A${order.items.map(i=>`• ${i.emoji} ${i.name} (${i.variant}) ×${i.qty} = ₹${i.price*i.qty}`).join('%0A')}%0A%0A🚚 Delivery: ${order.delivery===0?'FREE':'₹'+order.delivery}%0A💰 *Total: ₹${order.total}*${order.note?'%0A%0A📝 '+order.note:''}`;
+  const msg = `🔔 *NEW ORDER — Udaya Bakery*%0A*Order: ${order.id}*%0A%0A👤 ${order.name}%0A📞 ${order.phone}${pickupLine}%0A💳 ${order.payMethod==='phonepe'||order.payMethod==='razorpay'?'Razorpay Online':'COD'}%0A%0A*Items:*%0A${order.items.map(i=>`• ${i.emoji} ${i.name} (${i.variant}) ×${i.qty} = ₹${i.price*i.qty}`).join('%0A')}%0A%0A🚚 Delivery: ${order.delivery===0?'FREE':'₹'+order.delivery}%0A💰 *Total: ₹${order.total}*${order.note?'%0A%0A📝 '+order.note:''}`;
   window.open(`https://wa.me/919845406712?text=${msg}`, '_blank');
 }
 
@@ -9288,13 +9296,17 @@ function openOrderModal(prefillTime){
     const dd = String(minDate.getDate()).padStart(2,'0');
     dateInput.min = `${yyyy}-${mm}-${dd}`;
 
-    // Compute max advance across cart items (respecting per-flavour advance if set)
+    // Compute max advance across cart items (respecting per-flavour+weight advance if set)
     const maxAdvPreview = cart.reduce((mx, ci) => {
       const prod = PRODS.find(p => String(p.id) === String(ci.pid));
       if(!prod) return mx;
-      // Check per-flavour advance first
+      // Check per-flavour → per-weight advance first
       if(prod.flavours && prod.flavours.length > 0 && ci.flvName){
         const flv = prod.flavours.find(f=>f.name && f.name.toLowerCase()===ci.flvName.toLowerCase());
+        if(flv && flv.variants && ci.variant){
+          const vnt = flv.variants.find(v=>v.label && v.label.toLowerCase()===(ci.variant||'').toLowerCase());
+          if(vnt && vnt.advanceAmt > 0) return Math.max(mx, parseInt(vnt.advanceAmt));
+        }
         if(flv && flv.advanceAmt > 0) return Math.max(mx, parseInt(flv.advanceAmt));
       }
       return Math.max(mx, (prod.advanceAmt) ? parseInt(prod.advanceAmt) : 0);
@@ -9323,7 +9335,7 @@ function openOrderModal(prefillTime){
       if(advBanner) advBanner.style.display = 'block';
       if(advBannerText){
         const sub = cart.reduce((s,c)=>s+c.price*c.qty,0);
-        advBannerText.innerHTML = `This order requires an advance of <strong style="color:#C4B5FD;">₹${maxAdvPreview}</strong> to be paid online before confirmation.<br><span style="font-size:11px;opacity:.75;">You can also pay the full amount of ₹${sub} online. Balance (if any) is collected on delivery.</span>`;
+        advBannerText.innerHTML = `This order requires an advance of <strong style="color:#C4B5FD;">₹${maxAdvPreview}</strong> to be paid via Razorpay before confirmation.<br><span style="font-size:11px;opacity:.75;">You can also pay the full amount of ₹${sub} online. Balance (if any) is collected on delivery.</span>`;
       }
       // Hide COD option — advance/online payment is mandatory
       if(codOpt2){ codOpt2.style.display='none'; }
@@ -9556,7 +9568,7 @@ function submitOrder(){
   // Pickup must pay online
   if(isPickup && selectedPayMethod === 'cod'){
     selectPayMethod('phonepe');
-    showToast('🏪 Store pickup requires online payment — please pay via PhonePe/UPI','err');
+    showToast('🏪 Store pickup requires online payment — please pay via Razorpay','err');
     return;
   }
   // If bakery is currently closed, auto-set to tomorrow
@@ -9593,7 +9605,7 @@ function submitOrder(){
     time: delivDateTime, delivDate: delivDate, delivTime: time,
     items:cart.map(c=>({...c})), subtotal:sub, delivery:fee, total,
     timestamp:new Date().toLocaleString('en-IN'), status:'pending',
-    payMethod: isPickup ? 'phonepe' : selectedPayMethod,
+    payMethod: isPickup ? 'razorpay' : selectedPayMethod,
     orderType: isPickup ? 'pickup' : 'delivery',
     couponCode: appliedCoupon ? (document.getElementById('couponInput')?.value||'').trim().toUpperCase() : '',
     couponDiscount: couponDisc,
@@ -9602,13 +9614,16 @@ function submitOrder(){
   };
   
   // ── ADVANCE PAYMENT CHECK ──
-  // Check per-flavour advance first, fall back to product-level advance
+  // Check per-flavour+weight advance first, fall back to flavour-level, then product-level
   const maxAdvance = cart.reduce((mx, ci) => {
     const prod = PRODS.find(p => String(p.id) === String(ci.pid));
     if(!prod) return mx;
-    // Per-flavour advance takes priority
     if(prod.flavours && prod.flavours.length > 0 && ci.flvName){
       const flv = prod.flavours.find(f=>f.name && f.name.toLowerCase()===(ci.flvName||'').toLowerCase());
+      if(flv && flv.variants && ci.variant){
+        const vnt = flv.variants.find(v=>v.label && v.label.toLowerCase()===(ci.variant||'').toLowerCase());
+        if(vnt && vnt.advanceAmt > 0) return Math.max(mx, parseInt(vnt.advanceAmt));
+      }
       if(flv && flv.advanceAmt > 0) return Math.max(mx, parseInt(flv.advanceAmt));
     }
     return Math.max(mx, prod.advanceAmt ? parseInt(prod.advanceAmt) : 0);
@@ -9616,7 +9631,7 @@ function submitOrder(){
 
   if(maxAdvance > 0 && order.payMethod === 'cod'){
     // Block COD entirely when advance is required
-    showToast('💳 This order requires advance payment — please pay online', 'err');
+    showToast('💳 This order requires advance payment — please pay via Razorpay', 'err');
     selectPayMethod('phonepe');
     return;
   }
@@ -9625,12 +9640,13 @@ function submitOrder(){
     pendingOrder = order;
     closeOrderModal();
     if(maxAdvance > 0){
-      // Show advance screen — customer can pay advance OR full amount
+      // Show advance screen — customer pays advance via Razorpay
       order.advanceAmt = maxAdvance;
       order.advancePaid = false;
       openAdvancePayModal(maxAdvance, total, order);
     } else {
-      openPhonePeModal(total, order);
+      // Full payment via Razorpay
+      processRazorpayFull(total);
     }
   } else {
     finalizeOrder(order, 'COD');
@@ -9921,7 +9937,7 @@ async function openAdvancePayModal(advAmt, fullTotal, order){
       <div style="display:inline-block;background:linear-gradient(135deg,rgba(200,146,58,.18),rgba(200,146,58,.08));border:1px solid rgba(200,146,58,.35);border-radius:12px;padding:6px 18px;margin-bottom:14px;">
         <span style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#C8923A;">💳 Advance Required</span>
       </div>
-      <div style="font-family:Playfair Display,serif;font-size:20px;color:var(--choco);font-weight:700;margin-bottom:4px;">Pay ₹${advAmt} Advance via UPI</div>
+      <div style="font-family:Playfair Display,serif;font-size:20px;color:var(--choco);font-weight:700;margin-bottom:4px;">Pay ₹${advAmt} Advance via Razorpay</div>
       <div style="font-size:12px;color:var(--text-mid);margin-bottom:4px;">This item requires an advance to confirm your order.</div>
       <div style="font-size:12px;color:var(--text-mid);margin-bottom:16px;">Balance <strong style="color:var(--choco);">₹${balDue}</strong> will be collected on delivery.</div>
 
@@ -9969,7 +9985,7 @@ function confirmAdvancePayment(advAmt, fullTotal){
     finalizeOrder(pendingOrder, `Advance ₹${advAmt} via UPI · UTR:${utr} + COD ₹${fullTotal - advAmt} on delivery`);
     pendingOrder = null;
   }
-  closePhonePeModal();
+  
   showToast('✅ Advance paid! Order confirmed. Balance ₹' + (fullTotal - advAmt) + ' on delivery.', 'ok');
 }
 
@@ -9984,7 +10000,7 @@ function onPaymentSuccess(txnId){
     finalizeOrder(pendingOrder, `PhonePe · ${txnId}`);
     pendingOrder = null;
   }
-  closePhonePeModal();
+  
   // Open track modal and auto-show the just-placed order
   setTimeout(()=>openTrackModal(placedOrderId), 500);
 }
@@ -10122,14 +10138,14 @@ function confirmAdvancePayment(advanceAmt, total){
     const placedOrderId = pendingOrder.id;
     finalizeOrder(pendingOrder, pendingOrder.payNote);
     pendingOrder = null;
-    closePhonePeModal();
+    
     setTimeout(()=>openTrackModal(placedOrderId), 500);
   }
 }
 
 function processRazorpayAdvance(advanceAmt, total){
   const key = window._advRzpKey || '';
-  if(!key){ showToast('Razorpay not configured — use UPI below', 'err'); return; }
+  if(!key){ showToast('⚠️ Razorpay not configured — contact bakery', 'err'); return; }
   const ownerName = localStorage.getItem('ub_bname') || 'Udaya Bakery';
   const orderId = pendingOrder ? pendingOrder.id : ('UB-ADV-' + Date.now());
 
@@ -10159,13 +10175,13 @@ function processRazorpayAdvance(advanceAmt, total){
             const placedOrderId = pendingOrder.id;
             finalizeOrder(pendingOrder, pendingOrder.payNote);
             pendingOrder = null;
-            closePhonePeModal();
+            
             setTimeout(()=>openTrackModal(placedOrderId), 500);
           }
         },
         modal: {
           ondismiss: function(){
-            showToast('Payment cancelled — try again or use UPI below', 'err');
+            showToast('Payment cancelled — please try again', 'err');
           }
         }
       });
@@ -10179,7 +10195,7 @@ function processRazorpayAdvance(advanceAmt, total){
     const s = document.createElement('script');
     s.src = 'https://checkout.razorpay.com/v1/checkout.js';
     s.onload = launchRzp;
-    s.onerror = function(){ showToast('Could not load Razorpay — use UPI below', 'err'); };
+    s.onerror = function(){ showToast('Could not load Razorpay — please refresh and try again', 'err'); };
     document.head.appendChild(s);
   } else {
     launchRzp();
@@ -10188,7 +10204,7 @@ function processRazorpayAdvance(advanceAmt, total){
 
 function processRazorpayFull(total){
   const key = window._advRzpKey || '';
-  if(!key){ showToast('Razorpay not configured — use UPI below', 'err'); return; }
+  if(!key){ showToast('⚠️ Razorpay not configured — contact bakery', 'err'); return; }
   const ownerName = localStorage.getItem('ub_bname') || 'Udaya Bakery';
   const orderId = pendingOrder ? pendingOrder.id : ('UB-' + Date.now());
 
@@ -10219,11 +10235,11 @@ function processRazorpayFull(total){
             const placedOrderId = pendingOrder.id;
             finalizeOrder(pendingOrder, pendingOrder.payNote);
             pendingOrder = null;
-            closePhonePeModal();
+            
             setTimeout(()=>openTrackModal(placedOrderId), 500);
           }
         },
-        modal: { ondismiss: function(){ showToast('Payment cancelled — try again or use UPI below', 'err'); } }
+        modal: { ondismiss: function(){ showToast('Payment cancelled — please try again', 'err'); } }
       });
       rzp.open();
     } catch(e){ showToast('Razorpay error: ' + e.message, 'err'); }
@@ -10233,7 +10249,7 @@ function processRazorpayFull(total){
     const s = document.createElement('script');
     s.src = 'https://checkout.razorpay.com/v1/checkout.js';
     s.onload = launchRzpFull;
-    s.onerror = function(){ showToast('Could not load Razorpay — use UPI below', 'err'); };
+    s.onerror = function(){ showToast('Could not load Razorpay — please refresh and try again', 'err'); };
     document.head.appendChild(s);
   } else { launchRzpFull(); }
 }
@@ -11044,10 +11060,6 @@ function renderAdminTab(){
   else if(adminTab==='cakebuilder') el.innerHTML = buildCakeBuilderAdminTab();
   else if(adminTab==='videos') el.innerHTML = buildVideosAdminTab();
   else if(adminTab==='policies'){ el.innerHTML = buildPoliciesAdminTab(); initPoliciesAdmin(); }
-  else if(adminTab==='expenses') el.innerHTML = buildExpensesTab();
-  else if(adminTab==='combos') el.innerHTML = buildCombosTab();
-  else if(adminTab==='reconciliation') el.innerHTML = buildReconciliationTab();
-  else if(adminTab==='razorpay') el.innerHTML = buildRazorpayTab();
   else if(adminTab==='designer'){
     try {
       el.innerHTML = buildDesignerTab();
@@ -11122,7 +11134,6 @@ function buildDash(){
       <div style="font-size:11px;color:rgba(252,211,77,.6);">Tap Orders tab to confirm</div></div>
     </div>`:'<div style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:12px;padding:10px 16px;font-size:13px;color:#4ADE80;">✅ All caught up!</div>'}
   </div>
-  ${(()=>{const lowItems=PRODS.filter(p=>p.stockQty!=null&&p.stockQty<=5&&p.inStock!==false);return lowItems.length?`<div style="background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.3);border-radius:14px;padding:13px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;" onclick="switchTab('products')"><span style="font-size:22px;flex-shrink:0;">🔴</span><div style="flex:1;"><div style="font-size:13px;font-weight:800;color:#F87171;margin-bottom:4px;">⚠️ Low Stock Alert — ${lowItems.length} product${lowItems.length>1?'s':''} running low</div><div style="font-size:12px;color:rgba(253,246,236,.65);line-height:1.6;">${lowItems.map(p=>`${p.emoji||'🎂'} <strong style="color:#FCA5A5;">${p.name}</strong>: ${p.stockQty} remaining`).join(' &nbsp;·&nbsp; ')}</div><div style="font-size:11px;color:rgba(239,68,68,.7);margin-top:5px;font-weight:700;">Tap to go to Products → update stock</div></div></div>`:'';})()}
 
   <!-- Stats Grid -->
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
@@ -11229,27 +11240,15 @@ function buildProdsTab(){
   </div>
   <div style="overflow-x:auto;">
   <table class="aptable">
-    <thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Variants</th><th>Qty</th><th>Stock</th><th>Actions</th></tr></thead>
+    <thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Variants</th><th>Stock</th><th>Actions</th></tr></thead>
     <tbody>${PRODS.map(p=>{
       const cat = CATS.find(c=>c.id===p.cat);
       const isOos = p.inStock===false;
-      const qty = p.stockQty != null ? p.stockQty : '∞';
-      const LOW_STOCK_THRESHOLD = 5;
-      const isLow = p.stockQty != null && p.stockQty <= LOW_STOCK_THRESHOLD && p.stockQty > 0;
-      const rowClass = isOos ? 'ub-low-stock-row' : (isLow ? 'ub-low-stock-row' : '');
-      return `<tr class="${rowClass}">
+      return `<tr class="${isOos?'ub-low-stock-row':''}">
         <td><div style="width:46px;height:46px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:22px;">${p.image?`<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;">`:`${p.emoji}`}</div></td>
-        <td><div style="font-weight:600;color:rgba(253,246,236,.87);max-width:160px;">${p.name}${p.badge?`<span style="display:inline-block;background:rgba(200,146,58,.2);color:#E8B96A;font-size:9px;padding:1px 6px;border-radius:6px;margin-left:5px;font-weight:700;">${p.badge}</span>`:''}</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:2px;">₹${p.price} base</div>${isOos?'<span class="ub-low-stock-badge">⊘ Out of Stock</span>':isLow?'<span class="ub-low-stock-badge">⚠️ Low Stock</span>':''}</td>
+        <td><div style="font-weight:600;color:rgba(253,246,236,.87);max-width:160px;">${p.name}${p.badge?`<span style="display:inline-block;background:rgba(200,146,58,.2);color:#E8B96A;font-size:9px;padding:1px 6px;border-radius:6px;margin-left:5px;font-weight:700;">${p.badge}</span>`:''}</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:2px;">₹${p.price} base</div>${isOos?'<span class="ub-low-stock-badge">⊘ Out of Stock</span>':''}</td>
         <td style="white-space:nowrap;">${cat?cat.emoji+' '+cat.name:p.cat}</td>
         <td style="max-width:180px;">${p.variants.map(v=>`<span style="display:inline-block;background:rgba(200,146,58,.1);border-radius:6px;padding:2px 8px;margin:2px;font-size:11px;color:rgba(253,246,236,.6);">${v.label}: ₹${v.price}</span>`).join('')}</td>
-        <td>
-          <div style="display:flex;align-items:center;gap:4px;">
-            <input type="number" min="0" value="${p.stockQty != null ? p.stockQty : ''}" placeholder="∞" title="Stock quantity (blank=unlimited)"
-              style="width:54px;background:rgba(255,255,255,.07);border:1.5px solid rgba(200,146,58,.2);border-radius:8px;padding:5px 6px;font-family:Jost,sans-serif;font-size:12px;color:#FDF6EC;text-align:center;"
-              onchange="ubSetStockQty(${p.id},this.value)">
-          </div>
-          ${isLow?`<div style="font-size:9px;color:#FBBF24;margin-top:2px;font-weight:700;">⚠️ ${p.stockQty} left</div>`:''}
-        </td>
         <td>
           <label class="ub-sold-toggle" title="${isOos?'Click to restore stock':'Click to mark Sold Out'}">
             <input type="checkbox" ${isOos?'checked':''} onchange="ubToggleStock(${p.id})">
@@ -11261,370 +11260,11 @@ function buildProdsTab(){
         <td style="white-space:nowrap;display:flex;gap:5px;align-items:center;">
           <button class="abtn-edit" onclick="startEdit(${p.id})" style="padding:6px 10px;">✏️</button>
           <button class="abtn-del" onclick="delProd(${p.id})" style="padding:6px 10px;">🗑</button>
-          <button onclick="ubShowOrderQR('${p.id}')" style="background:rgba(99,102,241,.15);color:#A5B4FC;border:1px solid rgba(99,102,241,.3);border-radius:8px;padding:6px 8px;font-size:12px;cursor:pointer;" title="Order QR Code">📱</button>
         </td>
       </tr>`;}).join('')}
     </tbody>
-  </table></div>
-  ${(()=>{const lowItems=PRODS.filter(p=>p.stockQty!=null&&p.stockQty<=5&&p.inStock!==false);return lowItems.length?`<div style="margin-top:14px;background:rgba(251,191,36,.08);border:1.5px solid rgba(251,191,36,.3);border-radius:14px;padding:12px 16px;display:flex;align-items:flex-start;gap:10px;"><span style="font-size:22px;">⚠️</span><div><div style="font-size:13px;font-weight:700;color:#FCD34D;margin-bottom:4px;">Low Stock Alert — ${lowItems.length} item${lowItems.length>1?'s':''}</div><div style="font-size:12px;color:rgba(253,246,236,.6);">${lowItems.map(p=>`${p.emoji} ${p.name}: <strong style="color:#FBBF24;">${p.stockQty} left</strong>`).join(' · ')}</div></div></div>`:'';})()}`;
+  </table></div>`;
 }
-
-function ubSetStockQty(pid, val){
-  const p = PRODS.find(x=>String(x.id)===String(pid));
-  if(!p) return;
-  const qty = val === '' ? null : parseInt(val);
-  p.stockQty = qty;
-  if(db) db.collection('products').doc(String(pid)).set({stockQty: qty!=null?qty:null}, {merge:true}).catch(()=>{});
-  showToast(qty != null ? `📦 Stock set to ${qty} for ${p.name}` : `📦 ${p.name} — unlimited stock`, 'ok');
-  renderAdminTab();
-}
-
-// ── ORDER QR CODE ──
-function ubShowOrderQR(pid){
-  const p = PRODS.find(x=>String(x.id)===String(pid));
-  if(!p) return;
-  const url = window.location.href.split('?')[0] + '?order=' + pid;
-  const modal = document.createElement('div');
-  modal.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);';
-  modal.innerHTML=`<div style="background:linear-gradient(135deg,#1E0C02,#2A1208);border:1px solid rgba(200,146,58,.35);border-radius:24px;padding:32px 28px;max-width:340px;width:90%;text-align:center;position:relative;">
-    <button onclick="this.closest('[style*=position]').remove()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;">✕</button>
-    <div style="font-size:36px;margin-bottom:8px;">${p.emoji||'🎂'}</div>
-    <div style="font-family:'Playfair Display',serif;font-size:18px;color:#E8B96A;margin-bottom:4px;">${p.name}</div>
-    <div style="font-size:12px;color:rgba(253,246,236,.45);margin-bottom:18px;">Scan to order this product directly</div>
-    <div style="background:#fff;border-radius:16px;padding:12px;display:inline-block;margin-bottom:14px;">
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=190x190&data=${encodeURIComponent(url)}" width="190" height="190" alt="QR Code" style="display:block;border-radius:8px;">
-    </div>
-    <div style="font-size:10px;color:rgba(253,246,236,.3);word-break:break-all;margin-bottom:14px;">${url}</div>
-    <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${url.replace(/'/g,"\\'")}').then(()=>showToast('✅ Link copied!','ok'))" style="background:rgba(200,146,58,.2);color:#E8B96A;border:1px solid rgba(200,146,58,.35);border-radius:10px;padding:9px 18px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">📋 Copy Link</button>
-  </div>`;
-  document.body.appendChild(modal);
-  modal.addEventListener('click',function(e){if(e.target===modal)modal.remove();});
-}
-
-// ══════════════════════════════════════
-//  💸 EXPENSE TRACKER TAB
-// ══════════════════════════════════════
-function ubGetExpenses(){ try{ return JSON.parse(localStorage.getItem('ub_expenses')||'[]'); }catch(e){ return []; }}
-function ubSaveExpenses(list){ localStorage.setItem('ub_expenses', JSON.stringify(list)); if(db) db.collection('categories').doc('ubExpenses').set({list:list.slice(-500),updatedAt:Date.now()},{merge:true}).catch(()=>{}); }
-
-function buildExpensesTab(){
-  const expenses = ubGetExpenses();
-  const total = expenses.reduce((s,e)=>s+(parseFloat(e.amount)||0), 0);
-  const today = new Date().toDateString();
-  const todayTotal = expenses.filter(e=>new Date(e.date).toDateString()===today).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);
-  const byCategory = {};
-  expenses.forEach(e=>{ byCategory[e.category]=(byCategory[e.category]||0)+(parseFloat(e.amount)||0); });
-  const topCats = Object.entries(byCategory).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  return `<div style="max-width:860px;">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
-    <div><h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">💸 Expense Tracker</h2><p style="font-size:12px;color:rgba(253,246,236,.38);">Track bakery expenses — ingredients, utilities, salaries &amp; more</p></div>
-    <button onclick="ubExportExpenses()" style="background:rgba(200,146,58,.12);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:8px 16px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">📤 Export CSV</button>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
-    <div class="kcard"><div class="klbl">Total Expenses</div><div class="kval">₹${total.toLocaleString('en-IN')}</div></div>
-    <div class="kcard"><div class="klbl">Today</div><div class="kval">₹${todayTotal.toLocaleString('en-IN')}</div></div>
-    <div class="kcard"><div class="klbl">Entries</div><div class="kval">${expenses.length}</div></div>
-  </div>
-  <div class="acard" style="margin-bottom:20px;">
-    <h3>➕ Add Expense</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div class="af-group"><label>Category</label>
-        <select class="af-sel" id="exp_cat">
-          <option>🌾 Ingredients</option><option>⚡ Electricity</option><option>💧 Water</option><option>👷 Salaries</option><option>📦 Packaging</option><option>🔧 Maintenance</option><option>🚚 Delivery</option><option>📢 Marketing</option><option>🏠 Rent</option><option>🧴 Cleaning</option><option>📋 Misc</option>
-        </select>
-      </div>
-      <div class="af-group"><label>Amount (₹) *</label><input class="af-inp" type="number" id="exp_amt" placeholder="e.g. 500" min="0"></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div class="af-group"><label>Date</label><input class="af-inp" type="date" id="exp_date" value="${new Date().toISOString().split('T')[0]}"></div>
-      <div class="af-group"><label>Description</label><input class="af-inp" id="exp_desc" placeholder="e.g. Flour 50kg, Sugar"></div>
-    </div>
-    <div class="af-group"><label>Notes (optional)</label><textarea class="af-ta" id="exp_notes" rows="2" placeholder="Vendor name, receipt #..."></textarea></div>
-    <button class="abtn" onclick="ubAddExpense()">💾 Log Expense</button>
-  </div>
-  ${topCats.length?`<div class="acard" style="margin-bottom:20px;"><h3>📊 By Category</h3><div class="asub">Spending breakdown</div>${topCats.map(([cat,amt])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div style="font-size:13px;color:rgba(253,246,236,.75);font-weight:600;">${cat}</div><div style="font-family:'Playfair Display',serif;font-size:15px;color:#E8B96A;font-weight:700;">₹${amt.toLocaleString('en-IN')}</div></div>`).join('')}</div>`:''}
-  <div class="acard"><h3>📋 Recent Expenses</h3><div class="asub">Latest ${Math.min(expenses.length,50)} entries</div>
-    ${expenses.length===0?'<div style="text-align:center;padding:32px;color:rgba(253,246,236,.25);">No expenses logged yet</div>':
-    '<div style="overflow-x:auto;"><table class="aptable"><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th></th></tr></thead><tbody>'
-    +[...expenses].reverse().slice(0,50).map((e,i)=>`<tr><td style="font-size:12px;">${new Date(e.date).toLocaleDateString('en-IN')}</td><td style="font-size:12px;">${e.category}</td><td style="font-size:12px;color:rgba(253,246,236,.55);">${e.desc||'—'}</td><td style="color:#E8B96A;font-weight:700;">₹${parseFloat(e.amount).toLocaleString('en-IN')}</td><td><button onclick="ubDeleteExpense('${e.id}')" style="background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:4px 8px;font-size:11px;cursor:pointer;">🗑</button></td></tr>`).join('')
-    +'</tbody></table></div>'}
-  </div></div>`;
-}
-
-function ubAddExpense(){
-  const cat  = document.getElementById('exp_cat')?.value || 'Misc';
-  const amt  = parseFloat(document.getElementById('exp_amt')?.value||'0');
-  const date = document.getElementById('exp_date')?.value || new Date().toISOString().split('T')[0];
-  const desc = (document.getElementById('exp_desc')?.value||'').trim();
-  const notes= (document.getElementById('exp_notes')?.value||'').trim();
-  if(!amt||isNaN(amt)||amt<=0){ showToast('⚠️ Enter a valid amount','err'); return; }
-  const list = ubGetExpenses();
-  list.push({id:'exp'+Date.now(), category:cat, amount:amt, date, desc, notes, addedAt:Date.now()});
-  ubSaveExpenses(list);
-  showToast('✅ Expense logged!','ok');
-  renderAdminTab();
-}
-function ubDeleteExpense(id){
-  const list = ubGetExpenses().filter(e=>e.id!==id);
-  ubSaveExpenses(list);
-  showToast('🗑 Expense deleted','ok');
-  renderAdminTab();
-}
-function ubExportExpenses(){
-  const list = ubGetExpenses();
-  if(!list.length){ showToast('No expenses to export','err'); return; }
-  const header='Date,Category,Description,Amount,Notes';
-  const rows=list.map(e=>`"${e.date}","${e.category}","${(e.desc||'').replace(/"/g,"'")}",${e.amount},"${(e.notes||'').replace(/"/g,"'")}"`);
-  const blob=new Blob([header+'\n'+rows.join('\n')],{type:'text/csv'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`expenses_${Date.now()}.csv`;a.click();
-  showToast('📤 Expenses exported!','ok');
-}
-
-// ══════════════════════════════════════
-//  🎁 COMBO OFFERS TAB
-// ══════════════════════════════════════
-function ubGetCombos(){ try{ return JSON.parse(localStorage.getItem('ub_combos')||'[]'); }catch(e){ return []; }}
-function ubSaveCombos(list){
-  localStorage.setItem('ub_combos', JSON.stringify(list));
-  if(db) db.collection('categories').doc('ubCombos').set({list,updatedAt:Date.now()},{merge:true}).catch(()=>{});
-}
-
-function buildCombosTab(){
-  const combos = ubGetCombos();
-  return `<div style="max-width:860px;">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
-    <div><h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">🎁 Combo Offers</h2><p style="font-size:12px;color:rgba(253,246,236,.38);">Create bundle deals — owner sets products &amp; prices. Shown to customers as special combo packages.</p></div>
-  </div>
-  <div class="acard" style="margin-bottom:20px;">
-    <h3>➕ Create New Combo</h3>
-    <div class="af-row">
-      <div class="af-group"><label>Combo Name *</label><input class="af-inp" id="cb_name" placeholder="e.g. Birthday Bonanza, Family Treat"></div>
-      <div class="af-group"><label>Emoji Icon</label><input class="af-inp" id="cb_emoji" value="🎁" style="font-size:20px;max-width:80px;"></div>
-    </div>
-    <div class="af-group"><label>Description</label><input class="af-inp" id="cb_desc" placeholder="What is included in this combo..."></div>
-    <div class="af-row">
-      <div class="af-group"><label>Combo Price (₹) * — you set this</label><input class="af-inp" type="number" id="cb_price" placeholder="e.g. 999" min="0"></div>
-      <div class="af-group"><label>Original MRP (₹) — show savings</label><input class="af-inp" type="number" id="cb_mrp" placeholder="e.g. 1250 (crossed out)" min="0"></div>
-    </div>
-    <div class="af-group">
-      <label>Products Included (select one or more)</label>
-      <div style="background:rgba(255,255,255,.03);border:1.5px solid rgba(200,146,58,.18);border-radius:12px;padding:12px;max-height:200px;overflow-y:auto;">
-        ${PRODS.length===0?'<div style="color:rgba(253,246,236,.3);font-size:12px;">No products yet — add products first</div>':
-        PRODS.map(p=>`<label style="display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);">
-          <input type="checkbox" id="cbp_${p.id}" style="width:16px;height:16px;accent-color:#C8923A;">
-          <span style="font-size:13px;color:rgba(253,246,236,.8);">${p.emoji||'🎂'} ${p.name}</span>
-          <span style="font-size:11px;color:rgba(253,246,236,.35);margin-left:auto;">₹${p.price}</span>
-        </label>`).join('')}
-      </div>
-    </div>
-    <div class="af-row">
-      <div class="af-group"><label>Valid From</label><input class="af-inp" type="date" id="cb_from" value="${new Date().toISOString().split('T')[0]}"></div>
-      <div class="af-group"><label>Valid Until (blank = no expiry)</label><input class="af-inp" type="date" id="cb_to"></div>
-    </div>
-    <div class="af-group"><label>Badge Label (shown on combo card)</label><input class="af-inp" id="cb_badge" placeholder="e.g. Best Value, Fan Favourite"></div>
-    <button class="abtn" onclick="ubSaveCombo()">🎁 Create Combo</button>
-  </div>
-  <div class="acard"><h3>All Combos (${combos.length})</h3>
-    ${combos.length===0?'<div style="text-align:center;padding:40px;color:rgba(253,246,236,.25);">No combos yet — create your first combo above</div>':
-    combos.map(c=>{
-      const todayStr=new Date().toISOString().split('T')[0];
-      const expired=c.to&&c.to<todayStr;
-      const savings=c.mrp&&c.price?c.mrp-c.price:0;
-      return `<div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,146,58,${expired?'.08':'.2'});border-radius:14px;padding:16px;margin-bottom:12px;${expired?'opacity:.5':''}">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-          <div style="flex:1;">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-              <span style="font-size:24px;">${c.emoji||'🎁'}</span>
-              <div>
-                <div style="font-family:'Playfair Display',serif;font-size:16px;color:#E8B96A;font-weight:700;">${c.name}</div>
-                ${c.badge?`<span style="background:rgba(200,146,58,.2);color:#E8B96A;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;">${c.badge}</span>`:''}
-                ${expired?`<span style="background:rgba(239,68,68,.15);color:#F87171;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;margin-left:4px;">EXPIRED</span>`:''}
-                ${c.active===false?`<span style="background:rgba(255,255,255,.05);color:rgba(253,246,236,.3);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;margin-left:4px;">DISABLED</span>`:''}
-              </div>
-            </div>
-            <div style="font-size:12px;color:rgba(253,246,236,.55);margin-bottom:6px;">${c.desc||''}</div>
-            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-              <span style="font-family:'Playfair Display',serif;font-size:20px;color:#4ADE80;font-weight:700;">₹${c.price}</span>
-              ${c.mrp?`<span style="font-size:13px;color:rgba(253,246,236,.3);text-decoration:line-through;">₹${c.mrp}</span>`:''}
-              ${savings>0?`<span style="background:rgba(74,222,128,.12);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;">Save ₹${savings}</span>`:''}
-            </div>
-            ${c.items&&c.items.length?`<div style="font-size:11px;color:rgba(253,246,236,.4);margin-top:6px;">Includes: ${c.items.map(id=>{const p=PRODS.find(x=>String(x.id)===String(id));return p?p.emoji+' '+p.name:'?';}).join(', ')}</div>`:''}
-            ${c.from||c.to?`<div style="font-size:10px;color:rgba(253,246,236,.3);margin-top:4px;">Valid: ${c.from||'—'} to ${c.to||'no expiry'}</div>`:''}
-          </div>
-          <div style="display:flex;gap:6px;flex-shrink:0;">
-            <button onclick="ubToggleCombo('${c.id}')" style="background:rgba(200,146,58,.12);color:#E8B96A;border:1px solid rgba(200,146,58,.25);border-radius:9px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;">${c.active===false?'▶ Enable':'⏸ Disable'}</button>
-            <button onclick="ubDeleteCombo('${c.id}')" class="abtn-del" style="padding:7px 10px;">🗑</button>
-          </div>
-        </div>
-      </div>`;
-    }).join('')}
-  </div></div>`;
-}
-
-function ubSaveCombo(){
-  const name  = (document.getElementById('cb_name')?.value||'').trim();
-  const emoji = (document.getElementById('cb_emoji')?.value||'').trim()||'🎁';
-  const desc  = (document.getElementById('cb_desc')?.value||'').trim();
-  const price = parseFloat(document.getElementById('cb_price')?.value||'0');
-  const mrp   = parseFloat(document.getElementById('cb_mrp')?.value||'0')||null;
-  const from  = document.getElementById('cb_from')?.value||'';
-  const to    = document.getElementById('cb_to')?.value||'';
-  const badge = (document.getElementById('cb_badge')?.value||'').trim();
-  if(!name){ showToast('⚠️ Combo name required','err'); return; }
-  if(!price||price<=0){ showToast('⚠️ Set a combo price','err'); return; }
-  const items = PRODS.filter(p=>document.getElementById('cbp_'+p.id)?.checked).map(p=>String(p.id));
-  const combos = ubGetCombos();
-  combos.push({id:'combo'+Date.now(), name, emoji, desc, price, mrp, from, to, badge, items, active:true, createdAt:Date.now()});
-  ubSaveCombos(combos);
-  showToast('🎁 Combo created!','ok');
-  renderAdminTab();
-}
-function ubToggleCombo(id){
-  const combos=ubGetCombos(); const c=combos.find(x=>x.id===id); if(!c) return;
-  c.active=c.active===false?true:false; ubSaveCombos(combos);
-  showToast(c.active?'✅ Combo enabled!':'⏸ Combo disabled','ok'); renderAdminTab();
-}
-function ubDeleteCombo(id){
-  if(!confirm('Delete this combo?')) return;
-  ubSaveCombos(ubGetCombos().filter(x=>x.id!==id));
-  showToast('🗑 Combo deleted','ok'); renderAdminTab();
-}
-
-// ══════════════════════════════════════
-//  🧾 PAYMENT RECONCILIATION TAB
-// ══════════════════════════════════════
-function buildReconciliationTab(){
-  const days=30;
-  const now=new Date();
-  const cutoff=new Date(now-days*24*60*60*1000);
-  const recentOrders=ORDERS.filter(o=>new Date(o.timestamp)>=cutoff&&o.status!=='cancelled');
-  const totalRevenue=recentOrders.reduce((s,o)=>s+(o.total||0),0);
-  const codOrders=recentOrders.filter(o=>!o.payMethod||o.payMethod==='cod');
-  const onlineOrders=recentOrders.filter(o=>o.payMethod&&o.payMethod!=='cod');
-  const codTotal=codOrders.reduce((s,o)=>s+(o.total||0),0);
-  const onlineTotal=onlineOrders.reduce((s,o)=>s+(o.total||0),0);
-  const expenses=ubGetExpenses();
-  const recentExp=expenses.filter(e=>new Date(e.date)>=cutoff);
-  const totalExp=recentExp.reduce((s,e)=>s+(parseFloat(e.amount)||0),0);
-  const netProfit=totalRevenue-totalExp;
-  const daily=[];
-  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toDateString();const rev=ORDERS.filter(o=>new Date(o.timestamp).toDateString()===ds&&o.status!=='cancelled').reduce((s,o)=>s+(o.total||0),0);const exp=expenses.filter(e=>new Date(e.date).toDateString()===ds).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);daily.push({label:d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric'}),rev,exp,net:rev-exp});}
-  return `<div style="max-width:860px;">
-  <div style="margin-bottom:20px;"><h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">🧾 Payment Reconciliation</h2><p style="font-size:12px;color:rgba(253,246,236,.38);">Last 30 days · Revenue vs Expenses · Cash vs Online</p></div>
-  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;">
-    <div class="kcard"><div class="klbl">Total Revenue (30d)</div><div class="kval" style="color:#4ADE80;">₹${totalRevenue.toLocaleString('en-IN')}</div></div>
-    <div class="kcard"><div class="klbl">Total Expenses (30d)</div><div class="kval" style="color:#F87171;">₹${totalExp.toLocaleString('en-IN')}</div></div>
-    <div class="kcard"><div class="klbl">Net Profit</div><div class="kval" style="color:${netProfit>=0?'#4ADE80':'#F87171'};">${netProfit>=0?'+':'-'}₹${Math.abs(netProfit).toLocaleString('en-IN')}</div></div>
-    <div class="kcard"><div class="klbl">Profit Margin</div><div class="kval" style="color:${totalRevenue>0&&netProfit/totalRevenue>0.2?'#4ADE80':'#FBBF24'};">${totalRevenue>0?Math.round(netProfit/totalRevenue*100):0}%</div></div>
-  </div>
-  <div class="acard" style="margin-bottom:20px;">
-    <h3>💳 Payment Method Breakdown</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px;">
-      <div style="background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);border-radius:14px;padding:16px;text-align:center;">
-        <div style="font-size:28px;margin-bottom:4px;">💵</div>
-        <div style="font-family:'Playfair Display',serif;font-size:22px;color:#FCD34D;font-weight:700;">₹${codTotal.toLocaleString('en-IN')}</div>
-        <div style="font-size:11px;color:rgba(253,246,236,.4);margin-top:4px;">Cash on Delivery · ${codOrders.length} orders</div>
-      </div>
-      <div style="background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);border-radius:14px;padding:16px;text-align:center;">
-        <div style="font-size:28px;margin-bottom:4px;">📱</div>
-        <div style="font-family:'Playfair Display',serif;font-size:22px;color:#A5B4FC;font-weight:700;">₹${onlineTotal.toLocaleString('en-IN')}</div>
-        <div style="font-size:11px;color:rgba(253,246,236,.4);margin-top:4px;">UPI / Online · ${onlineOrders.length} orders</div>
-      </div>
-    </div>
-  </div>
-  <div class="acard" style="margin-bottom:20px;">
-    <h3>📅 Daily P&amp;L — Last 7 Days</h3>
-    <div class="asub">Revenue vs Expenses vs Net per day</div>
-    <div style="overflow-x:auto;margin-top:14px;">
-      <table class="aptable"><thead><tr><th>Day</th><th style="color:#4ADE80;">Revenue</th><th style="color:#F87171;">Expenses</th><th>Net</th></tr></thead><tbody>
-      ${daily.map(d=>`<tr><td style="font-size:12px;color:rgba(253,246,236,.6);">${d.label}</td><td style="color:#4ADE80;font-weight:700;">₹${d.rev.toLocaleString('en-IN')}</td><td style="color:#F87171;">₹${d.exp.toLocaleString('en-IN')}</td><td style="font-weight:700;color:${d.net>=0?'#4ADE80':'#F87171'};">${d.net>=0?'+':'-'}₹${Math.abs(d.net).toLocaleString('en-IN')}</td></tr>`).join('')}
-      </tbody></table>
-    </div>
-  </div>
-  <div class="acard">
-    <h3>📋 Recent Orders (30d)</h3>
-    <div class="asub">${recentOrders.length} completed orders</div>
-    ${recentOrders.length===0?'<div style="text-align:center;padding:24px;color:rgba(253,246,236,.25);">No orders in last 30 days</div>':
-    '<div style="overflow-x:auto;"><table class="aptable"><thead><tr><th>Order</th><th>Customer</th><th>Method</th><th>Amount</th><th>Status</th></tr></thead><tbody>'
-    +[...recentOrders].reverse().slice(0,30).map(o=>`<tr><td style="font-size:11px;color:#E8B96A;">${o.id}</td><td style="font-size:12px;">${o.name||'?'}</td><td style="font-size:11px;"><span style="background:${o.payMethod&&o.payMethod!=='cod'?'rgba(99,102,241,.15)':'rgba(251,191,36,.12)'};color:${o.payMethod&&o.payMethod!=='cod'?'#A5B4FC':'#FCD34D'};padding:2px 7px;border-radius:6px;font-weight:700;">${o.payMethod==='cod'||!o.payMethod?'💵 COD':'📱 Online'}</span></td><td style="color:#E8B96A;font-weight:700;">₹${(o.total||0).toLocaleString('en-IN')}</td><td><span class="obadge ${o.status}">${o.status}</span></td></tr>`).join('')
-    +'</tbody></table></div>'}
-  </div></div>`;
-}
-
-// ══════════════════════════════════════
-//  💳 RAZORPAY DASHBOARD TAB
-// ══════════════════════════════════════
-function buildRazorpayTab(){
-  const rzpOrders=ORDERS.filter(o=>o.payMethod==='razorpay'||o.rzpPaymentId);
-  const rzpRevenue=rzpOrders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+(o.total||0),0);
-  const rzpPending=rzpOrders.filter(o=>o.status==='pending').length;
-  return `<div style="max-width:860px;">
-  <div style="margin-bottom:20px;"><h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">💳 Razorpay Dashboard</h2><p style="font-size:12px;color:rgba(253,246,236,.38);">Monitor Razorpay transactions, key status &amp; payment analytics</p></div>
-  <div style="background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(99,102,241,.06));border:1.5px solid rgba(99,102,241,.3);border-radius:16px;padding:20px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-    <div style="width:52px;height:52px;background:linear-gradient(135deg,#6366F1,#4338CA);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">💳</div>
-    <div style="flex:1;"><div style="font-size:16px;font-weight:700;color:#A5B4FC;margin-bottom:2px;">Razorpay Integration</div><div style="font-size:12px;color:rgba(165,180,252,.6);">Configure API keys in Payments tab to activate online payments</div></div>
-    <button onclick="switchTab('payments')" style="background:rgba(99,102,241,.2);color:#A5B4FC;border:1px solid rgba(99,102,241,.4);border-radius:10px;padding:9px 16px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">⚙️ Configure Keys</button>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
-    <div class="kcard"><div class="klbl">Razorpay Revenue</div><div class="kval" style="color:#A5B4FC;">₹${rzpRevenue.toLocaleString('en-IN')}</div></div>
-    <div class="kcard"><div class="klbl">Online Orders</div><div class="kval">${rzpOrders.length}</div></div>
-    <div class="kcard"><div class="klbl">Pending</div><div class="kval" style="color:#FBBF24;">${rzpPending}</div></div>
-  </div>
-  <div class="acard" style="margin-bottom:20px;">
-    <h3>🔗 Razorpay Quick Links</h3><div class="asub">Open your Razorpay merchant dashboard</div>
-    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;">
-      <a href="https://dashboard.razorpay.com/app/payments" target="_blank" rel="noopener" style="background:rgba(99,102,241,.15);color:#A5B4FC;border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">💳 Payments →</a>
-      <a href="https://dashboard.razorpay.com/app/orders" target="_blank" rel="noopener" style="background:rgba(99,102,241,.15);color:#A5B4FC;border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">📋 Orders →</a>
-      <a href="https://dashboard.razorpay.com/app/settlements" target="_blank" rel="noopener" style="background:rgba(99,102,241,.15);color:#A5B4FC;border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">🏦 Settlements →</a>
-      <a href="https://dashboard.razorpay.com/app/analytics" target="_blank" rel="noopener" style="background:rgba(99,102,241,.15);color:#A5B4FC;border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">📈 Analytics →</a>
-    </div>
-  </div>
-  <div class="acard">
-    <h3>📋 Razorpay Transactions (local)</h3><div class="asub">Orders paid via Razorpay / UPI online</div>
-    ${rzpOrders.length===0?`<div style="text-align:center;padding:32px;color:rgba(253,246,236,.25);"><div style="font-size:40px;margin-bottom:10px;">💳</div><div>No Razorpay transactions yet.<br><span style="font-size:12px;">Configure Razorpay in Payments tab to enable online payments.</span></div></div>`:
-    '<table class="aptable"><thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Payment ID</th><th>Status</th></tr></thead><tbody>'
-    +[...rzpOrders].reverse().slice(0,30).map(o=>`<tr><td style="color:#E8B96A;font-size:11px;">${o.id}</td><td style="font-size:12px;">${o.name||'?'}</td><td style="color:#A5B4FC;font-weight:700;">₹${(o.total||0).toLocaleString('en-IN')}</td><td style="font-size:10px;color:rgba(253,246,236,.4);">${o.rzpPaymentId||'—'}</td><td><span class="obadge ${o.status}">${o.status}</span></td></tr>`).join('')
-    +'</tbody></table>'}
-  </div>
-  <div style="margin-top:14px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);border-radius:12px;padding:12px 16px;font-size:12px;color:rgba(74,222,128,.75);line-height:1.7;">
-    💡 For complete transaction history, settlement reports &amp; refunds — log in to your <a href="https://dashboard.razorpay.com" target="_blank" style="color:#4ADE80;font-weight:700;">Razorpay Dashboard</a> directly.
-  </div></div>`;
-}
-
-// ── COMBO: load from Firebase + render on customer page ──
-function ubLoadCombosFromDB(){
-  if(!db) return;
-  db.collection('categories').doc('ubCombos').get().then(doc=>{if(doc.exists&&doc.data().list)localStorage.setItem('ub_combos',JSON.stringify(doc.data().list));ubRenderComboSection();}).catch(()=>{});
-  db.collection('categories').doc('ubExpenses').get().then(doc=>{if(doc.exists&&doc.data().list)localStorage.setItem('ub_expenses',JSON.stringify(doc.data().list));}).catch(()=>{});
-}
-function ubRenderComboSection(){
-  const combos=ubGetCombos().filter(c=>{if(c.active===false)return false;const today=new Date().toISOString().split('T')[0];if(c.to&&c.to<today)return false;if(c.from&&c.from>today)return false;return true;});
-  const sec=document.getElementById('ubComboSection');if(!sec)return;
-  if(!combos.length){sec.style.display='none';return;}
-  sec.style.display='block';
-  const grid=document.getElementById('ubComboGrid');if(!grid)return;
-  grid.innerHTML=combos.map(c=>{
-    const savings=c.mrp&&c.price?c.mrp-c.price:0;
-    return `<div style="background:var(--white);border:2px solid rgba(200,146,58,.25);border-radius:22px;padding:22px;box-shadow:0 4px 18px var(--shadow);position:relative;overflow:hidden;transition:transform .2s;">
-      ${c.badge?`<div style="position:absolute;top:14px;right:14px;background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;">${c.badge}</div>`:''}
-      <div style="font-size:40px;margin-bottom:10px;">${c.emoji||'🎁'}</div>
-      <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--choco);font-weight:700;margin-bottom:6px;">${c.name}</div>
-      <div style="font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:14px;">${c.desc||''}</div>
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
-        <span style="font-family:'Playfair Display',serif;font-size:24px;color:var(--gold);font-weight:700;">₹${c.price}</span>
-        ${c.mrp?`<span style="font-size:14px;color:var(--text-mid);text-decoration:line-through;">₹${c.mrp}</span>`:''}
-        ${savings>0?`<span style="background:rgba(74,222,128,.12);color:#166534;border:1px solid rgba(74,222,128,.25);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700;">Save ₹${savings}</span>`:''}
-      </div>
-      <button onclick="ubAddComboToCart('${c.id}')" style="width:100%;background:linear-gradient(135deg,var(--choco),var(--choco-light));color:var(--cream);border:none;border-radius:14px;padding:12px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">🎁 Add to Cart</button>
-    </div>`;
-  }).join('');
-}
-function ubAddComboToCart(cid){
-  const c=ubGetCombos().find(x=>x.id===cid);if(!c){showToast('Combo not found','err');return;}
-  if(typeof cart!=='undefined'){cart.push({id:'combo_'+c.id,name:c.name+' (Combo)',price:c.price,qty:1,variant:'Bundle',emoji:c.emoji||'🎁',isCombo:true});if(typeof saveCart==='function')saveCart();if(typeof updateCartUI==='function')updateCartUI();if(typeof openCart==='function')openCart();}
-  showToast('🎁 Combo added to cart!','ok');
-}
-document.addEventListener('DOMContentLoaded',function(){setTimeout(ubLoadCombosFromDB,2500);setTimeout(ubRenderComboSection,3000);});
 
 function ubToggleStock(id){
   const p=PRODS.find(x=>String(x.id)===String(id)); if(!p) return;
@@ -11785,10 +11425,11 @@ let flavourCardCount = 0;
 function buildFlavourCard(name, weights, idx) {
   // weights = [{label:'500g', eggPrice:520, egglessPrice:580}, ...]
   const wRows = weights.map((w, wi) => `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 32px;gap:8px;margin-bottom:6px;" id="fcwr-${idx}-${wi}">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 32px;gap:6px;margin-bottom:6px;" id="fcwr-${idx}-${wi}">
       <input class="vr-inp" placeholder="e.g. 500g, 1kg" value="${w.label||''}" id="fcwl-${idx}-${wi}">
       <input class="vr-inp" type="number" placeholder="🥚 Egg ₹" value="${w.eggPrice!=null?w.eggPrice:(w.price||'')}" id="fcwp-egg-${idx}-${wi}" min="0" style="border-color:rgba(200,146,58,.35);">
       <input class="vr-inp" type="number" placeholder="🌿 Eggless ₹" value="${w.egglessPrice!=null?w.egglessPrice:''}" id="fcwp-eggless-${idx}-${wi}" min="0" style="border-color:rgba(74,222,128,.35);">
+      <input class="vr-inp" type="number" placeholder="Advance ₹" value="${w.advanceAmt!=null&&w.advanceAmt>0?w.advanceAmt:''}" id="fcwadv-${idx}-${wi}" min="0" style="border-color:rgba(99,102,241,.4);" title="Advance required for this weight (0 = no advance)">
       <button class="vr-rmv" onclick="removeFlavourWeightRow(${idx},${wi})" title="Remove">✕</button>
     </div>`).join('');
   const fcImg = (weights && weights._img) ? weights._img : '';
@@ -11812,18 +11453,13 @@ function buildFlavourCard(name, weights, idx) {
         <div id="fcimg-status-${idx}" style="font-size:10px;color:rgba(200,146,58,.6);margin-top:3px;">${fcImg ? '✅ Image set' : ''}</div>
       </div>
     </div>
-    <!-- Per-flavour advance amount -->
-    <div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;padding:10px 12px;margin-bottom:12px;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:rgba(165,180,252,.7);text-transform:uppercase;margin-bottom:6px;">💳 Advance for this flavour (₹)</div>
-      <input class="vr-inp" type="number" id="fcadvance-${idx}" min="0" value="${fcAdvance}" placeholder="0 = no advance required" style="border-color:rgba(99,102,241,.3);width:100%;"
-        oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-      <div style="font-size:10px;color:rgba(165,180,252,.5);margin-top:4px;">Overrides the product-level advance for this flavour only. 0 = use product default.</div>
-    </div>
-    <div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:rgba(253,246,236,.35);text-transform:uppercase;margin-bottom:6px;">Weight &amp; Price for this flavour</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 32px;gap:8px;margin-bottom:6px;">
+    <!-- Per-weight advance amounts (replaces single flavour advance) -->
+    <div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:rgba(253,246,236,.35);text-transform:uppercase;margin-bottom:6px;">Weight, Price &amp; Advance for this flavour</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 32px;gap:6px;margin-bottom:6px;">
       <span style="font-size:10px;color:rgba(253,246,236,.3);font-weight:600;">Weight</span>
       <span style="font-size:10px;color:rgba(200,146,58,.7);font-weight:700;">🥚 Egg ₹</span>
       <span style="font-size:10px;color:rgba(74,222,128,.7);font-weight:700;">🌿 Eggless ₹</span>
+      <span style="font-size:10px;color:rgba(165,180,252,.8);font-weight:700;">💳 Advance ₹</span>
       <span></span>
     </div>
     <div id="fcwr-wrap-${idx}">${wRows}</div>
@@ -11850,10 +11486,11 @@ function addFlavourWeightRow(cardIdx) {
   if (!wrap) return;
   const wi = wrap.querySelectorAll('[id^="fcwr-' + cardIdx + '-"]').length;
   wrap.insertAdjacentHTML('beforeend', `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 32px;gap:8px;margin-bottom:6px;" id="fcwr-${cardIdx}-${wi}">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 32px;gap:6px;margin-bottom:6px;" id="fcwr-${cardIdx}-${wi}">
       <input class="vr-inp" placeholder="e.g. 2kg" id="fcwl-${cardIdx}-${wi}">
       <input class="vr-inp" type="number" placeholder="🥚 Egg ₹" id="fcwp-egg-${cardIdx}-${wi}" min="0" style="border-color:rgba(200,146,58,.35);">
       <input class="vr-inp" type="number" placeholder="🌿 Eggless ₹" id="fcwp-eggless-${cardIdx}-${wi}" min="0" style="border-color:rgba(74,222,128,.35);">
+      <input class="vr-inp" type="number" placeholder="Advance ₹" id="fcwadv-${cardIdx}-${wi}" min="0" style="border-color:rgba(99,102,241,.4);" title="Advance for this weight">
       <button class="vr-rmv" onclick="removeFlavourWeightRow(${cardIdx},${wi})" title="Remove">✕</button>
     </div>`);
 }
@@ -11924,11 +11561,12 @@ async function collectFlavourCardsAsync() {
         const lbl = (document.getElementById('fcwl-' + idx + '-' + wi)?.value||'').trim();
         const eggPr = parseFloat(document.getElementById('fcwp-egg-' + idx + '-' + wi)?.value||'0')||0;
         const egglessPr = parseFloat(document.getElementById('fcwp-eggless-' + idx + '-' + wi)?.value||'0')||0;
-        if (lbl) variants.push({label: lbl, price: eggPr, eggPrice: eggPr, egglessPrice: egglessPr});
+        const advAmt = parseInt(document.getElementById('fcwadv-' + idx + '-' + wi)?.value||'0')||0;
+        if (lbl) variants.push({label: lbl, price: eggPr, eggPrice: eggPr, egglessPrice: egglessPr, advanceAmt: advAmt});
       });
     }
-    const advanceAmt = parseInt(document.getElementById('fcadvance-' + idx)?.value||'0')||0;
-    flavours.push({name, image, variants, extras:{}, extra:0, advanceAmt: advanceAmt||0});
+    const advanceAmt = variants.reduce((mx,v)=>Math.max(mx,v.advanceAmt||0),0); // flavour-level = max of its weights
+    flavours.push({name, image, variants, extras:{}, extra:0, advanceAmt});
   }
   return flavours;
 }
@@ -11941,7 +11579,6 @@ function collectFlavourCards() {
     const name = (document.getElementById('fcname-' + idx)?.value||'').trim();
     if (!name) return;
     const image = document.getElementById('fcimg-' + idx)?.value || '';
-    const advanceAmt = parseInt(document.getElementById('fcadvance-' + idx)?.value||'0')||0;
     const wrapEl = document.getElementById('fcwr-wrap-' + idx);
     const variants = [];
     if (wrapEl) {
@@ -11950,10 +11587,12 @@ function collectFlavourCards() {
         const lbl = (document.getElementById('fcwl-' + idx + '-' + wi)?.value||'').trim();
         const eggPr = parseFloat(document.getElementById('fcwp-egg-' + idx + '-' + wi)?.value||'0')||0;
         const egglessPr = parseFloat(document.getElementById('fcwp-eggless-' + idx + '-' + wi)?.value||'0')||0;
-        if (lbl) variants.push({label: lbl, price: eggPr, eggPrice: eggPr, egglessPrice: egglessPr});
+        const advAmt = parseInt(document.getElementById('fcwadv-' + idx + '-' + wi)?.value||'0')||0;
+        if (lbl) variants.push({label: lbl, price: eggPr, eggPrice: eggPr, egglessPrice: egglessPr, advanceAmt: advAmt});
       });
     }
-    flavours.push({name, image, variants, extras:{}, extra:0, advanceAmt: advanceAmt||0});
+    const advanceAmt = variants.reduce((mx,v)=>Math.max(mx,v.advanceAmt||0),0);
+    flavours.push({name, image, variants, extras:{}, extra:0, advanceAmt});
   });
   return flavours;
 }
@@ -11966,7 +11605,7 @@ function initFlavourCards(flavours) {
   if (flavours && flavours.length) {
     flavours.forEach(f => {
       const weights = f.variants && f.variants.length
-        ? f.variants.map(v => ({label: v.label, eggPrice: v.eggPrice != null ? v.eggPrice : v.price, egglessPrice: v.egglessPrice != null ? v.egglessPrice : ''}))
+        ? f.variants.map(v => ({label: v.label, eggPrice: v.eggPrice != null ? v.eggPrice : v.price, egglessPrice: v.egglessPrice != null ? v.egglessPrice : '', advanceAmt: v.advanceAmt||0}))
         : [{label:'500g', eggPrice: f.extra||0, egglessPrice:''},{label:'1kg', eggPrice:'', egglessPrice:''}];
       weights._img = f.image || '';
       weights._advance = f.advanceAmt != null ? f.advanceAmt : '';
@@ -12581,7 +12220,7 @@ function buildOrderCard(o){
       <div style="text-align:right;">
         <span class="obadge ${o.status}">${statusLabel(o.status)}</span>
         <div style="font-family:Playfair Display,serif;font-size:26px;color:#E8B96A;margin-top:6px;line-height:1;">₹${o.total}</div>
-        ${o.payMethod?`<div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:3px;">${o.payMethod==='phonepe'?'💜 PhonePe/UPI':'💵 Cash on Delivery'}</div>`:''}
+        ${o.payMethod?`<div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:3px;">${(o.payMethod==='phonepe'||o.payMethod==='razorpay')?'💳 Razorpay Online':'💵 Cash on Delivery'}</div>`:''}
         ${o.txnId?`<div style="font-size:10px;color:rgba(253,246,236,.25);margin-top:1px;">TXN: ${o.txnId}</div>`:''}
         ${o.advancePaid?`<div style="margin-top:6px;display:inline-block;background:linear-gradient(135deg,rgba(74,222,128,.18),rgba(74,222,128,.08));border:1px solid rgba(74,222,128,.35);border-radius:8px;padding:4px 9px;font-size:10px;font-weight:800;color:#4ADE80;letter-spacing:.5px;text-transform:uppercase;">${o.advanceFull?'✅ FULL ₹'+o.total+' PAID':'✅ ADV ₹'+o.advanceAmt+' PAID'}${o.advanceMethod==='razorpay'?' · RZP':' · UPI'}</div>${!o.advanceFull?`<div style="font-size:10px;color:rgba(253,246,236,.3);margin-top:2px;">Bal ₹${o.total-o.advanceAmt} on delivery</div>`:''}`:''}
       </div>
@@ -12714,7 +12353,7 @@ function ubPrintBill(oid){
     +(o.walletDiscount?'<tr><td>💰 Wallet Cash</td><td class="ra" style="color:green;">-₹'+o.walletDiscount+'</td></tr>':'')
     +'<tr><td class="b tot">TOTAL</td><td class="ra b tot" style="color:#8B4513;">₹'+o.total+'</td></tr>'
     +'</table><hr class="dv">'
-    +'<p style="text-align:center;font-size:12px;">💳 '+(o.payMethod==='phonepe'?'UPI / PhonePe':'Cash on Delivery')+'</p>'
+    +'<p style="text-align:center;font-size:12px;">💳 '+((o.payMethod==='phonepe'||o.payMethod==='razorpay')?'Razorpay Online':'Cash on Delivery')+'</p>'
     +'<p class="ft">Thank you for choosing Udaya Bakery! 🙏</p>'
     +'<button class="np" onclick="window.print()" style="width:100%;padding:11px;background:#8B4513;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;margin-top:12px;">🖨️ Print</button>'
     +'</body></html>');
@@ -13745,7 +13384,7 @@ function ubShowConfirm(order){
   document.getElementById('ubConfId').textContent = order.id;
   document.getElementById('ubConfAmt').textContent =
     '₹' + order.total.toLocaleString('en-IN') +
-    (order.payMethod === 'phonepe' ? '  ·  💜 UPI/PhonePe' : '  ·  💵 Cash on Delivery');
+    ((order.payMethod === 'phonepe'||order.payMethod==='razorpay') ? '  ·  💳 Razorpay Online' : '  ·  💵 Cash on Delivery');
   document.getElementById('ubConfItems').innerHTML =
     (order.items||[]).map(i =>
       `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px;">
@@ -14567,7 +14206,7 @@ function buildAnalyticsTab(){
   const topP=Object.entries(ps).sort((a,b)=>b[1].r-a[1].r).slice(0,8);
   const oos=PRODS.filter(p=>p.inStock===false);
   const payMethods={};
-  ORDERS.filter(o=>o.status!=='cancelled').forEach(o=>{const m=o.payMethod==='phonepe'?'PhonePe/UPI':'Cash on Delivery';payMethods[m]=(payMethods[m]||0)+o.total;});
+  ORDERS.filter(o=>o.status!=='cancelled').forEach(o=>{const m=(o.payMethod==='phonepe'||o.payMethod==='razorpay')?'Razorpay Online':'Cash on Delivery';payMethods[m]=(payMethods[m]||0)+o.total;});
   const totalPay=Object.values(payMethods).reduce((a,b)=>a+b,0)||1;
   const catRev={};
   ORDERS.filter(o=>o.status!=='cancelled').forEach(o=>(o.items||[]).forEach(i=>{const cat=i.cat||'other';catRev[cat]=(catRev[cat]||0)+i.price*i.qty;}));
@@ -14906,9 +14545,9 @@ function ubDownloadInvoice(orderId){
       <div class="tot-row final"><span>Total Amount</span><span>₹${o.total}</span></div>
     </div>
     <div class="pay-row">
-      <span style="font-size:18px;">${o.payMethod==='phonepe'?'💜':'💵'}</span>
+      <span style="font-size:18px;">${(o.payMethod==='phonepe'||o.payMethod==='razorpay')?'💳':'💵'}</span>
       <div>
-        <div style="font-weight:700;">Payment: ${o.payMethod==='phonepe'?'PhonePe / UPI':'Cash on Delivery'}</div>
+        <div style="font-weight:700;">Payment: ${(o.payMethod==='phonepe'||o.payMethod==='razorpay')?'Razorpay Online':'Cash on Delivery'}</div>
         ${o.txnId?`<div style="font-size:11px;color:#A0623A;margin-top:2px;">TXN: ${o.txnId}</div>`:''}
       </div>
       <span class="status-badge" style="margin-left:auto;">${statusLabel(o.status)}</span>
@@ -15147,10 +14786,10 @@ async function buildPaymentsTab(){
   var ppIdx     = localStorage.getItem('ub_pp_salt_idx') || '1';
 
   // Payment summary counts
-  var upiCount = ORDERS.filter(function(o){return o.payMethod==='phonepe'||o.payMethod==='upi';}).length;
+  var upiCount = ORDERS.filter(function(o){return o.payMethod==='phonepe'||o.payMethod==='upi'||o.payMethod==='razorpay';}).length;
   var codCount = ORDERS.filter(function(o){return o.payMethod==='cod'||!o.payMethod;}).length;
   var rzpCount = ORDERS.filter(function(o){return o.payMethod==='razorpay';}).length;
-  var upiAmt   = ORDERS.filter(function(o){return o.payMethod==='phonepe'||o.payMethod==='upi';}).reduce(function(s,o){return s+o.total;},0);
+  var upiAmt   = ORDERS.filter(function(o){return o.payMethod==='phonepe'||o.payMethod==='upi'||o.payMethod==='razorpay';}).reduce(function(s,o){return s+o.total;},0);
   var codAmt   = ORDERS.filter(function(o){return o.payMethod==='cod'||!o.payMethod;}).reduce(function(s,o){return s+o.total;},0);
   var rzpAmt   = ORDERS.filter(function(o){return o.payMethod==='razorpay';}).reduce(function(s,o){return s+o.total;},0);
 
@@ -15189,45 +14828,19 @@ async function buildPaymentsTab(){
   + '<div style="font-size:11px;color:rgba(253,246,236,.4);">Customer pays when order arrives</div></div></div>'
   + '<input type="checkbox" ' + (codOn?'checked':'') + ' onchange="ubSavePayToggle(\'cod\',this.checked)" style="width:22px;height:22px;accent-color:#C8923A;cursor:pointer;"></div>'
 
-  // UPI
-  + '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 16px;">'
-  + '<div style="display:flex;align-items:center;gap:12px;"><span style="font-size:24px;">&#128241;</span>'
-  + '<div><div style="font-size:14px;font-weight:700;color:rgba(253,246,236,.9);">UPI / QR Code</div>'
-  + '<div style="font-size:11px;color:rgba(253,246,236,.4);">GPay, PhonePe, Paytm, any UPI app</div></div></div>'
-  + '<input type="checkbox" ' + (upiOn?'checked':'') + ' onchange="ubSavePayToggle(\'upi\',this.checked)" style="width:22px;height:22px;accent-color:#C8923A;cursor:pointer;"></div>'
-
-  // Razorpay
-  + '<div style="display:flex;align-items:center;justify-content:space-between;background:' + (rzpOn?'rgba(99,102,241,.08)':'rgba(255,255,255,.03)') + ';border:1px solid ' + (rzpOn?'rgba(99,102,241,.3)':'rgba(255,255,255,.07)') + ';border-radius:12px;padding:14px 16px;">'
+  // Razorpay — always active
+  + '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(99,102,241,.08);border:1.5px solid rgba(99,102,241,.4);border-radius:12px;padding:14px 16px;">'
   + '<div style="display:flex;align-items:center;gap:12px;"><span style="font-size:24px;">&#127974;</span>'
-  + '<div><div style="font-size:14px;font-weight:700;color:rgba(253,246,236,.9);">Razorpay <span style="font-size:10px;background:rgba(99,102,241,.25);color:#A5B4FC;border-radius:6px;padding:2px 7px;">RECOMMENDED</span></div>'
-  + '<div style="font-size:11px;color:rgba(253,246,236,.4);">Cards, UPI, Net Banking, EMI — all in one</div></div></div>'
-  + '<input type="checkbox" id="pay_rzp" ' + (rzpOn?'checked':'') + ' onchange="ubSavePayToggle(\'rzp\',this.checked);document.getElementById(\'rzp_section\').style.display=this.checked?\'block\':\'none\';" style="width:22px;height:22px;accent-color:#6366F1;cursor:pointer;"></div>'
-
-  // PhonePe
-  + '<div style="display:flex;align-items:center;justify-content:space-between;background:' + (ppOn?'rgba(91,45,142,.08)':'rgba(255,255,255,.03)') + ';border:1px solid ' + (ppOn?'rgba(91,45,142,.3)':'rgba(255,255,255,.07)') + ';border-radius:12px;padding:14px 16px;">'
-  + '<div style="display:flex;align-items:center;gap:12px;"><span style="font-size:24px;">&#128156;</span>'
-  + '<div><div style="font-size:14px;font-weight:700;color:rgba(253,246,236,.9);">PhonePe Business API</div>'
-  + '<div style="font-size:11px;color:rgba(253,246,236,.4);">Official PhonePe payment gateway</div></div></div>'
-  + '<input type="checkbox" id="pay_pp" ' + (ppOn?'checked':'') + ' onchange="ubSavePayToggle(\'pp\',this.checked);document.getElementById(\'pp_section\').style.display=this.checked?\'block\':\'none\';" style="width:22px;height:22px;accent-color:#5B2D8E;cursor:pointer;"></div>'
+  + '<div><div style="font-size:14px;font-weight:700;color:rgba(253,246,236,.9);">Razorpay &nbsp;<span style="font-size:10px;background:rgba(99,102,241,.25);color:#A5B4FC;border-radius:6px;padding:2px 8px;">ACTIVE · ONLY ONLINE METHOD</span></div>'
+  + '<div style="font-size:11px;color:rgba(253,246,236,.4);">Cards, UPI, Net Banking, EMI, Wallets — change key below</div></div></div>'
+  + '<span style="font-size:11px;color:#4ADE80;font-weight:700;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);border-radius:8px;padding:5px 10px;flex-shrink:0;">&#10003; Always On</span></div>'
 
   + '</div></div>'
-
-  // ── UPI Settings ──
-  + '<div class="acard" style="margin-bottom:16px;">'
-  + '<h3>&#128241; UPI / QR Code Settings</h3>'
-  + '<div class="asub">Customers scan a QR or tap to pay — no API key needed!</div>'
-  + '<div class="af-group" style="margin-top:14px;"><label>Your UPI ID <span style="font-size:10px;color:rgba(253,246,236,.4);">e.g. 9845406712@ybl</span></label>'
-  + '<input class="af-inp" id="s_upi_id" value="' + upiId.replace(/"/g,'&quot;') + '" placeholder="yourname@ybl"></div>'
-  + '<div style="background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.15);border-radius:10px;padding:10px 14px;font-size:12px;color:rgba(253,246,236,.5);margin-bottom:12px;">&#128161; Works instantly — customers see QR code + Pay button. Money goes directly to your bank.</div>'
-  + '<button class="abtn" onclick="saveUPISettings()">&#128190; Save UPI ID</button>'
-  + upiStatus
-  + '</div>'
-
   // ── Razorpay ──
   + '<div class="acard" style="margin-bottom:16px;" id="rzp_section">'
   + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">'
-  + '<h3 style="margin:0;">&#127974; Razorpay API Keys</h3>'
-  + '<span style="font-size:10px;background:rgba(99,102,241,.2);color:#A5B4FC;border-radius:6px;padding:3px 8px;font-weight:700;">BEST FOR INDIA</span></div>'
+  + '<h3 style="margin:0;">&#127974; Razorpay API Key &nbsp;<span style="font-size:10px;background:rgba(74,222,128,.2);color:#4ADE80;border-radius:6px;padding:3px 8px;font-weight:700;">&#128994; LIVE MODE · ACTIVE</span></h3>'
+  + '</div>'
   + '<div class="asub">Cards, UPI, Net Banking, EMI, Wallets. Sign up free at <a href="https://razorpay.com" target="_blank" rel="noopener noreferrer" style="color:#E8B96A;">razorpay.com</a></div>'
   + '<div style="display:flex;gap:8px;margin:14px 0;">'
   + '<button onclick="ubSetRzpMode(\'test\')" style="flex:1;padding:10px;border-radius:10px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid;' + rzpModeTestStyle + '">&#129514; Test Mode</button>'
@@ -15251,25 +14864,6 @@ async function buildPaymentsTab(){
   + '<div id="rzp_status" style="margin-top:10px;font-size:12px;">' + rzpStatus + '</div>'
   + '</div>'
 
-  // ── PhonePe ──
-  + '<div class="acard" style="margin-bottom:16px;" id="pp_section">'
-  + '<h3>&#128156; PhonePe Business API</h3>'
-  + '<div class="asub">Official PhonePe gateway. Apply at <a href="https://business.phonepe.com" target="_blank" rel="noopener noreferrer" style="color:#E8B96A;">business.phonepe.com</a></div>'
-  + '<div class="af-group" style="margin-top:14px;"><label>Merchant ID (MID)</label>'
-  + '<input class="af-inp" id="pp_mid" value="' + ppMid.replace(/"/g,'&quot;') + '" placeholder="e.g. UDAYABAKERY123"></div>'
-  + '<div class="af-group"><label>Salt Key <span style="font-size:10px;color:rgba(253,246,236,.4);">from PhonePe dashboard</span></label>'
-  + '<div style="position:relative;"><input class="af-inp" type="password" id="pp_salt" value="' + ppSalt.replace(/"/g,'&quot;') + '" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" style="padding-right:70px;">'
-  + '<button onclick="var e=document.getElementById(\'pp_salt\');e.type=e.type===\'password\'?\'text\':\'password\';" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(253,246,236,.5);font-size:11px;cursor:pointer;white-space:nowrap;">&#128065; Show</button></div></div>'
-  + '<div class="af-group"><label>Salt Index <span style="font-size:10px;color:rgba(253,246,236,.4);">usually 1</span></label>'
-  + '<input class="af-inp" type="number" id="pp_salt_idx" value="' + ppIdx + '" min="1" max="4" style="width:100px;"></div>'
-  + '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;margin-bottom:14px;">'
-  + '<div style="font-size:12px;font-weight:700;color:rgba(253,246,236,.6);margin-bottom:8px;">&#128203; How to get PhonePe Keys:</div>'
-  + '<div style="font-size:12px;color:rgba(253,246,236,.45);line-height:1.9;">1. Go to <strong style="color:#E8B96A;">business.phonepe.com</strong> &#8594; Register<br>2. Complete KYC (GST / Aadhaar)<br>3. Dashboard &#8594; <strong style="color:#E8B96A;">API &amp; Plugins &#8594; Keys</strong><br>4. Copy MID, Salt Key, Salt Index here</div>'
-  + '</div>'
-  + '<button class="abtn" onclick="ubSavePhonePe()">&#128190; Save PhonePe Keys</button>'
-  + '<div id="pp_status" style="margin-top:10px;font-size:12px;">' + ppStatus + '</div>'
-  + '</div>'
-
   // ── Payment Summary ──
   + '<div class="acard" style="margin-bottom:16px;">'
   + '<h3>&#128202; Payment Summary</h3>'
@@ -15278,7 +14872,7 @@ async function buildPaymentsTab(){
   + '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px;text-align:center;">'
   + '<div style="font-size:22px;margin-bottom:4px;">&#128241;</div>'
   + '<div style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;">' + upiCount + '</div>'
-  + '<div style="font-size:11px;color:rgba(253,246,236,.4);">UPI Orders</div>'
+  + '<div style="font-size:11px;color:rgba(253,246,236,.4);">Online / Razorpay</div>'
   + '<div style="font-size:12px;color:#4ADE80;margin-top:4px;">&#8377;' + upiAmt.toLocaleString('en-IN') + '</div></div>'
   + '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px;text-align:center;">'
   + '<div style="font-size:22px;margin-bottom:4px;">&#128181;</div>'
@@ -15311,15 +14905,22 @@ async function ubSaveRazorpay(){
   key = key.trim();
   if(!key){ showToast('Enter your Razorpay Key ID','err'); return; }
   if(!key.startsWith('rzp_')){ showToast('Key ID must start with rzp_test_ or rzp_live_','err'); return; }
+  // Auto-detect mode from key prefix
+  if(key.startsWith('rzp_live_')){ localStorage.setItem('ub_rzp_mode','live'); }
+  else if(key.startsWith('rzp_test_')){ localStorage.setItem('ub_rzp_mode','test'); }
   // Store Key ID encrypted in localStorage
   await UB_SECURE.set('rzp_key_id', key);
   localStorage.setItem('ub_rzp_enabled','1');
+  // INSTANT EFFECT: update in-memory key so next payment uses new key immediately
+  window._advRzpKey = key;
   // Clear Key Secret input — it should NEVER be stored in browser
   const secEl = document.getElementById('rzp_key_secret');
   if(secEl) secEl.value = '';
   var st = document.getElementById('rzp_status');
-  if(st) st.innerHTML = '<span style="color:#4ADE80;">&#10003; Key ID saved securely (encrypted)! Mode: '+localStorage.getItem('ub_rzp_mode')+'</span>';
-  showToast('✅ Razorpay Key ID saved securely!','ok');
+  var mode = localStorage.getItem('ub_rzp_mode');
+  if(st) st.innerHTML = '<span style="color:#4ADE80;">&#10003; Key saved &amp; active immediately! Mode: <strong>'+(mode==='live'?'🟢 Live':'🟡 Test')+'</strong></span>';
+  showToast('✅ Razorpay Key saved — active immediately for all payments!','ok');
+  renderAdminTab();
 }
 
 async function ubTestRazorpay(){
