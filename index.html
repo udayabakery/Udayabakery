@@ -5970,6 +5970,24 @@ function ubStartConfigListener(){
       ubApplyDesign(d.siteDesign);
     }
 
+    // ── Stock ──
+    if(d.stock){
+      localStorage.setItem('ub_stock', JSON.stringify(d.stock));
+      // Refresh stock tab if admin has it open
+      if(adminLoggedIn && adminTab==='stock') try{ renderAdminTab(); }catch(e){}
+    }
+
+    // ── Combos ──
+    if(d.combos){
+      localStorage.setItem('ub_combos', JSON.stringify(d.combos));
+    }
+
+    // ── Expenses ──
+    if(d.expenses){
+      localStorage.setItem('ub_expenses', JSON.stringify(d.expenses));
+      if(adminLoggedIn && adminTab==='expense') try{ renderAdminTab(); }catch(e){}
+    }
+
   }, e => {
     console.warn('[UB Config] Listener error — will retry:', e);
     _configUnsubscribe = null;
@@ -10888,13 +10906,18 @@ function showAdminDash(){
     lbl.textContent = '👋 ' + currentUser.name;
     lbl.style.display = 'inline';
   }
+  // Patch admin UI first (injects sidebar/topbar CSS), then render dashboard
+  try{ ubPatchAdmin(); }catch(e){}
   switchTab('dashboard');
   updateOrderBadge();
   startOrderListener(); // Real-time Firebase updates
+  // Re-render after sidebar fully injected to avoid black/empty flash
+  setTimeout(function(){ try{ renderAdminTab(); }catch(e){} }, 120);
 }
 
 function doLogout(){
   adminLoggedIn = false;
+  _patchDone = false; // Allow sidebar re-injection on next login
   _stopAdminIdle();
   UB_SECURE.clear(); // Wipe AES key from memory — encrypted data stays but unreadable
   localStorage.removeItem('ub_admin_logged_in');
@@ -10937,10 +10960,22 @@ function switchTab(t, preserveEdit){
 function renderAdminTab(){
   const el = document.getElementById('adminMain');
   if(!el) return;
-  if(adminTab==='dashboard') el.innerHTML = buildDash();
-  else if(adminTab==='products') el.innerHTML = buildProdsTab();
-  else if(adminTab==='addprod'){ el.innerHTML = buildAddProdTab(); initAddProdForm(); }
-  else if(adminTab==='cats') el.innerHTML = buildCatsTab();
+  function _safeRender(fn, label){
+    try{ return fn(); }
+    catch(e){
+      console.error('Tab error ['+label+']:', e);
+      return '<div style="padding:40px;text-align:center;">'
+        +'<div style="font-size:48px;margin-bottom:16px;">⚠️</div>'
+        +'<div style="color:#F87171;font-size:15px;font-weight:700;margin-bottom:8px;">Error loading '+label+'</div>'
+        +'<div style="color:rgba(253,246,236,.5);font-size:13px;margin-bottom:20px;">'+e.message+'</div>'
+        +'<button onclick="renderAdminTab()" style="background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:10px 20px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">🔄 Try Again</button>'
+        +'</div>';
+    }
+  }
+  if(adminTab==='dashboard') el.innerHTML = _safeRender(buildDash,'Dashboard');
+  else if(adminTab==='products') el.innerHTML = _safeRender(buildProdsTab,'Products');
+  else if(adminTab==='addprod'){ el.innerHTML = _safeRender(buildAddProdTab,'Add Product'); try{initAddProdForm();}catch(e){} }
+  else if(adminTab==='cats') el.innerHTML = _safeRender(buildCatsTab,'Categories');
   else if(adminTab==='orders') {
     el.innerHTML = buildOrdersTab();
     // If orders appear empty, retry after 2s in case snapshot hasn't fired yet
@@ -10997,31 +11032,21 @@ function renderAdminTab(){
     });
     return;
   }
-  else if(adminTab==='reports')   el.innerHTML = buildReportsTab();
-  else if(adminTab==='customers') el.innerHTML = buildCustomersTab();
-  else if(adminTab==='broadcast') el.innerHTML = buildBroadcastTab();
-  else if(adminTab==='analytics') el.innerHTML = buildAnalyticsTab();
-  else if(adminTab==='cakebuilder') el.innerHTML = buildCakeBuilderAdminTab();
-  else if(adminTab==='videos') el.innerHTML = buildVideosAdminTab();
-  else if(adminTab==='policies'){ el.innerHTML = buildPoliciesAdminTab(); initPoliciesAdmin(); }
-  else if(adminTab==='expense') el.innerHTML = buildExpenseTab();
-  else if(adminTab==='combo') el.innerHTML = buildComboTab();
-  else if(adminTab==='reconciliation') el.innerHTML = buildReconciliationTab();
-  else if(adminTab==='rzpdash') el.innerHTML = buildRzpDashTab();
-  else if(adminTab==='stock') el.innerHTML = buildStockTab();
+  else if(adminTab==='reports')       el.innerHTML = _safeRender(buildReportsTab,'Reports');
+  else if(adminTab==='customers')     el.innerHTML = _safeRender(buildCustomersTab,'Customers');
+  else if(adminTab==='broadcast')     el.innerHTML = _safeRender(buildBroadcastTab,'Broadcast');
+  else if(adminTab==='analytics')     el.innerHTML = _safeRender(buildAnalyticsTab,'Analytics');
+  else if(adminTab==='cakebuilder')   el.innerHTML = _safeRender(buildCakeBuilderAdminTab,'Cake Builder');
+  else if(adminTab==='videos')        el.innerHTML = _safeRender(buildVideosAdminTab,'Cake Videos');
+  else if(adminTab==='policies'){     el.innerHTML = _safeRender(buildPoliciesAdminTab,'Rules & Policy'); try{initPoliciesAdmin();}catch(e){} }
+  else if(adminTab==='expense')       el.innerHTML = _safeRender(buildExpenseTab,'Expenses');
+  else if(adminTab==='combo')         el.innerHTML = _safeRender(buildComboTab,'Combo Offers');
+  else if(adminTab==='reconciliation')el.innerHTML = _safeRender(buildReconciliationTab,'Reconciliation');
+  else if(adminTab==='rzpdash')       el.innerHTML = _safeRender(buildRzpDashTab,'Razorpay');
+  else if(adminTab==='stock')         el.innerHTML = _safeRender(buildStockTab,'Stock');
   else if(adminTab==='designer'){
-    try {
-      el.innerHTML = buildDesignerTab();
-      ubInitDesigner();
-    } catch(e) {
-      console.error('Designer tab error:', e);
-      el.innerHTML = `<div style="padding:40px;text-align:center;">
-        <div style="font-size:48px;margin-bottom:16px;">🎨</div>
-        <div style="color:#F87171;font-size:15px;font-weight:700;margin-bottom:8px;">Designer failed to load</div>
-        <div style="color:rgba(253,246,236,.5);font-size:13px;margin-bottom:20px;">${e.message||'Unknown error'}</div>
-        <button onclick="renderAdminTab()" style="background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:10px 20px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">🔄 Try Again</button>
-      </div>`;
-    }
+    el.innerHTML = _safeRender(buildDesignerTab,'Designer');
+    try{ ubInitDesigner(); }catch(e){ console.warn('Designer init:',e); }
   }
 }
 
@@ -17886,7 +17911,16 @@ function ubShowOrderQR(orderId){
 //  📦 STOCK MANAGEMENT
 // ══════════════════════════════════════════════════════════════
 function ubGetStock(){ return JSON.parse(localStorage.getItem('ub_stock')||'{}'); }
-function ubSaveStock(s){ localStorage.setItem('ub_stock', JSON.stringify(s)); }
+function ubSaveStock(s){
+  localStorage.setItem('ub_stock', JSON.stringify(s));
+  // Sync to Firestore so all customers see stock status instantly
+  try{
+    if(db){
+      db.collection('config').doc('siteConfig').set({stock: s, stockUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()},{merge:true})
+        .catch(e=>console.warn('Stock sync failed:',e));
+    }
+  }catch(e){}
+}
 
 function buildStockTab(){
   const stock = ubGetStock();
@@ -17940,11 +17974,26 @@ function ubSaveAllStock(){
   PRODS.forEach(p=>{
     const qi=document.getElementById('stk-'+p.id);
     const li=document.getElementById('lsa-'+p.id);
-    if(qi && qi.value!=='') s[p.id]=parseInt(qi.value)||0;
+    if(qi && qi.value!==''){
+      const qty=parseInt(qi.value)||0;
+      s[p.id]=qty;
+      // Auto mark out-of-stock when qty is 0
+      const wasInStock = p.inStock !== false;
+      const nowInStock = qty > 0;
+      if(wasInStock !== nowInStock){
+        p.inStock = nowInStock;
+        // Sync inStock to Firestore product doc
+        try{
+          if(db) db.collection('products').doc(String(p.id)).set({inStock:nowInStock},{merge:true}).catch(e=>console.warn('inStock sync:',e));
+        }catch(e){}
+      }
+    }
     if(li) p.lowStockAlert=parseInt(li.value)||5;
   });
   ubSaveStock(s);
-  showToast('✅ Stock saved!','ok');
+  // Re-render product grid so customers see out-of-stock changes instantly
+  try{ renderProds(); }catch(e){}
+  showToast('✅ Stock saved & synced to customers!','ok');
   renderAdminTab();
 }
 
@@ -17952,7 +18001,15 @@ function ubSaveAllStock(){
 //  💸 EXPENSE TRACKER
 // ══════════════════════════════════════════════════════════════
 function ubGetExpenses(){ return JSON.parse(localStorage.getItem('ub_expenses')||'[]'); }
-function ubSaveExpenses(e){ localStorage.setItem('ub_expenses', JSON.stringify(e)); }
+function ubSaveExpenses(e){
+  localStorage.setItem('ub_expenses', JSON.stringify(e));
+  try{
+    if(db){
+      db.collection('config').doc('siteConfig').set({expenses: e, expensesUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()},{merge:true})
+        .catch(err=>console.warn('Expenses sync failed:',err));
+    }
+  }catch(err){}
+}
 
 function buildExpenseTab(){
   const expenses = ubGetExpenses();
@@ -18027,7 +18084,15 @@ function ubDeleteExpense(i){
 //  🎁 COMBO OFFERS
 // ══════════════════════════════════════════════════════════════
 function ubGetCombos(){ return JSON.parse(localStorage.getItem('ub_combos')||'[]'); }
-function ubSaveCombos(c){ localStorage.setItem('ub_combos', JSON.stringify(c)); }
+function ubSaveCombos(c){
+  localStorage.setItem('ub_combos', JSON.stringify(c));
+  try{
+    if(db){
+      db.collection('config').doc('siteConfig').set({combos: c, combosUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()},{merge:true})
+        .catch(e=>console.warn('Combos sync failed:',e));
+    }
+  }catch(e){}
+}
 
 function buildComboTab(){
   const combos = ubGetCombos();
