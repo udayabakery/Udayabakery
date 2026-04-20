@@ -5116,10 +5116,10 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
 <div class="payment-modal-bg" id="paymentModalBg">
   <div class="payment-modal" id="paymentModalInner">
     <div class="pm-header">
-      <div class="pm-header-logo">💜</div>
+      <div class="pm-header-logo">💳</div>
       <div>
-        <h3>PhonePe Payment</h3>
-        <p>Secure checkout powered by PhonePe</p>
+        <h3>Razorpay Payment</h3>
+        <p>Secure checkout powered by Razorpay</p>
       </div>
     </div>
     <div class="pm-body" id="pmBody">
@@ -9817,44 +9817,11 @@ function closePhonePeModal(){
 }
 
 function renderPhonePeForm(total, order){
-  document.getElementById('pmBody').innerHTML=`
-    <div class="pm-amount-box">
-      <div class="pm-amount-label">Amount to Pay</div>
-      <div class="pm-amount-val">₹${total}</div>
-    </div>
-    <div class="pm-methods">
-      <div class="pm-method selected" id="pm-upi" onclick="selectPmMethod('upi')">
-        <div class="pm-method-icon upi">📱</div>
-        <div class="pm-method-info">
-          <div class="pm-method-name">UPI / PhonePe</div>
-          <div class="pm-method-sub">PhonePe, GPay, Paytm, BHIM</div>
-        </div>
-        <span class="pm-method-badge">Instant</span>
-      </div>
-      <div class="pm-upi-input show" id="upiInputWrap">
-        <input class="upi-inp" type="text" id="upiIdInput" placeholder="Enter UPI ID (e.g. name@ybl)">
-      </div>
-      <div class="pm-method" id="pm-card" onclick="selectPmMethod('card')">
-        <div class="pm-method-icon card">💳</div>
-        <div class="pm-method-info">
-          <div class="pm-method-name">Debit / Credit Card</div>
-          <div class="pm-method-sub">Visa, Mastercard, RuPay</div>
-        </div>
-      </div>
-      <div class="pm-method" id="pm-netbanking" onclick="selectPmMethod('netbanking')">
-        <div class="pm-method-icon" style="background:linear-gradient(135deg,#92400E,#D97706);">🏦</div>
-        <div class="pm-method-info">
-          <div class="pm-method-name">Net Banking</div>
-          <div class="pm-method-sub">All major banks supported</div>
-        </div>
-      </div>
-    </div>
-    <button class="pm-pay-btn" onclick="processPhonePePayment(${total})">
-      💜 Pay ₹${total} Now
-    </button>
-    <div class="pm-secure">🔒 100% Secure Payment · PhonePe PG</div>
-    <div class="pm-close"><button onclick="closePhonePeModal()">Cancel & go back</button></div>
-  `;
+  // Redirect to Razorpay — this modal is no longer used for UPI
+  document.getElementById('pmBody').innerHTML='<div style="text-align:center;padding:30px 20px;"><div style="font-size:40px;margin-bottom:12px;">💳</div><div style="font-family:Playfair Display,serif;font-size:18px;color:var(--choco);font-weight:700;margin-bottom:8px;">Opening Razorpay...</div><div style="font-size:13px;color:var(--text-mid);">Please wait</div></div>';
+  closePhonePeModal();
+  pendingOrder = order;
+  processRazorpayFull(total);
 }
 
 let activePmMethod = 'upi';
@@ -10018,133 +9985,66 @@ function openAdvancePayModal(advanceAmt, total, order){
 async function renderAdvancePayScreen(advanceAmt, total, order){
   const pmBody = document.getElementById('pmBody');
   const balance = total - advanceAmt;
-  const ownerUPI  = (await UB_SECURE.get('upi_id')) || localStorage.getItem('ub_upi_id') || '9845406712@ybl';
   const ownerName = localStorage.getItem('ub_bname') || 'Udaya Bakery';
-  const rzpKey    = (await UB_SECURE.get('rzp_key_id')) || '';
-  const rzpOn     = localStorage.getItem('ub_rzp_enabled') === '1' && rzpKey;
-  const upiLink   = `upi://pay?pa=${encodeURIComponent(ownerUPI)}&pn=${encodeURIComponent(ownerName)}&am=${advanceAmt}&cu=INR&tn=${encodeURIComponent('Udaya Bakery Advance - ' + order.id)}`;
-  const qrUrl     = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(upiLink)}&choe=UTF-8`;
-
-  // Store rzpKey on window so the Razorpay handler can use it
-  window._advRzpKey = rzpKey;
-
-  const rzpBlock = rzpOn ? `
-    <div style="margin-bottom:16px;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;">
-        <button onclick="processRazorpayAdvance(${advanceAmt}, ${total})"
-          style="background:linear-gradient(135deg,#1A1A6E,#3730A3);color:#fff;border:none;padding:14px 10px;border-radius:14px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">
-          💳 Pay Advance<br><span style="font-size:16px;font-weight:800;">₹${advanceAmt}</span>
-        </button>
-        <button onclick="processRazorpayFull(${total})"
-          style="background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:none;padding:14px 10px;border-radius:14px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">
-          ✅ Pay Full<br><span style="font-size:16px;font-weight:800;">₹${total}</span>
-        </button>
-      </div>
-      <div style="font-size:11px;color:var(--text-mid);text-align:center;margin-bottom:12px;">Cards · UPI · Net Banking · Wallets · EMI</div>
-    </div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-      <div style="flex:1;height:1px;background:var(--cream-dark);"></div>
-      <span style="font-size:11px;color:var(--text-mid);font-weight:600;letter-spacing:.5px;">OR PAY VIA UPI</span>
-      <div style="flex:1;height:1px;background:var(--cream-dark);"></div>
-    </div>` : '';
-
-  const upiLinkFull = `upi://pay?pa=${encodeURIComponent(ownerUPI)}&pn=${encodeURIComponent(ownerName)}&am=${total}&cu=INR&tn=${encodeURIComponent('Udaya Bakery Full Payment - ' + order.id)}`;
+  // Always load key fresh from secure store — ensures latest key is used
+  const rzpKey = (await UB_SECURE.get('rzp_key_id')) || window._advRzpKey || '';
+  window._advRzpKey = rzpKey; // refresh in-memory cache
 
   pmBody.innerHTML = `
     <div style="text-align:center;padding:10px 0;">
-      <!-- Amount summary -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+      <div style="display:inline-block;background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(99,102,241,.08));border:1px solid rgba(99,102,241,.4);border-radius:12px;padding:6px 18px;margin-bottom:14px;">
+        <span style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#A5B4FC;">💳 Advance Required — Pay via Razorpay</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
         <div style="background:linear-gradient(135deg,rgba(200,146,58,.15),rgba(200,146,58,.06));border:1.5px solid rgba(200,146,58,.3);border-radius:14px;padding:12px 8px;">
           <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(200,146,58,.7);margin-bottom:4px;">Advance</div>
-          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--choco);">₹${advanceAmt}</div>
-          <div style="font-size:10px;color:var(--text-mid);margin-top:2px;">+₹${balance} on delivery</div>
+          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--choco);">₹\${advanceAmt}</div>
+          <div style="font-size:10px;color:var(--text-mid);margin-top:2px;">+₹\${balance} on delivery</div>
         </div>
         <div style="background:linear-gradient(135deg,rgba(74,222,128,.12),rgba(74,222,128,.05));border:1.5px solid rgba(74,222,128,.3);border-radius:14px;padding:12px 8px;">
-          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(74,222,128,.7);margin-bottom:4px;">Full Amount</div>
-          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--choco);">₹${total}</div>
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(74,222,128,.7);margin-bottom:4px;">Pay Full</div>
+          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--choco);">₹\${total}</div>
           <div style="font-size:10px;color:var(--text-mid);margin-top:2px;">Nothing on delivery</div>
         </div>
       </div>
 
-      ${rzpBlock}
-
-      <div style="font-family:'Playfair Display',serif;font-size:15px;color:var(--choco);font-weight:700;margin-bottom:4px;">Pay via UPI / QR</div>
-      <div style="font-size:12px;color:var(--text-mid);margin-bottom:12px;">Scan QR or tap a button to open your UPI app</div>
-
-      <div style="display:inline-block;padding:12px;background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.12);margin-bottom:10px;">
-        <img src="${qrUrl}" width="160" height="160" alt="UPI QR Code (Advance)" style="display:block;border-radius:8px;">
-        <div style="font-size:10px;color:#666;margin-top:6px;">QR for advance ₹${advanceAmt}</div>
-      </div>
-
-      <div style="font-size:12px;color:var(--text-mid);margin-bottom:8px;">UPI ID: <strong style="color:var(--choco);letter-spacing:.5px;">${ownerUPI}</strong></div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
-        <a href="${upiLink}" style="display:block;background:linear-gradient(135deg,#5B2D8E,#8B5CF6);color:#fff;text-decoration:none;padding:12px 8px;border-radius:12px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;text-align:center;">
-          💜 Pay Advance<br>₹${advanceAmt}
-        </a>
-        <a href="${upiLinkFull}" style="display:block;background:linear-gradient(135deg,#065F46,#059669);color:#fff;text-decoration:none;padding:12px 8px;border-radius:12px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;text-align:center;">
-          ✅ Pay Full<br>₹${total}
-        </a>
-      </div>
-
-      <div style="background:var(--cream);border-radius:14px;padding:14px;text-align:left;">
-        <div style="font-size:12px;font-weight:700;color:var(--choco);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">After Payment — Enter UTR / Transaction ID</div>
-        <input type="text" id="advUtrInput" placeholder="e.g. 425612345678" maxlength="30"
-          style="width:100%;border:1.5px solid var(--cream-dark);border-radius:10px;padding:10px 14px;font-family:Jost,sans-serif;font-size:16px;color:var(--choco);outline:none;box-sizing:border-box;background:var(--white);"
-          oninput="this.value=this.value.replace(/[^0-9A-Za-z]/g,'')"
-          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--cream-dark)'">
-        <div style="font-size:11px;color:var(--text-mid);margin-top:5px;opacity:.7;">Find UTR in your PhonePe/GPay/Paytm transaction history</div>
-        <!-- Amount paid toggle -->
-        <div style="display:flex;gap:8px;margin:10px 0 4px;">
-          <label style="flex:1;display:flex;align-items:center;gap:6px;background:rgba(99,102,241,.08);border:1.5px solid rgba(99,102,241,.25);border-radius:10px;padding:8px 10px;cursor:pointer;font-size:12px;font-weight:700;color:#A5B4FC;">
-            <input type="radio" name="advPayType" value="advance" checked style="accent-color:#6366F1;"> Paid ₹${advanceAmt} advance
-          </label>
-          <label style="flex:1;display:flex;align-items:center;gap:6px;background:rgba(74,222,128,.08);border:1.5px solid rgba(74,222,128,.25);border-radius:10px;padding:8px 10px;cursor:pointer;font-size:12px;font-weight:700;color:#4ADE80;">
-            <input type="radio" name="advPayType" value="full" style="accent-color:#4ADE80;"> Paid full ₹${total}
-          </label>
+      ${rzpKey ? `
+      <div style="background:rgba(99,102,241,.06);border:1.5px solid rgba(99,102,241,.3);border-radius:16px;padding:16px;margin-bottom:14px;">
+        <div style="font-size:13px;font-weight:700;color:#A5B4FC;margin-bottom:12px;">🔒 Secure Payment via Razorpay</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button onclick="processRazorpayAdvance(\${advanceAmt}, \${total})"
+            style="background:linear-gradient(135deg,#312E81,#4338CA);color:#fff;border:none;padding:16px 10px;border-radius:14px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;line-height:1.4;">
+            💳 Pay Advance<br><span style="font-size:18px;font-weight:800;">₹\${advanceAmt}</span>
+          </button>
+          <button onclick="processRazorpayFull(\${total})"
+            style="background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:none;padding:16px 10px;border-radius:14px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;line-height:1.4;">
+            ✅ Pay Full<br><span style="font-size:18px;font-weight:800;">₹\${total}</span>
+          </button>
         </div>
-        <button onclick="confirmAdvancePayment(${advanceAmt}, ${total})"
-          style="width:100%;margin-top:8px;background:linear-gradient(135deg,var(--gold),var(--choco-light));color:#fff;border:none;border-radius:12px;padding:13px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">
-          ✅ Confirm Order
-        </button>
+        <div style="font-size:11px;color:var(--text-mid);text-align:center;margin-top:8px;">Cards · UPI · Net Banking · Wallets · EMI</div>
       </div>
+      ` : `
+      <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:14px;padding:16px;margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:700;color:#F87171;margin-bottom:6px;">⚠️ Payment Gateway Not Configured</div>
+        <div style="font-size:12px;color:rgba(253,246,236,.5);">Please contact Udaya Bakery to complete your order payment.</div>
+      </div>
+      `}
 
       <div style="margin-top:14px;">
-        <button onclick="closePhonePeModal()" style="background:none;border:none;color:var(--text-mid);font-size:13px;cursor:pointer;font-family:Jost,sans-serif;text-decoration:underline;">Cancel & go back</button>
+        <button onclick="closePhonePeModal()" style="background:none;border:none;color:var(--text-mid);font-size:13px;cursor:pointer;font-family:Jost,sans-serif;text-decoration:underline;">Cancel &amp; go back</button>
       </div>
     </div>`;
 }
 
-function confirmAdvancePayment(advanceAmt, total){
-  const utr = (document.getElementById('advUtrInput')?.value||'').trim();
-  if(!utr || utr.length < 6){
-    showToast('Please enter your UTR / Transaction ID 📋','err');
-    document.getElementById('advUtrInput')?.focus();
-    return;
-  }
-  const paidFull = document.querySelector('input[name="advPayType"]:checked')?.value === 'full';
-  const paidAmt  = paidFull ? total : advanceAmt;
-  if(pendingOrder){
-    pendingOrder.advancePaid = true;
-    pendingOrder.advanceUtr  = (paidFull ? 'FULL-' : 'ADV-') + utr;
-    pendingOrder.advanceAmt  = paidAmt;
-    pendingOrder.advanceFull = paidFull;
-    if(paidFull){
-      pendingOrder.payStatus = 'paid';
-      pendingOrder.payNote   = `Full payment ₹${total} via UPI · UTR: ${utr}`;
-    } else {
-      pendingOrder.payNote   = `Advance ₹${advanceAmt} paid via UPI · UTR: ${utr} · Balance ₹${total - advanceAmt} on delivery`;
-    }
-    const placedOrderId = pendingOrder.id;
-    finalizeOrder(pendingOrder, pendingOrder.payNote);
-    pendingOrder = null;
-    
-    setTimeout(()=>openTrackModal(placedOrderId), 500);
-  }
-}
 
-function processRazorpayAdvance(advanceAmt, total){
-  const key = window._advRzpKey || '';
+async function processRazorpayAdvance(advanceAmt, total){
+  // Always fetch key fresh — handles async init timing issues
+  let key = window._advRzpKey || '';
+  if(!key){
+    try { key = (await UB_SECURE.get('rzp_key_id')) || ''; } catch(e){}
+    if(key) window._advRzpKey = key;
+  }
   if(!key){ showToast('⚠️ Razorpay not configured — contact bakery', 'err'); return; }
   const ownerName = localStorage.getItem('ub_bname') || 'Udaya Bakery';
   const orderId = pendingOrder ? pendingOrder.id : ('UB-ADV-' + Date.now());
@@ -10202,8 +10102,13 @@ function processRazorpayAdvance(advanceAmt, total){
   }
 }
 
-function processRazorpayFull(total){
-  const key = window._advRzpKey || '';
+async function processRazorpayFull(total){
+  // Always fetch key fresh — handles async init timing issues
+  let key = window._advRzpKey || '';
+  if(!key){
+    try { key = (await UB_SECURE.get('rzp_key_id')) || ''; } catch(e){}
+    if(key) window._advRzpKey = key;
+  }
   if(!key){ showToast('⚠️ Razorpay not configured — contact bakery', 'err'); return; }
   const ownerName = localStorage.getItem('ub_bname') || 'Udaya Bakery';
   const orderId = pendingOrder ? pendingOrder.id : ('UB-' + Date.now());
