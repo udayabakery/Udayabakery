@@ -10951,9 +10951,19 @@ function switchTab(t, preserveEdit){
     vRowCount = 2;
     flvRowCount = 2;
   }
+  // Update horizontal tab bar active state
   document.querySelectorAll('.atab').forEach(el => el.classList.remove('active'));
   const at = document.getElementById('at-' + t);
-  if(at) at.classList.add('active');
+  if(at){
+    at.classList.add('active');
+    // Scroll the active tab into view on mobile
+    try{ at.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'}); }catch(e){}
+  }
+  // Update sidebar active state
+  document.querySelectorAll('.sni').forEach(el => el.classList.remove('on'));
+  const sn = document.getElementById('ubsn-' + t);
+  if(sn) sn.classList.add('on');
+  // Render content
   renderAdminTab();
 }
 
@@ -16403,16 +16413,7 @@ function ubPatchAdmin(){
   try { _injectSidebar(); } catch(e){ console.warn('UB sidebar:', e); }
   try { _injectTopbar(); } catch(e){ console.warn('UB topbar:', e); }
 
-  // Patch switchTab only if original still exists
-  try {
-    if(typeof window.switchTab === 'function'){
-      const _origSwitch = window.switchTab;
-      window.switchTab = function(t, preserveEdit){
-        try{ _origSwitch(t, preserveEdit); }catch(e){ console.warn('switchTab orig:', e); }
-        try{ _syncSidebar(t); }catch(e){}
-      };
-    }
-  } catch(e){ console.warn('UB switchTab patch:', e); }
+  // switchTab handles sidebar sync natively — no patch needed here
 
   // Patch build functions with full isolation
   try{ _patchBuildDash(); }catch(e){ console.warn('UB dash patch:', e); }
@@ -16468,6 +16469,15 @@ function _injectSidebar(){
     <button class="sni" onclick="switchTab('customers')" id="ubsn-customers"><span class="ic">👥</span>Customers</button>
     <div class="snsp"></div>
     <button class="sni" onclick="switchTab('settings')" id="ubsn-settings"><span class="ic">⚙️</span>Settings</button>
+    <div class="snsp"></div>
+    <div class="snl">MORE</div>
+    <button class="sni" onclick="switchTab('stock')" id="ubsn-stock"><span class="ic">📦</span>Stock</button>
+    <button class="sni" onclick="switchTab('expense')" id="ubsn-expense"><span class="ic">💸</span>Expenses</button>
+    <button class="sni" onclick="switchTab('combo')" id="ubsn-combo"><span class="ic">🎁</span>Combo Offers</button>
+    <button class="sni" onclick="switchTab('reconciliation')" id="ubsn-reconciliation"><span class="ic">🧾</span>Reconciliation</button>
+    <button class="sni" onclick="switchTab('rzpdash')" id="ubsn-rzpdash"><span class="ic">💳</span>Razorpay</button>
+    <button class="sni" onclick="switchTab('policies')" id="ubsn-policies"><span class="ic">📜</span>Rules & Policy</button>
+    <button class="sni" onclick="switchTab('designer')" id="ubsn-designer"><span class="ic">🎨</span>Website Designer</button>
   `;
 
   const inner = document.createElement('div');
