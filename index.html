@@ -24,10 +24,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Udaya Bakery">
 <!-- SECURITY: Content Security Policy — reduces XSS risk -->
-
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://apis.google.com https://cdn-cgi.cloudflare.com https://checkout.razorpay.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://checkout.razorpay.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.google.com wss://*.firebaseio.com https://nominatim.openstreetmap.org https://freeimage.host https://api.imgbb.com https://i.ibb.co https://*.ibb.co https://api.razorpay.com https://lumberjack.razorpay.com https://api.msg91.com; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com https://api.razorpay.com https://*.razorpay.com; object-src 'none'; base-uri 'self';">
 <!-- SECURITY: Prevent clickjacking and MIME sniffing -->
-
-
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Image CDN preconnects for faster category/product image loading -->
@@ -1288,8 +1288,8 @@ section{padding:64px 0;contain:layout;}
 .di-row strong{color:var(--gold-light);}
 
 /* ── CART ── */
-.cart-overlay{position:fixed;inset:0;background:rgba(43,18,8,.5);z-index:1200;display:none;opacity:0;transition:opacity .3s;}
-.cart-overlay.open{display:block;opacity:1;pointer-events:all;}
+.cart-overlay{position:fixed;inset:0;background:rgba(43,18,8,.5);z-index:1200;opacity:0;pointer-events:none;transition:opacity .3s;}
+.cart-overlay.open{opacity:1;pointer-events:all;}
 .cart-sidebar{position:fixed;top:0;right:-440px;width:min(440px,100vw);height:100%;height:100dvh;background:var(--white);z-index:1201;transition:right .36s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-16px 0 50px rgba(0,0,0,.16);overflow:hidden;}
 .cart-sidebar.open{right:0;}
 .cart-head{padding:18px 20px 14px;border-bottom:1.5px solid rgba(255,255,255,.15);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,var(--choco),var(--choco-mid));flex-shrink:0;}
@@ -4763,6 +4763,19 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
   </div>
 </section>
 
+<!-- COMBO OFFERS SECTION -->
+<section id="ubComboSection" style="display:none;padding:60px 0 20px;">
+  <div class="container">
+    <div class="section-head center">
+      <span class="section-label">✦ Special Bundles</span>
+      <h2 class="section-title">🎁 Combo <em>Offers</em></h2>
+      <div class="divider center"></div>
+      <p class="section-desc">Curated bundles at unbeatable prices — crafted by our owner for you.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-top:12px;" id="ubComboGrid"></div>
+  </div>
+</section>
+
 <!-- RECENTLY VIEWED -->
 <section id="recentlyViewed" style="display:none;padding:32px 0 0;">
   <div class="container">
@@ -5402,8 +5415,8 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
         <button class="atab" onclick="switchTab('policies')" id="at-policies">📜 Rules & Policy</button>
         <button class="atab" onclick="switchTab('expenses')" id="at-expenses">💸 Expenses</button>
         <button class="atab" onclick="switchTab('combos')" id="at-combos">🎁 Combo Offers</button>
-        <button class="atab" onclick="switchTab('reconcile')" id="at-reconcile">🧾 Reconciliation</button>
-        <button class="atab" onclick="switchTab('rzpdash')" id="at-rzpdash">💳 Razorpay</button>
+        <button class="atab" onclick="switchTab('reconciliation')" id="at-reconciliation">🧾 Reconciliation</button>
+        <button class="atab" onclick="switchTab('razorpay')" id="at-razorpay">💳 Razorpay</button>
       </div>
     </div>
     
@@ -5414,7 +5427,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ╔══════════════════════════════════════════════════════════════╗
 // ║          🔐 UB SECURITY MODULE — DO NOT MODIFY              ║
 // ║  AES-256-GCM encrypted storage + session hardening          ║
@@ -5588,12 +5601,12 @@ initFirebase();
 // ─── Show loading spinner on start ───
 document.addEventListener('DOMContentLoaded', ()=>{
   if(!db) initFirebase();
-
-  // ── INSTANT RENDER — CATS and PRODS are always pre-filled with defaults ──
-  // Show products immediately, Firebase will update with live data when ready.
-  renderCats();
-  renderProds();
-
+  // Show loading placeholders while Firebase loads
+  const _cg = document.getElementById('catGridEl');
+  const _pg = document.getElementById('productGrid');
+  if(_cg) _cg.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px 0;color:var(--gold);font-family:Jost,sans-serif;font-size:15px;opacity:0.7;">🎂 Loading...</div>';
+  if(_pg) _pg.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px 0;color:var(--gold);font-family:Jost,sans-serif;font-size:15px;opacity:0.7;">Loading products...</div>';
+  // Don't render hardcoded data — wait for Firebase so customers always see latest
 
   function startFirebaseSync(){
     if(!db){ initFirebase(); }
@@ -5758,8 +5771,6 @@ function startProductListener(){
     });
     renderCats();
     renderProds();
-    // Cache to localStorage so next visit shows data instantly even before Firebase loads
-    try{ localStorage.setItem('ub_prods', JSON.stringify(PRODS)); }catch(e){}
   }, e=>{
     console.warn('Product listener error — retrying in 3s:', e);
     _prodUnsubscribe = null;
@@ -5781,15 +5792,9 @@ function startProductListener(){
         CATS = fbCats; // replace hardcoded array with Firestore data
         renderCats();
         renderProds();
-        // Cache categories for offline/slow-load fallback
-        try{ localStorage.setItem('ub_cats', JSON.stringify(CATS)); }catch(e){}
         return;
       }
-      // Firestore empty — seed default categories & products into Firebase
-      seedCategories();
-      seedProducts();
-      renderCats();
-      renderProds();
+      // If Firestore has no categories yet, seed from built-in list
     }
     snap.docChanges().forEach(change=>{
       const fc = {...change.doc.data(), id: change.doc.id};
@@ -5806,8 +5811,6 @@ function startProductListener(){
     });
     renderCats();
     renderProds();
-    // Cache to localStorage for offline/slow-load fallback
-    try{ localStorage.setItem('ub_cats', JSON.stringify(CATS)); }catch(e){}
   }, e=>{
     console.warn('Category listener error:', e);
     _catUnsubscribe = null;
@@ -6201,16 +6204,10 @@ function resizeImageTo600(file){
       ctx.fillRect(0, 0, SIZE, SIZE);
       ctx.drawImage(img, finalX, finalY, finalS, finalS, 0, 0, SIZE, SIZE);
 
-      // Use WebP if browser supports it (30% smaller than JPEG), fallback to JPEG
-      const supportsWebP = canvas.toDataURL('image/webp').startsWith('data:image/webp');
-      const mimeType = supportsWebP ? 'image/webp' : 'image/jpeg';
-      const quality  = supportsWebP ? 0.88 : 0.92;
-      const fileName = supportsWebP ? 'product.webp' : 'product.jpg';
-
       canvas.toBlob(blob => {
-        if(blob) resolve(new File([blob], fileName, {type: mimeType}));
+        if(blob) resolve(new File([blob], 'product.jpg', {type:'image/jpeg'}));
         else reject(new Error('Canvas toBlob failed'));
-      }, mimeType, quality);
+      }, 'image/jpeg', 0.92);
     };
     img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image load failed')); };
     img.src = url;
@@ -6265,50 +6262,10 @@ const LS={get:k=>{try{return JSON.parse(localStorage.getItem(k));}catch{return n
 // ═══════════════════════════════════════
 //  DATA
 // ═══════════════════════════════════════
-// CATEGORIES — default data shown instantly; Firebase overwrites with live data
-let CATS = (function(){
-  try {
-    const cached = localStorage.getItem('ub_cats');
-    if(cached){ const p=JSON.parse(cached); if(p&&p.length) return p; }
-  } catch(e){}
-  return [
-    {id:'cakes',      name:'Cakes',         emoji:'🎂', image:'', order:0},
-    {id:'puffs',      name:'Egg Puff',       emoji:'🥐', image:'', order:1},
-    {id:'vegpuffs',   name:'Veg Puff',       emoji:'🫓', image:'', order:2},
-    {id:'chakli',     name:'Chakli',         emoji:'🍩', image:'', order:3},
-    {id:'sweets',     name:'Sweets',         emoji:'🍬', image:'', order:4},
-    {id:'namkeen',    name:'Namkeen',        emoji:'🥨', image:'', order:5},
-    {id:'pastries',   name:'Pastries',       emoji:'🥧', image:'', order:6},
-    {id:'breads',     name:'Breads & Buns',  emoji:'🍞', image:'', order:7},
-    {id:'seasonal',   name:'Seasonal Special',emoji:'🌟', image:'', order:8},
-    {id:'custom',     name:'Custom Orders',  emoji:'✨', image:'', order:9},
-  ];
-})();
+// CATEGORIES — practical groupings
+let CATS = []; // Loaded from Firebase — no hardcoded defaults to avoid flash
 
-// PRODUCTS — default data shown instantly; Firebase overwrites with live data
-let PRODS = (function(){
-  try {
-    const cached = localStorage.getItem('ub_prods');
-    if(cached){ const p=JSON.parse(cached); if(p&&p.length) return p; }
-  } catch(e){}
-  return [
-    {id:'1', name:'Birthday Cake', emoji:'🎂', cat:'cakes', desc:'Freshly baked birthday cake with cream frosting. Available in multiple flavours.', price:450, inStock:true, variants:[{label:'500g',price:450},{label:'1kg',price:850},{label:'2kg',price:1600}], tags:['cake','birthday','cream']},
-    {id:'2', name:'Wedding Cake',  emoji:'💍', cat:'cakes', desc:'Elegant multi-tier wedding cake crafted to perfection for your special day.', price:2500, inStock:true, variants:[{label:'2kg',price:2500},{label:'3kg',price:3500},{label:'5kg',price:5500}], tags:['cake','wedding','tier']},
-    {id:'3', name:'Black Forest Cake', emoji:'🍫', cat:'cakes', desc:'Classic Black Forest with chocolate sponge, cherries and whipped cream.', price:500, inStock:true, variants:[{label:'500g',price:500},{label:'1kg',price:950}], tags:['cake','chocolate','black forest']},
-    {id:'4', name:'Butterscotch Cake', emoji:'🍰', cat:'cakes', desc:'Rich butterscotch cake with crunchy praline topping.', price:450, inStock:true, variants:[{label:'500g',price:450},{label:'1kg',price:850}], tags:['cake','butterscotch']},
-    {id:'5', name:'Egg Puff',      emoji:'🥐', cat:'puffs', desc:'Crispy golden puff with a soft boiled egg filling, baked fresh every morning.', price:20, inStock:true, variants:[{label:'1 pc',price:20},{label:'6 pcs',price:110}], tags:['puff','egg','snack']},
-    {id:'6', name:'Chicken Puff',  emoji:'🍗', cat:'puffs', desc:'Flaky puff pastry filled with spiced chicken keema.', price:25, inStock:true, variants:[{label:'1 pc',price:25},{label:'6 pcs',price:140}], tags:['puff','chicken','snack']},
-    {id:'7', name:'Veg Puff',      emoji:'🫓', cat:'vegpuffs', desc:'Crispy pastry filled with spiced mixed vegetables. 100% vegetarian.', price:18, inStock:true, variants:[{label:'1 pc',price:18},{label:'6 pcs',price:100}], tags:['puff','veg','snack']},
-    {id:'8', name:'Paneer Puff',   emoji:'🧀', cat:'vegpuffs', desc:'Golden puff stuffed with spiced paneer masala filling.', price:22, inStock:true, variants:[{label:'1 pc',price:22},{label:'6 pcs',price:120}], tags:['puff','paneer','veg']},
-    {id:'9', name:'Chakli',        emoji:'🍩', cat:'chakli', desc:'Traditional crispy rice flour chakli — perfectly spiced and crunchy.', price:120, inStock:true, variants:[{label:'250g',price:120},{label:'500g',price:220}], tags:['chakli','snack','crispy']},
-    {id:'10', name:'Mixture',       emoji:'🥨', cat:'namkeen', desc:'Spicy Bombay mixture with sev, peanuts and crunchy bites.', price:100, inStock:true, variants:[{label:'250g',price:100},{label:'500g',price:190}], tags:['mixture','namkeen','spicy']},
-    {id:'11', name:'Besan Laddoo',  emoji:'🍡', cat:'sweets', desc:'Melt-in-mouth besan laddoos made with pure ghee and cardamom.', price:200, inStock:true, variants:[{label:'250g',price:200},{label:'500g',price:380}], tags:['laddoo','sweet','besan']},
-    {id:'12', name:'Gulab Jamun',   emoji:'🍮', cat:'sweets', desc:'Soft, syrup-soaked gulab jamuns — a classic Indian sweet.', price:150, inStock:true, variants:[{label:'250g',price:150},{label:'500g',price:280}], tags:['gulab jamun','sweet']},
-    {id:'13', name:'Cream Pastry',  emoji:'🥧', cat:'pastries', desc:'Light sponge pastry with fresh cream and fruit topping.', price:40, inStock:true, variants:[{label:'1 pc',price:40},{label:'6 pcs',price:220}], tags:['pastry','cream','fresh']},
-    {id:'14', name:'Bread Loaf',    emoji:'🍞', cat:'breads', desc:'Soft sandwich bread baked fresh daily.', price:35, inStock:true, variants:[{label:'Small',price:35},{label:'Large',price:55}], tags:['bread','loaf','sandwich']},
-    {id:'15', name:'Dinner Roll',   emoji:'🧁', cat:'breads', desc:'Soft dinner rolls, perfect with butter or as a burger bun.', price:12, inStock:true, variants:[{label:'1 pc',price:12},{label:'6 pcs',price:65}], tags:['bun','roll','bread']},
-  ];
-})();
+let PRODS = []; // Loaded from Firebase — no hardcoded defaults to avoid flash
 let ORDERS = [];
 let CFG = LS.get('ub_cfg') || {freeKm:2, base:70, perKm:15, minOrder:0};
 let adminPass = null; // plain-text password removed — see hashPass() below
@@ -6679,7 +6636,7 @@ function openQAModal(pid){
 
   const mainImgSrc = p.image || (hasFlavours && p.flavours[0]?.image ? p.flavours[0].image : '');
   const imgHtml = mainImgSrc
-    ? `<img class="qa-img" id="qaMainImg" loading="lazy" decoding="async" src="${mainImgSrc}" alt="${p.name}" style="width:100%;height:300px;object-fit:contain;object-position:center center;border-radius:28px 28px 0 0;background:#1a0e06;flex-shrink:0;display:block;">`
+    ? `<img class="qa-img" id="qaMainImg" src="${mainImgSrc}" alt="${p.name}" style="width:100%;height:300px;object-fit:contain;object-position:center center;border-radius:28px 28px 0 0;background:#1a0e06;flex-shrink:0;display:block;">`
     : `<div class="qa-img-emoji" id="qaMainImg">${p.emoji}</div>`;
 
   // Egg/Eggless selector HTML
@@ -8649,7 +8606,7 @@ function selCatFn(id){
       // Render sub-cat cards from the subcats array
       catGrid.innerHTML = subcats.map(sc=>{
         const imgEl = sc.image
-          ? `<img src="${sc.image}" loading="lazy" decoding="async" style="width:56px;height:56px;border-radius:12px;object-fit:cover;margin-bottom:8px;">`
+          ? `<img src="${sc.image}" style="width:56px;height:56px;border-radius:12px;object-fit:cover;margin-bottom:8px;">`
           : `<div class="ub-cake-cat-icon">${sc.emoji||'🏷️'}</div>`;
         return `<div class="ub-cake-cat-card" onclick="filterByCakeCat('${sc.id}')" data-subcat="${sc.id}">
           ${imgEl}
@@ -8962,7 +8919,7 @@ function renderProds(){
     if(img.complete) img.closest('.pimg-wrap')?.classList.add('img-loaded');
     else img.addEventListener('load',()=>img.closest('.pimg-wrap')?.classList.add('img-loaded'),{once:true});
   });
-  // ── Wire + Add buttons via data-attributes ──
+  // ── Wire + Add buttons and image clicks using data-attributes (avoids broken nested template literals) ──
   grid.querySelectorAll('.ub-card-add').forEach(function(btn){
     btn.addEventListener('click', function(e){
       e.stopPropagation();
@@ -8995,7 +8952,6 @@ function renderProds(){
   });
   });
 }
-
 
 // Debounced renderProds — Firebase real-time updates won't spam re-render
 // Immediate=true for user actions (category click), debounced for data changes
@@ -9198,7 +9154,7 @@ function renderCartItems(){
   el.innerHTML=cart.map(item=>{
     const dispImg = item.flvImage || item.image || '';
     const imgEl = dispImg
-      ? `<img src="${dispImg}" alt="${item.name}" loading="lazy" decoding="async" onerror="this.parentElement.innerHTML='<div class=cii-emoji>${item.emoji}</div>'">`
+      ? `<img src="${dispImg}" alt="${item.name}" onerror="this.parentElement.innerHTML='<div class=cii-emoji>${item.emoji}</div>'">`
       : `<div class="cii-emoji">${item.emoji}</div>`;
     // Parse variant: "1kg · Chocolate · 🌿 Eggless" → weight + flavour + egg type
     const parts = (item.variant||'').split('·').map(s=>s.trim());
@@ -9332,17 +9288,13 @@ function openOrderModal(prefillTime){
     const dd = String(minDate.getDate()).padStart(2,'0');
     dateInput.min = `${yyyy}-${mm}-${dd}`;
 
-    // Compute max advance across cart items (respecting per-flavour+weight advance if set)
+    // Compute max advance across cart items (respecting per-flavour advance if set)
     const maxAdvPreview = cart.reduce((mx, ci) => {
       const prod = PRODS.find(p => String(p.id) === String(ci.pid));
       if(!prod) return mx;
-      // Check per-flavour → per-weight advance first
+      // Check per-flavour advance first
       if(prod.flavours && prod.flavours.length > 0 && ci.flvName){
         const flv = prod.flavours.find(f=>f.name && f.name.toLowerCase()===ci.flvName.toLowerCase());
-        if(flv && flv.variants && ci.variant){
-          const vnt = flv.variants.find(v=>v.label && v.label.toLowerCase()===(ci.variant||'').toLowerCase());
-          if(vnt && vnt.advanceAmt > 0) return Math.max(mx, parseInt(vnt.advanceAmt));
-        }
         if(flv && flv.advanceAmt > 0) return Math.max(mx, parseInt(flv.advanceAmt));
       }
       return Math.max(mx, (prod.advanceAmt) ? parseInt(prod.advanceAmt) : 0);
@@ -9650,16 +9602,13 @@ function submitOrder(){
   };
   
   // ── ADVANCE PAYMENT CHECK ──
-  // Check per-flavour+weight advance first, fall back to flavour-level, then product-level
+  // Check per-flavour advance first, fall back to product-level advance
   const maxAdvance = cart.reduce((mx, ci) => {
     const prod = PRODS.find(p => String(p.id) === String(ci.pid));
     if(!prod) return mx;
+    // Per-flavour advance takes priority
     if(prod.flavours && prod.flavours.length > 0 && ci.flvName){
       const flv = prod.flavours.find(f=>f.name && f.name.toLowerCase()===(ci.flvName||'').toLowerCase());
-      if(flv && flv.variants && ci.variant){
-        const vnt = flv.variants.find(v=>v.label && v.label.toLowerCase()===(ci.variant||'').toLowerCase());
-        if(vnt && vnt.advanceAmt > 0) return Math.max(mx, parseInt(vnt.advanceAmt));
-      }
       if(flv && flv.advanceAmt > 0) return Math.max(mx, parseInt(flv.advanceAmt));
     }
     return Math.max(mx, prod.advanceAmt ? parseInt(prod.advanceAmt) : 0);
@@ -9776,21 +9725,6 @@ function finalizeOrder(order, payNote){
   showToast('🎉 Order placed!','ok');
   sendNotification('✅ Order Placed – Udaya Bakery', 'Your order has been placed! 🎂');
   if(adminLoggedIn&&adminTab==='orders') renderAdminTab();
-
-  // ── STOCK DECREMENT: reduce stockQty for each ordered item ──
-  (order.items||[]).forEach(item=>{
-    const prod = PRODS.find(p=>String(p.id)===String(item.pid||item.id));
-    if(prod && prod.stockQty > 0){
-      prod.stockQty = Math.max(0, prod.stockQty - (item.qty||1));
-      if(prod.stockQty === 0){ prod.inStock = false; }
-      try{ if(db) db.collection('products').doc(String(prod.id)).update({stockQty: prod.stockQty, inStock: prod.inStock!==false}).catch(()=>{}); }catch(e){}
-      // Low stock alert for admin
-      const alertThreshold = prod.stockAlert || 3;
-      if(prod.stockQty > 0 && prod.stockQty <= alertThreshold){
-        ubSaveLowStockAlert(prod);
-      }
-    }
-  });
 
   // ── STEP 2: Background tasks — Firebase + WhatsApp (never block UI) ──
   // Build WhatsApp message
@@ -10476,14 +10410,7 @@ document.addEventListener('click', (e)=>{
 
 // Init Google Sign-In
 window.addEventListener('load', ()=>{
-  if(currentUser){
-    renderUserNav();
-    // Show welcome greeting for returning logged-in users
-    const _firstName = currentUser.name ? currentUser.name.split(' ')[0] : 'there';
-    setTimeout(function(){
-      showToast('👋 ' + getTimeGreeting() + ', ' + _firstName + '! Welcome back 🎂', 'ok');
-    }, 600);
-  }
+  if(currentUser) renderUserNav();
   // Admin FAB visibility is handled by Firebase auth.onAuthStateChanged — do not
   // restore adminLoggedIn from localStorage alone, as it bypasses auth verification.
   // The onAuthStateChanged listener below handles this securely.
@@ -11117,10 +11044,10 @@ function renderAdminTab(){
   else if(adminTab==='cakebuilder') el.innerHTML = buildCakeBuilderAdminTab();
   else if(adminTab==='videos') el.innerHTML = buildVideosAdminTab();
   else if(adminTab==='policies'){ el.innerHTML = buildPoliciesAdminTab(); initPoliciesAdmin(); }
-  else if(adminTab==='expenses'){ el.innerHTML = buildExpensesTab(); }
-  else if(adminTab==='combos'){ el.innerHTML = buildCombosTab(); }
-  else if(adminTab==='reconcile'){ el.innerHTML = buildReconcileTab(); }
-  else if(adminTab==='rzpdash'){ el.innerHTML='<div style="padding:40px;text-align:center;color:rgba(253,246,236,.4);">⏳ Loading...</div>'; buildRzpDashTab().then(function(html){ if(adminTab==='rzpdash') el.innerHTML=html; }).catch(function(e){ el.innerHTML='<div style="padding:20px;color:#F87171;">Error: '+e.message+'</div>'; }); }
+  else if(adminTab==='expenses') el.innerHTML = buildExpensesTab();
+  else if(adminTab==='combos') el.innerHTML = buildCombosTab();
+  else if(adminTab==='reconciliation') el.innerHTML = buildReconciliationTab();
+  else if(adminTab==='razorpay') el.innerHTML = buildRazorpayTab();
   else if(adminTab==='designer'){
     try {
       el.innerHTML = buildDesignerTab();
@@ -11195,6 +11122,7 @@ function buildDash(){
       <div style="font-size:11px;color:rgba(252,211,77,.6);">Tap Orders tab to confirm</div></div>
     </div>`:'<div style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:12px;padding:10px 16px;font-size:13px;color:#4ADE80;">✅ All caught up!</div>'}
   </div>
+  ${(()=>{const lowItems=PRODS.filter(p=>p.stockQty!=null&&p.stockQty<=5&&p.inStock!==false);return lowItems.length?`<div style="background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.3);border-radius:14px;padding:13px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;" onclick="switchTab('products')"><span style="font-size:22px;flex-shrink:0;">🔴</span><div style="flex:1;"><div style="font-size:13px;font-weight:800;color:#F87171;margin-bottom:4px;">⚠️ Low Stock Alert — ${lowItems.length} product${lowItems.length>1?'s':''} running low</div><div style="font-size:12px;color:rgba(253,246,236,.65);line-height:1.6;">${lowItems.map(p=>`${p.emoji||'🎂'} <strong style="color:#FCA5A5;">${p.name}</strong>: ${p.stockQty} remaining`).join(' &nbsp;·&nbsp; ')}</div><div style="font-size:11px;color:rgba(239,68,68,.7);margin-top:5px;font-weight:700;">Tap to go to Products → update stock</div></div></div>`:'';})()}
 
   <!-- Stats Grid -->
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
@@ -11301,15 +11229,27 @@ function buildProdsTab(){
   </div>
   <div style="overflow-x:auto;">
   <table class="aptable">
-    <thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Variants</th><th>Stock</th><th>Actions</th></tr></thead>
+    <thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Variants</th><th>Qty</th><th>Stock</th><th>Actions</th></tr></thead>
     <tbody>${PRODS.map(p=>{
       const cat = CATS.find(c=>c.id===p.cat);
       const isOos = p.inStock===false;
-      return `<tr class="${isOos?'ub-low-stock-row':''}">
+      const qty = p.stockQty != null ? p.stockQty : '∞';
+      const LOW_STOCK_THRESHOLD = 5;
+      const isLow = p.stockQty != null && p.stockQty <= LOW_STOCK_THRESHOLD && p.stockQty > 0;
+      const rowClass = isOos ? 'ub-low-stock-row' : (isLow ? 'ub-low-stock-row' : '');
+      return `<tr class="${rowClass}">
         <td><div style="width:46px;height:46px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:22px;">${p.image?`<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;">`:`${p.emoji}`}</div></td>
-        <td><div style="font-weight:600;color:rgba(253,246,236,.87);max-width:160px;">${p.name}${p.badge?`<span style="display:inline-block;background:rgba(200,146,58,.2);color:#E8B96A;font-size:9px;padding:1px 6px;border-radius:6px;margin-left:5px;font-weight:700;">${p.badge}</span>`:''}</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:2px;">₹${p.price} base</div>${isOos?'<span class="ub-low-stock-badge">⊘ Out of Stock</span>':''}</td>
+        <td><div style="font-weight:600;color:rgba(253,246,236,.87);max-width:160px;">${p.name}${p.badge?`<span style="display:inline-block;background:rgba(200,146,58,.2);color:#E8B96A;font-size:9px;padding:1px 6px;border-radius:6px;margin-left:5px;font-weight:700;">${p.badge}</span>`:''}</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:2px;">₹${p.price} base</div>${isOos?'<span class="ub-low-stock-badge">⊘ Out of Stock</span>':isLow?'<span class="ub-low-stock-badge">⚠️ Low Stock</span>':''}</td>
         <td style="white-space:nowrap;">${cat?cat.emoji+' '+cat.name:p.cat}</td>
         <td style="max-width:180px;">${p.variants.map(v=>`<span style="display:inline-block;background:rgba(200,146,58,.1);border-radius:6px;padding:2px 8px;margin:2px;font-size:11px;color:rgba(253,246,236,.6);">${v.label}: ₹${v.price}</span>`).join('')}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <input type="number" min="0" value="${p.stockQty != null ? p.stockQty : ''}" placeholder="∞" title="Stock quantity (blank=unlimited)"
+              style="width:54px;background:rgba(255,255,255,.07);border:1.5px solid rgba(200,146,58,.2);border-radius:8px;padding:5px 6px;font-family:Jost,sans-serif;font-size:12px;color:#FDF6EC;text-align:center;"
+              onchange="ubSetStockQty(${p.id},this.value)">
+          </div>
+          ${isLow?`<div style="font-size:9px;color:#FBBF24;margin-top:2px;font-weight:700;">⚠️ ${p.stockQty} left</div>`:''}
+        </td>
         <td>
           <label class="ub-sold-toggle" title="${isOos?'Click to restore stock':'Click to mark Sold Out'}">
             <input type="checkbox" ${isOos?'checked':''} onchange="ubToggleStock(${p.id})">
@@ -11321,11 +11261,370 @@ function buildProdsTab(){
         <td style="white-space:nowrap;display:flex;gap:5px;align-items:center;">
           <button class="abtn-edit" onclick="startEdit(${p.id})" style="padding:6px 10px;">✏️</button>
           <button class="abtn-del" onclick="delProd(${p.id})" style="padding:6px 10px;">🗑</button>
+          <button onclick="ubShowOrderQR('${p.id}')" style="background:rgba(99,102,241,.15);color:#A5B4FC;border:1px solid rgba(99,102,241,.3);border-radius:8px;padding:6px 8px;font-size:12px;cursor:pointer;" title="Order QR Code">📱</button>
         </td>
       </tr>`;}).join('')}
     </tbody>
-  </table></div>`;
+  </table></div>
+  ${(()=>{const lowItems=PRODS.filter(p=>p.stockQty!=null&&p.stockQty<=5&&p.inStock!==false);return lowItems.length?`<div style="margin-top:14px;background:rgba(251,191,36,.08);border:1.5px solid rgba(251,191,36,.3);border-radius:14px;padding:12px 16px;display:flex;align-items:flex-start;gap:10px;"><span style="font-size:22px;">⚠️</span><div><div style="font-size:13px;font-weight:700;color:#FCD34D;margin-bottom:4px;">Low Stock Alert — ${lowItems.length} item${lowItems.length>1?'s':''}</div><div style="font-size:12px;color:rgba(253,246,236,.6);">${lowItems.map(p=>`${p.emoji} ${p.name}: <strong style="color:#FBBF24;">${p.stockQty} left</strong>`).join(' · ')}</div></div></div>`:'';})()}`;
 }
+
+function ubSetStockQty(pid, val){
+  const p = PRODS.find(x=>String(x.id)===String(pid));
+  if(!p) return;
+  const qty = val === '' ? null : parseInt(val);
+  p.stockQty = qty;
+  if(db) db.collection('products').doc(String(pid)).set({stockQty: qty!=null?qty:null}, {merge:true}).catch(()=>{});
+  showToast(qty != null ? `📦 Stock set to ${qty} for ${p.name}` : `📦 ${p.name} — unlimited stock`, 'ok');
+  renderAdminTab();
+}
+
+// ── ORDER QR CODE ──
+function ubShowOrderQR(pid){
+  const p = PRODS.find(x=>String(x.id)===String(pid));
+  if(!p) return;
+  const url = window.location.href.split('?')[0] + '?order=' + pid;
+  const modal = document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);';
+  modal.innerHTML=`<div style="background:linear-gradient(135deg,#1E0C02,#2A1208);border:1px solid rgba(200,146,58,.35);border-radius:24px;padding:32px 28px;max-width:340px;width:90%;text-align:center;position:relative;">
+    <button onclick="this.closest('[style*=position]').remove()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;">✕</button>
+    <div style="font-size:36px;margin-bottom:8px;">${p.emoji||'🎂'}</div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;color:#E8B96A;margin-bottom:4px;">${p.name}</div>
+    <div style="font-size:12px;color:rgba(253,246,236,.45);margin-bottom:18px;">Scan to order this product directly</div>
+    <div style="background:#fff;border-radius:16px;padding:12px;display:inline-block;margin-bottom:14px;">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=190x190&data=${encodeURIComponent(url)}" width="190" height="190" alt="QR Code" style="display:block;border-radius:8px;">
+    </div>
+    <div style="font-size:10px;color:rgba(253,246,236,.3);word-break:break-all;margin-bottom:14px;">${url}</div>
+    <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${url.replace(/'/g,"\\'")}').then(()=>showToast('✅ Link copied!','ok'))" style="background:rgba(200,146,58,.2);color:#E8B96A;border:1px solid rgba(200,146,58,.35);border-radius:10px;padding:9px 18px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">📋 Copy Link</button>
+  </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',function(e){if(e.target===modal)modal.remove();});
+}
+
+// ══════════════════════════════════════
+//  💸 EXPENSE TRACKER TAB
+// ══════════════════════════════════════
+function ubGetExpenses(){ try{ return JSON.parse(localStorage.getItem('ub_expenses')||'[]'); }catch(e){ return []; }}
+function ubSaveExpenses(list){ localStorage.setItem('ub_expenses', JSON.stringify(list)); if(db) db.collection('categories').doc('ubExpenses').set({list:list.slice(-500),updatedAt:Date.now()},{merge:true}).catch(()=>{}); }
+
+function buildExpensesTab(){
+  const expenses = ubGetExpenses();
+  const total = expenses.reduce((s,e)=>s+(parseFloat(e.amount)||0), 0);
+  const today = new Date().toDateString();
+  const todayTotal = expenses.filter(e=>new Date(e.date).toDateString()===today).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);
+  const byCategory = {};
+  expenses.forEach(e=>{ byCategory[e.category]=(byCategory[e.category]||0)+(parseFloat(e.amount)||0); });
+  const topCats = Object.entries(byCategory).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  return `<div style="max-width:860px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+    <div><h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">💸 Expense Tracker</h2><p style="font-size:12px;color:rgba(253,246,236,.38);">Track bakery expenses — ingredients, utilities, salaries &amp; more</p></div>
+    <button onclick="ubExportExpenses()" style="background:rgba(200,146,58,.12);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:8px 16px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">📤 Export CSV</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+    <div class="kcard"><div class="klbl">Total Expenses</div><div class="kval">₹${total.toLocaleString('en-IN')}</div></div>
+    <div class="kcard"><div class="klbl">Today</div><div class="kval">₹${todayTotal.toLocaleString('en-IN')}</div></div>
+    <div class="kcard"><div class="klbl">Entries</div><div class="kval">${expenses.length}</div></div>
+  </div>
+  <div class="acard" style="margin-bottom:20px;">
+    <h3>➕ Add Expense</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="af-group"><label>Category</label>
+        <select class="af-sel" id="exp_cat">
+          <option>🌾 Ingredients</option><option>⚡ Electricity</option><option>💧 Water</option><option>👷 Salaries</option><option>📦 Packaging</option><option>🔧 Maintenance</option><option>🚚 Delivery</option><option>📢 Marketing</option><option>🏠 Rent</option><option>🧴 Cleaning</option><option>📋 Misc</option>
+        </select>
+      </div>
+      <div class="af-group"><label>Amount (₹) *</label><input class="af-inp" type="number" id="exp_amt" placeholder="e.g. 500" min="0"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="af-group"><label>Date</label><input class="af-inp" type="date" id="exp_date" value="${new Date().toISOString().split('T')[0]}"></div>
+      <div class="af-group"><label>Description</label><input class="af-inp" id="exp_desc" placeholder="e.g. Flour 50kg, Sugar"></div>
+    </div>
+    <div class="af-group"><label>Notes (optional)</label><textarea class="af-ta" id="exp_notes" rows="2" placeholder="Vendor name, receipt #..."></textarea></div>
+    <button class="abtn" onclick="ubAddExpense()">💾 Log Expense</button>
+  </div>
+  ${topCats.length?`<div class="acard" style="margin-bottom:20px;"><h3>📊 By Category</h3><div class="asub">Spending breakdown</div>${topCats.map(([cat,amt])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div style="font-size:13px;color:rgba(253,246,236,.75);font-weight:600;">${cat}</div><div style="font-family:'Playfair Display',serif;font-size:15px;color:#E8B96A;font-weight:700;">₹${amt.toLocaleString('en-IN')}</div></div>`).join('')}</div>`:''}
+  <div class="acard"><h3>📋 Recent Expenses</h3><div class="asub">Latest ${Math.min(expenses.length,50)} entries</div>
+    ${expenses.length===0?'<div style="text-align:center;padding:32px;color:rgba(253,246,236,.25);">No expenses logged yet</div>':
+    '<div style="overflow-x:auto;"><table class="aptable"><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th></th></tr></thead><tbody>'
+    +[...expenses].reverse().slice(0,50).map((e,i)=>`<tr><td style="font-size:12px;">${new Date(e.date).toLocaleDateString('en-IN')}</td><td style="font-size:12px;">${e.category}</td><td style="font-size:12px;color:rgba(253,246,236,.55);">${e.desc||'—'}</td><td style="color:#E8B96A;font-weight:700;">₹${parseFloat(e.amount).toLocaleString('en-IN')}</td><td><button onclick="ubDeleteExpense('${e.id}')" style="background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:4px 8px;font-size:11px;cursor:pointer;">🗑</button></td></tr>`).join('')
+    +'</tbody></table></div>'}
+  </div></div>`;
+}
+
+function ubAddExpense(){
+  const cat  = document.getElementById('exp_cat')?.value || 'Misc';
+  const amt  = parseFloat(document.getElementById('exp_amt')?.value||'0');
+  const date = document.getElementById('exp_date')?.value || new Date().toISOString().split('T')[0];
+  const desc = (document.getElementById('exp_desc')?.value||'').trim();
+  const notes= (document.getElementById('exp_notes')?.value||'').trim();
+  if(!amt||isNaN(amt)||amt<=0){ showToast('⚠️ Enter a valid amount','err'); return; }
+  const list = ubGetExpenses();
+  list.push({id:'exp'+Date.now(), category:cat, amount:amt, date, desc, notes, addedAt:Date.now()});
+  ubSaveExpenses(list);
+  showToast('✅ Expense logged!','ok');
+  renderAdminTab();
+}
+function ubDeleteExpense(id){
+  const list = ubGetExpenses().filter(e=>e.id!==id);
+  ubSaveExpenses(list);
+  showToast('🗑 Expense deleted','ok');
+  renderAdminTab();
+}
+function ubExportExpenses(){
+  const list = ubGetExpenses();
+  if(!list.length){ showToast('No expenses to export','err'); return; }
+  const header='Date,Category,Description,Amount,Notes';
+  const rows=list.map(e=>`"${e.date}","${e.category}","${(e.desc||'').replace(/"/g,"'")}",${e.amount},"${(e.notes||'').replace(/"/g,"'")}"`);
+  const blob=new Blob([header+'\n'+rows.join('\n')],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`expenses_${Date.now()}.csv`;a.click();
+  showToast('📤 Expenses exported!','ok');
+}
+
+// ══════════════════════════════════════
+//  🎁 COMBO OFFERS TAB
+// ══════════════════════════════════════
+function ubGetCombos(){ try{ return JSON.parse(localStorage.getItem('ub_combos')||'[]'); }catch(e){ return []; }}
+function ubSaveCombos(list){
+  localStorage.setItem('ub_combos', JSON.stringify(list));
+  if(db) db.collection('categories').doc('ubCombos').set({list,updatedAt:Date.now()},{merge:true}).catch(()=>{});
+}
+
+function buildCombosTab(){
+  const combos = ubGetCombos();
+  return `<div style="max-width:860px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+    <div><h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">🎁 Combo Offers</h2><p style="font-size:12px;color:rgba(253,246,236,.38);">Create bundle deals — owner sets products &amp; prices. Shown to customers as special combo packages.</p></div>
+  </div>
+  <div class="acard" style="margin-bottom:20px;">
+    <h3>➕ Create New Combo</h3>
+    <div class="af-row">
+      <div class="af-group"><label>Combo Name *</label><input class="af-inp" id="cb_name" placeholder="e.g. Birthday Bonanza, Family Treat"></div>
+      <div class="af-group"><label>Emoji Icon</label><input class="af-inp" id="cb_emoji" value="🎁" style="font-size:20px;max-width:80px;"></div>
+    </div>
+    <div class="af-group"><label>Description</label><input class="af-inp" id="cb_desc" placeholder="What is included in this combo..."></div>
+    <div class="af-row">
+      <div class="af-group"><label>Combo Price (₹) * — you set this</label><input class="af-inp" type="number" id="cb_price" placeholder="e.g. 999" min="0"></div>
+      <div class="af-group"><label>Original MRP (₹) — show savings</label><input class="af-inp" type="number" id="cb_mrp" placeholder="e.g. 1250 (crossed out)" min="0"></div>
+    </div>
+    <div class="af-group">
+      <label>Products Included (select one or more)</label>
+      <div style="background:rgba(255,255,255,.03);border:1.5px solid rgba(200,146,58,.18);border-radius:12px;padding:12px;max-height:200px;overflow-y:auto;">
+        ${PRODS.length===0?'<div style="color:rgba(253,246,236,.3);font-size:12px;">No products yet — add products first</div>':
+        PRODS.map(p=>`<label style="display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);">
+          <input type="checkbox" id="cbp_${p.id}" style="width:16px;height:16px;accent-color:#C8923A;">
+          <span style="font-size:13px;color:rgba(253,246,236,.8);">${p.emoji||'🎂'} ${p.name}</span>
+          <span style="font-size:11px;color:rgba(253,246,236,.35);margin-left:auto;">₹${p.price}</span>
+        </label>`).join('')}
+      </div>
+    </div>
+    <div class="af-row">
+      <div class="af-group"><label>Valid From</label><input class="af-inp" type="date" id="cb_from" value="${new Date().toISOString().split('T')[0]}"></div>
+      <div class="af-group"><label>Valid Until (blank = no expiry)</label><input class="af-inp" type="date" id="cb_to"></div>
+    </div>
+    <div class="af-group"><label>Badge Label (shown on combo card)</label><input class="af-inp" id="cb_badge" placeholder="e.g. Best Value, Fan Favourite"></div>
+    <button class="abtn" onclick="ubSaveCombo()">🎁 Create Combo</button>
+  </div>
+  <div class="acard"><h3>All Combos (${combos.length})</h3>
+    ${combos.length===0?'<div style="text-align:center;padding:40px;color:rgba(253,246,236,.25);">No combos yet — create your first combo above</div>':
+    combos.map(c=>{
+      const todayStr=new Date().toISOString().split('T')[0];
+      const expired=c.to&&c.to<todayStr;
+      const savings=c.mrp&&c.price?c.mrp-c.price:0;
+      return `<div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,146,58,${expired?'.08':'.2'});border-radius:14px;padding:16px;margin-bottom:12px;${expired?'opacity:.5':''}">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:24px;">${c.emoji||'🎁'}</span>
+              <div>
+                <div style="font-family:'Playfair Display',serif;font-size:16px;color:#E8B96A;font-weight:700;">${c.name}</div>
+                ${c.badge?`<span style="background:rgba(200,146,58,.2);color:#E8B96A;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;">${c.badge}</span>`:''}
+                ${expired?`<span style="background:rgba(239,68,68,.15);color:#F87171;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;margin-left:4px;">EXPIRED</span>`:''}
+                ${c.active===false?`<span style="background:rgba(255,255,255,.05);color:rgba(253,246,236,.3);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;margin-left:4px;">DISABLED</span>`:''}
+              </div>
+            </div>
+            <div style="font-size:12px;color:rgba(253,246,236,.55);margin-bottom:6px;">${c.desc||''}</div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span style="font-family:'Playfair Display',serif;font-size:20px;color:#4ADE80;font-weight:700;">₹${c.price}</span>
+              ${c.mrp?`<span style="font-size:13px;color:rgba(253,246,236,.3);text-decoration:line-through;">₹${c.mrp}</span>`:''}
+              ${savings>0?`<span style="background:rgba(74,222,128,.12);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;">Save ₹${savings}</span>`:''}
+            </div>
+            ${c.items&&c.items.length?`<div style="font-size:11px;color:rgba(253,246,236,.4);margin-top:6px;">Includes: ${c.items.map(id=>{const p=PRODS.find(x=>String(x.id)===String(id));return p?p.emoji+' '+p.name:'?';}).join(', ')}</div>`:''}
+            ${c.from||c.to?`<div style="font-size:10px;color:rgba(253,246,236,.3);margin-top:4px;">Valid: ${c.from||'—'} to ${c.to||'no expiry'}</div>`:''}
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0;">
+            <button onclick="ubToggleCombo('${c.id}')" style="background:rgba(200,146,58,.12);color:#E8B96A;border:1px solid rgba(200,146,58,.25);border-radius:9px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;">${c.active===false?'▶ Enable':'⏸ Disable'}</button>
+            <button onclick="ubDeleteCombo('${c.id}')" class="abtn-del" style="padding:7px 10px;">🗑</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div></div>`;
+}
+
+function ubSaveCombo(){
+  const name  = (document.getElementById('cb_name')?.value||'').trim();
+  const emoji = (document.getElementById('cb_emoji')?.value||'').trim()||'🎁';
+  const desc  = (document.getElementById('cb_desc')?.value||'').trim();
+  const price = parseFloat(document.getElementById('cb_price')?.value||'0');
+  const mrp   = parseFloat(document.getElementById('cb_mrp')?.value||'0')||null;
+  const from  = document.getElementById('cb_from')?.value||'';
+  const to    = document.getElementById('cb_to')?.value||'';
+  const badge = (document.getElementById('cb_badge')?.value||'').trim();
+  if(!name){ showToast('⚠️ Combo name required','err'); return; }
+  if(!price||price<=0){ showToast('⚠️ Set a combo price','err'); return; }
+  const items = PRODS.filter(p=>document.getElementById('cbp_'+p.id)?.checked).map(p=>String(p.id));
+  const combos = ubGetCombos();
+  combos.push({id:'combo'+Date.now(), name, emoji, desc, price, mrp, from, to, badge, items, active:true, createdAt:Date.now()});
+  ubSaveCombos(combos);
+  showToast('🎁 Combo created!','ok');
+  renderAdminTab();
+}
+function ubToggleCombo(id){
+  const combos=ubGetCombos(); const c=combos.find(x=>x.id===id); if(!c) return;
+  c.active=c.active===false?true:false; ubSaveCombos(combos);
+  showToast(c.active?'✅ Combo enabled!':'⏸ Combo disabled','ok'); renderAdminTab();
+}
+function ubDeleteCombo(id){
+  if(!confirm('Delete this combo?')) return;
+  ubSaveCombos(ubGetCombos().filter(x=>x.id!==id));
+  showToast('🗑 Combo deleted','ok'); renderAdminTab();
+}
+
+// ══════════════════════════════════════
+//  🧾 PAYMENT RECONCILIATION TAB
+// ══════════════════════════════════════
+function buildReconciliationTab(){
+  const days=30;
+  const now=new Date();
+  const cutoff=new Date(now-days*24*60*60*1000);
+  const recentOrders=ORDERS.filter(o=>new Date(o.timestamp)>=cutoff&&o.status!=='cancelled');
+  const totalRevenue=recentOrders.reduce((s,o)=>s+(o.total||0),0);
+  const codOrders=recentOrders.filter(o=>!o.payMethod||o.payMethod==='cod');
+  const onlineOrders=recentOrders.filter(o=>o.payMethod&&o.payMethod!=='cod');
+  const codTotal=codOrders.reduce((s,o)=>s+(o.total||0),0);
+  const onlineTotal=onlineOrders.reduce((s,o)=>s+(o.total||0),0);
+  const expenses=ubGetExpenses();
+  const recentExp=expenses.filter(e=>new Date(e.date)>=cutoff);
+  const totalExp=recentExp.reduce((s,e)=>s+(parseFloat(e.amount)||0),0);
+  const netProfit=totalRevenue-totalExp;
+  const daily=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toDateString();const rev=ORDERS.filter(o=>new Date(o.timestamp).toDateString()===ds&&o.status!=='cancelled').reduce((s,o)=>s+(o.total||0),0);const exp=expenses.filter(e=>new Date(e.date).toDateString()===ds).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);daily.push({label:d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric'}),rev,exp,net:rev-exp});}
+  return `<div style="max-width:860px;">
+  <div style="margin-bottom:20px;"><h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">🧾 Payment Reconciliation</h2><p style="font-size:12px;color:rgba(253,246,236,.38);">Last 30 days · Revenue vs Expenses · Cash vs Online</p></div>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;">
+    <div class="kcard"><div class="klbl">Total Revenue (30d)</div><div class="kval" style="color:#4ADE80;">₹${totalRevenue.toLocaleString('en-IN')}</div></div>
+    <div class="kcard"><div class="klbl">Total Expenses (30d)</div><div class="kval" style="color:#F87171;">₹${totalExp.toLocaleString('en-IN')}</div></div>
+    <div class="kcard"><div class="klbl">Net Profit</div><div class="kval" style="color:${netProfit>=0?'#4ADE80':'#F87171'};">${netProfit>=0?'+':'-'}₹${Math.abs(netProfit).toLocaleString('en-IN')}</div></div>
+    <div class="kcard"><div class="klbl">Profit Margin</div><div class="kval" style="color:${totalRevenue>0&&netProfit/totalRevenue>0.2?'#4ADE80':'#FBBF24'};">${totalRevenue>0?Math.round(netProfit/totalRevenue*100):0}%</div></div>
+  </div>
+  <div class="acard" style="margin-bottom:20px;">
+    <h3>💳 Payment Method Breakdown</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px;">
+      <div style="background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);border-radius:14px;padding:16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:4px;">💵</div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;color:#FCD34D;font-weight:700;">₹${codTotal.toLocaleString('en-IN')}</div>
+        <div style="font-size:11px;color:rgba(253,246,236,.4);margin-top:4px;">Cash on Delivery · ${codOrders.length} orders</div>
+      </div>
+      <div style="background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);border-radius:14px;padding:16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:4px;">📱</div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;color:#A5B4FC;font-weight:700;">₹${onlineTotal.toLocaleString('en-IN')}</div>
+        <div style="font-size:11px;color:rgba(253,246,236,.4);margin-top:4px;">UPI / Online · ${onlineOrders.length} orders</div>
+      </div>
+    </div>
+  </div>
+  <div class="acard" style="margin-bottom:20px;">
+    <h3>📅 Daily P&amp;L — Last 7 Days</h3>
+    <div class="asub">Revenue vs Expenses vs Net per day</div>
+    <div style="overflow-x:auto;margin-top:14px;">
+      <table class="aptable"><thead><tr><th>Day</th><th style="color:#4ADE80;">Revenue</th><th style="color:#F87171;">Expenses</th><th>Net</th></tr></thead><tbody>
+      ${daily.map(d=>`<tr><td style="font-size:12px;color:rgba(253,246,236,.6);">${d.label}</td><td style="color:#4ADE80;font-weight:700;">₹${d.rev.toLocaleString('en-IN')}</td><td style="color:#F87171;">₹${d.exp.toLocaleString('en-IN')}</td><td style="font-weight:700;color:${d.net>=0?'#4ADE80':'#F87171'};">${d.net>=0?'+':'-'}₹${Math.abs(d.net).toLocaleString('en-IN')}</td></tr>`).join('')}
+      </tbody></table>
+    </div>
+  </div>
+  <div class="acard">
+    <h3>📋 Recent Orders (30d)</h3>
+    <div class="asub">${recentOrders.length} completed orders</div>
+    ${recentOrders.length===0?'<div style="text-align:center;padding:24px;color:rgba(253,246,236,.25);">No orders in last 30 days</div>':
+    '<div style="overflow-x:auto;"><table class="aptable"><thead><tr><th>Order</th><th>Customer</th><th>Method</th><th>Amount</th><th>Status</th></tr></thead><tbody>'
+    +[...recentOrders].reverse().slice(0,30).map(o=>`<tr><td style="font-size:11px;color:#E8B96A;">${o.id}</td><td style="font-size:12px;">${o.name||'?'}</td><td style="font-size:11px;"><span style="background:${o.payMethod&&o.payMethod!=='cod'?'rgba(99,102,241,.15)':'rgba(251,191,36,.12)'};color:${o.payMethod&&o.payMethod!=='cod'?'#A5B4FC':'#FCD34D'};padding:2px 7px;border-radius:6px;font-weight:700;">${o.payMethod==='cod'||!o.payMethod?'💵 COD':'📱 Online'}</span></td><td style="color:#E8B96A;font-weight:700;">₹${(o.total||0).toLocaleString('en-IN')}</td><td><span class="obadge ${o.status}">${o.status}</span></td></tr>`).join('')
+    +'</tbody></table></div>'}
+  </div></div>`;
+}
+
+// ══════════════════════════════════════
+//  💳 RAZORPAY DASHBOARD TAB
+// ══════════════════════════════════════
+function buildRazorpayTab(){
+  const rzpOrders=ORDERS.filter(o=>o.payMethod==='razorpay'||o.rzpPaymentId);
+  const rzpRevenue=rzpOrders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+(o.total||0),0);
+  const rzpPending=rzpOrders.filter(o=>o.status==='pending').length;
+  return `<div style="max-width:860px;">
+  <div style="margin-bottom:20px;"><h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">💳 Razorpay Dashboard</h2><p style="font-size:12px;color:rgba(253,246,236,.38);">Monitor Razorpay transactions, key status &amp; payment analytics</p></div>
+  <div style="background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(99,102,241,.06));border:1.5px solid rgba(99,102,241,.3);border-radius:16px;padding:20px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <div style="width:52px;height:52px;background:linear-gradient(135deg,#6366F1,#4338CA);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">💳</div>
+    <div style="flex:1;"><div style="font-size:16px;font-weight:700;color:#A5B4FC;margin-bottom:2px;">Razorpay Integration</div><div style="font-size:12px;color:rgba(165,180,252,.6);">Configure API keys in Payments tab to activate online payments</div></div>
+    <button onclick="switchTab('payments')" style="background:rgba(99,102,241,.2);color:#A5B4FC;border:1px solid rgba(99,102,241,.4);border-radius:10px;padding:9px 16px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">⚙️ Configure Keys</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+    <div class="kcard"><div class="klbl">Razorpay Revenue</div><div class="kval" style="color:#A5B4FC;">₹${rzpRevenue.toLocaleString('en-IN')}</div></div>
+    <div class="kcard"><div class="klbl">Online Orders</div><div class="kval">${rzpOrders.length}</div></div>
+    <div class="kcard"><div class="klbl">Pending</div><div class="kval" style="color:#FBBF24;">${rzpPending}</div></div>
+  </div>
+  <div class="acard" style="margin-bottom:20px;">
+    <h3>🔗 Razorpay Quick Links</h3><div class="asub">Open your Razorpay merchant dashboard</div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;">
+      <a href="https://dashboard.razorpay.com/app/payments" target="_blank" rel="noopener" style="background:rgba(99,102,241,.15);color:#A5B4FC;border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">💳 Payments →</a>
+      <a href="https://dashboard.razorpay.com/app/orders" target="_blank" rel="noopener" style="background:rgba(99,102,241,.15);color:#A5B4FC;border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">📋 Orders →</a>
+      <a href="https://dashboard.razorpay.com/app/settlements" target="_blank" rel="noopener" style="background:rgba(99,102,241,.15);color:#A5B4FC;border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">🏦 Settlements →</a>
+      <a href="https://dashboard.razorpay.com/app/analytics" target="_blank" rel="noopener" style="background:rgba(99,102,241,.15);color:#A5B4FC;border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">📈 Analytics →</a>
+    </div>
+  </div>
+  <div class="acard">
+    <h3>📋 Razorpay Transactions (local)</h3><div class="asub">Orders paid via Razorpay / UPI online</div>
+    ${rzpOrders.length===0?`<div style="text-align:center;padding:32px;color:rgba(253,246,236,.25);"><div style="font-size:40px;margin-bottom:10px;">💳</div><div>No Razorpay transactions yet.<br><span style="font-size:12px;">Configure Razorpay in Payments tab to enable online payments.</span></div></div>`:
+    '<table class="aptable"><thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Payment ID</th><th>Status</th></tr></thead><tbody>'
+    +[...rzpOrders].reverse().slice(0,30).map(o=>`<tr><td style="color:#E8B96A;font-size:11px;">${o.id}</td><td style="font-size:12px;">${o.name||'?'}</td><td style="color:#A5B4FC;font-weight:700;">₹${(o.total||0).toLocaleString('en-IN')}</td><td style="font-size:10px;color:rgba(253,246,236,.4);">${o.rzpPaymentId||'—'}</td><td><span class="obadge ${o.status}">${o.status}</span></td></tr>`).join('')
+    +'</tbody></table>'}
+  </div>
+  <div style="margin-top:14px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);border-radius:12px;padding:12px 16px;font-size:12px;color:rgba(74,222,128,.75);line-height:1.7;">
+    💡 For complete transaction history, settlement reports &amp; refunds — log in to your <a href="https://dashboard.razorpay.com" target="_blank" style="color:#4ADE80;font-weight:700;">Razorpay Dashboard</a> directly.
+  </div></div>`;
+}
+
+// ── COMBO: load from Firebase + render on customer page ──
+function ubLoadCombosFromDB(){
+  if(!db) return;
+  db.collection('categories').doc('ubCombos').get().then(doc=>{if(doc.exists&&doc.data().list)localStorage.setItem('ub_combos',JSON.stringify(doc.data().list));ubRenderComboSection();}).catch(()=>{});
+  db.collection('categories').doc('ubExpenses').get().then(doc=>{if(doc.exists&&doc.data().list)localStorage.setItem('ub_expenses',JSON.stringify(doc.data().list));}).catch(()=>{});
+}
+function ubRenderComboSection(){
+  const combos=ubGetCombos().filter(c=>{if(c.active===false)return false;const today=new Date().toISOString().split('T')[0];if(c.to&&c.to<today)return false;if(c.from&&c.from>today)return false;return true;});
+  const sec=document.getElementById('ubComboSection');if(!sec)return;
+  if(!combos.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  const grid=document.getElementById('ubComboGrid');if(!grid)return;
+  grid.innerHTML=combos.map(c=>{
+    const savings=c.mrp&&c.price?c.mrp-c.price:0;
+    return `<div style="background:var(--white);border:2px solid rgba(200,146,58,.25);border-radius:22px;padding:22px;box-shadow:0 4px 18px var(--shadow);position:relative;overflow:hidden;transition:transform .2s;">
+      ${c.badge?`<div style="position:absolute;top:14px;right:14px;background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;">${c.badge}</div>`:''}
+      <div style="font-size:40px;margin-bottom:10px;">${c.emoji||'🎁'}</div>
+      <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--choco);font-weight:700;margin-bottom:6px;">${c.name}</div>
+      <div style="font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:14px;">${c.desc||''}</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+        <span style="font-family:'Playfair Display',serif;font-size:24px;color:var(--gold);font-weight:700;">₹${c.price}</span>
+        ${c.mrp?`<span style="font-size:14px;color:var(--text-mid);text-decoration:line-through;">₹${c.mrp}</span>`:''}
+        ${savings>0?`<span style="background:rgba(74,222,128,.12);color:#166534;border:1px solid rgba(74,222,128,.25);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700;">Save ₹${savings}</span>`:''}
+      </div>
+      <button onclick="ubAddComboToCart('${c.id}')" style="width:100%;background:linear-gradient(135deg,var(--choco),var(--choco-light));color:var(--cream);border:none;border-radius:14px;padding:12px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">🎁 Add to Cart</button>
+    </div>`;
+  }).join('');
+}
+function ubAddComboToCart(cid){
+  const c=ubGetCombos().find(x=>x.id===cid);if(!c){showToast('Combo not found','err');return;}
+  if(typeof cart!=='undefined'){cart.push({id:'combo_'+c.id,name:c.name+' (Combo)',price:c.price,qty:1,variant:'Bundle',emoji:c.emoji||'🎁',isCombo:true});if(typeof saveCart==='function')saveCart();if(typeof updateCartUI==='function')updateCartUI();if(typeof openCart==='function')openCart();}
+  showToast('🎁 Combo added to cart!','ok');
+}
+document.addEventListener('DOMContentLoaded',function(){setTimeout(ubLoadCombosFromDB,2500);setTimeout(ubRenderComboSection,3000);});
 
 function ubToggleStock(id){
   const p=PRODS.find(x=>String(x.id)===String(id)); if(!p) return;
@@ -11455,19 +11754,6 @@ function buildAddProdTab(){
         <div style="font-size:11px;color:rgba(253,246,236,.3);margin-top:4px;">Customer must pay this via UPI/PhonePe to confirm order. 0 = no advance needed.</div>
       </div>
     </div>
-    <!-- Stock quantity & low stock alert -->
-    <div class="af-row" style="margin-top:2px;">
-      <div class="af-group">
-        <label>📦 Stock Quantity <span style="color:rgba(253,246,236,.4);font-size:10px;">(leave 0 = unlimited)</span></label>
-        <input class="af-inp" id="pf_stockQty" type="number" min="0" value="${p&&p.stockQty?p.stockQty:0}" placeholder="e.g. 10" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-        <div style="font-size:11px;color:rgba(253,246,236,.3);margin-top:4px;">Shows "Only X left!" to customer when stock is low.</div>
-      </div>
-      <div class="af-group">
-        <label>🔔 Low Stock Alert Threshold <span style="color:rgba(253,246,236,.4);font-size:10px;">(alert when qty ≤ this)</span></label>
-        <input class="af-inp" id="pf_stockAlert" type="number" min="0" value="${p&&p.stockAlert?p.stockAlert:3}" placeholder="e.g. 3" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-        <div style="font-size:11px;color:rgba(253,246,236,.3);margin-top:4px;">You get a warning in admin when stock falls to this number.</div>
-      </div>
-    </div>
     <!-- Seasonal availability -->
     <div class="af-row" style="margin-top:2px;">
       <div class="af-group">
@@ -11499,11 +11785,10 @@ let flavourCardCount = 0;
 function buildFlavourCard(name, weights, idx) {
   // weights = [{label:'500g', eggPrice:520, egglessPrice:580}, ...]
   const wRows = weights.map((w, wi) => `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 32px;gap:6px;margin-bottom:6px;" id="fcwr-${idx}-${wi}">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 32px;gap:8px;margin-bottom:6px;" id="fcwr-${idx}-${wi}">
       <input class="vr-inp" placeholder="e.g. 500g, 1kg" value="${w.label||''}" id="fcwl-${idx}-${wi}">
       <input class="vr-inp" type="number" placeholder="🥚 Egg ₹" value="${w.eggPrice!=null?w.eggPrice:(w.price||'')}" id="fcwp-egg-${idx}-${wi}" min="0" style="border-color:rgba(200,146,58,.35);">
       <input class="vr-inp" type="number" placeholder="🌿 Eggless ₹" value="${w.egglessPrice!=null?w.egglessPrice:''}" id="fcwp-eggless-${idx}-${wi}" min="0" style="border-color:rgba(74,222,128,.35);">
-      <input class="vr-inp" type="number" placeholder="Advance ₹" value="${w.advanceAmt!=null&&w.advanceAmt>0?w.advanceAmt:''}" id="fcwadv-${idx}-${wi}" min="0" style="border-color:rgba(99,102,241,.4);" title="Advance required for this weight (0 = no advance)">
       <button class="vr-rmv" onclick="removeFlavourWeightRow(${idx},${wi})" title="Remove">✕</button>
     </div>`).join('');
   const fcImg = (weights && weights._img) ? weights._img : '';
@@ -11527,13 +11812,18 @@ function buildFlavourCard(name, weights, idx) {
         <div id="fcimg-status-${idx}" style="font-size:10px;color:rgba(200,146,58,.6);margin-top:3px;">${fcImg ? '✅ Image set' : ''}</div>
       </div>
     </div>
-    <!-- Per-weight advance amounts (replaces single flavour advance) -->
-    <div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:rgba(253,246,236,.35);text-transform:uppercase;margin-bottom:6px;">Weight, Price &amp; Advance for this flavour</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 32px;gap:6px;margin-bottom:6px;">
+    <!-- Per-flavour advance amount -->
+    <div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;padding:10px 12px;margin-bottom:12px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:rgba(165,180,252,.7);text-transform:uppercase;margin-bottom:6px;">💳 Advance for this flavour (₹)</div>
+      <input class="vr-inp" type="number" id="fcadvance-${idx}" min="0" value="${fcAdvance}" placeholder="0 = no advance required" style="border-color:rgba(99,102,241,.3);width:100%;"
+        oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      <div style="font-size:10px;color:rgba(165,180,252,.5);margin-top:4px;">Overrides the product-level advance for this flavour only. 0 = use product default.</div>
+    </div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:rgba(253,246,236,.35);text-transform:uppercase;margin-bottom:6px;">Weight &amp; Price for this flavour</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 32px;gap:8px;margin-bottom:6px;">
       <span style="font-size:10px;color:rgba(253,246,236,.3);font-weight:600;">Weight</span>
       <span style="font-size:10px;color:rgba(200,146,58,.7);font-weight:700;">🥚 Egg ₹</span>
       <span style="font-size:10px;color:rgba(74,222,128,.7);font-weight:700;">🌿 Eggless ₹</span>
-      <span style="font-size:10px;color:rgba(165,180,252,.8);font-weight:700;">💳 Advance ₹</span>
       <span></span>
     </div>
     <div id="fcwr-wrap-${idx}">${wRows}</div>
@@ -11560,11 +11850,10 @@ function addFlavourWeightRow(cardIdx) {
   if (!wrap) return;
   const wi = wrap.querySelectorAll('[id^="fcwr-' + cardIdx + '-"]').length;
   wrap.insertAdjacentHTML('beforeend', `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 32px;gap:6px;margin-bottom:6px;" id="fcwr-${cardIdx}-${wi}">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 32px;gap:8px;margin-bottom:6px;" id="fcwr-${cardIdx}-${wi}">
       <input class="vr-inp" placeholder="e.g. 2kg" id="fcwl-${cardIdx}-${wi}">
       <input class="vr-inp" type="number" placeholder="🥚 Egg ₹" id="fcwp-egg-${cardIdx}-${wi}" min="0" style="border-color:rgba(200,146,58,.35);">
       <input class="vr-inp" type="number" placeholder="🌿 Eggless ₹" id="fcwp-eggless-${cardIdx}-${wi}" min="0" style="border-color:rgba(74,222,128,.35);">
-      <input class="vr-inp" type="number" placeholder="Advance ₹" id="fcwadv-${cardIdx}-${wi}" min="0" style="border-color:rgba(99,102,241,.4);" title="Advance for this weight">
       <button class="vr-rmv" onclick="removeFlavourWeightRow(${cardIdx},${wi})" title="Remove">✕</button>
     </div>`);
 }
@@ -11586,30 +11875,17 @@ async function handleFlvCardImg(event, idx) {
   let resizedFile = file;
   try { resizedFile = await resizeImageTo600(file); } catch(e) {}
 
-  // Try uploading to ImageBB CDN first
+  // Try uploading to freeimage.host
   try {
     const url = await uploadToImageBB(resizedFile);
     if (hiddenEl) hiddenEl.value = url;
     if (prevWrap) prevWrap.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" id="fcimg-prev-${idx}">`;
     if (statusEl) { statusEl.textContent = '✅ Uploaded!'; statusEl.style.color = '#4ADE80'; }
   } catch(e) {
-    // Fallback: save as base64 — but ONLY if LocalStorage has room (guard against 5MB crash)
+    // Fallback: save as base64 so image is preserved locally
     const reader = new FileReader();
     reader.onload = function(ev) {
       const base64 = ev.target.result;
-      // Size check: base64 string + existing localStorage must stay under ~4MB
-      try {
-        let usedBytes = 0;
-        for(let k in localStorage){ if(localStorage.hasOwnProperty(k)) usedBytes += (localStorage[k].length + k.length) * 2; }
-        const base64Bytes = base64.length * 2;
-        if(usedBytes + base64Bytes > 4 * 1024 * 1024){
-          if(statusEl){
-            statusEl.innerHTML = '❌ Image too large to save offline (storage full). Please check your internet connection and try again.';
-            statusEl.style.color = '#F87171';
-          }
-          return;
-        }
-      } catch(se){}
       if (hiddenEl) hiddenEl.value = base64;
       if (prevWrap) prevWrap.innerHTML = `<img src="${base64}" style="width:100%;height:100%;object-fit:cover;" id="fcimg-prev-${idx}">`;
       if (statusEl) {
@@ -11648,12 +11924,11 @@ async function collectFlavourCardsAsync() {
         const lbl = (document.getElementById('fcwl-' + idx + '-' + wi)?.value||'').trim();
         const eggPr = parseFloat(document.getElementById('fcwp-egg-' + idx + '-' + wi)?.value||'0')||0;
         const egglessPr = parseFloat(document.getElementById('fcwp-eggless-' + idx + '-' + wi)?.value||'0')||0;
-        const advAmt = parseInt(document.getElementById('fcwadv-' + idx + '-' + wi)?.value||'0')||0;
-        if (lbl) variants.push({label: lbl, price: eggPr, eggPrice: eggPr, egglessPrice: egglessPr, advanceAmt: advAmt});
+        if (lbl) variants.push({label: lbl, price: eggPr, eggPrice: eggPr, egglessPrice: egglessPr});
       });
     }
-    const advanceAmt = variants.reduce((mx,v)=>Math.max(mx,v.advanceAmt||0),0); // flavour-level = max of its weights
-    flavours.push({name, image, variants, extras:{}, extra:0, advanceAmt});
+    const advanceAmt = parseInt(document.getElementById('fcadvance-' + idx)?.value||'0')||0;
+    flavours.push({name, image, variants, extras:{}, extra:0, advanceAmt: advanceAmt||0});
   }
   return flavours;
 }
@@ -11666,6 +11941,7 @@ function collectFlavourCards() {
     const name = (document.getElementById('fcname-' + idx)?.value||'').trim();
     if (!name) return;
     const image = document.getElementById('fcimg-' + idx)?.value || '';
+    const advanceAmt = parseInt(document.getElementById('fcadvance-' + idx)?.value||'0')||0;
     const wrapEl = document.getElementById('fcwr-wrap-' + idx);
     const variants = [];
     if (wrapEl) {
@@ -11674,12 +11950,10 @@ function collectFlavourCards() {
         const lbl = (document.getElementById('fcwl-' + idx + '-' + wi)?.value||'').trim();
         const eggPr = parseFloat(document.getElementById('fcwp-egg-' + idx + '-' + wi)?.value||'0')||0;
         const egglessPr = parseFloat(document.getElementById('fcwp-eggless-' + idx + '-' + wi)?.value||'0')||0;
-        const advAmt = parseInt(document.getElementById('fcwadv-' + idx + '-' + wi)?.value||'0')||0;
-        if (lbl) variants.push({label: lbl, price: eggPr, eggPrice: eggPr, egglessPrice: egglessPr, advanceAmt: advAmt});
+        if (lbl) variants.push({label: lbl, price: eggPr, eggPrice: eggPr, egglessPrice: egglessPr});
       });
     }
-    const advanceAmt = variants.reduce((mx,v)=>Math.max(mx,v.advanceAmt||0),0);
-    flavours.push({name, image, variants, extras:{}, extra:0, advanceAmt});
+    flavours.push({name, image, variants, extras:{}, extra:0, advanceAmt: advanceAmt||0});
   });
   return flavours;
 }
@@ -11692,7 +11966,7 @@ function initFlavourCards(flavours) {
   if (flavours && flavours.length) {
     flavours.forEach(f => {
       const weights = f.variants && f.variants.length
-        ? f.variants.map(v => ({label: v.label, eggPrice: v.eggPrice != null ? v.eggPrice : v.price, egglessPrice: v.egglessPrice != null ? v.egglessPrice : '', advanceAmt: v.advanceAmt||0}))
+        ? f.variants.map(v => ({label: v.label, eggPrice: v.eggPrice != null ? v.eggPrice : v.price, egglessPrice: v.egglessPrice != null ? v.egglessPrice : ''}))
         : [{label:'500g', eggPrice: f.extra||0, egglessPrice:''},{label:'1kg', eggPrice:'', egglessPrice:''}];
       weights._img = f.image || '';
       weights._advance = f.advanceAmt != null ? f.advanceAmt : '';
@@ -11966,8 +12240,6 @@ async function saveProd(existId){
     const tags = (document.getElementById('pf_tags')?.value||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean);
     const leadDays = parseInt(document.getElementById('pf_leadDays')?.value||'0')||0;
     const advanceAmt = parseInt(document.getElementById('pf_advanceAmt')?.value||'0')||0;
-    const stockQty = parseInt(document.getElementById('pf_stockQty')?.value||'0')||0;
-    const stockAlert = parseInt(document.getElementById('pf_stockAlert')?.value||'3')||3;
     const seasonStart = (document.getElementById('pf_seasonStart')?.value||'').trim();
     const seasonEnd = (document.getElementById('pf_seasonEnd')?.value||'').trim();
 
@@ -11993,7 +12265,7 @@ async function saveProd(existId){
       // Use first flavour's weights as base variants
       finalVariants = flavours[0].variants;
     }
-    const prodData = {cat, subcat, name, desc, emoji, price, variants:finalVariants||variants, flavours:flavours||[], badge, image:imageUrl||'', tags:tags||[], defaultFlavour:defaultFlavour||'', leadDays:leadDays||0, advanceAmt:advanceAmt||0, stockQty:stockQty||0, stockAlert:stockAlert||3, seasonStart:seasonStart||'', seasonEnd:seasonEnd||''};
+    const prodData = {cat, subcat, name, desc, emoji, price, variants:finalVariants||variants, flavours:flavours||[], badge, image:imageUrl||'', tags:tags||[], defaultFlavour:defaultFlavour||'', leadDays:leadDays||0, advanceAmt:advanceAmt||0, seasonStart:seasonStart||'', seasonEnd:seasonEnd||''};
     // Egg pricing
     const eggPrices = collectEggPrices();
     if(eggPrices) prodData.eggPrices = eggPrices;
@@ -12410,71 +12682,10 @@ function buildOrderCard(o){
       <a href="https://wa.me/91${(o.phone||'').replace(/\D/g,'')}?text=${encodeURIComponent('Hello '+o.name+'! 🎂\n\nYour Udaya Bakery order *'+o.id+'* status:\n\n*'+statusLabel(o.status)+'* ✅\n\nThank you for choosing Udaya Bakery! 🙏')}" target="_blank" rel="noopener noreferrer" style="background:rgba(37,211,102,.12);color:#25D366;border:1px solid rgba(37,211,102,.25);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:16px;">💬</span> WhatsApp</a>
       <a href="tel:${o.phone}" style="background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.2);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;">📞 Call</a>
       <button onclick="ubPrintBill('${o.id}')" style="background:rgba(255,255,255,.06);color:rgba(253,246,236,.6);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🖨️ Print Bill</button>
-      <button onclick="ubShowOrderQR('${o.id}')" style="background:rgba(99,102,241,.12);color:#A5B4FC;border:1px solid rgba(99,102,241,.25);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">📱 QR Code</button>
     </div>
   </div>`;
 }
 
-
-
-// ── ORDER QR CODE ──
-function ubShowOrderQR(oid){
-  var o = ORDERS.find(function(x){ return x.id===oid; });
-  if(!o) return;
-  var base = window.location.origin + window.location.pathname;
-  var qrData = base + '?adminorder=' + oid;
-  var qrUrl = 'https://chart.googleapis.com/chart?chs=240x240&cht=qr&chl=' + encodeURIComponent(qrData) + '&choe=UTF-8';
-  var modal = document.getElementById('ubOrderQRModal');
-  if(modal) modal.remove();
-  modal = document.createElement('div');
-  modal.id = 'ubOrderQRModal';
-  modal.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
-  var typeLabel = o.orderType==='pickup' ? '🏪 Store Pickup' : '🚚 Home Delivery';
-  var inner = document.createElement('div');
-  inner.style.cssText = 'background:#1A0C04;border:1.5px solid rgba(200,146,58,.3);border-radius:24px;padding:28px 24px;text-align:center;max-width:300px;width:88%;box-shadow:0 24px 80px rgba(0,0,0,.6);';
-  inner.innerHTML = '<div style="font-family:Playfair Display,serif;font-size:17px;color:#E8B96A;font-weight:700;margin-bottom:4px;">&#128241; Order QR Code</div>'
-    + '<div style="font-size:12px;color:rgba(253,246,236,.4);margin-bottom:16px;">Scan to open order <strong style="color:#E8B96A;">' + oid + '</strong></div>'
-    + '<div style="background:#fff;border-radius:14px;padding:10px;display:inline-block;margin-bottom:14px;">'
-    + '<img src="' + qrUrl + '" width="190" height="190" alt="Order QR" style="display:block;border-radius:6px;"></div>'
-    + '<div style="font-size:12px;color:rgba(253,246,236,.65);font-weight:600;margin-bottom:3px;">&#128100; ' + (o.name||'') + ' &nbsp;&middot;&nbsp; &#8377;' + o.total + '</div>'
-    + '<div style="font-size:11px;color:rgba(253,246,236,.3);margin-bottom:18px;">' + typeLabel + '</div>'
-    + '<button id="ubQRCloseBtn" style="background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:11px;padding:10px 0;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;width:100%;">Close</button>';
-  modal.appendChild(inner);
-  modal.addEventListener('click', function(e){ if(e.target===modal) modal.remove(); });
-  inner.querySelector('#ubQRCloseBtn').addEventListener('click', function(){ modal.remove(); });
-  document.body.appendChild(modal);
-}
-
-// Handle ?adminorder= URL param
-(function(){
-  var params = new URLSearchParams(window.location.search);
-  var adminOrderId = params.get('adminorder');
-  if(!adminOrderId) return;
-  function tryOpen(){
-    if(typeof openAdmin==='function'){
-      openAdmin();
-      var t = setInterval(function(){
-        if(typeof adminLoggedIn!=='undefined' && adminLoggedIn){
-          clearInterval(t);
-          if(typeof switchTab==='function') switchTab('orders');
-          setTimeout(function(){
-            var card = document.querySelector('.order-card[data-id="' + adminOrderId + '"]');
-            if(card){
-              card.scrollIntoView({behavior:'smooth', block:'center'});
-              card.style.boxShadow = '0 0 0 3px #FCD34D';
-              setTimeout(function(){ card.style.boxShadow = ''; }, 3000);
-            }
-          }, 800);
-        }
-      }, 300);
-    } else {
-      setTimeout(tryOpen, 400);
-    }
-  }
-  window.addEventListener('DOMContentLoaded', function(){ setTimeout(tryOpen, 600); });
-})();
-
-})();
 function ubPrintBill(oid){
   const o=ORDERS.find(x=>x.id===oid); if(!o) return;
   const w=window.open('','_blank','width=420,height=680');
@@ -17925,43 +18136,12 @@ function ubTriggerInstall() {
 // ── Register caching Service Worker for fast repeat loads ──
 if('serviceWorker' in navigator){
   window.addEventListener('load', function(){
-    // Primary: register the external sw.js
     navigator.serviceWorker.register('/Udayabakery/sw.js', {scope: '/Udayabakery/'})
       .then(function(reg){
-        console.log('[SW] Registered:', reg.scope);
-        // If SW sends a message about a failed cache file, log but don't crash
-        if(navigator.serviceWorker.controller){
-          navigator.serviceWorker.addEventListener('message', function(evt){
-            if(evt.data && evt.data.type === 'CACHE_FAIL'){
-              console.warn('[SW] Could not cache:', evt.data.url);
-            }
-          });
-        }
+        console.log('[SW] Caching SW registered:', reg.scope);
       })
       .catch(function(err){
-        console.warn('[SW] sw.js registration failed — using inline fallback SW:', err);
-        // Fallback: register a minimal inline SW that caches only the page itself
-        try {
-          const swCode = `
-            const CACHE = 'ub-fallback-v1';
-            self.addEventListener('install', e => {
-              e.waitUntil(
-                Promise.allSettled([self.location.origin + '/Udayabakery/'].map(url =>
-                  caches.open(CACHE).then(c => c.add(url)).catch(() => {})
-                ))
-              );
-            });
-            self.addEventListener('fetch', e => {
-              e.respondWith(
-                fetch(e.request).catch(() => caches.match(e.request))
-              );
-            });`;
-          const blob = new Blob([swCode], {type:'application/javascript'});
-          const url  = URL.createObjectURL(blob);
-          navigator.serviceWorker.register(url, {scope: '/Udayabakery/'})
-            .then(() => URL.revokeObjectURL(url))
-            .catch(() => {});
-        } catch(fe){}
+        console.warn('[SW] Caching SW registration failed:', err);
       });
   });
 }
@@ -18124,614 +18304,6 @@ function ubRenderPolicyPanel(){
     +'</div>';
   }).join('');
 }
-
-// ═══════════════════════════════════════════════════
-// 🔔 LOW STOCK ALERT SYSTEM
-// ═══════════════════════════════════════════════════
-function ubSaveLowStockAlert(prod){
-  try{
-    const alerts = JSON.parse(localStorage.getItem('ub_low_stock_alerts')||'[]');
-    const existing = alerts.findIndex(a=>String(a.id)===String(prod.id));
-    const alert = {id:prod.id, name:prod.name, emoji:prod.emoji||'🎂', stockQty:prod.stockQty, alertAt: new Date().toLocaleString('en-IN')};
-    if(existing>=0) alerts[existing]=alert; else alerts.unshift(alert);
-    localStorage.setItem('ub_low_stock_alerts', JSON.stringify(alerts.slice(0,50)));
-  }catch(e){}
-}
-function ubGetLowStockAlerts(){ try{ return JSON.parse(localStorage.getItem('ub_low_stock_alerts')||'[]'); }catch(e){ return []; } }
-function ubClearLowStockAlerts(){ localStorage.removeItem('ub_low_stock_alerts'); if(typeof renderAdminTab==='function') renderAdminTab(); }
-
-// ═══════════════════════════════════════════════════
-// 💸 EXPENSE TRACKER
-// ═══════════════════════════════════════════════════
-function ubGetExpenses(){ try{ return JSON.parse(localStorage.getItem('ub_expenses')||'[]'); }catch(e){ return []; } }
-function ubSaveExpenses(arr){ localStorage.setItem('ub_expenses', JSON.stringify(arr)); }
-
-function buildExpensesTab(){
-  const expenses = ubGetExpenses();
-  const today = new Date().toISOString().split('T')[0];
-  const thisMonth = today.slice(0,7);
-  const monthExp = expenses.filter(e=>e.date && e.date.startsWith(thisMonth));
-  const totalMonth = monthExp.reduce((s,e)=>s+(e.amount||0),0);
-  const todayExp = expenses.filter(e=>e.date===today);
-  const totalToday = todayExp.reduce((s,e)=>s+(e.amount||0),0);
-  const cats = ['🧁 Ingredients','📦 Packaging','⚡ Electricity','🚗 Delivery','👷 Labour','🔧 Equipment','🧹 Maintenance','💊 Misc'];
-
-  const rows = expenses.slice(0,100).map((e,i)=>`
-    <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
-      <td style="padding:10px 8px;font-size:12px;color:rgba(253,246,236,.5);">${e.date||'—'}</td>
-      <td style="padding:10px 8px;font-size:13px;color:#F0DEC8;font-weight:600;">${e.category||'Misc'}</td>
-      <td style="padding:10px 8px;font-size:13px;color:rgba(253,246,236,.7);">${e.note||'—'}</td>
-      <td style="padding:10px 8px;font-size:14px;color:#F87171;font-weight:700;">₹${(e.amount||0).toLocaleString('en-IN')}</td>
-      <td style="padding:10px 8px;">
-        <button onclick="ubDeleteExpense(${i})" style="background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🗑</button>
-      </td>
-    </tr>`).join('');
-
-  // Category breakdown this month
-  const catBreak = {};
-  monthExp.forEach(e=>{ catBreak[e.category||'Misc']=(catBreak[e.category||'Misc']||0)+(e.amount||0); });
-  const catRows = Object.entries(catBreak).sort((a,b)=>b[1]-a[1]).map(([cat,amt])=>{
-    const pct = totalMonth>0 ? Math.round(amt/totalMonth*100) : 0;
-    return `<div style="margin-bottom:10px;">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:rgba(253,246,236,.7);">${cat}</span><span style="color:#F87171;font-weight:700;">₹${amt.toLocaleString('en-IN')} (${pct}%)</span></div>
-      <div style="background:rgba(255,255,255,.06);border-radius:4px;height:6px;"><div style="background:linear-gradient(90deg,#F87171,#FCA5A5);height:6px;border-radius:4px;width:${pct}%;transition:width .4s;"></div></div>
-    </div>`;
-  }).join('');
-
-  return `<div style="max-width:860px;">
-    <h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#E8B96A;margin-bottom:18px;">💸 Expense Tracker</h2>
-    <!-- Summary Cards -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;">
-      <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:16px;padding:16px;">
-        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(248,113,113,.7);text-transform:uppercase;margin-bottom:6px;">Today's Expenses</div>
-        <div style="font-family:'Playfair Display',serif;font-size:26px;color:#F87171;font-weight:700;">₹${totalToday.toLocaleString('en-IN')}</div>
-        <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:3px;">${todayExp.length} entries</div>
-      </div>
-      <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:16px;padding:16px;">
-        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(248,113,113,.7);text-transform:uppercase;margin-bottom:6px;">This Month</div>
-        <div style="font-family:'Playfair Display',serif;font-size:26px;color:#F87171;font-weight:700;">₹${totalMonth.toLocaleString('en-IN')}</div>
-        <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:3px;">${monthExp.length} entries</div>
-      </div>
-    </div>
-    <!-- Add Expense -->
-    <div style="background:rgba(255,255,255,.03);border:1.5px solid rgba(200,146,58,.2);border-radius:18px;padding:20px;margin-bottom:22px;">
-      <div style="font-family:'Playfair Display',serif;font-size:16px;color:#E8B96A;margin-bottom:14px;">➕ Add Expense</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-        <div>
-          <label style="font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.7);text-transform:uppercase;display:block;margin-bottom:5px;">Date</label>
-          <input class="af-inp" type="date" id="exp_date" value="${today}" style="font-size:13px;">
-        </div>
-        <div>
-          <label style="font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.7);text-transform:uppercase;display:block;margin-bottom:5px;">Amount (₹)</label>
-          <input class="af-inp" type="number" id="exp_amount" placeholder="e.g. 500" min="0" style="font-size:13px;" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-        </div>
-        <div>
-          <label style="font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.7);text-transform:uppercase;display:block;margin-bottom:5px;">Category</label>
-          <select class="af-inp" id="exp_cat" style="font-size:13px;">
-            ${cats.map(c=>`<option value="${c}">${c}</option>`).join('')}
-          </select>
-        </div>
-        <div>
-          <label style="font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.7);text-transform:uppercase;display:block;margin-bottom:5px;">Note</label>
-          <input class="af-inp" id="exp_note" placeholder="e.g. Maida 5kg" style="font-size:13px;">
-        </div>
-      </div>
-      <button onclick="ubAddExpense()" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:11px;padding:11px 24px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💸 Add Expense</button>
-    </div>
-    <!-- Category breakdown -->
-    ${catRows ? `<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:18px;margin-bottom:22px;">
-      <div style="font-family:'Playfair Display',serif;font-size:15px;color:#E8B96A;margin-bottom:14px;">📊 This Month by Category</div>
-      ${catRows}
-    </div>` : ''}
-    <!-- Table -->
-    <div style="background:rgba(255,255,255,.02);border:1px solid rgba(200,146,58,.12);border-radius:16px;overflow:hidden;">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);">
-        <div style="font-family:'Playfair Display',serif;font-size:15px;color:#E8B96A;">All Expenses (${expenses.length})</div>
-        ${expenses.length>0?`<button onclick="if(confirm('Clear all expenses?')){localStorage.removeItem('ub_expenses');renderAdminTab();}" style="background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🗑 Clear All</button>`:''}
-      </div>
-      ${expenses.length===0?`<div style="text-align:center;padding:40px;color:rgba(253,246,236,.2);font-size:13px;">No expenses yet — add your first one above</div>`:`
-      <table style="width:100%;border-collapse:collapse;">
-        <thead><tr style="background:rgba(200,146,58,.08);">
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.7);text-transform:uppercase;">Date</th>
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.7);text-transform:uppercase;">Category</th>
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.7);text-transform:uppercase;">Note</th>
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.7);text-transform:uppercase;">Amount</th>
-          <th></th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-      </table>`}
-    </div>
-  </div>`;
-}
-
-function ubAddExpense(){
-  const date = document.getElementById('exp_date')?.value||new Date().toISOString().split('T')[0];
-  const amount = parseInt(document.getElementById('exp_amount')?.value||'0')||0;
-  const category = document.getElementById('exp_cat')?.value||'Misc';
-  const note = (document.getElementById('exp_note')?.value||'').trim();
-  if(!amount){ showToast('Enter an amount','err'); return; }
-  const expenses = ubGetExpenses();
-  expenses.unshift({date, amount, category, note, id: Date.now()});
-  ubSaveExpenses(expenses);
-  showToast('💸 Expense added!','ok');
-  renderAdminTab();
-}
-function ubDeleteExpense(idx){
-  const expenses = ubGetExpenses();
-  expenses.splice(idx,1);
-  ubSaveExpenses(expenses);
-  renderAdminTab();
-}
-
-// ═══════════════════════════════════════════════════
-// 🎁 COMBO OFFERS
-// ═══════════════════════════════════════════════════
-function ubGetCombos(){ try{ return JSON.parse(localStorage.getItem('ub_combos')||'[]'); }catch(e){ return []; } }
-function ubSaveCombos(arr){ localStorage.setItem('ub_combos', JSON.stringify(arr)); }
-
-function buildCombosTab(){
-  const combos = ubGetCombos();
-  const prodOpts = (typeof PRODS!=='undefined'?PRODS:[]).map(p=>`<option value="${p.id}">${p.emoji||'🎂'} ${p.name}</option>`).join('');
-
-  const comboCards = combos.map((c,i)=>`
-    <div style="background:rgba(255,255,255,.03);border:1.5px solid rgba(200,146,58,.2);border-radius:16px;padding:16px;margin-bottom:12px;position:relative;">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
-        <div style="flex:1;">
-          <div style="font-family:'Playfair Display',serif;font-size:16px;color:#E8B96A;font-weight:700;margin-bottom:4px;">${c.icon||'🎁'} ${c.name||'Combo'}</div>
-          <div style="font-size:12px;color:rgba(253,246,236,.5);margin-bottom:8px;">${c.desc||''}</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
-            ${(c.products||[]).map(pid=>{ const p=(typeof PRODS!=='undefined'?PRODS:[]).find(x=>String(x.id)===String(pid)); return p?`<span style="background:rgba(200,146,58,.1);border:1px solid rgba(200,146,58,.2);color:#E8B96A;border-radius:8px;padding:3px 9px;font-size:11px;">${p.emoji||'🎂'} ${p.name}</span>`:''; }).join('')}
-          </div>
-          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-            <span style="font-size:13px;color:rgba(253,246,236,.4);text-decoration:line-through;">₹${c.originalPrice||0}</span>
-            <span style="font-size:18px;color:#4ADE80;font-weight:800;">₹${c.comboPrice||0}</span>
-            <span style="background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.25);color:#4ADE80;border-radius:8px;padding:3px 9px;font-size:11px;font-weight:700;">Save ₹${(c.originalPrice||0)-(c.comboPrice||0)}</span>
-            <span style="background:${c.active?'rgba(74,222,128,.12)':'rgba(239,68,68,.12)'};border:1px solid ${c.active?'rgba(74,222,128,.25)':'rgba(239,68,68,.25)'};color:${c.active?'#4ADE80':'#F87171'};border-radius:8px;padding:3px 9px;font-size:11px;font-weight:700;">${c.active?'✅ Active':'⏸ Hidden'}</span>
-          </div>
-        </div>
-        <div style="display:flex;gap:6px;flex-shrink:0;">
-          <button onclick="ubToggleCombo(${i})" style="background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.2);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">${c.active?'⏸ Hide':'▶ Show'}</button>
-          <button onclick="ubDeleteCombo(${i})" style="background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🗑</button>
-        </div>
-      </div>
-    </div>`).join('');
-
-  return `<div style="max-width:860px;">
-    <h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#E8B96A;margin-bottom:6px;">🎁 Combo Offers</h2>
-    <p style="font-size:12px;color:rgba(253,246,236,.38);margin-bottom:20px;">Create bundle deals — customers see active combos in the shop. Only you can add or remove combos.</p>
-    <!-- Add New Combo -->
-    <div style="background:linear-gradient(135deg,rgba(200,146,58,.08),rgba(200,146,58,.03));border:1.5px solid rgba(200,146,58,.25);border-radius:20px;padding:22px;margin-bottom:24px;">
-      <div style="font-family:'Playfair Display',serif;font-size:16px;color:#E8B96A;margin-bottom:16px;">➕ Create New Combo</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-        <div>
-          <label style="font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.7);text-transform:uppercase;display:block;margin-bottom:5px;">Combo Name *</label>
-          <input class="af-inp" id="cmb_name" placeholder="e.g. Birthday Bundle" style="font-size:13px;">
-        </div>
-        <div>
-          <label style="font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.7);text-transform:uppercase;display:block;margin-bottom:5px;">Icon (emoji)</label>
-          <input class="af-inp" id="cmb_icon" placeholder="🎁" style="font-size:18px;text-align:center;" maxlength="4" value="🎁">
-        </div>
-        <div style="grid-column:1/-1;">
-          <label style="font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.7);text-transform:uppercase;display:block;margin-bottom:5px;">Description</label>
-          <input class="af-inp" id="cmb_desc" placeholder="e.g. Perfect for celebrations — cake + snack pack" style="font-size:13px;">
-        </div>
-        <div>
-          <label style="font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.7);text-transform:uppercase;display:block;margin-bottom:5px;">Select Products</label>
-          <select class="af-inp" id="cmb_prods" multiple style="font-size:13px;height:100px;">${prodOpts}</select>
-          <div style="font-size:10px;color:rgba(253,246,236,.3);margin-top:3px;">Hold Ctrl/Cmd to select multiple</div>
-        </div>
-        <div>
-          <label style="font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.7);text-transform:uppercase;display:block;margin-bottom:5px;">Original Price (₹)</label>
-          <input class="af-inp" type="number" id="cmb_orig" placeholder="e.g. 1500" min="0" style="font-size:13px;margin-bottom:10px;">
-          <label style="font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(74,222,128,.7);text-transform:uppercase;display:block;margin-bottom:5px;">Combo Price (₹) *</label>
-          <input class="af-inp" type="number" id="cmb_price" placeholder="e.g. 1199" min="0" style="font-size:13px;border-color:rgba(74,222,128,.4);">
-        </div>
-      </div>
-      <button onclick="ubAddCombo()" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:11px;padding:11px 24px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">🎁 Create Combo</button>
-    </div>
-    <!-- Existing Combos -->
-    <div style="font-family:'Playfair Display',serif;font-size:16px;color:#E8B96A;margin-bottom:12px;">Your Combos (${combos.length})</div>
-    ${combos.length===0?`<div style="text-align:center;padding:40px;color:rgba(253,246,236,.2);font-size:13px;">No combos yet — create your first bundle above</div>`:comboCards}
-  </div>`;
-}
-
-function ubAddCombo(){
-  const name = (document.getElementById('cmb_name')?.value||'').trim();
-  const icon = (document.getElementById('cmb_icon')?.value||'🎁').trim();
-  const desc = (document.getElementById('cmb_desc')?.value||'').trim();
-  const sel = document.getElementById('cmb_prods');
-  const products = sel ? Array.from(sel.selectedOptions).map(o=>o.value) : [];
-  const originalPrice = parseInt(document.getElementById('cmb_orig')?.value||'0')||0;
-  const comboPrice = parseInt(document.getElementById('cmb_price')?.value||'0')||0;
-  if(!name){ showToast('Enter combo name','err'); return; }
-  if(comboPrice<=0){ showToast('Enter combo price','err'); return; }
-  if(products.length<1){ showToast('Select at least 1 product','err'); return; }
-  const combos = ubGetCombos();
-  combos.unshift({id:Date.now(), name, icon, desc, products, originalPrice, comboPrice, active:true, createdAt:new Date().toISOString()});
-  ubSaveCombos(combos);
-  showToast('🎁 Combo created!','ok');
-  renderAdminTab();
-}
-function ubToggleCombo(i){
-  const combos = ubGetCombos();
-  if(combos[i]) combos[i].active = !combos[i].active;
-  ubSaveCombos(combos);
-  renderAdminTab();
-}
-function ubDeleteCombo(i){
-  if(!confirm('Delete this combo?')) return;
-  const combos = ubGetCombos();
-  combos.splice(i,1);
-  ubSaveCombos(combos);
-  renderAdminTab();
-}
-
-// ═══════════════════════════════════════════════════
-// 🧾 PAYMENT RECONCILIATION
-// ═══════════════════════════════════════════════════
-function buildReconcileTab(){
-  const orders = typeof ORDERS!=='undefined' ? ORDERS : [];
-  const today = new Date().toISOString().split('T')[0];
-  const thisMonth = today.slice(0,7);
-
-  // Separate by payment method
-  const upiOrders = orders.filter(o=>o.status!=='cancelled' && (o.payMethod==='phonepe' || o.advancePaid));
-  const codOrders = orders.filter(o=>o.status!=='cancelled' && o.payMethod==='cod' && !o.advancePaid);
-  const deliveredCod = codOrders.filter(o=>o.status==='delivered');
-  const pendingCod = codOrders.filter(o=>o.status!=='delivered');
-
-  const totalUpiCollected = upiOrders.reduce((s,o)=>s+(o.advancePaid&&!o.advanceFull ? (o.advanceAmt||0) : (o.total||0)),0);
-  const totalCodDelivered = deliveredCod.reduce((s,o)=>s+(o.total||0),0);
-  const totalCodPending = pendingCod.reduce((s,o)=>s+(o.total||0),0);
-  const totalRevenue = totalUpiCollected + totalCodDelivered;
-
-  const expenses = ubGetExpenses();
-  const monthExp = expenses.filter(e=>e.date&&e.date.startsWith(thisMonth)).reduce((s,e)=>s+(e.amount||0),0);
-
-  const recentRows = upiOrders.slice(0,30).map(o=>`
-    <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-      <td style="padding:9px 8px;font-size:11px;color:rgba(253,246,236,.4);">${o.id}</td>
-      <td style="padding:9px 8px;font-size:12px;color:#F0DEC8;font-weight:600;">${o.name||'—'}</td>
-      <td style="padding:9px 8px;font-size:12px;color:#E8B96A;font-weight:700;">₹${o.advancePaid&&!o.advanceFull?(o.advanceAmt||0):(o.total||0)}</td>
-      <td style="padding:9px 8px;">
-        ${o.advancePaid&&o.advanceMethod==='razorpay'
-          ?`<span style="background:rgba(99,102,241,.12);color:#A5B4FC;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">Razorpay</span>`
-          :`<span style="background:rgba(74,222,128,.1);color:#4ADE80;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">UPI</span>`}
-      </td>
-      <td style="padding:9px 8px;font-size:11px;color:rgba(253,246,236,.35);">${o.advanceUtr||o.utrId||'—'}</td>
-      <td style="padding:9px 8px;">
-        ${o.advancePaid&&!o.advanceFull
-          ?`<span style="background:rgba(251,191,36,.1);color:#FCD34D;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">Partial — Bal ₹${(o.total||0)-(o.advanceAmt||0)}</span>`
-          :`<span style="background:rgba(74,222,128,.1);color:#4ADE80;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">Full Paid</span>`}
-      </td>
-    </tr>`).join('');
-
-  return `<div style="max-width:960px;">
-    <h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#E8B96A;margin-bottom:6px;">🧾 Payment Reconciliation</h2>
-    <p style="font-size:12px;color:rgba(253,246,236,.38);margin-bottom:20px;">Full picture of all money collected, pending, and profit.</p>
-    <!-- Summary Cards -->
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:22px;">
-      <div style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:16px;padding:16px;">
-        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(74,222,128,.7);text-transform:uppercase;margin-bottom:6px;">💰 Total Collected</div>
-        <div style="font-family:'Playfair Display',serif;font-size:28px;color:#4ADE80;font-weight:700;">₹${totalRevenue.toLocaleString('en-IN')}</div>
-        <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:3px;">UPI + Delivered COD</div>
-      </div>
-      <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:16px;padding:16px;">
-        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(251,191,36,.7);text-transform:uppercase;margin-bottom:6px;">⏳ COD Pending</div>
-        <div style="font-family:'Playfair Display',serif;font-size:28px;color:#FCD34D;font-weight:700;">₹${totalCodPending.toLocaleString('en-IN')}</div>
-        <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:3px;">${pendingCod.length} undelivered COD orders</div>
-      </div>
-      <div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:16px;padding:16px;">
-        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(165,180,252,.7);text-transform:uppercase;margin-bottom:6px;">💳 UPI Received</div>
-        <div style="font-family:'Playfair Display',serif;font-size:28px;color:#A5B4FC;font-weight:700;">₹${totalUpiCollected.toLocaleString('en-IN')}</div>
-        <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:3px;">${upiOrders.length} UPI/Razorpay payments</div>
-      </div>
-      <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:16px;padding:16px;">
-        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(248,113,113,.7);text-transform:uppercase;margin-bottom:6px;">💸 Expenses (Month)</div>
-        <div style="font-family:'Playfair Display',serif;font-size:28px;color:#F87171;font-weight:700;">₹${monthExp.toLocaleString('en-IN')}</div>
-        <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:3px;">Est. Profit: <strong style="color:#4ADE80;">₹${Math.max(0,totalRevenue-monthExp).toLocaleString('en-IN')}</strong></div>
-      </div>
-    </div>
-    <!-- UPI/Razorpay Payment Log -->
-    <div style="background:rgba(255,255,255,.02);border:1px solid rgba(200,146,58,.12);border-radius:16px;overflow:hidden;margin-bottom:20px;">
-      <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);">
-        <div style="font-family:'Playfair Display',serif;font-size:15px;color:#E8B96A;">💳 UPI / Razorpay Payment Log</div>
-      </div>
-      ${upiOrders.length===0?`<div style="text-align:center;padding:30px;color:rgba(253,246,236,.2);font-size:13px;">No online payments yet</div>`:`
-      <div style="overflow-x:auto;">
-      <table style="width:100%;border-collapse:collapse;min-width:560px;">
-        <thead><tr style="background:rgba(200,146,58,.06);">
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.6);text-transform:uppercase;">Order ID</th>
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.6);text-transform:uppercase;">Customer</th>
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.6);text-transform:uppercase;">Amount</th>
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.6);text-transform:uppercase;">Method</th>
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.6);text-transform:uppercase;">UTR / ID</th>
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.6);text-transform:uppercase;">Status</th>
-        </tr></thead>
-        <tbody>${recentRows}</tbody>
-      </table></div>`}
-    </div>
-  </div>`;
-}
-
-// ═══════════════════════════════════════════════════
-// 💳 RAZORPAY DASHBOARD TAB
-// ═══════════════════════════════════════════════════
-async function buildRzpDashTab(){
-  const el = document.getElementById('adminMain');
-  const rzpKey = (await UB_SECURE.get('rzp_key_id'))||'';
-  const isLive = rzpKey.startsWith('rzp_live_');
-  const isTest = rzpKey.startsWith('rzp_test_');
-
-  // Razorpay payments from our own orders
-  const rzpOrders = (typeof ORDERS!=='undefined'?ORDERS:[]).filter(o=>o.advanceMethod==='razorpay'||o.payMethod==='razorpay');
-  const rzpTotal = rzpOrders.reduce((s,o)=>s+(o.advanceFull?o.total:o.advanceAmt||0),0);
-
-  const rows = rzpOrders.slice(0,50).map(o=>`
-    <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-      <td style="padding:9px 8px;font-size:11px;color:rgba(253,246,236,.4);">${o.id}</td>
-      <td style="padding:9px 8px;font-size:12px;color:#F0DEC8;font-weight:600;">${o.name||'—'}</td>
-      <td style="padding:9px 8px;font-size:13px;color:#A5B4FC;font-weight:700;">₹${o.advanceFull?o.total:(o.advanceAmt||0)}</td>
-      <td style="padding:9px 8px;font-size:11px;color:rgba(253,246,236,.4);">${o.advanceUtr||'—'}</td>
-      <td style="padding:9px 8px;">
-        <span style="background:${o.status==='delivered'?'rgba(74,222,128,.1)':'rgba(251,191,36,.1)'};color:${o.status==='delivered'?'#4ADE80':'#FCD34D'};border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">${o.status||'—'}</span>
-      </td>
-    </tr>`).join('');
-
-  return `<div style="max-width:960px;">
-    <h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#E8B96A;margin-bottom:6px;">💳 Razorpay Dashboard</h2>
-    <p style="font-size:12px;color:rgba(253,246,236,.38);margin-bottom:20px;">Track all Razorpay payments collected through Udaya Bakery.</p>
-
-    <!-- Key Status -->
-    <div style="background:${isLive?'rgba(74,222,128,.08)':isTest?'rgba(251,191,36,.08)':'rgba(239,68,68,.08)'};border:1.5px solid ${isLive?'rgba(74,222,128,.3)':isTest?'rgba(251,191,36,.3)':'rgba(239,68,68,.3)'};border-radius:16px;padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-      <div style="font-size:28px;">${isLive?'🟢':isTest?'🟡':'🔴'}</div>
-      <div style="flex:1;">
-        <div style="font-size:14px;font-weight:700;color:${isLive?'#4ADE80':isTest?'#FCD34D':'#F87171'};">${isLive?'✅ LIVE MODE — Real payments active':isTest?'⚠️ TEST MODE — No real money':' ❌ No Razorpay key configured'}</div>
-        <div style="font-size:12px;color:rgba(253,246,236,.4);margin-top:3px;">${rzpKey?'Key: '+rzpKey.slice(0,18)+'...':'Go to Payments tab to add your Razorpay key'}</div>
-      </div>
-      <button onclick="switchTab('payments')" style="background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:8px 16px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">${rzpKey?'🔑 Change Key':'⚙️ Configure'}</button>
-    </div>
-
-    <!-- Summary -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;">
-      <div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:16px;padding:16px;">
-        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(165,180,252,.7);text-transform:uppercase;margin-bottom:6px;">Total via Razorpay</div>
-        <div style="font-family:'Playfair Display',serif;font-size:26px;color:#A5B4FC;font-weight:700;">₹${rzpTotal.toLocaleString('en-IN')}</div>
-      </div>
-      <div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:16px;padding:16px;">
-        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(165,180,252,.7);text-transform:uppercase;margin-bottom:6px;">Transactions</div>
-        <div style="font-family:'Playfair Display',serif;font-size:26px;color:#A5B4FC;font-weight:700;">${rzpOrders.length}</div>
-      </div>
-      <div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:16px;padding:16px;">
-        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(165,180,252,.7);text-transform:uppercase;margin-bottom:6px;">Avg per Payment</div>
-        <div style="font-family:'Playfair Display',serif;font-size:26px;color:#A5B4FC;font-weight:700;">₹${rzpOrders.length>0?Math.round(rzpTotal/rzpOrders.length).toLocaleString('en-IN'):0}</div>
-      </div>
-    </div>
-
-    <!-- Open Razorpay Dashboard -->
-    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(99,102,241,.2);border-radius:16px;padding:18px;margin-bottom:22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-      <div style="font-size:32px;">🏦</div>
-      <div style="flex:1;">
-        <div style="font-size:14px;font-weight:700;color:#F0DEC8;margin-bottom:3px;">Open Full Razorpay Dashboard</div>
-        <div style="font-size:12px;color:rgba(253,246,236,.4);">View all transactions, settlements, refunds &amp; reports directly in Razorpay.</div>
-      </div>
-      <a href="https://dashboard.razorpay.com/app/payments" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg,#6366F1,#4F46E5);color:#fff;border:none;border-radius:11px;padding:11px 20px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;">🔗 Open Razorpay →</a>
-    </div>
-
-    <!-- Transaction Log -->
-    <div style="background:rgba(255,255,255,.02);border:1px solid rgba(200,146,58,.12);border-radius:16px;overflow:hidden;">
-      <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);">
-        <div style="font-family:'Playfair Display',serif;font-size:15px;color:#E8B96A;">Razorpay Payments from Orders (${rzpOrders.length})</div>
-      </div>
-      ${rzpOrders.length===0?`<div style="text-align:center;padding:30px;color:rgba(253,246,236,.2);font-size:13px;">No Razorpay payments yet</div>`:`
-      <div style="overflow-x:auto;">
-      <table style="width:100%;border-collapse:collapse;min-width:500px;">
-        <thead><tr style="background:rgba(200,146,58,.06);">
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.6);text-transform:uppercase;">Order ID</th>
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.6);text-transform:uppercase;">Customer</th>
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.6);text-transform:uppercase;">Amount</th>
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.6);text-transform:uppercase;">Payment ID</th>
-          <th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:800;letter-spacing:1px;color:rgba(200,146,58,.6);text-transform:uppercase;">Status</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-      </table></div>`}
-    </div>
-  </div>`;
-}
-
-// (async rzpdash override removed — handled in renderAdminTab directly)
-
-// ═══════════════════════════════════════════════════
-// 📈 ENHANCED BEST SELLING TIME CHART
-// (patches existing analytics tab)
-// ═══════════════════════════════════════════════════
-(function(){
-  const _origAnalytics = window.buildAnalyticsTab;
-  window.buildAnalyticsTab = function(){
-    let base = '';
-    try{ base = _origAnalytics(); }catch(e){ base = '<div style="color:#F87171;padding:20px;">Analytics error</div>'; }
-    // Build 24-hour bar chart
-    try{
-      const hrs = Array(24).fill(0);
-      const hrRev = Array(24).fill(0);
-      (typeof ORDERS!=='undefined'?ORDERS:[]).filter(o=>o.status!=='cancelled').forEach(o=>{
-        const d = new Date(o.timestamp);
-        if(!isNaN(d)){
-          hrs[d.getHours()]++;
-          hrRev[d.getHours()] += (o.total||0);
-        }
-      });
-      const maxHr = Math.max(...hrs,1);
-      const peakH = hrs.indexOf(Math.max(...hrs));
-      const peakLbl = peakH===0?'12:00 AM':peakH<12?peakH+':00 AM':peakH===12?'12:00 PM':((peakH-12)+':00 PM');
-      const labels=['12A','1A','2A','3A','4A','5A','6A','7A','8A','9A','10A','11A','12P','1P','2P','3P','4P','5P','6P','7P','8P','9P','10P','11P'];
-      const bars = hrs.map((v,i)=>{
-        const pct = Math.max(2, Math.round(v/maxHr*80));
-        const isP = i===peakH;
-        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default;" title="${labels[i]}: ${v} orders • ₹${hrRev[i]}">
-          <div style="font-size:8px;color:${isP?'#FCD34D':'rgba(253,246,236,.25)'};">${v||''}</div>
-          <div style="width:100%;background:${isP?'linear-gradient(180deg,#FCD34D,rgba(200,146,58,.3))':'linear-gradient(180deg,rgba(200,146,58,.7),rgba(200,146,58,.15))'};border-radius:3px 3px 0 0;height:${pct}px;"></div>
-          <div style="font-size:8px;color:rgba(253,246,236,.25);writing-mode:vertical-rl;transform:rotate(180deg);height:18px;">${labels[i]}</div>
-        </div>`;
-      }).join('');
-
-      const chart = `<div class="acard" style="margin-bottom:16px;">
-        <h3 style="color:#E8B96A;margin-bottom:4px;">🕐 Best Selling Hours</h3>
-        <p style="font-size:12px;color:rgba(253,246,236,.4);margin-bottom:14px;">Peak hour: <strong style="color:#FCD34D;">${peakLbl}</strong> (${hrs[peakH]} orders)</p>
-        <div style="display:flex;align-items:flex-end;gap:2px;height:110px;padding:0 4px;">
-          ${bars}
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:rgba(253,246,236,.2);">
-          <span>Midnight</span><span>6 AM</span><span>Noon</span><span>6 PM</span><span>11 PM</span>
-        </div>
-      </div>`;
-      base = chart + base;
-    }catch(e){}
-    return base;
-  };
-})();
-
-// ═══════════════════════════════════════════════════
-// 🔔 LOW STOCK ALERT BANNER IN ADMIN DASHBOARD
-
-// ═══════════════════════════════════════════════════
-
-(function(){
-
-  function _injectLowStockBanner(){
-
-    if(typeof adminTab==="undefined" || adminTab!=="dashboard") return;
-
-    var el = document.getElementById("adminMain");
-
-    if(!el) return;
-
-    var lowStock = (typeof PRODS!=="undefined"?PRODS:[]).filter(function(p){ return p.stockQty>0 && p.stockQty<=(p.stockAlert||3); });
-
-    if(lowStock.length===0) return;
-
-    if(document.getElementById("ub-low-stock-banner")) return;
-
-    var banner = document.createElement("div");
-
-    banner.id = "ub-low-stock-banner";
-
-    banner.style.cssText = "background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.3);border-radius:14px;padding:14px 16px;margin-bottom:16px;";
-
-    var itemsHtml = lowStock.map(function(p){
-
-      return '<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:7px 12px;display:flex;align-items:center;gap:6px;">'
-
-        + '<span style="font-size:16px;">' + (p.emoji||"🎂") + '</span>'
-
-        + '<span style="font-size:12px;color:#F0DEC8;font-weight:600;">' + (p.name||"") + '</span>'
-
-        + '<span style="background:rgba(239,68,68,.2);color:#F87171;border-radius:6px;padding:2px 7px;font-size:10px;font-weight:800;">Only ' + p.stockQty + ' left</span>'
-
-        + '<button onclick="switchTab(\'addprod\');editProduct(' + p.id + ');" style="background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.2);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">Update</button>'
-
-        + "</div>";
-
-    }).join("");
-
-    banner.innerHTML = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">'
-
-      + '<span style="font-size:20px;">🔔</span>'
-
-      + '<div style="font-size:14px;font-weight:700;color:#F87171;flex:1;">Low Stock Alert — ' + lowStock.length + ' product' + (lowStock.length!==1?"s":"") + ' running low!</div>'
-
-      + '<button onclick="ubClearLowStockAlerts();document.getElementById(\'ub-low-stock-banner\')?.remove();" style="background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">Dismiss</button>'
-
-      + '</div><div style="display:flex;flex-wrap:wrap;gap:8px;">' + itemsHtml + "</div>";
-
-    el.insertBefore(banner, el.firstChild);
-
-  }
-
-  var _origSwitch = window.switchTab;
-
-  if(typeof _origSwitch==="function"){
-
-    window.switchTab = function(t, p){
-
-      _origSwitch(t,p);
-
-      if(t==="dashboard") setTimeout(_injectLowStockBanner, 100);
-
-    };
-
-  }
-
-})();
-
-
-// ═══════════════════════════════════════════════════
-// ⚡ PERFORMANCE OPTIMIZATIONS
-// ═══════════════════════════════════════════════════
-// 1. Lazy-load images with IntersectionObserver
-(function(){
-  if(!('IntersectionObserver' in window)) return;
-  const io = new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      if(entry.isIntersecting){
-        const img = entry.target;
-        if(img.dataset.src){
-          img.src = img.dataset.src;
-          img.removeAttribute('data-src');
-          io.unobserve(img);
-        }
-      }
-    });
-  },{rootMargin:'200px'});
-  function ubLazyInit(){
-    document.querySelectorAll('img[data-src]').forEach(function(img){ io.observe(img); });
-  }
-  document.addEventListener('DOMContentLoaded', ubLazyInit);
-  window.addEventListener('ub-prods-rendered', ubLazyInit);
-})();
-
-// 2. Debounce search inputs to reduce repaints
-window.ubDebounce = function(fn, ms){
-  let t; return function(){ clearTimeout(t); t = setTimeout(fn.apply.bind(fn,this,arguments), ms||300); };
-};
-
-// (perf render override removed — handled in renderAdminTab directly)
-
-// 4. Preload critical fonts immediately
-(function(){
-  ['Playfair+Display:wght@700','Jost:wght@400;600;700'].forEach(function(f){
-    const l = document.createElement('link');
-    l.rel='preload'; l.as='style';
-    l.href='https://fonts.googleapis.com/css2?family='+f+'&display=swap';
-    document.head.appendChild(l);
-  });
-})();
-
-// 5. Show "Only X left" badge on product cards when stock is low
-(function(){
-  const _origRenderProds = window.renderProds;
-  if(typeof _origRenderProds==='function'){
-    window.renderProds = function(){
-      _origRenderProds();
-      setTimeout(function(){
-        (typeof PRODS!=='undefined'?PRODS:[]).forEach(function(p){
-          if(p.stockQty>0 && p.stockQty<=(p.stockAlert||3)){
-            const cards = document.querySelectorAll('[data-pid="'+p.id+'"] .pprice, .product-card[data-id="'+p.id+'"] .pprice');
-            cards.forEach(function(el){
-              if(!el.querySelector('.ub-stock-badge')){
-                const badge = document.createElement('div');
-                badge.className='ub-stock-badge';
-                badge.style.cssText='font-size:10px;font-weight:800;color:#F87171;margin-top:3px;';
-                badge.textContent='🔥 Only '+p.stockQty+' left!';
-                el.parentNode.insertBefore(badge, el.nextSibling);
-              }
-            });
-          }
-        });
-      }, 200);
-    };
-  }
-})();
 </script>
 
 <!-- ── CUSTOMER RULES & POLICY PANEL (hidden, opened from sidebar menu) ── -->
