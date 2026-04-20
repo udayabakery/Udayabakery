@@ -35,6 +35,8 @@
 <link rel="dns-prefetch" href="https://i.ibb.co">
 <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
 <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com">
+<!-- Performance: WebP support detection -->
+<script>document.documentElement.classList.add(window.WebPSupport===undefined?(function(){var i=new Image();i.onload=i.onerror=function(){window.WebPSupport=i.height===2;document.querySelectorAll("img[data-webp]").forEach(function(el){if(window.WebPSupport&&el.dataset.webp)el.src=el.dataset.webp;})};i.src="data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA";return "checking"})():"webp-checked");</script>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
@@ -5178,6 +5180,11 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
       </div>
     </div>
     </div><!-- /deliveryPanelWrap -->
+    <!-- COMBO OFFERS -->
+    <div id="comboOffersSection" style="margin-bottom:12px;display:none;">
+      <div style="font-size:11px;font-weight:700;color:var(--text-mid);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;">🎁 Combo Deals Available</div>
+      <div id="comboOffersList"></div>
+    </div>
     <!-- COUPON CODE -->
     <div style="margin-bottom:4px;">
       <div style="font-size:11px;font-weight:700;color:var(--text-mid);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">🏷️ Have a Coupon Code?</div>
@@ -5400,6 +5407,11 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
         <button class="atab" onclick="switchTab('cakebuilder')" id="at-cakebuilder">🎂 Cake Builder</button>
         <button class="atab" onclick="switchTab('videos')" id="at-videos">🎬 Cake Videos</button>
         <button class="atab" onclick="switchTab('policies')" id="at-policies">📜 Rules & Policy</button>
+        <button class="atab" onclick="switchTab('expense')" id="at-expense">💸 Expenses</button>
+        <button class="atab" onclick="switchTab('combo')" id="at-combo">🎁 Combo Offers</button>
+        <button class="atab" onclick="switchTab('reconciliation')" id="at-reconciliation">🧾 Reconciliation</button>
+        <button class="atab" onclick="switchTab('rzpdash')" id="at-rzpdash">💳 Razorpay</button>
+        <button class="atab" onclick="switchTab('stock')" id="at-stock">📦 Stock</button>
       </div>
     </div>
     
@@ -9122,6 +9134,22 @@ function addCart(pid){
   saveCart(); updateBadge(); ubCartBounce();
   showToast(`${p.emoji} ${p.name} (${v.label}) added!`, 'ok');
 }
+function ubRenderCombos(){
+  const section = document.getElementById('comboOffersSection');
+  const list = document.getElementById('comboOffersList');
+  if(!section||!list) return;
+  const combos = ubGetCombos ? ubGetCombos().filter(c=>c.active) : [];
+  if(!combos.length){ section.style.display='none'; return; }
+  section.style.display='';
+  list.innerHTML = combos.map((c,i)=>'<div style="background:linear-gradient(135deg,rgba(200,146,58,.1),rgba(200,146,58,.05));border:1.5px solid rgba(200,146,58,.25);border-radius:12px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;justify-content:space-between;">'
+    +'<div><div style="font-size:13px;font-weight:700;color:var(--choco);">🎁 '+c.name+'</div>'
+    +'<div style="font-size:11px;color:var(--text-mid);margin-top:2px;">'+c.desc+'</div></div>'
+    +'<div style="text-align:right;flex-shrink:0;">'
+    +(c.originalPrice?'<div style="font-size:10px;color:var(--text-mid);text-decoration:line-through;">₹'+c.originalPrice+'</div>':'')
+    +'<div style="font-size:16px;font-weight:800;color:var(--choco);">₹'+c.price+'</div>'
+    +'</div></div>'
+  ).join('');
+}
 function updateBadge(){
   const count = cart.reduce((s,c)=>s+c.qty,0);
   // Floating cart button - show only when cart has items
@@ -9146,6 +9174,7 @@ function closeCart(){
 }
 
 function renderCartItems(){
+  ubRenderCombos();
   const el = document.getElementById('cartList');
   if(!cart.length){
     el.innerHTML=`<div class="cart-empty-msg" style="text-align:center;padding:48px 20px;">
@@ -10965,6 +10994,11 @@ function renderAdminTab(){
   else if(adminTab==='cakebuilder') el.innerHTML = buildCakeBuilderAdminTab();
   else if(adminTab==='videos') el.innerHTML = buildVideosAdminTab();
   else if(adminTab==='policies'){ el.innerHTML = buildPoliciesAdminTab(); initPoliciesAdmin(); }
+  else if(adminTab==='expense') el.innerHTML = buildExpenseTab();
+  else if(adminTab==='combo') el.innerHTML = buildComboTab();
+  else if(adminTab==='reconciliation') el.innerHTML = buildReconciliationTab();
+  else if(adminTab==='rzpdash') el.innerHTML = buildRzpDashTab();
+  else if(adminTab==='stock') el.innerHTML = buildStockTab();
   else if(adminTab==='designer'){
     try {
       el.innerHTML = buildDesignerTab();
@@ -10983,6 +11017,7 @@ function renderAdminTab(){
 
 // ── DASHBOARD ──
 function buildDash(){
+  const _lowStockBanner = ubLowStockBannerHtml ? ubLowStockBannerHtml() : '';
   const pend = ORDERS.filter(o=>o.status==='pending').length;
   const confirmed = ORDERS.filter(o=>o.status==='confirmed').length;
   const delivered = ORDERS.filter(o=>o.status==='delivered').length;
@@ -12058,7 +12093,7 @@ function buildOrdersTab(){
 function _buildOrdersList(){
   return `
   <!-- Bulk Action Bar (hidden until items selected) -->
-  <div id="ubBulkBar" style="display:none;position:sticky;top:0;z-index:10;background:rgba(200,146,58,.15);border:1px solid rgba(200,146,58,.3);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+  <div id="ubBulkBar" style="display:none;position:sticky;top:0;z-index:10;background:rgba(200,146,58,.15);border:1px solid rgba(200,146,58,.3);border-radius:12px;padding:10px 14px;margin-bottom:14px;align-items:center;gap:10px;flex-wrap:wrap;">
     <span id="ubBulkCount" style="font-size:13px;font-weight:700;color:#E8B96A;flex:1;"></span>
     <button onclick="ubBulkSetStatus('confirmed')" style="background:rgba(74,222,128,.15);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">✅ Confirm</button>
     <button onclick="ubBulkSetStatus('delivered')" style="background:rgba(59,130,246,.15);color:#93C5FD;border:1px solid rgba(59,130,246,.25);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🎉 Delivered</button>
@@ -12226,6 +12261,7 @@ function buildOrderCard(o){
       <a href="https://wa.me/91${(o.phone||'').replace(/\D/g,'')}?text=${encodeURIComponent('Hello '+o.name+'! 🎂\n\nYour Udaya Bakery order *'+o.id+'* status:\n\n*'+statusLabel(o.status)+'* ✅\n\nThank you for choosing Udaya Bakery! 🙏')}" target="_blank" rel="noopener noreferrer" style="background:rgba(37,211,102,.12);color:#25D366;border:1px solid rgba(37,211,102,.25);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:16px;">💬</span> WhatsApp</a>
       <a href="tel:${o.phone}" style="background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.2);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;">📞 Call</a>
       <button onclick="ubPrintBill('${o.id}')" style="background:rgba(255,255,255,.06);color:rgba(253,246,236,.6);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🖨️ Print Bill</button>
+      <button onclick="ubShowOrderQR('${o.id}')" style="background:rgba(99,102,241,.1);color:#A5B4FC;border:1px solid rgba(99,102,241,.25);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">📱 QR Code</button>
     </div>
   </div>`;
 }
@@ -15573,6 +15609,7 @@ function buildVideosAdminTab(){
   }).join('');
 
   return `
+  ${_lowStockBanner}
   <div style="max-width:860px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;flex-wrap:wrap;gap:10px;">
       <div>
@@ -17810,6 +17847,341 @@ function ubRenderPolicyPanel(){
     +'</div>';
   }).join('');
 }
+// ══════════════════════════════════════════════════════════════
+//  📱 ORDER QR CODE
+// ══════════════════════════════════════════════════════════════
+function ubShowOrderQR(orderId){
+  const o = ORDERS.find(x=>x.id===orderId);
+  if(!o){ showToast('Order not found','err'); return; }
+  const info = encodeURIComponent(
+    'ORDER: '+o.id+'\nCustomer: '+(o.name||'')+'\nTotal: ₹'+o.total+'\nStatus: '+statusLabel(o.status)
+  );
+  const qrUrl = 'https://chart.googleapis.com/chart?chs=220x220&cht=qr&chl='+info+'&choe=UTF-8';
+  const dlg = document.createElement('div');
+  dlg.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:20px;';
+  dlg.onclick = function(e){ if(e.target===dlg) dlg.remove(); };
+  dlg.innerHTML = '<div style="background:#1E0E06;border:1.5px solid rgba(200,146,58,.3);border-radius:20px;padding:28px 24px;max-width:300px;width:100%;text-align:center;">'
+    +'<div style="font-family:Playfair Display,serif;font-size:16px;color:#E8B96A;font-weight:700;margin-bottom:4px;">📱 Order QR Code</div>'
+    +'<div style="font-size:12px;color:rgba(253,246,236,.4);margin-bottom:14px;">'+o.id+' · ₹'+o.total+'</div>'
+    +'<div style="background:#fff;border-radius:12px;padding:12px;display:inline-block;margin-bottom:14px;">'
+    +'<img src="'+qrUrl+'" width="200" height="200" alt="Order QR"></div>'
+    +'<div style="font-size:11px;color:rgba(253,246,236,.35);margin-bottom:16px;">Scan to view order details</div>'
+    +'<button onclick="this.closest('div[style*=fixed]').remove()" style="background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:10px 24px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Close</button>'
+    +'</div>';
+  document.body.appendChild(dlg);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  📦 STOCK MANAGEMENT
+// ══════════════════════════════════════════════════════════════
+function ubGetStock(){ return JSON.parse(localStorage.getItem('ub_stock')||'{}'); }
+function ubSaveStock(s){ localStorage.setItem('ub_stock', JSON.stringify(s)); }
+
+function buildStockTab(){
+  const stock = ubGetStock();
+  const rows = PRODS.map(p=>{
+    const qty = stock[p.id] != null ? stock[p.id] : '';
+    const low = qty !== '' && qty <= (p.lowStockAlert||5);
+    return '<tr style="border-bottom:1px solid rgba(255,255,255,.05);">'
+      +'<td style="padding:10px 8px;font-size:13px;color:rgba(253,246,236,.85);">'+(p.emoji||'🎂')+' '+p.name+'</td>'
+      +'<td style="padding:10px 8px;"><input type="number" min="0" value="'+qty+'" placeholder="—"'
+      +' id="stk-'+p.id+'" oninput="ubUpdateStock(''+p.id+'',this.value)"'
+      +' style="width:80px;background:rgba(255,255,255,.07);border:1px solid rgba(200,146,58,.2);border-radius:8px;padding:6px 10px;font-family:Jost,sans-serif;font-size:13px;color:#FDF6EC;text-align:center;outline:none;"></td>'
+      +'<td style="padding:10px 8px;"><input type="number" min="0" value="'+(p.lowStockAlert||5)+'" placeholder="5"'
+      +' id="lsa-'+p.id+'" oninput="ubUpdateLSA(''+p.id+'',this.value)"'
+      +' style="width:70px;background:rgba(255,255,255,.07);border:1px solid rgba(200,146,58,.2);border-radius:8px;padding:6px 10px;font-family:Jost,sans-serif;font-size:13px;color:#FDF6EC;text-align:center;outline:none;"></td>'
+      +'<td style="padding:10px 8px;">'
+      +(qty===''?'<span style="font-size:12px;color:rgba(253,246,236,.3);">—</span>'
+       :low?'<span style="background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.3);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;">⚠️ LOW</span>'
+       :'<span style="background:rgba(74,222,128,.1);color:#4ADE80;border:1px solid rgba(74,222,128,.2);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;">✅ OK</span>')
+      +'</td>'
+      +'</tr>';
+  }).join('');
+
+  const lowItems = PRODS.filter(p=>{ const q=stock[p.id]; return q!=null && q<=(p.lowStockAlert||5); });
+
+  return '<div style="max-width:860px;">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">'
+    +'<div><h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">📦 Stock Quantity</h2>'
+    +'<p style="font-size:12px;color:rgba(253,246,236,.38);">Track inventory · Set low-stock alert levels</p></div>'
+    +'<button onclick="ubSaveAllStock()" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💾 Save All</button>'
+    +'</div>'
+    +(lowItems.length?'<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;">'
+    +'<span style="font-size:20px;">⚠️</span><div><div style="font-size:13px;font-weight:700;color:#F87171;margin-bottom:4px;">Low Stock Alert — '+lowItems.length+' item(s)</div>'
+    +'<div style="font-size:12px;color:rgba(253,246,236,.5);">'+lowItems.map(p=>(p.emoji||'🎂')+' '+p.name+' ('+ubGetStock()[p.id]+' left)').join(' · ')+'</div></div></div>':'')
+    +'<div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,146,58,.12);border-radius:14px;overflow:hidden;">'
+    +'<table style="width:100%;border-collapse:collapse;">'
+    +'<thead><tr style="background:rgba(200,146,58,.08);border-bottom:1px solid rgba(200,146,58,.2);">'
+    +'<th style="padding:10px 8px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Product</th>'
+    +'<th style="padding:10px 8px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Qty in Stock</th>'
+    +'<th style="padding:10px 8px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Alert Below</th>'
+    +'<th style="padding:10px 8px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Status</th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+}
+
+function ubUpdateStock(id, val){ const s=ubGetStock(); s[id]=val===''?null:parseInt(val)||0; ubSaveStock(s); }
+function ubUpdateLSA(id, val){
+  const p=PRODS.find(x=>String(x.id)===String(id)); if(!p) return;
+  p.lowStockAlert=parseInt(val)||5;
+}
+function ubSaveAllStock(){
+  const s=ubGetStock();
+  PRODS.forEach(p=>{
+    const qi=document.getElementById('stk-'+p.id);
+    const li=document.getElementById('lsa-'+p.id);
+    if(qi && qi.value!=='') s[p.id]=parseInt(qi.value)||0;
+    if(li) p.lowStockAlert=parseInt(li.value)||5;
+  });
+  ubSaveStock(s);
+  showToast('✅ Stock saved!','ok');
+  renderAdminTab();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  💸 EXPENSE TRACKER
+// ══════════════════════════════════════════════════════════════
+function ubGetExpenses(){ return JSON.parse(localStorage.getItem('ub_expenses')||'[]'); }
+function ubSaveExpenses(e){ localStorage.setItem('ub_expenses', JSON.stringify(e)); }
+
+function buildExpenseTab(){
+  const expenses = ubGetExpenses();
+  const total = expenses.reduce((s,e)=>s+parseFloat(e.amount||0),0);
+  const today = new Date().toISOString().slice(0,10);
+  const todayExp = expenses.filter(e=>e.date===today).reduce((s,e)=>s+parseFloat(e.amount||0),0);
+  const cats = ['Ingredients','Utilities','Packaging','Labour','Equipment','Rent','Marketing','Other'];
+  const rows = expenses.slice().reverse().map((e,ri)=>{
+    const i = expenses.length-1-ri;
+    return '<tr style="border-bottom:1px solid rgba(255,255,255,.04);">'
+      +'<td style="padding:8px 10px;font-size:12px;color:rgba(253,246,236,.6);">'+e.date+'</td>'
+      +'<td style="padding:8px 10px;font-size:13px;color:rgba(253,246,236,.9);font-weight:600;">'+e.desc+'</td>'
+      +'<td style="padding:8px 10px;"><span style="background:rgba(200,146,58,.1);color:#E8B96A;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;">'+e.cat+'</span></td>'
+      +'<td style="padding:8px 10px;font-size:14px;font-weight:700;color:#F87171;">₹'+parseFloat(e.amount||0).toFixed(0)+'</td>'
+      +'<td style="padding:8px 10px;"><button onclick="ubDeleteExpense('+i+')" style="background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">Delete</button></td>'
+      +'</tr>';
+  }).join('');
+
+  return '<div style="max-width:860px;">'
+    +'<h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">💸 Expense Tracker</h2>'
+    +'<p style="font-size:12px;color:rgba(253,246,236,.38);margin-bottom:20px;">Track all your bakery expenses</p>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">'
+    +'<div class="kcard"><div class="klbl">TODAY'S EXPENSES</div><div class="kval">₹'+todayExp.toFixed(0)+'</div></div>'
+    +'<div class="kcard"><div class="klbl">TOTAL EXPENSES</div><div class="kval">₹'+total.toFixed(0)+'</div></div>'
+    +'</div>'
+    +'<div class="acard" style="margin-bottom:20px;">'
+    +'<h3 style="margin-bottom:14px;">➕ Add Expense</h3>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">'
+    +'<div><label style="font-size:11px;color:rgba(253,246,236,.4);display:block;margin-bottom:5px;">Description</label>'
+    +'<input class="af-inp" id="exp_desc" placeholder="e.g. Flour purchase" style="width:100%;box-sizing:border-box;"></div>'
+    +'<div><label style="font-size:11px;color:rgba(253,246,236,.4);display:block;margin-bottom:5px;">Amount (₹)</label>'
+    +'<input class="af-inp" id="exp_amt" type="number" placeholder="500" style="width:100%;box-sizing:border-box;"></div>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">'
+    +'<div><label style="font-size:11px;color:rgba(253,246,236,.4);display:block;margin-bottom:5px;">Category</label>'
+    +'<select class="af-sel" id="exp_cat" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(200,146,58,.2);border-radius:10px;padding:10px 12px;font-family:Jost,sans-serif;font-size:13px;color:#FDF6EC;outline:none;">'
+    +cats.map(c=>'<option>'+c+'</option>').join('')+'</select></div>'
+    +'<div><label style="font-size:11px;color:rgba(253,246,236,.4);display:block;margin-bottom:5px;">Date</label>'
+    +'<input class="af-inp" id="exp_date" type="date" value="'+today+'" style="width:100%;box-sizing:border-box;"></div>'
+    +'</div>'
+    +'<button class="abtn" onclick="ubAddExpense()">➕ Add Expense</button>'
+    +'</div>'
+    +(expenses.length?'<div class="acard">'
+    +'<h3 style="margin-bottom:14px;">📋 All Expenses</h3>'
+    +'<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">'
+    +'<thead><tr style="background:rgba(200,146,58,.08);border-bottom:1px solid rgba(200,146,58,.2);">'
+    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;text-transform:uppercase;">Date</th>'
+    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;text-transform:uppercase;">Description</th>'
+    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;text-transform:uppercase;">Category</th>'
+    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;text-transform:uppercase;">Amount</th>'
+    +'<th></th></tr></thead>'
+    +'<tbody>'+rows+'</tbody></table></div></div>':'')
+    +'</div>';
+}
+
+function ubAddExpense(){
+  const desc=(document.getElementById('exp_desc').value||'').trim();
+  const amt=parseFloat(document.getElementById('exp_amt').value||'0');
+  const cat=document.getElementById('exp_cat').value||'Other';
+  const date=document.getElementById('exp_date').value||new Date().toISOString().slice(0,10);
+  if(!desc){ showToast('Enter description','err'); return; }
+  if(!amt||amt<=0){ showToast('Enter valid amount','err'); return; }
+  const ex=ubGetExpenses(); ex.push({desc,amount:amt,cat,date}); ubSaveExpenses(ex);
+  showToast('✅ Expense added!','ok'); renderAdminTab();
+}
+function ubDeleteExpense(i){
+  const ex=ubGetExpenses(); ex.splice(i,1); ubSaveExpenses(ex);
+  showToast('Deleted','ok'); renderAdminTab();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  🎁 COMBO OFFERS
+// ══════════════════════════════════════════════════════════════
+function ubGetCombos(){ return JSON.parse(localStorage.getItem('ub_combos')||'[]'); }
+function ubSaveCombos(c){ localStorage.setItem('ub_combos', JSON.stringify(c)); }
+
+function buildComboTab(){
+  const combos = ubGetCombos();
+  const cards = combos.map((c,i)=>'<div class="acard" style="margin-bottom:14px;">'
+    +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;">'
+    +'<div><div style="font-size:16px;font-weight:700;color:#E8B96A;margin-bottom:2px;">🎁 '+c.name+'</div>'
+    +'<div style="font-size:12px;color:rgba(253,246,236,.45);">'+c.desc+'</div></div>'
+    +'<div style="text-align:right;flex-shrink:0;">'
+    +'<div style="font-size:20px;font-weight:800;color:#4ADE80;font-family:Playfair Display,serif;">₹'+c.price+'</div>'
+    +(c.originalPrice?'<div style="font-size:12px;color:rgba(253,246,236,.35);text-decoration:line-through;">₹'+c.originalPrice+'</div>':'')
+    +'</div></div>'
+    +(c.items&&c.items.length?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">'+c.items.map(it=>'<span style="background:rgba(200,146,58,.12);color:#E8B96A;border:1px solid rgba(200,146,58,.2);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;">'+it+'</span>').join('')+'</div>':'')
+    +'<div style="display:flex;gap:8px;">'
+    +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(253,246,236,.6);cursor:pointer;"><input type="checkbox" '+(c.active?'checked':'')
+    +' onchange="ubToggleCombo('+i+',this.checked)" style="accent-color:#C8923A;"> Active</label>'
+    +'<button onclick="ubDeleteCombo('+i+')" style="margin-left:auto;background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🗑 Delete</button>'
+    +'</div></div>'
+  ).join('');
+
+  return '<div style="max-width:860px;">'
+    +'<h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">🎁 Combo Offers</h2>'
+    +'<p style="font-size:12px;color:rgba(253,246,236,.38);margin-bottom:20px;">Create bundle deals — customers see these in their cart</p>'
+    +'<div class="acard" style="margin-bottom:20px;">'
+    +'<h3 style="margin-bottom:14px;">➕ Create New Combo</h3>'
+    +'<div class="af-group"><label>Combo Name <span style="color:rgba(253,246,236,.4);font-size:10px;">e.g. Party Pack</span></label>'
+    +'<input class="af-inp" id="cmb_name" placeholder="e.g. Birthday Party Pack"></div>'
+    +'<div class="af-group"><label>Description</label>'
+    +'<input class="af-inp" id="cmb_desc" placeholder="e.g. 1 cake + 12 cupcakes + 6 puffs"></div>'
+    +'<div class="af-group"><label>Items Included <span style="color:rgba(253,246,236,.4);font-size:10px;">comma-separated</span></label>'
+    +'<input class="af-inp" id="cmb_items" placeholder="e.g. Vanilla Cake 1kg, Choco Cupcakes ×12, Egg Puffs ×6"></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'
+    +'<div class="af-group"><label>Combo Price (₹)</label>'
+    +'<input class="af-inp" id="cmb_price" type="number" placeholder="999" min="0"></div>'
+    +'<div class="af-group"><label>Original Price (₹) <span style="color:rgba(253,246,236,.4);font-size:10px;">shows strikethrough</span></label>'
+    +'<input class="af-inp" id="cmb_orig" type="number" placeholder="1200" min="0"></div>'
+    +'</div>'
+    +'<button class="abtn" onclick="ubAddCombo()">✅ Save Combo</button>'
+    +'</div>'
+    +(combos.length?cards:'<div style="text-align:center;padding:40px;color:rgba(253,246,236,.25);">No combos yet — create one above!</div>')
+    +'</div>';
+}
+
+function ubAddCombo(){
+  const name=(document.getElementById('cmb_name').value||'').trim();
+  const desc=(document.getElementById('cmb_desc').value||'').trim();
+  const itemsRaw=(document.getElementById('cmb_items').value||'').trim();
+  const price=parseFloat(document.getElementById('cmb_price').value||'0');
+  const orig=parseFloat(document.getElementById('cmb_orig').value||'0');
+  if(!name){ showToast('Enter combo name','err'); return; }
+  if(!price||price<=0){ showToast('Enter combo price','err'); return; }
+  const items=itemsRaw.split(',').map(s=>s.trim()).filter(Boolean);
+  const cx=ubGetCombos();
+  cx.push({name,desc,items,price,originalPrice:orig||null,active:true});
+  ubSaveCombos(cx);
+  showToast('✅ Combo saved!','ok'); renderAdminTab();
+}
+function ubToggleCombo(i, active){
+  const cx=ubGetCombos(); cx[i].active=active; ubSaveCombos(cx);
+  showToast(active?'Combo activated':'Combo deactivated','ok');
+}
+function ubDeleteCombo(i){
+  const cx=ubGetCombos(); cx.splice(i,1); ubSaveCombos(cx);
+  showToast('Combo deleted','ok'); renderAdminTab();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  🧾 PAYMENT RECONCILIATION
+// ══════════════════════════════════════════════════════════════
+function buildReconciliationTab(){
+  const today = new Date().toISOString().slice(0,10);
+  const thisMonth = today.slice(0,7);
+  const mOrders = ORDERS.filter(o=>{ const d=new Date(o.timestamp); return d.toISOString&&d.toISOString().slice(0,7)===thisMonth && o.status!=='cancelled'; });
+  const rzpOrders = mOrders.filter(o=>o.payMethod==='razorpay'||o.payMethod==='phonepe');
+  const codOrders = mOrders.filter(o=>o.payMethod==='cod'||!o.payMethod);
+  const rzpTotal = rzpOrders.reduce((s,o)=>s+o.total,0);
+  const codTotal = codOrders.reduce((s,o)=>s+o.total,0);
+  const totalRev = mOrders.reduce((s,o)=>s+o.total,0);
+  const exp = ubGetExpenses().filter(e=>e.date&&e.date.slice(0,7)===thisMonth).reduce((s,e)=>s+parseFloat(e.amount||0),0);
+  const profit = totalRev - exp;
+
+  const rzpRows = rzpOrders.slice(0,30).map(o=>'<tr style="border-bottom:1px solid rgba(255,255,255,.04);">'
+    +'<td style="padding:7px 10px;font-size:12px;color:#E8B96A;font-family:Jost,sans-serif;">'+o.id+'</td>'
+    +'<td style="padding:7px 10px;font-size:12px;color:rgba(253,246,236,.7);">'+(o.name||'')+'</td>'
+    +'<td style="padding:7px 10px;font-size:12px;color:rgba(253,246,236,.5);">'+(o.timestamp||'')+'</td>'
+    +'<td style="padding:7px 10px;font-size:13px;font-weight:700;color:#4ADE80;">₹'+o.total+'</td>'
+    +'<td style="padding:7px 10px;font-size:11px;color:rgba(253,246,236,.4);">'+(o.advanceUtr||'—')+'</td>'
+    +'</tr>'
+  ).join('');
+
+  return '<div style="max-width:860px;">'
+    +'<h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">🧾 Payment Reconciliation</h2>'
+    +'<p style="font-size:12px;color:rgba(253,246,236,.38);margin-bottom:20px;">This month — '+thisMonth+'</p>'
+    +'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;">'
+    +'<div class="kcard"><div class="klbl">TOTAL REVENUE</div><div class="kval">₹'+totalRev.toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">'+mOrders.length+' orders</div></div>'
+    +'<div class="kcard"><div class="klbl">NET PROFIT</div><div class="kval" style="color:'+(profit>=0?'#4ADE80':'#F87171')+';">₹'+Math.abs(profit).toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">'+(profit>=0?'after expenses':'loss — check expenses')+'</div></div>'
+    +'<div class="kcard"><div class="klbl">RAZORPAY COLLECTED</div><div class="kval">₹'+rzpTotal.toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">'+rzpOrders.length+' online orders</div></div>'
+    +'<div class="kcard"><div class="klbl">CASH ON DELIVERY</div><div class="kval">₹'+codTotal.toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">'+codOrders.length+' COD orders</div></div>'
+    +'</div>'
+    +(rzpOrders.length?'<div class="acard"><h3 style="margin-bottom:14px;">💳 Razorpay Transactions This Month</h3>'
+    +'<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">'
+    +'<thead><tr style="background:rgba(99,102,241,.08);border-bottom:1px solid rgba(99,102,241,.2);">'
+    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:#A5B4FC;font-weight:700;text-transform:uppercase;">Order</th>'
+    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:#A5B4FC;font-weight:700;text-transform:uppercase;">Customer</th>'
+    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:#A5B4FC;font-weight:700;text-transform:uppercase;">Date</th>'
+    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:#A5B4FC;font-weight:700;text-transform:uppercase;">Amount</th>'
+    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:#A5B4FC;font-weight:700;text-transform:uppercase;">Razorpay ID</th>'
+    +'</tr></thead><tbody>'+rzpRows+'</tbody></table></div></div>':'')
+    +'</div>';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  💳 RAZORPAY DASHBOARD LINK TAB
+// ══════════════════════════════════════════════════════════════
+function buildRzpDashTab(){
+  const rzpMode = localStorage.getItem('ub_rzp_mode')||'live';
+  const dashUrl = rzpMode==='live'
+    ? 'https://dashboard.razorpay.com/app/dashboard'
+    : 'https://dashboard.razorpay.com/app/dashboard';
+  const today = new Date().toISOString().slice(0,10);
+  const thisMonth = today.slice(0,7);
+  const rzpOrders = ORDERS.filter(o=>(o.payMethod==='razorpay'||o.payMethod==='phonepe')&&o.status!=='cancelled');
+  const todayRzp = rzpOrders.filter(o=>o.timestamp&&o.timestamp.includes(new Date().toLocaleDateString('en-IN')));
+  const monthRzp = rzpOrders.filter(o=>{ try{ return new Date(o.timestamp).toISOString().slice(0,7)===thisMonth; }catch(e){ return false; } });
+  const totalRzp = rzpOrders.reduce((s,o)=>s+o.total,0);
+
+  return '<div style="max-width:720px;">'
+    +'<h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">💳 Razorpay Dashboard</h2>'
+    +'<p style="font-size:12px;color:rgba(253,246,236,.38);margin-bottom:20px;">Online payment overview · Opens Razorpay in new tab</p>'
+    +'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;">'
+    +'<div class="kcard"><div class="klbl">TOTAL ONLINE COLLECTED</div><div class="kval">₹'+totalRzp.toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">'+rzpOrders.length+' transactions</div></div>'
+    +'<div class="kcard"><div class="klbl">THIS MONTH</div><div class="kval">₹'+monthRzp.reduce((s,o)=>s+o.total,0).toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">'+monthRzp.length+' orders</div></div>'
+    +'</div>'
+    +'<div class="acard" style="text-align:center;padding:32px;">'
+    +'<div style="font-size:52px;margin-bottom:16px;">🏦</div>'
+    +'<div style="font-family:Playfair Display,serif;font-size:18px;color:#E8B96A;font-weight:700;margin-bottom:8px;">Open Razorpay Dashboard</div>'
+    +'<div style="font-size:13px;color:rgba(253,246,236,.4);margin-bottom:20px;">View settlements, disputes, transactions & analytics directly on Razorpay</div>'
+    +'<a href="'+dashUrl+'" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#312E81,#4338CA);color:#fff;text-decoration:none;padding:14px 28px;border-radius:14px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;box-shadow:0 4px 16px rgba(99,102,241,.3);">🏦 Open Razorpay Dashboard ↗</a>'
+    +'<div style="margin-top:12px;font-size:11px;color:rgba(253,246,236,.3);">Opens in new tab · Mode: '+(rzpMode==='live'?'🟢 Live':'🟡 Test')+'</div>'
+    +'</div>'
+    +'<div class="acard" style="margin-top:16px;">'
+    +'<h3 style="margin-bottom:12px;">⚡ Quick Links</h3>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:10px;">'
+    +'<a href="https://dashboard.razorpay.com/app/payments" target="_blank" rel="noopener noreferrer" style="background:rgba(99,102,241,.1);color:#A5B4FC;border:1px solid rgba(99,102,241,.25);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">💰 Payments</a>'
+    +'<a href="https://dashboard.razorpay.com/app/settlements" target="_blank" rel="noopener noreferrer" style="background:rgba(74,222,128,.1);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">🏦 Settlements</a>'
+    +'<a href="https://dashboard.razorpay.com/app/refunds" target="_blank" rel="noopener noreferrer" style="background:rgba(251,191,36,.1);color:#FCD34D;border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">↩️ Refunds</a>'
+    +'<a href="https://dashboard.razorpay.com/app/analytics" target="_blank" rel="noopener noreferrer" style="background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.25);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">📊 Analytics</a>'
+    +'</div></div>'
+    +'</div>';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  🔔 LOW STOCK BANNER in Dashboard (injected into buildDash)
+// ══════════════════════════════════════════════════════════════
+function ubLowStockBannerHtml(){
+  const stock = ubGetStock();
+  const lowItems = PRODS.filter(p=>{ const q=stock[p.id]; return q!=null && q<=(p.lowStockAlert||5); });
+  if(!lowItems.length) return '';
+  return '<div style="background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.3);border-radius:14px;padding:14px 16px;margin-bottom:20px;display:flex;gap:12px;align-items:flex-start;cursor:pointer;" onclick="switchTab('stock')">'
+    +'<span style="font-size:24px;flex-shrink:0;">⚠️</span>'
+    +'<div><div style="font-size:14px;font-weight:700;color:#F87171;margin-bottom:4px;">Low Stock Alert — '+lowItems.length+' item(s) need restocking</div>'
+    +'<div style="font-size:12px;color:rgba(253,246,236,.5);">'+lowItems.slice(0,4).map(p=>(p.emoji||'🎂')+' '+p.name+' ('+stock[p.id]+' left)').join(' · ')+(lowItems.length>4?' + '+(lowItems.length-4)+' more':'')+'</div>'
+    +'<div style="font-size:11px;color:#F87171;margin-top:6px;font-weight:700;">Tap to manage stock →</div></div></div>';
+}
+
+
 </script>
 
 <!-- ── CUSTOMER RULES & POLICY PANEL (hidden, opened from sidebar menu) ── -->
