@@ -4391,7 +4391,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
   "name": "Udaya Bakery",
   "description": "Artisan bakery in Belman, Karnataka offering fresh cakes, pastries, puffs, chakli, and more.",
   "url": "https://udayabakery.github.io/Udayabakery/",
-  "telephone": "+91-9845406712",
+  "telephone": "+91-" + (localStorage.getItem('ub_whatsapp')||'919845406712').slice(-10) + ",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Belman",
@@ -4506,7 +4506,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
       <div style="font-size:52px;margin-bottom:16px;">🎂</div>
       <h2 style="font-family:Georgia,serif;font-size:24px;color:#3B1F0E;margin-bottom:8px;">Udaya Bakery</h2>
       <p style="color:#5C3520;font-size:15px;margin-bottom:16px;">Please enable JavaScript in your browser to use our online ordering system.</p>
-      <p style="color:#5C3520;font-size:14px;">You can still reach us on <a href="https://wa.me/919845406712" style="color:#C8923A;font-weight:bold;">WhatsApp: +91 98454 06712</a></p>
+      <p style="color:#5C3520;font-size:14px;">You can still reach us on <a href="https://wa.me/919845406712" style="color:#C8923A;font-weight:bold;" id="closed-wa-link">WhatsApp: +91 98454 06712</a></p>
     </div>
   </div>
 </noscript>
@@ -4884,7 +4884,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
          style="background:var(--choco);color:var(--cream);padding:11px 22px;border-radius:12px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:8px;">
         📍 Open in Google Maps
       </a>
-      <a href="https://wa.me/919845406712?text=Hi!%20I%20want%20to%20visit%20Udaya%20Bakery.%20Please%20share%20the%20exact%20location." target="_blank" rel="noopener noreferrer"
+      <a href="https://wa.me/919845406712?text=Hi!%20I%20want%20to%20visit%20Udaya%20Bakery.%20Please%20share%20the%20exact%20location." id="visit-wa-link" target="_blank" rel="noopener noreferrer"
          style="background:#25D366;color:#fff;padding:11px 22px;border-radius:12px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:8px;">
         📱 Get Directions via WhatsApp
       </a>
@@ -4912,7 +4912,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
         <div class="faq-q"><span class="faq-q-text">Can I cancel or modify my order?</span><span class="faq-arrow">▼</span></div>
-        <div class="faq-a">You can cancel or modify your order within <strong>5 minutes</strong> of placing it by calling us on WhatsApp at <strong>9845406712</strong>. Once the bakers have started preparing, we cannot make changes.</div>
+        <div class="faq-a">You can cancel or modify your order within <strong>5 minutes</strong> of placing it by calling us on WhatsApp at <strong id="faq-phone-num">9845406712</strong>. Once the bakers have started preparing, we cannot make changes.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
         <div class="faq-q"><span class="faq-q-text">Do you take custom cake orders?</span><span class="faq-arrow">▼</span></div>
@@ -4972,12 +4972,12 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
         <p class="section-desc">Located in the heart of Belman near the bus stand. Visit or order online!</p>
         <div class="citems">
           <div class="ci"><div class="ci-icon">📍</div><div class="ci-text"><h4>Address</h4><p>Panchayat Building, 1, Karkala Main Road,<br>Near Busstand, Belman, Karnataka 576111</p></div></div>
-          <div class="ci"><div class="ci-icon">📞</div><div class="ci-text"><h4>Phone</h4><a href="tel:+919845406712">+91 98454 06712</a></div></div>
+          <div class="ci"><div class="ci-icon">📞</div><div class="ci-text"><h4>Phone</h4><a href="tel:+919845406712" id="ci-tel-link">+91 98454 06712</a></div></div>
           <div class="ci"><div class="ci-icon">🕐</div><div class="ci-text"><h4>Hours</h4><p>Mon–Sat: 7:00 AM – 9:00 PM<br>Sunday: 8:00 AM – 8:00 PM</p></div></div>
         </div>
         <div class="abtns">
-          <a href="https://wa.me/919845406712?text=Hi!%20I%20would%20like%20to%20order%20from%20Udaya%20Bakery" target="_blank" rel="noopener noreferrer" class="btn-wa">📱 Chat on WhatsApp</a>
-          <a href="tel:+919845406712" class="btn-call">📞 Call: +91 98454 06712</a>
+          <a href="https://wa.me/919845406712?text=Hi!%20I%20would%20like%20to%20order%20from%20Udaya%20Bakery" target="_blank" rel="noopener noreferrer" class="btn-wa" id="ci-wa-order">📱 Chat on WhatsApp</a>
+          <a href="tel:+919845406712" class="btn-call" id="ci-call-btn">📞 Call: +91 98454 06712</a>
         </div>
       </div>
       <div>
@@ -6079,7 +6079,8 @@ function playOrderSound(){
 function sendAdminWhatsApp(order){
   const pickupLine = order.orderType==='pickup' ? '%0A🏪 *STORE PICKUP*' : `%0A📍 ${order.addr}%0A📏 ${order.dist||0}km`;
   const msg = `🔔 *NEW ORDER — Udaya Bakery*%0A*Order: ${order.id}*%0A%0A👤 ${order.name}%0A📞 ${order.phone}${pickupLine}%0A💳 ${order.payMethod==='phonepe'||order.payMethod==='razorpay'?'Razorpay Online':'COD'}%0A%0A*Items:*%0A${order.items.map(i=>`• ${i.emoji} ${i.name} (${i.variant}) ×${i.qty} = ₹${i.price*i.qty}`).join('%0A')}%0A%0A🚚 Delivery: ${order.delivery===0?'FREE':'₹'+order.delivery}%0A💰 *Total: ₹${order.total}*${order.note?'%0A%0A📝 '+order.note:''}`;
-  window.open(`https://wa.me/919845406712?text=${msg}`, '_blank');
+  const _adminPhone = (localStorage.getItem('ub_whatsapp')||'919845406712').replace(/[^0-9]/g,'');
+  window.open(`https://wa.me/${_adminPhone}?text=${msg}`, '_blank');
 }
 
 function startOrderListener(){
@@ -7609,6 +7610,12 @@ function showCouponStatus(msg, type){
 
 function calcDiscount(subtotal, deliveryFee){
   if(!appliedCoupon) return 0;
+  // Re-validate expiry at calculation time (in case cart was open past midnight)
+  if(appliedCoupon.expiry){
+    const _now = new Date(); _now.setHours(0,0,0,0);
+    const _exp = new Date(appliedCoupon.expiry); _exp.setHours(0,0,0,0);
+    if(_now > _exp){ appliedCoupon=null; showCouponStatus('\u274C Coupon expired \u2014 please try another','err'); return 0; }
+  }
   if(appliedCoupon.type==='percent') return Math.round(subtotal * appliedCoupon.value / 100);
   if(appliedCoupon.type==='flat') return Math.min(appliedCoupon.value, subtotal);
   if(appliedCoupon.type==='freedel') return deliveryFee;
@@ -8697,7 +8704,8 @@ function submitCustomOrder(){
     document.getElementById('coPhone')?.focus(); return;
   }
   const msg='Hello Udaya Bakery! 🎂 I would like to place a *Custom Order*:%0A%0A*Name:* '+encodeURIComponent(name)+'%0A*Phone:* '+phone+'%0A*Order Details:* '+encodeURIComponent(desc)+(date?'%0A*Preferred Date:* '+date:'')+'%0A%0APlease confirm availability. Thank you!';
-  window.open('https://wa.me/919845406712?text='+msg,'_blank','noopener,noreferrer');
+  const _cbPhone = (localStorage.getItem('ub_whatsapp')||'919845406712').replace(/[^0-9]/g,'');
+  window.open('https://wa.me/'+_cbPhone+'?text='+msg,'_blank','noopener,noreferrer');
   closeCustomOrderModal();
   showToast('Redirecting to WhatsApp for custom order!','ok');
 }
@@ -9828,7 +9836,8 @@ function finalizeOrder(order, payNote){
     + '\n🔗 Track your order:\n' + _link + '\n\nThank you! 🙏';
 
   // Fire WhatsApp to owner (direct open — this is within the user gesture chain from "Place Order" tap)
-  setTimeout(()=>{ try{ window.open(`https://wa.me/919845406712?text=${encodeURIComponent(msg)}`,'_blank','noopener,noreferrer'); }catch(e){} }, 300);
+  const _confPhone = (localStorage.getItem('ub_whatsapp')||'919845406712').replace(/[^0-9]/g,'');
+  setTimeout(()=>{ try{ window.open(`https://wa.me/${_confPhone}?text=${encodeURIComponent(msg)}`,'_blank','noopener,noreferrer'); }catch(e){} }, 300);
 
   // Customer confirmation: show a toast with a tap-to-send WhatsApp link instead of a blocked popup
   if(_cph.length===10){
@@ -12505,10 +12514,8 @@ function ubGetMonthOrders() {
 
 function ubGenerateMonthlyReport(sendWhatsApp) {
   const statusEl = document.getElementById('reportStatus');
-  const email = document.getElementById('s_report_email')?.value.trim() || '';
-  const waNum = document.getElementById('s_report_wa')?.value.trim() || '';
-  localStorage.setItem('ub_report_email', email);
-  localStorage.setItem('ub_report_wa', waNum);
+  const email = localStorage.getItem('ub_report_email') || 'udayabakeryb@gmail.com';
+  const waNum = (localStorage.getItem('ub_whatsapp')||'919845406712').replace(/[^0-9]/g,'');
 
   const monthOrders = ubGetMonthOrders();
   const now = new Date();
@@ -12684,6 +12691,7 @@ function buildSettingsTab(){
     <div class="asub">Let visitors see your Google Maps reviews on the Reviews section</div>
     <div class="af-group" style="margin-top:12px;"><label>Google Maps Embed API Key</label><input class="af-inp" id="s_gmaps_key" value="${localStorage.getItem('ub_gmaps_key')||''}" placeholder="AIzaSy..."></div>
     <div class="af-group"><label>Google Place ID</label><input class="af-inp" id="s_gmaps_place" value="${localStorage.getItem('ub_gmaps_place')||''}" placeholder="ChIJ..."></div>
+    <div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:10px 12px;font-size:12px;color:rgba(253,246,236,.6);margin-bottom:12px;">⚠️ <strong style="color:#F87171;">Security:</strong> Restrict your Maps API key to your domain only at <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" style="color:#F87171;">console.cloud.google.com</a> to prevent unauthorised billing. Then paste the new key above.</div>
     <div style="background:rgba(200,146,58,.06);border-radius:10px;padding:10px 12px;font-size:12px;color:rgba(253,246,236,.5);margin-bottom:12px;">💡 Get your Place ID at <a href="https://developers.google.com/maps/documentation/places/web-service/place-id" target="_blank" rel="noopener noreferrer" style="color:#E8B96A;">developers.google.com/maps</a>. Embed API key must have Maps Embed API enabled.</div>
     <button class="abtn" onclick="ubSaveGmapsSettings()">💾 Save Google Maps Settings</button>
   </div>
@@ -12726,11 +12734,22 @@ function buildSettingsTab(){
   </div>
 
   <div class="acard" style="margin-bottom:16px;">
-    <h3>🏪 Bakery Name & Tagline</h3>
-    <div class="asub">Change the name shown in the top navigation</div>
+    <h3>🏪 Bakery Name, Tagline & Contact</h3>
+    <div class="asub">Updates the name in the nav bar and all phone/WhatsApp links across the site</div>
     <div class="af-group"><label>Bakery Name</label><input class="af-inp" id="s_bname" value="${localStorage.getItem('ub_bname')||'Udaya Bakery'}"></div>
     <div class="af-group"><label>Tagline (below name)</label><input class="af-inp" id="s_btag" value="${localStorage.getItem('ub_btag')||'Artisan Bakes'}"></div>
-    <button class="abtn" onclick="saveBrandName()">💾 Save Name</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="af-group">
+        <label>📞 Phone / WhatsApp Number <span style="font-size:10px;color:rgba(253,246,236,.4);">with country code, no +</span></label>
+        <input class="af-inp" id="s_wa_phone" value="${localStorage.getItem('ub_whatsapp')||'919845406712'}" placeholder="919845406712" maxlength="15" inputmode="numeric">
+        <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">Used for all WhatsApp & call buttons across the site</div>
+      </div>
+      <div class="af-group">
+        <label>📧 Owner Email</label>
+        <input class="af-inp" id="s_owner_email" value="${localStorage.getItem('ub_report_email')||'udayabakeryb@gmail.com'}" placeholder="owner@email.com">
+      </div>
+    </div>
+    <button class="abtn" onclick="saveBrandName()">💾 Save Name & Contact</button>
   </div>
 
   <!-- BUSINESS HOURS -->
@@ -12837,6 +12856,7 @@ function buildSettingsTab(){
     <div id="credMsg" style="display:none;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:12px;"></div>
     <button class="abtn" onclick="ubSaveCredentials()" style="width:100%;justify-content:center;background:linear-gradient(135deg,#C8923A,#9A5C1A);box-shadow:0 6px 20px rgba(200,146,58,.3);">🔐 Save Credentials</button>
     <div style="margin-top:10px;font-size:11px;color:rgba(253,246,236,.25);text-align:center;">Stored as SHA-256 hashes — never as plain text</div>
+    <div style="margin-top:8px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.18);border-radius:10px;padding:9px 12px;font-size:11px;color:rgba(253,246,236,.45);">💡 <strong style="color:#FCD34D;">Tip:</strong> For stronger security, also set up Google Sign-In below — that way admin login is protected by your Google account's 2FA.</div>
   </div>
   </div>
   <div class="acard" style="margin-top:0;">
@@ -12920,16 +12940,7 @@ function buildSettingsTab(){
   <div class="acard" style="margin-bottom:16px;border-left:3px solid #34D399;">
     <h3>📊 Monthly Order Report</h3>
     <div class="asub">Generate an Excel report of this month's orders — download it, and optionally clear processed orders</div>
-    <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <div class="af-group">
-        <label>Owner Email (for report reference)</label>
-        <input class="af-inp" id="s_report_email" value="${localStorage.getItem('ub_report_email')||'udayabakeryb@gmail.com'}" placeholder="owner@email.com">
-      </div>
-      <div class="af-group">
-        <label>Owner WhatsApp</label>
-        <input class="af-inp" id="s_report_wa" value="${localStorage.getItem('ub_report_wa')||'919845406712'}" placeholder="91XXXXXXXXXX">
-      </div>
-    </div>
+    <div style="margin-top:10px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.15);border-radius:10px;padding:9px 12px;font-size:12px;color:rgba(253,246,236,.5);">📞 Report uses your WhatsApp number from <strong style="color:#34D399;">Settings → Bakery Name &amp; Contact</strong></div>
     <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:rgba(253,246,236,.6);">
       📅 Current month: <strong style="color:#34D399;">${new Date().toLocaleString('en-IN',{month:'long',year:'numeric'})}</strong> &nbsp;|&nbsp;
       Total orders: <strong style="color:#34D399;">${(()=>{ try{ const now=new Date(); return (JSON.parse(localStorage.getItem('ub_orders_cache')||'[]').filter(o=>{ const d=new Date(o.timestamp||o.createdAt||Date.now()); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear(); }).length)||'(loading)'; }catch(e){ return '...'; } })()}</strong> orders this month
@@ -13322,22 +13333,73 @@ function applyLogoToNav(){
   }
 }
 function saveBrandName(){
-  const name = document.getElementById('s_bname').value.trim() || 'Udaya Bakery';
-  const tag  = document.getElementById('s_btag').value.trim()  || 'Artisan Bakes';
-  localStorage.setItem('ub_bname', name);
-  localStorage.setItem('ub_btag', tag);
+  const name  = (document.getElementById('s_bname')?.value||'').trim()       || 'Udaya Bakery';
+  const tag   = (document.getElementById('s_btag')?.value||'').trim()        || 'Artisan Bakes';
+  const phone = (document.getElementById('s_wa_phone')?.value||'').replace(/[^0-9]/g,'') || '919845406712';
+  const email = (document.getElementById('s_owner_email')?.value||'').trim() || 'udayabakeryb@gmail.com';
+
+  localStorage.setItem('ub_bname',       name);
+  localStorage.setItem('ub_btag',        tag);
+  localStorage.setItem('ub_whatsapp',    phone);
+  localStorage.setItem('ub_report_wa',   phone);
+  localStorage.setItem('ub_report_email',email);
+
+  // Update nav brand text immediately
   const textEl = document.getElementById('logoTextEl');
   if(textEl) textEl.innerHTML = `${name}<span>${tag}</span>`;
-  // Sync to Firestore so all customers see updated name
+
+  // Update ALL hardcoded WhatsApp/call links on the page instantly
+  ubApplyPhoneLinks(phone);
+
+  // Sync to Firestore so all customers see updated branding
   if(db){
     db.collection('categories').doc('ubBranding').set({
-      bname: name,
-      btag: tag,
+      bname: name, btag: tag, phone: phone, email: email,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, {merge: true}).catch(()=>{});
   }
-  showToast('✅ Bakery name updated for all devices!','ok');
+  showToast('✅ Bakery name, contact & all links updated!','ok');
 }
+
+// Update every WhatsApp/tel link on the page to use the saved phone number
+function ubApplyPhoneLinks(phone){
+  if(!phone) phone = (localStorage.getItem('ub_whatsapp')||'919845406712').replace(/[^0-9]/g,'');
+  const bare10 = phone.slice(-10);
+  const formatted = bare10.slice(0,5) + ' ' + bare10.slice(5);
+
+  // Float WhatsApp button
+  const floatWa = document.querySelector('a.float-wa');
+  if(floatWa) floatWa.href = 'https://wa.me/' + phone;
+
+  // Float Call button
+  const floatCall = document.querySelector('a.float-call');
+  if(floatCall) floatCall.href = 'tel:+' + phone;
+
+  // Closed store banner WA link
+  const closedWa = document.getElementById('closed-wa-link');
+  if(closedWa){ closedWa.href = 'https://wa.me/' + phone; closedWa.textContent = 'WhatsApp: +' + phone.slice(0,2) + ' ' + formatted; }
+
+  // Visit us WA link
+  const visitWa = document.getElementById('visit-wa-link');
+  if(visitWa) visitWa.href = 'https://wa.me/' + phone + '?text=Hi!%20I%20want%20to%20visit%20Udaya%20Bakery.%20Please%20share%20the%20exact%20location.';
+
+  // Contact section tel link
+  const ciTel = document.getElementById('ci-tel-link');
+  if(ciTel){ ciTel.href = 'tel:+' + phone; ciTel.textContent = '+' + phone.slice(0,2) + ' ' + formatted; }
+
+  // Contact section WA order link
+  const ciWa = document.getElementById('ci-wa-order');
+  if(ciWa) ciWa.href = 'https://wa.me/' + phone + '?text=Hi!%20I%20would%20like%20to%20order%20from%20Udaya%20Bakery';
+
+  // Contact section Call button
+  const ciCall = document.getElementById('ci-call-btn');
+  if(ciCall){ ciCall.href = 'tel:+' + phone; ciCall.textContent = '📞 Call: +' + phone.slice(0,2) + ' ' + formatted; }
+  // FAQ section phone number
+  const faqPhone = document.getElementById('faq-phone-num');
+  if(faqPhone) faqPhone.textContent = bare10;
+}
+// Apply on page load
+if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', function(){ ubApplyPhoneLinks(); }); } else { ubApplyPhoneLinks(); }
 function exportData(){
   const blob=new Blob([JSON.stringify({products:PRODS,categories:CATS,orders:ORDERS,settings:CFG,exported:new Date().toISOString()},null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
@@ -17863,7 +17925,7 @@ function initPoliciesAdmin(){
   // Nothing extra needed — all wired via inline onclick
 }
 
-function ubSavePoliciesFromAdmin(){
+window.ubSavePoliciesFromAdmin = function ubSavePoliciesFromAdmin(){
   var policies = ubGetPolicies();
   var updated = policies.map(function(p,i){
     var icon  = (document.getElementById('pol-icon-'+i)||{}).value  || p.icon;
@@ -17873,17 +17935,17 @@ function ubSavePoliciesFromAdmin(){
   });
   ubSavePolicies(updated);
   if(typeof showToast === 'function') showToast('✅ Policies saved and updated for customers!','ok');
-}
+};
 
-function ubAddPolicySection(){
+window.ubAddPolicySection = function ubAddPolicySection(){
   ubSavePoliciesFromAdmin(); // save current first
   var policies = ubGetPolicies();
   policies.push({ id:'custom'+Date.now(), icon:'📄', title:'New Policy Section', content:'Add your policy details here...' });
   ubSavePolicies(policies);
   renderAdminTab();
-}
+};
 
-function ubDeletePolicy(i){
+window.ubDeletePolicy = function ubDeletePolicy(i){
   if(!confirm('Delete this policy section?')) return;
   ubSavePoliciesFromAdmin();
   var policies = ubGetPolicies();
@@ -17891,7 +17953,7 @@ function ubDeletePolicy(i){
   ubSavePolicies(policies);
   renderAdminTab();
   if(typeof showToast === 'function') showToast('🗑 Section deleted','ok');
-}
+};
 
 /* ── CUSTOMER-FACING: OPEN/CLOSE POLICY PANEL ── */
 function openPolicyPanel(){
@@ -17931,6 +17993,7 @@ function ubShowOrderQR(orderId){
   );
   const qrUrl = 'https://chart.googleapis.com/chart?chs=220x220&cht=qr&chl='+info+'&choe=UTF-8';
   const dlg = document.createElement('div');
+  dlg.id = 'ubOrderQRDlg';
   dlg.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:20px;';
   dlg.onclick = function(e){ if(e.target===dlg) dlg.remove(); };
   dlg.innerHTML = '<div style="background:#1E0E06;border:1.5px solid rgba(200,146,58,.3);border-radius:20px;padding:28px 24px;max-width:300px;width:100%;text-align:center;">'
@@ -17939,7 +18002,7 @@ function ubShowOrderQR(orderId){
     +'<div style="background:#fff;border-radius:12px;padding:12px;display:inline-block;margin-bottom:14px;">'
     +'<img src="'+qrUrl+'" width="200" height="200" alt="Order QR"></div>'
     +'<div style="font-size:11px;color:rgba(253,246,236,.35);margin-bottom:16px;">Scan to view order details</div>'
-    +'<button onclick="this.closest('div[style*=fixed]').remove()" style="background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:10px 24px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Close</button>'
+    +'<button onclick="document.getElementById(\'ubOrderQRDlg\').remove()" style="background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:10px 24px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Close</button>'
     +'</div>';
   document.body.appendChild(dlg);
 }
@@ -18172,7 +18235,7 @@ function buildComboTab(){
     +'</div>';
 }
 
-function ubAddCombo(){
+window.ubAddCombo = function ubAddCombo(){
   const name=(document.getElementById('cmb_name').value||'').trim();
   const desc=(document.getElementById('cmb_desc').value||'').trim();
   const itemsRaw=(document.getElementById('cmb_items').value||'').trim();
@@ -18185,15 +18248,15 @@ function ubAddCombo(){
   cx.push({name,desc,items,price,originalPrice:orig||null,active:true});
   ubSaveCombos(cx);
   showToast('✅ Combo saved!','ok'); renderAdminTab();
-}
-function ubToggleCombo(i, active){
+};
+window.ubToggleCombo = function ubToggleCombo(i, active){
   const cx=ubGetCombos(); cx[i].active=active; ubSaveCombos(cx);
   showToast(active?'Combo activated':'Combo deactivated','ok');
-}
-function ubDeleteCombo(i){
+};
+window.ubDeleteCombo = function ubDeleteCombo(i){
   const cx=ubGetCombos(); cx.splice(i,1); ubSaveCombos(cx);
   showToast('Combo deleted','ok'); renderAdminTab();
-}
+};
 
 // ══════════════════════════════════════════════════════════════
 //  🧾 PAYMENT RECONCILIATION
