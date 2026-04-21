@@ -18149,7 +18149,10 @@ function ubSaveAllStock(){
 // ══════════════════════════════════════════════════════════════
 //  💸 EXPENSE TRACKER
 // ══════════════════════════════════════════════════════════════
-window.ubGetExpenses = function ubGetExpenses(){ return JSON.parse(localStorage.getItem('ub_expenses')||'[]'); }
+window.ubGetExpenses = function ubGetExpenses(){
+  try{ return JSON.parse(localStorage.getItem('ub_expenses')||'[]')||[]; }
+  catch(e){ return []; }
+};
 window.ubSaveExpenses = function ubSaveExpenses(e){
   localStorage.setItem('ub_expenses', JSON.stringify(e));
   try{
@@ -18173,7 +18176,7 @@ window.buildExpenseTab = function buildExpenseTab(){
       +'<td style="padding:8px 10px;font-size:13px;color:rgba(253,246,236,.9);font-weight:600;">'+e.desc+'</td>'
       +'<td style="padding:8px 10px;"><span style="background:rgba(200,146,58,.1);color:#E8B96A;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;">'+e.cat+'</span></td>'
       +'<td style="padding:8px 10px;font-size:14px;font-weight:700;color:#F87171;">₹'+parseFloat(e.amount||0).toFixed(0)+'</td>'
-      +'<td style="padding:8px 10px;"><button onclick="ubDeleteExpense('+i+')" style="background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">Delete</button></td>'
+      +'<td style="padding:8px 10px;"><button onclick="window.ubDeleteExpense ? window.ubDeleteExpense('+i+')" style="background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">Delete</button></td>'
       +'</tr>';
   }).join('');
 
@@ -18199,7 +18202,7 @@ window.buildExpenseTab = function buildExpenseTab(){
     +'<div><label style="font-size:11px;color:rgba(253,246,236,.4);display:block;margin-bottom:5px;">Date</label>'
     +'<input class="af-inp" id="exp_date" type="date" value="'+today+'" style="width:100%;box-sizing:border-box;"></div>'
     +'</div>'
-    +'<button class="abtn" onclick="ubAddExpense()">➕ Add Expense</button>'
+    +'<button class="abtn" onclick="window.ubAddExpense ? window.ubAddExpense() : ubAddExpense()">➕ Add Expense</button>'
     +'</div>'
     +(expenses.length?'<div class="acard">'
     +'<h3 style="margin-bottom:14px;">📋 All Expenses</h3>'
@@ -18232,19 +18235,24 @@ window.ubDeleteExpense = function ubDeleteExpense(i){
 // ══════════════════════════════════════════════════════════════
 //  🎁 COMBO OFFERS
 // ══════════════════════════════════════════════════════════════
-window.ubGetCombos = function ubGetCombos(){ return JSON.parse(localStorage.getItem('ub_combos')||'[]'); }
+window.ubGetCombos = function ubGetCombos(){
+  try{ return JSON.parse(localStorage.getItem('ub_combos')||'[]')||[]; }
+  catch(e){ return []; }
+};
 window.ubSaveCombos = function ubSaveCombos(c){
-  localStorage.setItem('ub_combos', JSON.stringify(c));
   try{
-    if(db){
-      db.collection('config').doc('siteConfig').set({combos: c, combosUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()},{merge:true})
-        .catch(e=>console.warn('Combos sync failed:',e));
+    localStorage.setItem('ub_combos', JSON.stringify(c));
+  }catch(e){ console.error('ubSaveCombos localStorage error:',e); }
+  try{
+    if(typeof db!=='undefined' && db){
+      db.collection('config').doc('siteConfig').set({combos:c, combosUpdatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})
+        .catch(e=>console.warn('Combos Firebase sync failed:',e));
     }
   }catch(e){}
-}
+};
 
 window.buildComboTab = function buildComboTab(){
-  const combos = ubGetCombos();
+  const combos = window.ubGetCombos ? window.ubGetCombos() : [];
   const cards = combos.map((c,i)=>'<div class="acard" style="margin-bottom:14px;">'
     +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;">'
     +'<div><div style="font-size:16px;font-weight:700;color:#E8B96A;margin-bottom:2px;">🎁 '+c.name+'</div>'
@@ -18256,8 +18264,8 @@ window.buildComboTab = function buildComboTab(){
     +(c.items&&c.items.length?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">'+c.items.map(it=>'<span style="background:rgba(200,146,58,.12);color:#E8B96A;border:1px solid rgba(200,146,58,.2);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;">'+it+'</span>').join('')+'</div>':'')
     +'<div style="display:flex;gap:8px;">'
     +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(253,246,236,.6);cursor:pointer;"><input type="checkbox" '+(c.active?'checked':'')
-    +' onchange="ubToggleCombo('+i+',this.checked)" style="accent-color:#C8923A;"> Active</label>'
-    +'<button onclick="ubDeleteCombo('+i+')" style="margin-left:auto;background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🗑 Delete</button>'
+    +' onchange="window.ubToggleCombo('+i+',this.checked)" style="accent-color:#C8923A;"> Active</label>'
+    +'<button onclick="window.ubDeleteCombo('+i+')" style="margin-left:auto;background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🗑 Delete</button>'
     +'</div></div>'
   ).join('');
 
@@ -18278,33 +18286,57 @@ window.buildComboTab = function buildComboTab(){
     +'<div class="af-group"><label>Original Price (₹) <span style="color:rgba(253,246,236,.4);font-size:10px;">shows strikethrough</span></label>'
     +'<input class="af-inp" id="cmb_orig" type="number" placeholder="1200" min="0"></div>'
     +'</div>'
-    +'<button class="abtn" onclick="ubAddCombo()">✅ Save Combo</button>'
+    +'<button class="abtn" onclick="window.ubAddCombo ? window.ubAddCombo() : ubAddCombo()">✅ Save Combo</button>'
     +'</div>'
     +(combos.length?cards:'<div style="text-align:center;padding:40px;color:rgba(253,246,236,.25);">No combos yet — create one above!</div>')
     +'</div>';
 }
 
 window.ubAddCombo = function ubAddCombo(){
-  const name=(document.getElementById('cmb_name').value||'').trim();
-  const desc=(document.getElementById('cmb_desc').value||'').trim();
-  const itemsRaw=(document.getElementById('cmb_items').value||'').trim();
-  const price=parseFloat(document.getElementById('cmb_price').value||'0');
-  const orig=parseFloat(document.getElementById('cmb_orig').value||'0');
-  if(!name){ showToast('Enter combo name','err'); return; }
-  if(!price||price<=0){ showToast('Enter combo price','err'); return; }
-  const items=itemsRaw.split(',').map(s=>s.trim()).filter(Boolean);
-  const cx=ubGetCombos();
-  cx.push({name,desc,items,price,originalPrice:orig||null,active:true});
-  ubSaveCombos(cx);
-  showToast('✅ Combo saved!','ok'); renderAdminTab();
+  try{
+    const nameEl=document.getElementById('cmb_name');
+    const descEl=document.getElementById('cmb_desc');
+    const itemsEl=document.getElementById('cmb_items');
+    const priceEl=document.getElementById('cmb_price');
+    const origEl=document.getElementById('cmb_orig');
+    if(!nameEl){showToast('Form not found — try again','err');return;}
+    const name=(nameEl.value||'').trim();
+    const desc=(descEl?descEl.value||'':'').trim();
+    const itemsRaw=(itemsEl?itemsEl.value||'':'').trim();
+    const price=parseFloat(priceEl?priceEl.value||'0':'0');
+    const orig=parseFloat(origEl?origEl.value||'0':'0');
+    if(!name){showToast('Enter combo name','err');return;}
+    if(!price||price<=0){showToast('Enter a valid combo price','err');return;}
+    const items=itemsRaw.split(',').map(s=>s.trim()).filter(Boolean);
+    const cx=window.ubGetCombos();
+    cx.push({name,desc,items,price,originalPrice:orig||null,active:true,id:'cmb_'+Date.now()});
+    window.ubSaveCombos(cx);
+    showToast('✅ Combo "'+name+'" saved!','ok');
+    renderAdminTab();
+  }catch(e){
+    console.error('ubAddCombo error:',e);
+    showToast('Error: '+e.message,'err');
+  }
 };
-window.ubToggleCombo = function ubToggleCombo(i, active){
-  const cx=ubGetCombos(); cx[i].active=active; ubSaveCombos(cx);
-  showToast(active?'Combo activated':'Combo deactivated','ok');
+window.ubToggleCombo = function ubToggleCombo(i,active){
+  try{
+    const cx=window.ubGetCombos();
+    if(!cx[i]){showToast('Combo not found','err');return;}
+    cx[i].active=active;
+    window.ubSaveCombos(cx);
+    showToast(active?'✅ Combo activated':'Combo deactivated','ok');
+  }catch(e){console.error('ubToggleCombo error:',e);}
 };
 window.ubDeleteCombo = function ubDeleteCombo(i){
-  const cx=ubGetCombos(); cx.splice(i,1); ubSaveCombos(cx);
-  showToast('Combo deleted','ok'); renderAdminTab();
+  try{
+    const cx=window.ubGetCombos();
+    if(!cx[i]){showToast('Combo not found','err');return;}
+    const n=cx[i].name;
+    cx.splice(i,1);
+    window.ubSaveCombos(cx);
+    showToast('🗑 "'+n+'" deleted','ok');
+    renderAdminTab();
+  }catch(e){console.error('ubDeleteCombo error:',e);}
 };
 
 // ══════════════════════════════════════════════════════════════
