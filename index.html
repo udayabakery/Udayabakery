@@ -35,14 +35,10 @@
 <link rel="dns-prefetch" href="https://i.ibb.co">
 <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
 <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com">
-<!-- Performance: WebP support detection -->
-<script>document.documentElement.classList.add(window.WebPSupport===undefined?(function(){var i=new Image();i.onload=i.onerror=function(){window.WebPSupport=i.height===2;document.querySelectorAll("img[data-webp]").forEach(function(el){if(window.WebPSupport&&el.dataset.webp)el.src=el.dataset.webp;})};i.src="data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA";return "checking"})():"webp-checked");</script>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<!-- Razorpay checkout SDK — preloaded so payment opens instantly -->
-<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
 <!-- Firebase SDK - defer so page always loads even if Firebase fails -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js" defer></script>
@@ -2199,11 +2195,9 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
 .atab.active{color:#E8B96A;border-bottom-color:#C8923A;background:rgba(200,146,58,.06);}
 
 /* ══ ADMIN CONTENT CARDS ══ */
-.acard{background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.02));
-  border:1px solid rgba(200,146,58,.16);border-radius:18px;padding:22px;margin-bottom:18px;
-  box-shadow:0 2px 16px rgba(0,0,0,.18);}
-.acard h3{font-family:Playfair Display,serif;font-size:18px;color:#E8B96A;margin-bottom:4px;font-weight:700;}
-.acard .asub{font-size:12px;color:rgba(253,246,236,.38);margin-bottom:18px;}
+.acard{background:rgba(255,255,255,.04);border:1px solid rgba(200,146,58,.14);border-radius:18px;padding:22px;margin-bottom:18px;}
+.acard h3{font-family:Playfair Display,serif;font-size:18px;color:#E8B96A;margin-bottom:4px;}
+.acard .asub{font-size:12px;color:rgba(253,246,236,.35);margin-bottom:18px;}
 
 /* Stat cards */
 .astats{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:20px;}
@@ -2214,8 +2208,8 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
 /* Form fields */
 .af-group{margin-bottom:16px;}
 .af-group label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(253,246,236,.45);margin-bottom:7px;}
-.af-inp{width:100%;background:rgba(255,255,255,.05);border:1.5px solid rgba(200,146,58,.2);border-radius:12px;padding:11px 14px;font-family:Jost,sans-serif;font-size:14px;color:#FDF6EC;outline:none;transition:border .2s,box-shadow .2s;box-sizing:border-box;}
-.af-inp:focus{border-color:#C8923A;box-shadow:0 0 0 3px rgba(200,146,58,.12);}
+.af-inp{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.18);border-radius:12px;padding:12px 14px;font-family:Jost,sans-serif;font-size:14px;color:#FDF6EC;outline:none;transition:border .2s;box-sizing:border-box;}
+.af-inp:focus{border-color:#C8923A;}
 .af-sel{width:100%;background:rgba(20,10,3,.9);border:1.5px solid rgba(200,146,58,.18);border-radius:12px;padding:12px 14px;font-family:Jost,sans-serif;font-size:14px;color:#FDF6EC;outline:none;box-sizing:border-box;}
 .af-ta{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.18);border-radius:12px;padding:12px 14px;font-family:Jost,sans-serif;font-size:14px;color:#FDF6EC;outline:none;height:80px;resize:vertical;box-sizing:border-box;}
 .af-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
@@ -4393,7 +4387,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
   "name": "Udaya Bakery",
   "description": "Artisan bakery in Belman, Karnataka offering fresh cakes, pastries, puffs, chakli, and more.",
   "url": "https://udayabakery.github.io/Udayabakery/",
-  "telephone": "+91-" + (localStorage.getItem('ub_whatsapp')||'919845406712').slice(-10) + ",
+  "telephone": "+91-9845406712",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Belman",
@@ -4508,7 +4502,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
       <div style="font-size:52px;margin-bottom:16px;">🎂</div>
       <h2 style="font-family:Georgia,serif;font-size:24px;color:#3B1F0E;margin-bottom:8px;">Udaya Bakery</h2>
       <p style="color:#5C3520;font-size:15px;margin-bottom:16px;">Please enable JavaScript in your browser to use our online ordering system.</p>
-      <p style="color:#5C3520;font-size:14px;">You can still reach us on <a href="https://wa.me/919845406712" style="color:#C8923A;font-weight:bold;" id="closed-wa-link">WhatsApp: +91 98454 06712</a></p>
+      <p style="color:#5C3520;font-size:14px;">You can still reach us on <a href="https://wa.me/919845406712" style="color:#C8923A;font-weight:bold;">WhatsApp: +91 98454 06712</a></p>
     </div>
   </div>
 </noscript>
@@ -4652,25 +4646,15 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
         </a>
       </div>
 
-      <!-- 📲 INSTALL APP BANNER — hidden if already installed -->
-      <div id="ubHeroInstallBanner" class="anim-fade-up" style="animation-delay:.6s;margin-top:14px;background:linear-gradient(135deg,rgba(200,146,58,.15),rgba(59,31,14,.25));border:1.5px solid rgba(200,146,58,.4);border-radius:18px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;display:none;">
+      <!-- 📲 INSTALL APP BANNER — always visible -->
+      <div id="ubHeroInstallBanner" class="anim-fade-up" style="animation-delay:.6s;margin-top:14px;background:linear-gradient(135deg,rgba(200,146,58,.15),rgba(59,31,14,.25));border:1.5px solid rgba(200,146,58,.4);border-radius:18px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
         <div style="flex:1;">
           <div style="font-family:Jost,sans-serif;font-size:13px;font-weight:700;color:var(--gold);margin-bottom:2px;">📲 Install Our App</div>
           <div style="font-family:Jost,sans-serif;font-size:11px;color:var(--text-mid);line-height:1.4;">Add to home screen for faster ordering</div>
         </div>
         <button onclick="ubHeroInstall()" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:30px;padding:10px 18px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;touch-action:manipulation;">Install</button>
-        <button onclick="document.getElementById('ubHeroInstallBanner').style.display='none';localStorage.setItem('ub_pwa_dismissed','1')" style="background:none;border:none;color:var(--text-mid);font-size:18px;cursor:pointer;padding:0 0 0 4px;line-height:1;flex-shrink:0;">✕</button>
+        <button onclick="document.getElementById('ubHeroInstallBanner').style.display='none'" style="background:none;border:none;color:var(--text-mid);font-size:18px;cursor:pointer;padding:0 0 0 4px;line-height:1;flex-shrink:0;">✕</button>
       </div>
-      <script>
-      (function(){
-        var banner=document.getElementById('ubHeroInstallBanner');
-        if(!banner)return;
-        var isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
-        var alreadyInstalled=localStorage.getItem('ub_pwa_installed')==='1';
-        var dismissed=localStorage.getItem('ub_pwa_dismissed')==='1';
-        if(!isStandalone&&!alreadyInstalled&&!dismissed){banner.style.display='flex';}
-      })();
-      </script>
 
       <!-- Install How-To Modal -->
       <div id="ubInstallModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:flex-end;justify-content:center;">
@@ -4886,7 +4870,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
          style="background:var(--choco);color:var(--cream);padding:11px 22px;border-radius:12px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:8px;">
         📍 Open in Google Maps
       </a>
-      <a href="https://wa.me/919845406712?text=Hi!%20I%20want%20to%20visit%20Udaya%20Bakery.%20Please%20share%20the%20exact%20location." id="visit-wa-link" target="_blank" rel="noopener noreferrer"
+      <a href="https://wa.me/919845406712?text=Hi!%20I%20want%20to%20visit%20Udaya%20Bakery.%20Please%20share%20the%20exact%20location." target="_blank" rel="noopener noreferrer"
          style="background:#25D366;color:#fff;padding:11px 22px;border-radius:12px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:8px;">
         📱 Get Directions via WhatsApp
       </a>
@@ -4914,7 +4898,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
         <div class="faq-q"><span class="faq-q-text">Can I cancel or modify my order?</span><span class="faq-arrow">▼</span></div>
-        <div class="faq-a">You can cancel or modify your order within <strong>5 minutes</strong> of placing it by calling us on WhatsApp at <strong id="faq-phone-num">9845406712</strong>. Once the bakers have started preparing, we cannot make changes.</div>
+        <div class="faq-a">You can cancel or modify your order within <strong>5 minutes</strong> of placing it by calling us on WhatsApp at <strong>9845406712</strong>. Once the bakers have started preparing, we cannot make changes.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
         <div class="faq-q"><span class="faq-q-text">Do you take custom cake orders?</span><span class="faq-arrow">▼</span></div>
@@ -4974,12 +4958,12 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
         <p class="section-desc">Located in the heart of Belman near the bus stand. Visit or order online!</p>
         <div class="citems">
           <div class="ci"><div class="ci-icon">📍</div><div class="ci-text"><h4>Address</h4><p>Panchayat Building, 1, Karkala Main Road,<br>Near Busstand, Belman, Karnataka 576111</p></div></div>
-          <div class="ci"><div class="ci-icon">📞</div><div class="ci-text"><h4>Phone</h4><a href="tel:+919845406712" id="ci-tel-link">+91 98454 06712</a></div></div>
+          <div class="ci"><div class="ci-icon">📞</div><div class="ci-text"><h4>Phone</h4><a href="tel:+919845406712">+91 98454 06712</a></div></div>
           <div class="ci"><div class="ci-icon">🕐</div><div class="ci-text"><h4>Hours</h4><p>Mon–Sat: 7:00 AM – 9:00 PM<br>Sunday: 8:00 AM – 8:00 PM</p></div></div>
         </div>
         <div class="abtns">
-          <a href="https://wa.me/919845406712?text=Hi!%20I%20would%20like%20to%20order%20from%20Udaya%20Bakery" target="_blank" rel="noopener noreferrer" class="btn-wa" id="ci-wa-order">📱 Chat on WhatsApp</a>
-          <a href="tel:+919845406712" class="btn-call" id="ci-call-btn">📞 Call: +91 98454 06712</a>
+          <a href="https://wa.me/919845406712?text=Hi!%20I%20would%20like%20to%20order%20from%20Udaya%20Bakery" target="_blank" rel="noopener noreferrer" class="btn-wa">📱 Chat on WhatsApp</a>
+          <a href="tel:+919845406712" class="btn-call">📞 Call: +91 98454 06712</a>
         </div>
       </div>
       <div>
@@ -5194,11 +5178,6 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
       </div>
     </div>
     </div><!-- /deliveryPanelWrap -->
-    <!-- COMBO OFFERS -->
-    <div id="comboOffersSection" style="margin-bottom:12px;display:none;">
-      <div style="font-size:11px;font-weight:700;color:var(--text-mid);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;">🎁 Combo Deals Available</div>
-      <div id="comboOffersList"></div>
-    </div>
     <!-- COUPON CODE -->
     <div style="margin-bottom:4px;">
       <div style="font-size:11px;font-weight:700;color:var(--text-mid);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">🏷️ Have a Coupon Code?</div>
@@ -5387,28 +5366,25 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
   <!-- DASHBOARD SCREEN (hidden until logged in) -->
   <div id="adminDashScreen" style="display:none;height:100vh;flex-direction:column;background:#0F0600;">
     
-    <!-- Top Bar — professional desktop + mobile -->
-    <div id="ub-topbar" style="background:linear-gradient(90deg,#160901,#231008,#1a0904);border-bottom:1px solid rgba(200,146,58,.2);padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:8px;box-shadow:0 2px 12px rgba(0,0,0,.4);">
-      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;min-width:0;">
-        <div style="width:36px;height:36px;background:linear-gradient(135deg,#E8B96A,#C8923A,#8B4513);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 3px 10px rgba(200,146,58,.35);">👑</div>
+    <!-- Top Bar — mobile-optimised -->
+    <div id="ub-topbar" style="background:linear-gradient(90deg,#1E0C02,#2A1208);border-bottom:1px solid rgba(200,146,58,.18);padding:0 12px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:6px;">
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;min-width:0;">
+        <div style="width:30px;height:30px;background:linear-gradient(135deg,#C8923A,#6B3A25);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">👑</div>
         <div style="min-width:0;">
-          <div style="font-family:'Playfair Display',serif;font-size:15px;color:#E8B96A;font-weight:700;white-space:nowrap;letter-spacing:.3px;">Udaya Bakery</div>
-          <div style="font-size:9px;color:rgba(253,246,236,.28);letter-spacing:1.5px;text-transform:uppercase;margin-top:1px;">Admin Dashboard</div>
+          <div style="font-family:'Playfair Display',serif;font-size:13px;color:#E8B96A;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Udaya Bakery</div>
+          <div style="font-size:8px;color:rgba(253,246,236,.3);letter-spacing:1.2px;text-transform:uppercase;">Admin</div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-        <div id="ub-clock-wrap" style="background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.15);border-radius:8px;padding:5px 10px;display:none;" class="ub-dsk-only">
-          <span id="ub-clock" style="font-family:Jost,sans-serif;font-size:12px;font-weight:700;color:rgba(200,146,58,.7);letter-spacing:.5px;"></span>
-        </div>
-        <span id="adminWelcomeLabel" style="font-size:11px;color:rgba(253,246,236,.4);display:none;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" class="ub-dsk-only"></span>
-        <button onclick="doLogout()" style="background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.18);border-radius:9px;padding:7px 12px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .2s;" onmouseover="this.style.background='rgba(239,68,68,.2)'" onmouseout="this.style.background='rgba(239,68,68,.1)'">🚪<span class="ub-dsk-only">Logout</span></button>
-        <button onclick="closeAdmin()" style="background:rgba(255,255,255,.05);color:rgba(253,246,236,.5);border:1px solid rgba(255,255,255,.09);border-radius:9px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0;transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(255,255,255,.05)'">✕</button>
+      <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
+        <span id="adminWelcomeLabel" style="font-size:11px;color:rgba(253,246,236,.4);display:none;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <button onclick="doLogout()" style="background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:6px 10px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;">🚪<span class="ub-dsk-only">Logout</span></button>
+        <button onclick="closeAdmin()" style="background:rgba(255,255,255,.06);color:rgba(253,246,236,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0;">✕</button>
       </div>
     </div>
     
     <!-- Tab Bar (horizontal, scrollable on mobile) -->
-    <div style="background:#140A03;border-bottom:1px solid rgba(200,146,58,.14);overflow-x:auto;flex-shrink:0;position:relative;" id="adminTabBar">
-      <div style="display:flex;min-width:max-content;padding:0 8px;gap:2px;">
+    <div style="background:#180D07;border-bottom:1px solid rgba(200,146,58,.12);overflow-x:auto;flex-shrink:0;" id="adminTabBar">
+      <div style="display:flex;min-width:max-content;padding:0 12px;">
         <button class="atab" onclick="switchTab('dashboard')" id="at-dashboard">📊 Dashboard</button>
         <button class="atab" onclick="switchTab('products')" id="at-products">📦 Products</button>
         <button class="atab" onclick="switchTab('addprod')" id="at-addprod">➕ Add Product</button>
@@ -5424,16 +5400,11 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
         <button class="atab" onclick="switchTab('cakebuilder')" id="at-cakebuilder">🎂 Cake Builder</button>
         <button class="atab" onclick="switchTab('videos')" id="at-videos">🎬 Cake Videos</button>
         <button class="atab" onclick="switchTab('policies')" id="at-policies">📜 Rules & Policy</button>
-        <button class="atab" onclick="switchTab('expense')" id="at-expense">💸 Expenses</button>
-        <button class="atab" onclick="switchTab('combo')" id="at-combo">🎁 Combo Offers</button>
-        <button class="atab" onclick="switchTab('reconciliation')" id="at-reconciliation">🧾 Reconciliation</button>
-        <button class="atab" onclick="switchTab('rzpdash')" id="at-rzpdash">💳 Razorpay</button>
-        <button class="atab" onclick="switchTab('stock')" id="at-stock">📦 Stock</button>
       </div>
     </div>
     
     <!-- Main Content Area -->
-    <div id="adminMain" style="flex:1;overflow-y:auto;padding:20px;width:100%;box-sizing:border-box;"></div>
+    <div id="adminMain" style="flex:1;overflow-y:auto;padding:20px;max-width:1100px;width:100%;margin:0 auto;box-sizing:border-box;"></div>
   </div>
 </div>
 
@@ -5617,7 +5588,7 @@ initFirebase();
     // Pre-seed the default live key if none is stored yet
     var existingKey = await UB_SECURE.get('rzp_key_id');
     if(!existingKey){
-      var defaultKey = ''; // Set your Razorpay Key ID in Admin → Payments
+      var defaultKey = 'rzp_live_SN4XuHOp4GbMFi';
       await UB_SECURE.set('rzp_key_id', defaultKey);
       localStorage.setItem('ub_rzp_enabled','1');
       localStorage.setItem('ub_rzp_mode','live');
@@ -5977,24 +5948,6 @@ function ubStartConfigListener(){
       ubApplyDesign(d.siteDesign);
     }
 
-    // ── Stock ──
-    if(d.stock){
-      localStorage.setItem('ub_stock', JSON.stringify(d.stock));
-      // Refresh stock tab if admin has it open
-      if(adminLoggedIn && adminTab==='stock') try{ renderAdminTab(); }catch(e){}
-    }
-
-    // ── Combos ──
-    if(d.combos){
-      localStorage.setItem('ub_combos', JSON.stringify(d.combos));
-    }
-
-    // ── Expenses ──
-    if(d.expenses){
-      localStorage.setItem('ub_expenses', JSON.stringify(d.expenses));
-      if(adminLoggedIn && adminTab==='expense') try{ renderAdminTab(); }catch(e){}
-    }
-
   }, e => {
     console.warn('[UB Config] Listener error — will retry:', e);
     _configUnsubscribe = null;
@@ -6084,8 +6037,7 @@ function playOrderSound(){
 function sendAdminWhatsApp(order){
   const pickupLine = order.orderType==='pickup' ? '%0A🏪 *STORE PICKUP*' : `%0A📍 ${order.addr}%0A📏 ${order.dist||0}km`;
   const msg = `🔔 *NEW ORDER — Udaya Bakery*%0A*Order: ${order.id}*%0A%0A👤 ${order.name}%0A📞 ${order.phone}${pickupLine}%0A💳 ${order.payMethod==='phonepe'||order.payMethod==='razorpay'?'Razorpay Online':'COD'}%0A%0A*Items:*%0A${order.items.map(i=>`• ${i.emoji} ${i.name} (${i.variant}) ×${i.qty} = ₹${i.price*i.qty}`).join('%0A')}%0A%0A🚚 Delivery: ${order.delivery===0?'FREE':'₹'+order.delivery}%0A💰 *Total: ₹${order.total}*${order.note?'%0A%0A📝 '+order.note:''}`;
-  const _adminPhone = (localStorage.getItem('ub_whatsapp')||'919845406712').replace(/[^0-9]/g,'');
-  window.open(`https://wa.me/${_adminPhone}?text=${msg}`, '_blank');
+  window.open(`https://wa.me/919845406712?text=${msg}`, '_blank');
 }
 
 function startOrderListener(){
@@ -7615,12 +7567,6 @@ function showCouponStatus(msg, type){
 
 function calcDiscount(subtotal, deliveryFee){
   if(!appliedCoupon) return 0;
-  // Re-validate expiry at calculation time (in case cart was open past midnight)
-  if(appliedCoupon.expiry){
-    const _now = new Date(); _now.setHours(0,0,0,0);
-    const _exp = new Date(appliedCoupon.expiry); _exp.setHours(0,0,0,0);
-    if(_now > _exp){ appliedCoupon=null; showCouponStatus('\u274C Coupon expired \u2014 please try another','err'); return 0; }
-  }
   if(appliedCoupon.type==='percent') return Math.round(subtotal * appliedCoupon.value / 100);
   if(appliedCoupon.type==='flat') return Math.min(appliedCoupon.value, subtotal);
   if(appliedCoupon.type==='freedel') return deliveryFee;
@@ -8709,8 +8655,7 @@ function submitCustomOrder(){
     document.getElementById('coPhone')?.focus(); return;
   }
   const msg='Hello Udaya Bakery! 🎂 I would like to place a *Custom Order*:%0A%0A*Name:* '+encodeURIComponent(name)+'%0A*Phone:* '+phone+'%0A*Order Details:* '+encodeURIComponent(desc)+(date?'%0A*Preferred Date:* '+date:'')+'%0A%0APlease confirm availability. Thank you!';
-  const _cbPhone = (localStorage.getItem('ub_whatsapp')||'919845406712').replace(/[^0-9]/g,'');
-  window.open('https://wa.me/'+_cbPhone+'?text='+msg,'_blank','noopener,noreferrer');
+  window.open('https://wa.me/919845406712?text='+msg,'_blank','noopener,noreferrer');
   closeCustomOrderModal();
   showToast('Redirecting to WhatsApp for custom order!','ok');
 }
@@ -9177,22 +9122,6 @@ function addCart(pid){
   saveCart(); updateBadge(); ubCartBounce();
   showToast(`${p.emoji} ${p.name} (${v.label}) added!`, 'ok');
 }
-function ubRenderCombos(){
-  const section = document.getElementById('comboOffersSection');
-  const list = document.getElementById('comboOffersList');
-  if(!section||!list) return;
-  const combos = ubGetCombos ? ubGetCombos().filter(c=>c.active) : [];
-  if(!combos.length){ section.style.display='none'; return; }
-  section.style.display='';
-  list.innerHTML = combos.map((c,i)=>'<div style="background:linear-gradient(135deg,rgba(200,146,58,.1),rgba(200,146,58,.05));border:1.5px solid rgba(200,146,58,.25);border-radius:12px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;justify-content:space-between;">'
-    +'<div><div style="font-size:13px;font-weight:700;color:var(--choco);">🎁 '+c.name+'</div>'
-    +'<div style="font-size:11px;color:var(--text-mid);margin-top:2px;">'+c.desc+'</div></div>'
-    +'<div style="text-align:right;flex-shrink:0;">'
-    +(c.originalPrice?'<div style="font-size:10px;color:var(--text-mid);text-decoration:line-through;">₹'+c.originalPrice+'</div>':'')
-    +'<div style="font-size:16px;font-weight:800;color:var(--choco);">₹'+c.price+'</div>'
-    +'</div></div>'
-  ).join('');
-}
 function updateBadge(){
   const count = cart.reduce((s,c)=>s+c.qty,0);
   // Floating cart button - show only when cart has items
@@ -9217,7 +9146,6 @@ function closeCart(){
 }
 
 function renderCartItems(){
-  ubRenderCombos();
   const el = document.getElementById('cartList');
   if(!cart.length){
     el.innerHTML=`<div class="cart-empty-msg" style="text-align:center;padding:48px 20px;">
@@ -9708,7 +9636,7 @@ function submitOrder(){
     return;
   }
 
-  if(order.payMethod === 'phonepe' || order.payMethod === 'razorpay'){
+  if(order.payMethod === 'phonepe'){
     pendingOrder = order;
     closeOrderModal();
     if(maxAdvance > 0){
@@ -9841,8 +9769,7 @@ function finalizeOrder(order, payNote){
     + '\n🔗 Track your order:\n' + _link + '\n\nThank you! 🙏';
 
   // Fire WhatsApp to owner (direct open — this is within the user gesture chain from "Place Order" tap)
-  const _confPhone = (localStorage.getItem('ub_whatsapp')||'919845406712').replace(/[^0-9]/g,'');
-  setTimeout(()=>{ try{ window.open(`https://wa.me/${_confPhone}?text=${encodeURIComponent(msg)}`,'_blank','noopener,noreferrer'); }catch(e){} }, 300);
+  setTimeout(()=>{ try{ window.open(`https://wa.me/919845406712?text=${encodeURIComponent(msg)}`,'_blank','noopener,noreferrer'); }catch(e){} }, 300);
 
   // Customer confirmation: show a toast with a tap-to-send WhatsApp link instead of a blocked popup
   if(_cph.length===10){
@@ -9860,19 +9787,7 @@ function finalizeOrder(order, payNote){
 
   // SMS confirmation (MSG91 — fires if admin has set the API key in Settings)
   if(_cph.length===10) setTimeout(()=>{ ubSendSMS(_cph, `Order ${order.id} confirmed! Total Rs.${order.total}. Track: ${window.location.origin+window.location.pathname}?track=${order.id}`); }, 2500);
-  try{
-    if(db){
-      const orderData = {
-        ...order,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        // Explicit razorpay fields for easy admin querying
-        razorpayPaymentId: order.advanceUtr || '',
-        paymentVerified: !!(order.advanceUtr && order.advanceUtr.startsWith('pay_')),
-      };
-      db.collection('orders').doc(order.id).set(orderData)
-        .catch(e=>console.warn('Firebase save failed:',e));
-    }
-  }catch(e){}
+  try{ if(db) db.collection('orders').doc(order.id).set({...order, createdAt: firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>console.warn('Firebase save failed:',e)); }catch(e){}
 }
 
 // ═══ PAYMENT METHOD SELECTION ═══
@@ -10124,11 +10039,13 @@ async function renderAdvancePayScreen(advanceAmt, total, order){
 
 
 async function processRazorpayAdvance(advanceAmt, total){
-  // Always fetch key fresh from encrypted storage (never rely solely on stale cache)
-  let key = '';
-  try { key = (await UB_SECURE.get('rzp_key_id')) || window._advRzpKey || ''; } catch(e){ key = window._advRzpKey || ''; }
-  if(key) window._advRzpKey = key; // refresh cache
-  if(!key){ showToast('⚠️ Razorpay key not set — admin must add API key in Payments settings', 'err'); return; }
+  // Always fetch key fresh — handles async init timing issues
+  let key = window._advRzpKey || '';
+  if(!key){
+    try { key = (await UB_SECURE.get('rzp_key_id')) || ''; } catch(e){}
+    if(key) window._advRzpKey = key;
+  }
+  if(!key){ showToast('⚠️ Razorpay not configured — contact bakery', 'err'); return; }
   const ownerName = localStorage.getItem('ub_bname') || 'Udaya Bakery';
   const orderId = pendingOrder ? pendingOrder.id : ('UB-ADV-' + Date.now());
 
@@ -10139,13 +10056,11 @@ async function processRazorpayAdvance(advanceAmt, total){
         amount: advanceAmt * 100, // paise
         currency: 'INR',
         name: ownerName,
-        description: `Order ${orderId} — Advance ₹${advanceAmt}`,
-        receipt: orderId + '-adv',
-        notes: { order_id: orderId, type: 'advance', bakery: ownerName },
+        description: `Advance for Order ${orderId}`,
+        notes: { order_id: orderId, type: 'advance' },
         prefill: {
-          name:    pendingOrder ? pendingOrder.name  : '',
-          contact: pendingOrder ? ('91' + (pendingOrder.phone||'').replace(/\D/g,'').slice(-10)) : '',
-          email:   pendingOrder && pendingOrder.email ? pendingOrder.email : ''
+          name:  pendingOrder ? pendingOrder.name  : '',
+          contact: pendingOrder ? pendingOrder.phone : ''
         },
         theme: { color: '#C8923A' },
         handler: function(response){
@@ -10156,7 +10071,6 @@ async function processRazorpayAdvance(advanceAmt, total){
             pendingOrder.advanceUtr    = rzpPayId;
             pendingOrder.advanceAmt    = advanceAmt;
             pendingOrder.advanceMethod = 'razorpay';
-            pendingOrder.payMethod     = 'razorpay';
             pendingOrder.payNote       = `Advance ₹${advanceAmt} paid via Razorpay · ID: ${rzpPayId} · Balance ₹${total - advanceAmt} on delivery`;
             const placedOrderId = pendingOrder.id;
             finalizeOrder(pendingOrder, pendingOrder.payNote);
@@ -10189,11 +10103,13 @@ async function processRazorpayAdvance(advanceAmt, total){
 }
 
 async function processRazorpayFull(total){
-  // Always fetch key fresh from encrypted storage (never rely solely on stale cache)
-  let key = '';
-  try { key = (await UB_SECURE.get('rzp_key_id')) || window._advRzpKey || ''; } catch(e){ key = window._advRzpKey || ''; }
-  if(key) window._advRzpKey = key; // refresh cache
-  if(!key){ showToast('⚠️ Razorpay key not set — admin must add API key in Payments settings', 'err'); return; }
+  // Always fetch key fresh — handles async init timing issues
+  let key = window._advRzpKey || '';
+  if(!key){
+    try { key = (await UB_SECURE.get('rzp_key_id')) || ''; } catch(e){}
+    if(key) window._advRzpKey = key;
+  }
+  if(!key){ showToast('⚠️ Razorpay not configured — contact bakery', 'err'); return; }
   const ownerName = localStorage.getItem('ub_bname') || 'Udaya Bakery';
   const orderId = pendingOrder ? pendingOrder.id : ('UB-' + Date.now());
 
@@ -10204,13 +10120,11 @@ async function processRazorpayFull(total){
         amount: total * 100,
         currency: 'INR',
         name: ownerName,
-        description: `Order ${orderId} — Full Payment`,
-        receipt: orderId,
-        notes: { order_id: orderId, type: 'full', bakery: ownerName },
+        description: `Full Payment for Order ${orderId}`,
+        notes: { order_id: orderId, type: 'full' },
         prefill: {
           name:    pendingOrder ? pendingOrder.name  : '',
-          contact: pendingOrder ? ('91' + (pendingOrder.phone||'').replace(/\D/g,'').slice(-10)) : '',
-          email:   pendingOrder && pendingOrder.email ? pendingOrder.email : ''
+          contact: pendingOrder ? pendingOrder.phone : ''
         },
         theme: { color: '#059669' },
         handler: function(response){
@@ -10221,7 +10135,6 @@ async function processRazorpayFull(total){
             pendingOrder.advanceUtr    = rzpPayId;
             pendingOrder.advanceAmt    = total;
             pendingOrder.advanceMethod = 'razorpay';
-            pendingOrder.payMethod     = 'razorpay';
             pendingOrder.payStatus     = 'paid';
             pendingOrder.payNote       = `Full payment ₹${total} via Razorpay · ID: ${rzpPayId}`;
             const placedOrderId = pendingOrder.id;
@@ -10936,18 +10849,13 @@ function showAdminDash(){
     lbl.textContent = '👋 ' + currentUser.name;
     lbl.style.display = 'inline';
   }
-  // Patch admin UI first (injects sidebar/topbar CSS), then render dashboard
-  try{ ubPatchAdmin(); }catch(e){}
   switchTab('dashboard');
   updateOrderBadge();
   startOrderListener(); // Real-time Firebase updates
-  // Re-render after sidebar fully injected to avoid black/empty flash
-  setTimeout(function(){ try{ renderAdminTab(); }catch(e){} }, 120);
 }
 
 function doLogout(){
   adminLoggedIn = false;
-  _patchDone = false; // Allow sidebar re-injection on next login
   _stopAdminIdle();
   UB_SECURE.clear(); // Wipe AES key from memory — encrypted data stays but unreadable
   localStorage.removeItem('ub_admin_logged_in');
@@ -10981,41 +10889,19 @@ function switchTab(t, preserveEdit){
     vRowCount = 2;
     flvRowCount = 2;
   }
-  // Update horizontal tab bar active state
   document.querySelectorAll('.atab').forEach(el => el.classList.remove('active'));
   const at = document.getElementById('at-' + t);
-  if(at){
-    at.classList.add('active');
-    // Scroll the active tab into view on mobile
-    try{ at.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'}); }catch(e){}
-  }
-  // Update sidebar active state
-  document.querySelectorAll('.sni').forEach(el => el.classList.remove('on'));
-  const sn = document.getElementById('ubsn-' + t);
-  if(sn) sn.classList.add('on');
-  // Render content
+  if(at) at.classList.add('active');
   renderAdminTab();
 }
 
 function renderAdminTab(){
   const el = document.getElementById('adminMain');
   if(!el) return;
-  function _safeRender(fn, label){
-    try{ return fn(); }
-    catch(e){
-      console.error('Tab error ['+label+']:', e);
-      return '<div style="padding:40px;text-align:center;">'
-        +'<div style="font-size:48px;margin-bottom:16px;">⚠️</div>'
-        +'<div style="color:#F87171;font-size:15px;font-weight:700;margin-bottom:8px;">Error loading '+label+'</div>'
-        +'<div style="color:rgba(253,246,236,.5);font-size:13px;margin-bottom:20px;">'+e.message+'</div>'
-        +'<button onclick="renderAdminTab()" style="background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:10px 20px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">🔄 Try Again</button>'
-        +'</div>';
-    }
-  }
-  if(adminTab==='dashboard') el.innerHTML = _safeRender(buildDash,'Dashboard');
-  else if(adminTab==='products') el.innerHTML = _safeRender(buildProdsTab,'Products');
-  else if(adminTab==='addprod'){ el.innerHTML = _safeRender(buildAddProdTab,'Add Product'); try{initAddProdForm();}catch(e){} }
-  else if(adminTab==='cats') el.innerHTML = _safeRender(buildCatsTab,'Categories');
+  if(adminTab==='dashboard') el.innerHTML = buildDash();
+  else if(adminTab==='products') el.innerHTML = buildProdsTab();
+  else if(adminTab==='addprod'){ el.innerHTML = buildAddProdTab(); initAddProdForm(); }
+  else if(adminTab==='cats') el.innerHTML = buildCatsTab();
   else if(adminTab==='orders') {
     el.innerHTML = buildOrdersTab();
     // If orders appear empty, retry after 2s in case snapshot hasn't fired yet
@@ -11072,27 +10958,31 @@ function renderAdminTab(){
     });
     return;
   }
-  else if(adminTab==='reports')       el.innerHTML = _safeRender(buildReportsTab,'Reports');
-  else if(adminTab==='customers')     el.innerHTML = _safeRender(buildCustomersTab,'Customers');
-  else if(adminTab==='broadcast')     el.innerHTML = _safeRender(buildBroadcastTab,'Broadcast');
-  else if(adminTab==='analytics')     el.innerHTML = _safeRender(buildAnalyticsTab,'Analytics');
-  else if(adminTab==='cakebuilder')   el.innerHTML = _safeRender(buildCakeBuilderAdminTab,'Cake Builder');
-  else if(adminTab==='videos')        el.innerHTML = _safeRender(buildVideosAdminTab,'Cake Videos');
-  else if(adminTab==='policies'){     el.innerHTML = _safeRender(buildPoliciesAdminTab,'Rules & Policy'); try{initPoliciesAdmin();}catch(e){} }
-  else if(adminTab==='expense')       el.innerHTML = _safeRender(window.buildExpenseTab||buildExpenseTab,'Expenses');
-  else if(adminTab==='combo')         el.innerHTML = _safeRender(window.buildComboTab||buildComboTab,'Combo Offers');
-  else if(adminTab==='reconciliation')el.innerHTML = _safeRender(window.buildReconciliationTab||buildReconciliationTab,'Reconciliation');
-  else if(adminTab==='rzpdash')       el.innerHTML = _safeRender(window.buildRzpDashTab||buildRzpDashTab,'Razorpay');
-  else if(adminTab==='stock')         el.innerHTML = _safeRender(buildStockTab,'Stock');
+  else if(adminTab==='reports')   el.innerHTML = buildReportsTab();
+  else if(adminTab==='customers') el.innerHTML = buildCustomersTab();
+  else if(adminTab==='broadcast') el.innerHTML = buildBroadcastTab();
+  else if(adminTab==='analytics') el.innerHTML = buildAnalyticsTab();
+  else if(adminTab==='cakebuilder') el.innerHTML = buildCakeBuilderAdminTab();
+  else if(adminTab==='videos') el.innerHTML = buildVideosAdminTab();
+  else if(adminTab==='policies'){ el.innerHTML = buildPoliciesAdminTab(); initPoliciesAdmin(); }
   else if(adminTab==='designer'){
-    el.innerHTML = _safeRender(buildDesignerTab,'Designer');
-    try{ ubInitDesigner(); }catch(e){ console.warn('Designer init:',e); }
+    try {
+      el.innerHTML = buildDesignerTab();
+      ubInitDesigner();
+    } catch(e) {
+      console.error('Designer tab error:', e);
+      el.innerHTML = `<div style="padding:40px;text-align:center;">
+        <div style="font-size:48px;margin-bottom:16px;">🎨</div>
+        <div style="color:#F87171;font-size:15px;font-weight:700;margin-bottom:8px;">Designer failed to load</div>
+        <div style="color:rgba(253,246,236,.5);font-size:13px;margin-bottom:20px;">${e.message||'Unknown error'}</div>
+        <button onclick="renderAdminTab()" style="background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:10px 20px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">🔄 Try Again</button>
+      </div>`;
+    }
   }
 }
 
 // ── DASHBOARD ──
 function buildDash(){
-  const _lowStockBanner = ubLowStockBannerHtml ? ubLowStockBannerHtml() : '';
   const pend = ORDERS.filter(o=>o.status==='pending').length;
   const confirmed = ORDERS.filter(o=>o.status==='confirmed').length;
   const delivered = ORDERS.filter(o=>o.status==='delivered').length;
@@ -11151,34 +11041,34 @@ function buildDash(){
   </div>
 
   <!-- Stats Grid -->
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;">
-    <div style="background:linear-gradient(135deg,rgba(252,211,77,.1),rgba(252,211,77,.04));border:1px solid rgba(252,211,77,.22);border-radius:16px;padding:16px 14px;text-align:center;cursor:pointer;" onclick="switchTab('orders')">
-      <div style="font-size:30px;font-weight:800;color:#FCD34D;font-family:'Playfair Display',serif;">${todayOrders.length}</div>
-      <div style="font-size:10px;color:rgba(253,246,236,.45);margin-top:4px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Today's Orders</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+    <div style="background:linear-gradient(135deg,rgba(252,211,77,.12),rgba(252,211,77,.06));border:1px solid rgba(252,211,77,.2);border-radius:16px;padding:16px;text-align:center;">
+      <div style="font-size:28px;font-weight:800;color:#FCD34D;">${pend}</div>
+      <div style="font-size:11px;color:rgba(253,246,236,.45);margin-top:3px;font-weight:600;">⏳ Pending</div>
     </div>
-    <div style="background:linear-gradient(135deg,rgba(200,146,58,.1),rgba(200,146,58,.04));border:1px solid rgba(200,146,58,.22);border-radius:16px;padding:16px 14px;text-align:center;cursor:pointer;" onclick="switchTab('orders')">
-      <div style="font-size:30px;font-weight:800;color:#E8B96A;font-family:'Playfair Display',serif;">₹${todayRev.toLocaleString('en-IN')}</div>
-      <div style="font-size:10px;color:rgba(253,246,236,.45);margin-top:4px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Today's Revenue</div>
+    <div style="background:linear-gradient(135deg,rgba(52,211,153,.12),rgba(52,211,153,.06));border:1px solid rgba(52,211,153,.2);border-radius:16px;padding:16px;text-align:center;">
+      <div style="font-size:28px;font-weight:800;color:#34D399;">${delivered}</div>
+      <div style="font-size:11px;color:rgba(253,246,236,.45);margin-top:3px;font-weight:600;">✅ Delivered</div>
     </div>
-    <div style="background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.04));border:1px solid rgba(239,68,68,.22);border-radius:16px;padding:16px 14px;text-align:center;cursor:pointer;" onclick="switchTab('orders')">
-      <div style="font-size:30px;font-weight:800;color:#F87171;font-family:'Playfair Display',serif;">${pend}</div>
-      <div style="font-size:10px;color:rgba(253,246,236,.45);margin-top:4px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">⏳ Pending</div>
-    </div>
-    <div style="background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(52,211,153,.04));border:1px solid rgba(52,211,153,.22);border-radius:16px;padding:16px 14px;text-align:center;cursor:pointer;" onclick="switchTab('customers')">
-      <div style="font-size:30px;font-weight:800;color:#34D399;font-family:'Playfair Display',serif;">${[...new Set(ORDERS.map(o=>o.phone).filter(Boolean))].length}</div>
-      <div style="font-size:10px;color:rgba(253,246,236,.45);margin-top:4px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Customers</div>
+    <div style="background:linear-gradient(135deg,rgba(200,146,58,.15),rgba(200,146,58,.07));border:1px solid rgba(200,146,58,.25);border-radius:16px;padding:16px;text-align:center;">
+      <div style="font-size:28px;font-weight:800;color:#E8B96A;">₹${rev.toLocaleString('en-IN')}</div>
+      <div style="font-size:11px;color:rgba(253,246,236,.45);margin-top:3px;font-weight:600;">💰 Total Revenue</div>
     </div>
   </div>
 
-  <!-- Revenue Trend Bar inline with chart header -->
+  <!-- Today's Summary -->
+  <div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,146,58,.15);border-radius:16px;padding:16px;margin-bottom:16px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(253,246,236,.35);margin-bottom:12px;">📅 Today's Summary</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center;">
+      <div><div style="font-size:22px;font-weight:800;color:#fff;">${todayOrders.length}</div><div style="font-size:11px;color:rgba(253,246,236,.4);">Orders</div></div>
+      <div><div style="font-size:22px;font-weight:800;color:#E8B96A;">₹${todayRev.toLocaleString('en-IN')}</div><div style="font-size:11px;color:rgba(253,246,236,.4);">Revenue</div></div>
+      <div><div style="font-size:22px;font-weight:800;color:${revChange>=0?'#4ADE80':'#F87171'};">${revChange>=0?'+':''}${revChange}%</div><div style="font-size:11px;color:rgba(253,246,236,.4);">vs Yesterday</div></div>
+    </div>
+  </div>
 
   <!-- 7-Day Revenue Chart -->
-  <div style="display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px;" class="ub-dash-2col">
-  <div class="acard" style="margin-bottom:0;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <h3 style="margin-bottom:0;">📈 7-Day Revenue</h3>
-      <span style="font-size:20px;font-weight:800;color:#E8B96A;font-family:'Playfair Display',serif;">₹${days7.reduce((s,d)=>s+d.rev,0).toLocaleString('en-IN')}</span>
-    </div>
+  <div class="acard" style="margin-bottom:16px;">
+    <h3>📈 Last 7 Days Revenue</h3>
     <div style="display:flex;align-items:flex-end;gap:6px;height:80px;margin-top:14px;">
       ${days7.map(d=>`
         <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
@@ -11189,26 +11079,24 @@ function buildDash(){
     <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:rgba(253,246,236,.3);">
       <span>6 days ago</span><span>Today: <strong style="color:#E8B96A;">₹${todayRev.toLocaleString('en-IN')}</strong></span>
     </div>
-  </div><!-- close chart acard -->
+  </div>
 
-  <!-- Top Selling Products (second column on desktop) -->
-  ${topProds.length>0?`<div class="acard" style="margin-bottom:0;">
-    <h3>🏆 Top Products</h3>
-    <div class="asub" style="margin-bottom:14px;">Based on all orders</div>
+  <!-- Top Selling Products -->
+  ${topProds.length>0?`<div class="acard" style="margin-bottom:16px;">
+    <h3>🏆 Top Selling Products</h3>
+    <div class="asub">Based on all orders</div>
     ${topProds.map(([name,qty],i)=>`
     <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);">
       <div style="width:28px;height:28px;border-radius:50%;background:${i===0?'linear-gradient(135deg,#F59E0B,#D97706)':i===1?'linear-gradient(135deg,#9CA3AF,#6B7280)':'linear-gradient(135deg,#CD7C3A,#92400E)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">${i+1}</div>
       <div style="flex:1;font-size:14px;color:rgba(253,246,236,.85);font-weight:600;">${name}</div>
       <div style="font-size:13px;color:#E8B96A;font-weight:700;">${qty} sold</div>
     </div>`).join('')}
-  </div>`:'<div class="acard" style="margin-bottom:0;display:flex;align-items:center;justify-content:center;min-height:120px;"><div style="text-align:center;color:rgba(253,246,236,.2);"><div style="font-size:32px;margin-bottom:8px;">🏆</div><div>No data yet</div></div></div>'}
-  </div><!-- close 2col grid -->
+  </div>`:''}
 
-  <!-- Recent Orders + Quick Actions (2 col on desktop) -->
-  <div style="display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px;" class="ub-dash-2col">
-  <div class="acard" style="margin-bottom:0;">
+  <!-- Recent Orders -->
+  <div class="acard" style="margin-bottom:16px;">
     <h3>📋 Recent Orders</h3>
-    <div class="asub">Latest activity</div>
+    <div class="asub">Latest incoming orders</div>
     ${ORDERS.length===0 ? `<div style="text-align:center;padding:32px;color:rgba(253,246,236,.2);"><div style="font-size:42px;margin-bottom:10px;">📭</div>No orders yet</div>` :
     ORDERS.slice(0,6).map(o=>`
     <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);">
@@ -11223,33 +11111,28 @@ function buildDash(){
     ${ORDERS.length > 6 ? `<div style="text-align:center;margin-top:12px;"><button class="abtn-sec" onclick="switchTab('orders')">View All ${ORDERS.length} Orders →</button></div>` : ''}
   </div>
 
-  <!-- Quick Actions (inside 2col grid as second panel) -->
-  <div class="acard" style="margin-bottom:0;">
-    <h3>⚡ Quick Actions</h3>
-    <div class="asub" style="margin-bottom:14px;">Shortcuts to common tasks</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <div style="background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.15);border-radius:14px;padding:14px 12px;cursor:pointer;text-align:center;transition:background .2s;" onclick="switchTab('addprod')" onmouseover="this.style.background='rgba(200,146,58,.14)'" onmouseout="this.style.background='rgba(200,146,58,.07)'">
-        <div style="font-size:28px;margin-bottom:6px;">➕</div>
-        <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:13px;font-weight:700;">Add Product</div>
-        <div style="font-size:10px;color:rgba(253,246,236,.35);margin-top:3px;">${PRODS.length} items</div>
-      </div>
-      <div style="background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.15);border-radius:14px;padding:14px 12px;cursor:pointer;text-align:center;transition:background .2s;" onclick="switchTab('orders')" onmouseover="this.style.background='rgba(200,146,58,.14)'" onmouseout="this.style.background='rgba(200,146,58,.07)'">
-        <div style="font-size:28px;margin-bottom:6px;">📋</div>
-        <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:13px;font-weight:700;">All Orders</div>
-        <div style="font-size:10px;color:rgba(253,246,236,.35);margin-top:3px;">${ORDERS.length} total</div>
-      </div>
-      <div style="background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.15);border-radius:14px;padding:14px 12px;cursor:pointer;text-align:center;transition:background .2s;" onclick="switchTab('combo')" onmouseover="this.style.background='rgba(200,146,58,.14)'" onmouseout="this.style.background='rgba(200,146,58,.07)'">
-        <div style="font-size:28px;margin-bottom:6px;">🎁</div>
-        <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:13px;font-weight:700;">Combo Offers</div>
-        <div style="font-size:10px;color:rgba(253,246,236,.35);margin-top:3px;">Create bundles</div>
-      </div>
-      <div style="background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.15);border-radius:14px;padding:14px 12px;cursor:pointer;text-align:center;transition:background .2s;" onclick="switchTab('reconciliation')" onmouseover="this.style.background='rgba(200,146,58,.14)'" onmouseout="this.style.background='rgba(200,146,58,.07)'">
-        <div style="font-size:28px;margin-bottom:6px;">🧾</div>
-        <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:13px;font-weight:700;">Reconciliation</div>
-        <div style="font-size:10px;color:rgba(253,246,236,.35);margin-top:3px;">Payments this month</div>
-      </div>
+  <!-- Quick Actions -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+    <div class="acard" style="cursor:pointer;text-align:center;" onclick="switchTab('addprod')">
+      <div style="font-size:32px;margin-bottom:8px;">➕</div>
+      <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:14px;font-weight:700;">Add Product</div>
+      <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">${PRODS.length} items currently</div>
     </div>
-  </div>
+    <div class="acard" style="cursor:pointer;text-align:center;" onclick="switchTab('orders')">
+      <div style="font-size:32px;margin-bottom:8px;">📋</div>
+      <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:14px;font-weight:700;">All Orders</div>
+      <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">${pend} pending · ${ORDERS.length} total</div>
+    </div>
+    <div class="acard" style="cursor:pointer;text-align:center;" onclick="switchTab('cats')">
+      <div style="font-size:32px;margin-bottom:8px;">🏷️</div>
+      <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:14px;font-weight:700;">Categories</div>
+      <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">${CATS.length} categories</div>
+    </div>
+    <div class="acard" style="cursor:pointer;text-align:center;" onclick="switchTab('settings')">
+      <div style="font-size:32px;margin-bottom:8px;">⚙️</div>
+      <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:14px;font-weight:700;">Settings</div>
+      <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">Hours, delivery, logo</div>
+    </div>
   </div>`;
 }
 function getGreeting(){ const h=new Date().getHours(); return h<12?'Morning':h<17?'Afternoon':'Evening'; }
@@ -12175,7 +12058,7 @@ function buildOrdersTab(){
 function _buildOrdersList(){
   return `
   <!-- Bulk Action Bar (hidden until items selected) -->
-  <div id="ubBulkBar" style="display:none;position:sticky;top:0;z-index:10;background:rgba(200,146,58,.15);border:1px solid rgba(200,146,58,.3);border-radius:12px;padding:10px 14px;margin-bottom:14px;align-items:center;gap:10px;flex-wrap:wrap;">
+  <div id="ubBulkBar" style="display:none;position:sticky;top:0;z-index:10;background:rgba(200,146,58,.15);border:1px solid rgba(200,146,58,.3);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
     <span id="ubBulkCount" style="font-size:13px;font-weight:700;color:#E8B96A;flex:1;"></span>
     <button onclick="ubBulkSetStatus('confirmed')" style="background:rgba(74,222,128,.15);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">✅ Confirm</button>
     <button onclick="ubBulkSetStatus('delivered')" style="background:rgba(59,130,246,.15);color:#93C5FD;border:1px solid rgba(59,130,246,.25);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🎉 Delivered</button>
@@ -12343,7 +12226,6 @@ function buildOrderCard(o){
       <a href="https://wa.me/91${(o.phone||'').replace(/\D/g,'')}?text=${encodeURIComponent('Hello '+o.name+'! 🎂\n\nYour Udaya Bakery order *'+o.id+'* status:\n\n*'+statusLabel(o.status)+'* ✅\n\nThank you for choosing Udaya Bakery! 🙏')}" target="_blank" rel="noopener noreferrer" style="background:rgba(37,211,102,.12);color:#25D366;border:1px solid rgba(37,211,102,.25);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:16px;">💬</span> WhatsApp</a>
       <a href="tel:${o.phone}" style="background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.2);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;">📞 Call</a>
       <button onclick="ubPrintBill('${o.id}')" style="background:rgba(255,255,255,.06);color:rgba(253,246,236,.6);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🖨️ Print Bill</button>
-      <button onclick="ubShowOrderQR('${o.id}')" style="background:rgba(99,102,241,.1);color:#A5B4FC;border:1px solid rgba(99,102,241,.25);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">📱 QR Code</button>
     </div>
   </div>`;
 }
@@ -12526,8 +12408,10 @@ function ubGetMonthOrders() {
 
 function ubGenerateMonthlyReport(sendWhatsApp) {
   const statusEl = document.getElementById('reportStatus');
-  const email = localStorage.getItem('ub_report_email') || 'udayabakeryb@gmail.com';
-  const waNum = (localStorage.getItem('ub_whatsapp')||'919845406712').replace(/[^0-9]/g,'');
+  const email = document.getElementById('s_report_email')?.value.trim() || '';
+  const waNum = document.getElementById('s_report_wa')?.value.trim() || '';
+  localStorage.setItem('ub_report_email', email);
+  localStorage.setItem('ub_report_wa', waNum);
 
   const monthOrders = ubGetMonthOrders();
   const now = new Date();
@@ -12703,7 +12587,6 @@ function buildSettingsTab(){
     <div class="asub">Let visitors see your Google Maps reviews on the Reviews section</div>
     <div class="af-group" style="margin-top:12px;"><label>Google Maps Embed API Key</label><input class="af-inp" id="s_gmaps_key" value="${localStorage.getItem('ub_gmaps_key')||''}" placeholder="AIzaSy..."></div>
     <div class="af-group"><label>Google Place ID</label><input class="af-inp" id="s_gmaps_place" value="${localStorage.getItem('ub_gmaps_place')||''}" placeholder="ChIJ..."></div>
-    <div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:10px 12px;font-size:12px;color:rgba(253,246,236,.6);margin-bottom:12px;">⚠️ <strong style="color:#F87171;">Security:</strong> Restrict your Maps API key to your domain only at <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" style="color:#F87171;">console.cloud.google.com</a> to prevent unauthorised billing. Then paste the new key above.</div>
     <div style="background:rgba(200,146,58,.06);border-radius:10px;padding:10px 12px;font-size:12px;color:rgba(253,246,236,.5);margin-bottom:12px;">💡 Get your Place ID at <a href="https://developers.google.com/maps/documentation/places/web-service/place-id" target="_blank" rel="noopener noreferrer" style="color:#E8B96A;">developers.google.com/maps</a>. Embed API key must have Maps Embed API enabled.</div>
     <button class="abtn" onclick="ubSaveGmapsSettings()">💾 Save Google Maps Settings</button>
   </div>
@@ -12746,22 +12629,11 @@ function buildSettingsTab(){
   </div>
 
   <div class="acard" style="margin-bottom:16px;">
-    <h3>🏪 Bakery Name, Tagline & Contact</h3>
-    <div class="asub">Updates the name in the nav bar and all phone/WhatsApp links across the site</div>
+    <h3>🏪 Bakery Name & Tagline</h3>
+    <div class="asub">Change the name shown in the top navigation</div>
     <div class="af-group"><label>Bakery Name</label><input class="af-inp" id="s_bname" value="${localStorage.getItem('ub_bname')||'Udaya Bakery'}"></div>
     <div class="af-group"><label>Tagline (below name)</label><input class="af-inp" id="s_btag" value="${localStorage.getItem('ub_btag')||'Artisan Bakes'}"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <div class="af-group">
-        <label>📞 Phone / WhatsApp Number <span style="font-size:10px;color:rgba(253,246,236,.4);">with country code, no +</span></label>
-        <input class="af-inp" id="s_wa_phone" value="${localStorage.getItem('ub_whatsapp')||'919845406712'}" placeholder="919845406712" maxlength="15" inputmode="numeric">
-        <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">Used for all WhatsApp & call buttons across the site</div>
-      </div>
-      <div class="af-group">
-        <label>📧 Owner Email</label>
-        <input class="af-inp" id="s_owner_email" value="${localStorage.getItem('ub_report_email')||'udayabakeryb@gmail.com'}" placeholder="owner@email.com">
-      </div>
-    </div>
-    <button class="abtn" onclick="saveBrandName()">💾 Save Name & Contact</button>
+    <button class="abtn" onclick="saveBrandName()">💾 Save Name</button>
   </div>
 
   <!-- BUSINESS HOURS -->
@@ -12868,7 +12740,6 @@ function buildSettingsTab(){
     <div id="credMsg" style="display:none;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:12px;"></div>
     <button class="abtn" onclick="ubSaveCredentials()" style="width:100%;justify-content:center;background:linear-gradient(135deg,#C8923A,#9A5C1A);box-shadow:0 6px 20px rgba(200,146,58,.3);">🔐 Save Credentials</button>
     <div style="margin-top:10px;font-size:11px;color:rgba(253,246,236,.25);text-align:center;">Stored as SHA-256 hashes — never as plain text</div>
-    <div style="margin-top:8px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.18);border-radius:10px;padding:9px 12px;font-size:11px;color:rgba(253,246,236,.45);">💡 <strong style="color:#FCD34D;">Tip:</strong> For stronger security, also set up Google Sign-In below — that way admin login is protected by your Google account's 2FA.</div>
   </div>
   </div>
   <div class="acard" style="margin-top:0;">
@@ -12952,7 +12823,16 @@ function buildSettingsTab(){
   <div class="acard" style="margin-bottom:16px;border-left:3px solid #34D399;">
     <h3>📊 Monthly Order Report</h3>
     <div class="asub">Generate an Excel report of this month's orders — download it, and optionally clear processed orders</div>
-    <div style="margin-top:10px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.15);border-radius:10px;padding:9px 12px;font-size:12px;color:rgba(253,246,236,.5);">📞 Report uses your WhatsApp number from <strong style="color:#34D399;">Settings → Bakery Name &amp; Contact</strong></div>
+    <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="af-group">
+        <label>Owner Email (for report reference)</label>
+        <input class="af-inp" id="s_report_email" value="${localStorage.getItem('ub_report_email')||'udayabakeryb@gmail.com'}" placeholder="owner@email.com">
+      </div>
+      <div class="af-group">
+        <label>Owner WhatsApp</label>
+        <input class="af-inp" id="s_report_wa" value="${localStorage.getItem('ub_report_wa')||'919845406712'}" placeholder="91XXXXXXXXXX">
+      </div>
+    </div>
     <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:rgba(253,246,236,.6);">
       📅 Current month: <strong style="color:#34D399;">${new Date().toLocaleString('en-IN',{month:'long',year:'numeric'})}</strong> &nbsp;|&nbsp;
       Total orders: <strong style="color:#34D399;">${(()=>{ try{ const now=new Date(); return (JSON.parse(localStorage.getItem('ub_orders_cache')||'[]').filter(o=>{ const d=new Date(o.timestamp||o.createdAt||Date.now()); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear(); }).length)||'(loading)'; }catch(e){ return '...'; } })()}</strong> orders this month
@@ -13345,73 +13225,22 @@ function applyLogoToNav(){
   }
 }
 function saveBrandName(){
-  const name  = (document.getElementById('s_bname')?.value||'').trim()       || 'Udaya Bakery';
-  const tag   = (document.getElementById('s_btag')?.value||'').trim()        || 'Artisan Bakes';
-  const phone = (document.getElementById('s_wa_phone')?.value||'').replace(/[^0-9]/g,'') || '919845406712';
-  const email = (document.getElementById('s_owner_email')?.value||'').trim() || 'udayabakeryb@gmail.com';
-
-  localStorage.setItem('ub_bname',       name);
-  localStorage.setItem('ub_btag',        tag);
-  localStorage.setItem('ub_whatsapp',    phone);
-  localStorage.setItem('ub_report_wa',   phone);
-  localStorage.setItem('ub_report_email',email);
-
-  // Update nav brand text immediately
+  const name = document.getElementById('s_bname').value.trim() || 'Udaya Bakery';
+  const tag  = document.getElementById('s_btag').value.trim()  || 'Artisan Bakes';
+  localStorage.setItem('ub_bname', name);
+  localStorage.setItem('ub_btag', tag);
   const textEl = document.getElementById('logoTextEl');
   if(textEl) textEl.innerHTML = `${name}<span>${tag}</span>`;
-
-  // Update ALL hardcoded WhatsApp/call links on the page instantly
-  ubApplyPhoneLinks(phone);
-
-  // Sync to Firestore so all customers see updated branding
+  // Sync to Firestore so all customers see updated name
   if(db){
     db.collection('categories').doc('ubBranding').set({
-      bname: name, btag: tag, phone: phone, email: email,
+      bname: name,
+      btag: tag,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, {merge: true}).catch(()=>{});
   }
-  showToast('✅ Bakery name, contact & all links updated!','ok');
+  showToast('✅ Bakery name updated for all devices!','ok');
 }
-
-// Update every WhatsApp/tel link on the page to use the saved phone number
-function ubApplyPhoneLinks(phone){
-  if(!phone) phone = (localStorage.getItem('ub_whatsapp')||'919845406712').replace(/[^0-9]/g,'');
-  const bare10 = phone.slice(-10);
-  const formatted = bare10.slice(0,5) + ' ' + bare10.slice(5);
-
-  // Float WhatsApp button
-  const floatWa = document.querySelector('a.float-wa');
-  if(floatWa) floatWa.href = 'https://wa.me/' + phone;
-
-  // Float Call button
-  const floatCall = document.querySelector('a.float-call');
-  if(floatCall) floatCall.href = 'tel:+' + phone;
-
-  // Closed store banner WA link
-  const closedWa = document.getElementById('closed-wa-link');
-  if(closedWa){ closedWa.href = 'https://wa.me/' + phone; closedWa.textContent = 'WhatsApp: +' + phone.slice(0,2) + ' ' + formatted; }
-
-  // Visit us WA link
-  const visitWa = document.getElementById('visit-wa-link');
-  if(visitWa) visitWa.href = 'https://wa.me/' + phone + '?text=Hi!%20I%20want%20to%20visit%20Udaya%20Bakery.%20Please%20share%20the%20exact%20location.';
-
-  // Contact section tel link
-  const ciTel = document.getElementById('ci-tel-link');
-  if(ciTel){ ciTel.href = 'tel:+' + phone; ciTel.textContent = '+' + phone.slice(0,2) + ' ' + formatted; }
-
-  // Contact section WA order link
-  const ciWa = document.getElementById('ci-wa-order');
-  if(ciWa) ciWa.href = 'https://wa.me/' + phone + '?text=Hi!%20I%20would%20like%20to%20order%20from%20Udaya%20Bakery';
-
-  // Contact section Call button
-  const ciCall = document.getElementById('ci-call-btn');
-  if(ciCall){ ciCall.href = 'tel:+' + phone; ciCall.textContent = '📞 Call: +' + phone.slice(0,2) + ' ' + formatted; }
-  // FAQ section phone number
-  const faqPhone = document.getElementById('faq-phone-num');
-  if(faqPhone) faqPhone.textContent = bare10;
-}
-// Apply on page load
-if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', function(){ ubApplyPhoneLinks(); }); } else { ubApplyPhoneLinks(); }
 function exportData(){
   const blob=new Blob([JSON.stringify({products:PRODS,categories:CATS,orders:ORDERS,settings:CFG,exported:new Date().toISOString()},null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
@@ -15743,9 +15572,7 @@ function buildVideosAdminTab(){
     </div>`;
   }).join('');
 
-  const _lowStockBannerVid = (typeof ubLowStockBannerHtml === 'function') ? ubLowStockBannerHtml() : '';
   return `
-  ${_lowStockBannerVid}
   <div style="max-width:860px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;flex-wrap:wrap;gap:10px;">
       <div>
@@ -16199,22 +16026,18 @@ window.ubCloseVideoLightbox = function(e){
   #adminDashScreen{flex-direction:row!important;}
   #ub-vsidebar{display:flex!important;}
   #ub-inner-wrap{display:flex;flex-direction:column;flex:1;overflow:hidden;min-width:0;}
-  #adminMain{padding:24px 28px!important;max-width:none!important;}
+  #adminMain{padding:22px!important;}
 }
 @media(max-width:899px){
   #ub-vsidebar{display:none!important;}
   #ub-inner-wrap{display:contents!important;}
 }
 #ub-vsidebar{
-  width:220px;min-width:220px;background:#0D0600;
+  width:200px;min-width:200px;background:#0D0600;
   border-right:1px solid rgba(200,146,58,.13);
-  flex-direction:column;overflow-y:auto;overflow-x:hidden;flex-shrink:0;
-  padding:10px 0 30px;display:none;
-  scrollbar-width:thin;scrollbar-color:rgba(200,146,58,.18) transparent;
+  flex-direction:column;overflow-y:auto;flex-shrink:0;
+  padding:10px 0 20px;display:none;
 }
-#ub-vsidebar::-webkit-scrollbar{width:3px;}
-#ub-vsidebar::-webkit-scrollbar-track{background:transparent;}
-#ub-vsidebar::-webkit-scrollbar-thumb{background:rgba(200,146,58,.2);border-radius:3px;}
 .snl{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
   color:rgba(200,146,58,.3);padding:12px 16px 4px;font-family:Jost,sans-serif;}
 .sni{display:flex;align-items:center;gap:9px;padding:9px 10px;cursor:pointer;
@@ -16288,19 +16111,16 @@ window.ubCloseVideoLightbox = function(e){
 @media(max-width:380px){.gval{font-size:15px;}}
 .glbl{font-size:9px;color:rgba(253,246,236,.32);font-weight:700;
   letter-spacing:.6px;text-transform:uppercase;margin-top:3px;}
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
-@media(max-width:680px){.kpi-grid{grid-template-columns:repeat(2,1fr);gap:10px;}}
-.kcard{background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
-  border:1px solid rgba(200,146,58,.15);
-  border-radius:16px;padding:16px 15px;
-  transition:border-color .2s,transform .2s,box-shadow .2s;
-  box-shadow:0 2px 12px rgba(0,0,0,.2);}
-.kcard:hover{border-color:rgba(200,146,58,.32);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
-.klbl{font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;
-  color:rgba(253,246,236,.35);margin-bottom:8px;font-family:Jost,sans-serif;}
-.kval{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;
-  color:#E8B96A;line-height:1;margin-bottom:6px;}
-@media(max-width:400px){.kval{font-size:20px;}}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:16px;}
+@media(max-width:680px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
+.kcard{background:rgba(255,255,255,.04);border:1px solid rgba(200,146,58,.13);
+  border-radius:15px;padding:14px 13px;transition:border-color .2s,transform .2s;}
+.kcard:hover{border-color:rgba(200,146,58,.26);transform:translateY(-2px);}
+.klbl{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+  color:rgba(253,246,236,.32);margin-bottom:6px;font-family:Jost,sans-serif;}
+.kval{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;
+  color:#E8B96A;line-height:1;margin-bottom:5px;}
+@media(max-width:400px){.kval{font-size:18px;}}
 .ktrend{font-size:11px;font-weight:700;display:flex;align-items:center;gap:3px;}
 .ktrend.up{color:#4ADE80;}.ktrend.dn{color:#F87171;}.ktrend.nu{color:rgba(253,246,236,.35);}
 .spark{display:flex;align-items:flex-end;gap:2px;height:26px;margin-top:7px;}
@@ -16443,34 +16263,8 @@ window.ubCloseVideoLightbox = function(e){
 }
 #adminTabBar::-webkit-scrollbar{ display:none; }
 .atab{
-  padding:10px 13px !important;
+  padding:12px 14px !important;
   font-size:12px !important;
-  white-space:nowrap;
-  flex-shrink:0;
-}
-
-/* Mobile tab scroll fade hint */
-#adminTabBar::after{
-  content:'';
-  position:sticky;
-  right:0;
-  top:0;
-  height:100%;
-  width:32px;
-  background:linear-gradient(to left, #140A03 0%, transparent 100%);
-  pointer-events:none;
-  flex-shrink:0;
-  display:block;
-}
-
-/* Dashboard KPI cards — better on desktop */
-@media(min-width:900px){
-  .kpi-grid{ grid-template-columns: repeat(4,1fr) !important; }
-  .acard{ border-radius:16px !important; }
-  .ub-dash-2col{ grid-template-columns: 1fr 1fr !important; }
-}
-@media(max-width:899px){
-  .ub-dash-2col{ grid-template-columns: 1fr !important; }
 }
 
 /* ── COMMAND PALETTE — full width on mobile ── */
@@ -16536,7 +16330,16 @@ function ubPatchAdmin(){
   try { _injectSidebar(); } catch(e){ console.warn('UB sidebar:', e); }
   try { _injectTopbar(); } catch(e){ console.warn('UB topbar:', e); }
 
-  // switchTab handles sidebar sync natively — no patch needed here
+  // Patch switchTab only if original still exists
+  try {
+    if(typeof window.switchTab === 'function'){
+      const _origSwitch = window.switchTab;
+      window.switchTab = function(t, preserveEdit){
+        try{ _origSwitch(t, preserveEdit); }catch(e){ console.warn('switchTab orig:', e); }
+        try{ _syncSidebar(t); }catch(e){}
+      };
+    }
+  } catch(e){ console.warn('UB switchTab patch:', e); }
 
   // Patch build functions with full isolation
   try{ _patchBuildDash(); }catch(e){ console.warn('UB dash patch:', e); }
@@ -16556,7 +16359,13 @@ function ubPatchAdmin(){
 /* ─── SIDEBAR ─── */
 function _injectSidebar(){
   const dash = document.getElementById('adminDashScreen');
+  const tabBar = document.getElementById('adminTabBar');
+  const main = document.getElementById('adminMain');
   if(!dash || document.getElementById('ub-vsidebar')) return;
+
+  // Ensure adminMain padding is reduced on mobile
+  const mainEl = document.getElementById('adminMain');
+  if(mainEl) mainEl.style.boxSizing = 'border-box';
 
   const sb = document.createElement('div');
   sb.id = 'ub-vsidebar';
@@ -16586,45 +16395,15 @@ function _injectSidebar(){
     <button class="sni" onclick="switchTab('customers')" id="ubsn-customers"><span class="ic">👥</span>Customers</button>
     <div class="snsp"></div>
     <button class="sni" onclick="switchTab('settings')" id="ubsn-settings"><span class="ic">⚙️</span>Settings</button>
-    <div class="snsp"></div>
-    <div class="snl">FINANCE</div>
-    <button class="sni" onclick="switchTab('expense')" id="ubsn-expense"><span class="ic">💸</span>Expenses</button>
-    <button class="sni" onclick="switchTab('reconciliation')" id="ubsn-reconciliation"><span class="ic">🧾</span>Reconciliation</button>
-    <button class="sni" onclick="switchTab('rzpdash')" id="ubsn-rzpdash"><span class="ic">💳</span>Razorpay</button>
-    <div class="snsp"></div>
-    <div class="snl">MARKETING</div>
-    <button class="sni" onclick="switchTab('combo')" id="ubsn-combo"><span class="ic">🎁</span>Combo Offers</button>
-    <button class="sni" onclick="switchTab('stock')" id="ubsn-stock"><span class="ic">📦</span>Stock</button>
-    <div class="snsp"></div>
-    <div class="snl">SYSTEM</div>
-    <button class="sni" onclick="switchTab('policies')" id="ubsn-policies"><span class="ic">📜</span>Rules & Policy</button>
-    <button class="sni" onclick="switchTab('designer')" id="ubsn-designer"><span class="ic">🎨</span>Website Designer</button>
   `;
 
-  // On desktop: use sidebar + inner-wrap layout
-  // On mobile: just prepend sidebar (hidden by CSS), DON'T move adminMain/tabBar
-  const isMobile = window.innerWidth < 900;
-  if(!isMobile){
-    const tabBar = document.getElementById('adminTabBar');
-    const main = document.getElementById('adminMain');
-    const inner = document.createElement('div');
-    inner.id = 'ub-inner-wrap';
-    if(tabBar) inner.appendChild(tabBar);
-    if(main) inner.appendChild(main);
-    dash.appendChild(sb);
-    dash.appendChild(inner);
-  } else {
-    // Mobile: just insert sidebar (CSS hides it), keep original DOM structure intact
-    dash.insertBefore(sb, dash.firstChild);
-    // Create ub-inner-wrap as a transparent passthrough wrapper only
-    if(!document.getElementById('ub-inner-wrap')){
-      const inner = document.createElement('div');
-      inner.id = 'ub-inner-wrap';
-      inner.style.cssText = 'display:contents;';
-      // Don't move children — just mark it exists
-      dash.appendChild(inner);
-    }
-  }
+  const inner = document.createElement('div');
+  inner.id = 'ub-inner-wrap';
+  if(tabBar) inner.appendChild(tabBar);
+  if(main) inner.appendChild(main);
+
+  dash.appendChild(sb);
+  dash.appendChild(inner);
 }
 
 function _syncSidebar(t){
@@ -17974,7 +17753,7 @@ function initPoliciesAdmin(){
   // Nothing extra needed — all wired via inline onclick
 }
 
-window.ubSavePoliciesFromAdmin = function ubSavePoliciesFromAdmin(){
+function ubSavePoliciesFromAdmin(){
   var policies = ubGetPolicies();
   var updated = policies.map(function(p,i){
     var icon  = (document.getElementById('pol-icon-'+i)||{}).value  || p.icon;
@@ -17984,17 +17763,17 @@ window.ubSavePoliciesFromAdmin = function ubSavePoliciesFromAdmin(){
   });
   ubSavePolicies(updated);
   if(typeof showToast === 'function') showToast('✅ Policies saved and updated for customers!','ok');
-};
+}
 
-window.ubAddPolicySection = function ubAddPolicySection(){
+function ubAddPolicySection(){
   ubSavePoliciesFromAdmin(); // save current first
   var policies = ubGetPolicies();
   policies.push({ id:'custom'+Date.now(), icon:'📄', title:'New Policy Section', content:'Add your policy details here...' });
   ubSavePolicies(policies);
   renderAdminTab();
-};
+}
 
-window.ubDeletePolicy = function ubDeletePolicy(i){
+function ubDeletePolicy(i){
   if(!confirm('Delete this policy section?')) return;
   ubSavePoliciesFromAdmin();
   var policies = ubGetPolicies();
@@ -18002,7 +17781,7 @@ window.ubDeletePolicy = function ubDeletePolicy(i){
   ubSavePolicies(policies);
   renderAdminTab();
   if(typeof showToast === 'function') showToast('🗑 Section deleted','ok');
-};
+}
 
 /* ── CUSTOMER-FACING: OPEN/CLOSE POLICY PANEL ── */
 function openPolicyPanel(){
@@ -18031,427 +17810,6 @@ function ubRenderPolicyPanel(){
     +'</div>';
   }).join('');
 }
-// ══════════════════════════════════════════════════════════════
-//  📱 ORDER QR CODE
-// ══════════════════════════════════════════════════════════════
-function ubShowOrderQR(orderId){
-  const o = ORDERS.find(x=>x.id===orderId);
-  if(!o){ showToast('Order not found','err'); return; }
-  const info = encodeURIComponent(
-    'ORDER: '+o.id+'\nCustomer: '+(o.name||'')+'\nTotal: ₹'+o.total+'\nStatus: '+statusLabel(o.status)
-  );
-  const qrUrl = 'https://chart.googleapis.com/chart?chs=220x220&cht=qr&chl='+info+'&choe=UTF-8';
-  const dlg = document.createElement('div');
-  dlg.id = 'ubOrderQRDlg';
-  dlg.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:20px;';
-  dlg.onclick = function(e){ if(e.target===dlg) dlg.remove(); };
-  dlg.innerHTML = '<div style="background:#1E0E06;border:1.5px solid rgba(200,146,58,.3);border-radius:20px;padding:28px 24px;max-width:300px;width:100%;text-align:center;">'
-    +'<div style="font-family:Playfair Display,serif;font-size:16px;color:#E8B96A;font-weight:700;margin-bottom:4px;">📱 Order QR Code</div>'
-    +'<div style="font-size:12px;color:rgba(253,246,236,.4);margin-bottom:14px;">'+o.id+' · ₹'+o.total+'</div>'
-    +'<div style="background:#fff;border-radius:12px;padding:12px;display:inline-block;margin-bottom:14px;">'
-    +'<img src="'+qrUrl+'" width="200" height="200" alt="Order QR"></div>'
-    +'<div style="font-size:11px;color:rgba(253,246,236,.35);margin-bottom:16px;">Scan to view order details</div>'
-    +'<button onclick="document.getElementById(\'ubOrderQRDlg\').remove()" style="background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:10px 24px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Close</button>'
-    +'</div>';
-  document.body.appendChild(dlg);
-}
-
-// ══════════════════════════════════════════════════════════════
-//  📦 STOCK MANAGEMENT
-// ══════════════════════════════════════════════════════════════
-function ubGetStock(){ return JSON.parse(localStorage.getItem('ub_stock')||'{}'); }
-function ubSaveStock(s){
-  localStorage.setItem('ub_stock', JSON.stringify(s));
-  // Sync to Firestore so all customers see stock status instantly
-  try{
-    if(db){
-      db.collection('config').doc('siteConfig').set({stock: s, stockUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()},{merge:true})
-        .catch(e=>console.warn('Stock sync failed:',e));
-    }
-  }catch(e){}
-}
-
-function buildStockTab(){
-  const stock = ubGetStock();
-  const rows = PRODS.map(p=>{
-    const qty = stock[p.id] != null ? stock[p.id] : '';
-    const low = qty !== '' && qty <= (p.lowStockAlert||5);
-    return '<tr style="border-bottom:1px solid rgba(255,255,255,.05);">'
-      +'<td style="padding:10px 8px;font-size:13px;color:rgba(253,246,236,.85);">'+(p.emoji||'🎂')+' '+p.name+'</td>'
-      +'<td style="padding:10px 8px;"><input type="number" min="0" value="'+qty+'" placeholder="—"'
-      +' id="stk-'+p.id+'" oninput="ubUpdateStock(''+p.id+'',this.value)"'
-      +' style="width:80px;background:rgba(255,255,255,.07);border:1px solid rgba(200,146,58,.2);border-radius:8px;padding:6px 10px;font-family:Jost,sans-serif;font-size:13px;color:#FDF6EC;text-align:center;outline:none;"></td>'
-      +'<td style="padding:10px 8px;"><input type="number" min="0" value="'+(p.lowStockAlert||5)+'" placeholder="5"'
-      +' id="lsa-'+p.id+'" oninput="ubUpdateLSA(''+p.id+'',this.value)"'
-      +' style="width:70px;background:rgba(255,255,255,.07);border:1px solid rgba(200,146,58,.2);border-radius:8px;padding:6px 10px;font-family:Jost,sans-serif;font-size:13px;color:#FDF6EC;text-align:center;outline:none;"></td>'
-      +'<td style="padding:10px 8px;">'
-      +(qty===''?'<span style="font-size:12px;color:rgba(253,246,236,.3);">—</span>'
-       :low?'<span style="background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.3);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;">⚠️ LOW</span>'
-       :'<span style="background:rgba(74,222,128,.1);color:#4ADE80;border:1px solid rgba(74,222,128,.2);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;">✅ OK</span>')
-      +'</td>'
-      +'</tr>';
-  }).join('');
-
-  const lowItems = PRODS.filter(p=>{ const q=stock[p.id]; return q!=null && q<=(p.lowStockAlert||5); });
-
-  return '<div style="max-width:860px;">'
-    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">'
-    +'<div><h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">📦 Stock Quantity</h2>'
-    +'<p style="font-size:12px;color:rgba(253,246,236,.38);">Track inventory · Set low-stock alert levels</p></div>'
-    +'<button onclick="ubSaveAllStock()" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💾 Save All</button>'
-    +'</div>'
-    +(lowItems.length?'<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;">'
-    +'<span style="font-size:20px;">⚠️</span><div><div style="font-size:13px;font-weight:700;color:#F87171;margin-bottom:4px;">Low Stock Alert — '+lowItems.length+' item(s)</div>'
-    +'<div style="font-size:12px;color:rgba(253,246,236,.5);">'+lowItems.map(p=>(p.emoji||'🎂')+' '+p.name+' ('+ubGetStock()[p.id]+' left)').join(' · ')+'</div></div></div>':'')
-    +'<div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,146,58,.12);border-radius:14px;overflow:hidden;">'
-    +'<table style="width:100%;border-collapse:collapse;">'
-    +'<thead><tr style="background:rgba(200,146,58,.08);border-bottom:1px solid rgba(200,146,58,.2);">'
-    +'<th style="padding:10px 8px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Product</th>'
-    +'<th style="padding:10px 8px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Qty in Stock</th>'
-    +'<th style="padding:10px 8px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Alert Below</th>'
-    +'<th style="padding:10px 8px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Status</th>'
-    +'</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
-}
-
-function ubUpdateStock(id, val){ const s=ubGetStock(); s[id]=val===''?null:parseInt(val)||0; ubSaveStock(s); }
-function ubUpdateLSA(id, val){
-  const p=PRODS.find(x=>String(x.id)===String(id)); if(!p) return;
-  p.lowStockAlert=parseInt(val)||5;
-}
-function ubSaveAllStock(){
-  const s=ubGetStock();
-  PRODS.forEach(p=>{
-    const qi=document.getElementById('stk-'+p.id);
-    const li=document.getElementById('lsa-'+p.id);
-    if(qi && qi.value!==''){
-      const qty=parseInt(qi.value)||0;
-      s[p.id]=qty;
-      // Auto mark out-of-stock when qty is 0
-      const wasInStock = p.inStock !== false;
-      const nowInStock = qty > 0;
-      if(wasInStock !== nowInStock){
-        p.inStock = nowInStock;
-        // Sync inStock to Firestore product doc
-        try{
-          if(db) db.collection('products').doc(String(p.id)).set({inStock:nowInStock},{merge:true}).catch(e=>console.warn('inStock sync:',e));
-        }catch(e){}
-      }
-    }
-    if(li) p.lowStockAlert=parseInt(li.value)||5;
-  });
-  ubSaveStock(s);
-  // Re-render product grid so customers see out-of-stock changes instantly
-  try{ renderProds(); }catch(e){}
-  showToast('✅ Stock saved & synced to customers!','ok');
-  renderAdminTab();
-}
-
-// ══════════════════════════════════════════════════════════════
-//  💸 EXPENSE TRACKER
-// ══════════════════════════════════════════════════════════════
-window.ubGetExpenses = function ubGetExpenses(){
-  try{ return JSON.parse(localStorage.getItem('ub_expenses')||'[]')||[]; }
-  catch(e){ return []; }
-};
-window.ubSaveExpenses = function ubSaveExpenses(e){
-  localStorage.setItem('ub_expenses', JSON.stringify(e));
-  try{
-    if(db){
-      db.collection('config').doc('siteConfig').set({expenses: e, expensesUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()},{merge:true})
-        .catch(err=>console.warn('Expenses sync failed:',err));
-    }
-  }catch(err){}
-}
-
-window.buildExpenseTab = function buildExpenseTab(){
-  const expenses = ubGetExpenses();
-  const total = expenses.reduce((s,e)=>s+parseFloat(e.amount||0),0);
-  const today = new Date().toISOString().slice(0,10);
-  const todayExp = expenses.filter(e=>e.date===today).reduce((s,e)=>s+parseFloat(e.amount||0),0);
-  const cats = ['Ingredients','Utilities','Packaging','Labour','Equipment','Rent','Marketing','Other'];
-  const rows = expenses.slice().reverse().map((e,ri)=>{
-    const i = expenses.length-1-ri;
-    return '<tr style="border-bottom:1px solid rgba(255,255,255,.04);">'
-      +'<td style="padding:8px 10px;font-size:12px;color:rgba(253,246,236,.6);">'+e.date+'</td>'
-      +'<td style="padding:8px 10px;font-size:13px;color:rgba(253,246,236,.9);font-weight:600;">'+e.desc+'</td>'
-      +'<td style="padding:8px 10px;"><span style="background:rgba(200,146,58,.1);color:#E8B96A;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;">'+e.cat+'</span></td>'
-      +'<td style="padding:8px 10px;font-size:14px;font-weight:700;color:#F87171;">₹'+parseFloat(e.amount||0).toFixed(0)+'</td>'
-      +'<td style="padding:8px 10px;"><button onclick="window.ubDeleteExpense ? window.ubDeleteExpense('+i+')" style="background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">Delete</button></td>'
-      +'</tr>';
-  }).join('');
-
-  return '<div style="max-width:860px;">'
-    +'<h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">💸 Expense Tracker</h2>'
-    +'<p style="font-size:12px;color:rgba(253,246,236,.38);margin-bottom:20px;">Track all your bakery expenses</p>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">'
-    +'<div class="kcard"><div class="klbl">TODAY&#39;S EXPENSES</div><div class="kval">₹'+todayExp.toFixed(0)+'</div></div>'
-    +'<div class="kcard"><div class="klbl">TOTAL EXPENSES</div><div class="kval">₹'+total.toFixed(0)+'</div></div>'
-    +'</div>'
-    +'<div class="acard" style="margin-bottom:20px;">'
-    +'<h3 style="margin-bottom:14px;">➕ Add Expense</h3>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">'
-    +'<div><label style="font-size:11px;color:rgba(253,246,236,.4);display:block;margin-bottom:5px;">Description</label>'
-    +'<input class="af-inp" id="exp_desc" placeholder="e.g. Flour purchase" style="width:100%;box-sizing:border-box;"></div>'
-    +'<div><label style="font-size:11px;color:rgba(253,246,236,.4);display:block;margin-bottom:5px;">Amount (₹)</label>'
-    +'<input class="af-inp" id="exp_amt" type="number" placeholder="500" style="width:100%;box-sizing:border-box;"></div>'
-    +'</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">'
-    +'<div><label style="font-size:11px;color:rgba(253,246,236,.4);display:block;margin-bottom:5px;">Category</label>'
-    +'<select class="af-sel" id="exp_cat" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(200,146,58,.2);border-radius:10px;padding:10px 12px;font-family:Jost,sans-serif;font-size:13px;color:#FDF6EC;outline:none;">'
-    +cats.map(c=>'<option>'+c+'</option>').join('')+'</select></div>'
-    +'<div><label style="font-size:11px;color:rgba(253,246,236,.4);display:block;margin-bottom:5px;">Date</label>'
-    +'<input class="af-inp" id="exp_date" type="date" value="'+today+'" style="width:100%;box-sizing:border-box;"></div>'
-    +'</div>'
-    +'<button class="abtn" onclick="window.ubAddExpense ? window.ubAddExpense() : ubAddExpense()">➕ Add Expense</button>'
-    +'</div>'
-    +(expenses.length?'<div class="acard">'
-    +'<h3 style="margin-bottom:14px;">📋 All Expenses</h3>'
-    +'<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">'
-    +'<thead><tr style="background:rgba(200,146,58,.08);border-bottom:1px solid rgba(200,146,58,.2);">'
-    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;text-transform:uppercase;">Date</th>'
-    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;text-transform:uppercase;">Description</th>'
-    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;text-transform:uppercase;">Category</th>'
-    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:rgba(200,146,58,.8);font-weight:700;text-transform:uppercase;">Amount</th>'
-    +'<th></th></tr></thead>'
-    +'<tbody>'+rows+'</tbody></table></div></div>':'')
-    +'</div>';
-}
-
-window.ubAddExpense = function ubAddExpense(){
-  const desc=(document.getElementById('exp_desc').value||'').trim();
-  const amt=parseFloat(document.getElementById('exp_amt').value||'0');
-  const cat=document.getElementById('exp_cat').value||'Other';
-  const date=document.getElementById('exp_date').value||new Date().toISOString().slice(0,10);
-  if(!desc){ showToast('Enter description','err'); return; }
-  if(!amt||amt<=0){ showToast('Enter valid amount','err'); return; }
-  const ex=ubGetExpenses(); ex.push({desc,amount:amt,cat,date}); ubSaveExpenses(ex);
-  showToast('✅ Expense added!','ok'); renderAdminTab();
-}
-window.ubDeleteExpense = function ubDeleteExpense(i){
-  const ex=ubGetExpenses(); ex.splice(i,1); ubSaveExpenses(ex);
-  showToast('Deleted','ok'); renderAdminTab();
-}
-
-// ══════════════════════════════════════════════════════════════
-//  🎁 COMBO OFFERS
-// ══════════════════════════════════════════════════════════════
-window.ubGetCombos = function ubGetCombos(){
-  try{ return JSON.parse(localStorage.getItem('ub_combos')||'[]')||[]; }
-  catch(e){ return []; }
-};
-window.ubSaveCombos = function ubSaveCombos(c){
-  try{
-    localStorage.setItem('ub_combos', JSON.stringify(c));
-  }catch(e){ console.error('ubSaveCombos localStorage error:',e); }
-  try{
-    if(typeof db!=='undefined' && db){
-      db.collection('config').doc('siteConfig').set({combos:c, combosUpdatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})
-        .catch(e=>console.warn('Combos Firebase sync failed:',e));
-    }
-  }catch(e){}
-};
-
-window.buildComboTab = function buildComboTab(){
-  const combos = window.ubGetCombos ? window.ubGetCombos() : [];
-  const cards = combos.map((c,i)=>'<div class="acard" style="margin-bottom:14px;">'
-    +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;">'
-    +'<div><div style="font-size:16px;font-weight:700;color:#E8B96A;margin-bottom:2px;">🎁 '+c.name+'</div>'
-    +'<div style="font-size:12px;color:rgba(253,246,236,.45);">'+c.desc+'</div></div>'
-    +'<div style="text-align:right;flex-shrink:0;">'
-    +'<div style="font-size:20px;font-weight:800;color:#4ADE80;font-family:Playfair Display,serif;">₹'+c.price+'</div>'
-    +(c.originalPrice?'<div style="font-size:12px;color:rgba(253,246,236,.35);text-decoration:line-through;">₹'+c.originalPrice+'</div>':'')
-    +'</div></div>'
-    +(c.items&&c.items.length?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">'+c.items.map(it=>'<span style="background:rgba(200,146,58,.12);color:#E8B96A;border:1px solid rgba(200,146,58,.2);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;">'+it+'</span>').join('')+'</div>':'')
-    +'<div style="display:flex;gap:8px;">'
-    +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(253,246,236,.6);cursor:pointer;"><input type="checkbox" '+(c.active?'checked':'')
-    +' onchange="window.ubToggleCombo('+i+',this.checked)" style="accent-color:#C8923A;"> Active</label>'
-    +'<button onclick="window.ubDeleteCombo('+i+')" style="margin-left:auto;background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🗑 Delete</button>'
-    +'</div></div>'
-  ).join('');
-
-  return '<div style="max-width:860px;">'
-    +'<h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">🎁 Combo Offers</h2>'
-    +'<p style="font-size:12px;color:rgba(253,246,236,.38);margin-bottom:20px;">Create bundle deals — customers see these in their cart</p>'
-    +'<div class="acard" style="margin-bottom:20px;">'
-    +'<h3 style="margin-bottom:14px;">➕ Create New Combo</h3>'
-    +'<div class="af-group"><label>Combo Name <span style="color:rgba(253,246,236,.4);font-size:10px;">e.g. Party Pack</span></label>'
-    +'<input class="af-inp" id="cmb_name" placeholder="e.g. Birthday Party Pack"></div>'
-    +'<div class="af-group"><label>Description</label>'
-    +'<input class="af-inp" id="cmb_desc" placeholder="e.g. 1 cake + 12 cupcakes + 6 puffs"></div>'
-    +'<div class="af-group"><label>Items Included <span style="color:rgba(253,246,236,.4);font-size:10px;">comma-separated</span></label>'
-    +'<input class="af-inp" id="cmb_items" placeholder="e.g. Vanilla Cake 1kg, Choco Cupcakes ×12, Egg Puffs ×6"></div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'
-    +'<div class="af-group"><label>Combo Price (₹)</label>'
-    +'<input class="af-inp" id="cmb_price" type="number" placeholder="999" min="0"></div>'
-    +'<div class="af-group"><label>Original Price (₹) <span style="color:rgba(253,246,236,.4);font-size:10px;">shows strikethrough</span></label>'
-    +'<input class="af-inp" id="cmb_orig" type="number" placeholder="1200" min="0"></div>'
-    +'</div>'
-    +'<button class="abtn" onclick="window.ubAddCombo ? window.ubAddCombo() : ubAddCombo()">✅ Save Combo</button>'
-    +'</div>'
-    +(combos.length?cards:'<div style="text-align:center;padding:40px;color:rgba(253,246,236,.25);">No combos yet — create one above!</div>')
-    +'</div>';
-}
-
-window.ubAddCombo = function ubAddCombo(){
-  try{
-    const nameEl=document.getElementById('cmb_name');
-    const descEl=document.getElementById('cmb_desc');
-    const itemsEl=document.getElementById('cmb_items');
-    const priceEl=document.getElementById('cmb_price');
-    const origEl=document.getElementById('cmb_orig');
-    if(!nameEl){showToast('Form not found — try again','err');return;}
-    const name=(nameEl.value||'').trim();
-    const desc=(descEl?descEl.value||'':'').trim();
-    const itemsRaw=(itemsEl?itemsEl.value||'':'').trim();
-    const price=parseFloat(priceEl?priceEl.value||'0':'0');
-    const orig=parseFloat(origEl?origEl.value||'0':'0');
-    if(!name){showToast('Enter combo name','err');return;}
-    if(!price||price<=0){showToast('Enter a valid combo price','err');return;}
-    const items=itemsRaw.split(',').map(s=>s.trim()).filter(Boolean);
-    const cx=window.ubGetCombos();
-    cx.push({name,desc,items,price,originalPrice:orig||null,active:true,id:'cmb_'+Date.now()});
-    window.ubSaveCombos(cx);
-    showToast('✅ Combo "'+name+'" saved!','ok');
-    renderAdminTab();
-  }catch(e){
-    console.error('ubAddCombo error:',e);
-    showToast('Error: '+e.message,'err');
-  }
-};
-window.ubToggleCombo = function ubToggleCombo(i,active){
-  try{
-    const cx=window.ubGetCombos();
-    if(!cx[i]){showToast('Combo not found','err');return;}
-    cx[i].active=active;
-    window.ubSaveCombos(cx);
-    showToast(active?'✅ Combo activated':'Combo deactivated','ok');
-  }catch(e){console.error('ubToggleCombo error:',e);}
-};
-window.ubDeleteCombo = function ubDeleteCombo(i){
-  try{
-    const cx=window.ubGetCombos();
-    if(!cx[i]){showToast('Combo not found','err');return;}
-    const n=cx[i].name;
-    cx.splice(i,1);
-    window.ubSaveCombos(cx);
-    showToast('🗑 "'+n+'" deleted','ok');
-    renderAdminTab();
-  }catch(e){console.error('ubDeleteCombo error:',e);}
-};
-
-// ══════════════════════════════════════════════════════════════
-//  🧾 PAYMENT RECONCILIATION
-// ══════════════════════════════════════════════════════════════
-window.buildReconciliationTab = function buildReconciliationTab(){
-  const today = new Date().toISOString().slice(0,10);
-  const thisMonth = today.slice(0,7);
-  const mOrders = ORDERS.filter(o=>{ const d=new Date(o.timestamp); return d.toISOString&&d.toISOString().slice(0,7)===thisMonth && o.status!=='cancelled'; });
-  const rzpOrders = mOrders.filter(o=>o.payMethod==='razorpay'||o.payMethod==='phonepe');
-  const codOrders = mOrders.filter(o=>o.payMethod==='cod'||!o.payMethod);
-  const rzpTotal = rzpOrders.reduce((s,o)=>s+o.total,0);
-  const codTotal = codOrders.reduce((s,o)=>s+o.total,0);
-  const totalRev = mOrders.reduce((s,o)=>s+o.total,0);
-  const exp = ubGetExpenses().filter(e=>e.date&&e.date.slice(0,7)===thisMonth).reduce((s,e)=>s+parseFloat(e.amount||0),0);
-  const profit = totalRev - exp;
-
-  const rzpRows = rzpOrders.slice(0,30).map(o=>{
-    const payId = o.advanceUtr || o.razorpayPaymentId || '—';
-    const verified = payId.startsWith('pay_');
-    return '<tr style="border-bottom:1px solid rgba(255,255,255,.04);">'
-      +'<td style="padding:7px 10px;font-size:12px;color:#E8B96A;font-family:Jost,sans-serif;">'+o.id+'</td>'
-      +'<td style="padding:7px 10px;font-size:12px;color:rgba(253,246,236,.7);">'+(o.name||'')+'</td>'
-      +'<td style="padding:7px 10px;font-size:12px;color:rgba(253,246,236,.5);">'+(o.timestamp||'')+'</td>'
-      +'<td style="padding:7px 10px;font-size:13px;font-weight:700;color:#4ADE80;">₹'+o.total+'</td>'
-      +'<td style="padding:7px 10px;font-size:11px;">'
-        +(payId==='—'
-          ? '<span style="color:rgba(253,246,236,.3);">—</span>'
-          : verified
-            ? '<span style="color:#4ADE80;font-weight:700;">✅ '+payId+'</span>'
-            : '<span style="color:#FCD34D;">⚠️ '+payId+'</span>')
-      +'</td>'
-      +'</tr>';
-  }).join('');
-
-  return '<div style="max-width:860px;">'
-    +'<h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">🧾 Payment Reconciliation</h2>'
-    +'<p style="font-size:12px;color:rgba(253,246,236,.38);margin-bottom:20px;">This month — '+thisMonth+'</p>'
-    +'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;">'
-    +'<div class="kcard"><div class="klbl">TOTAL REVENUE</div><div class="kval">₹'+totalRev.toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">'+mOrders.length+' orders</div></div>'
-    +'<div class="kcard"><div class="klbl">NET PROFIT</div><div class="kval" style="color:'+(profit>=0?'#4ADE80':'#F87171')+';">₹'+Math.abs(profit).toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">'+(profit>=0?'after expenses':'loss — check expenses')+'</div></div>'
-    +'<div class="kcard"><div class="klbl">RAZORPAY COLLECTED</div><div class="kval">₹'+rzpTotal.toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">'+rzpOrders.length+' online orders</div></div>'
-    +'<div class="kcard"><div class="klbl">CASH ON DELIVERY</div><div class="kval">₹'+codTotal.toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">'+codOrders.length+' COD orders</div></div>'
-    +'</div>'
-    +(rzpOrders.length?'<div class="acard"><h3 style="margin-bottom:14px;">💳 Razorpay Transactions This Month</h3>'
-    +'<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">'
-    +'<thead><tr style="background:rgba(99,102,241,.08);border-bottom:1px solid rgba(99,102,241,.2);">'
-    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:#A5B4FC;font-weight:700;text-transform:uppercase;">Order</th>'
-    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:#A5B4FC;font-weight:700;text-transform:uppercase;">Customer</th>'
-    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:#A5B4FC;font-weight:700;text-transform:uppercase;">Date</th>'
-    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:#A5B4FC;font-weight:700;text-transform:uppercase;">Amount</th>'
-    +'<th style="padding:8px 10px;text-align:left;font-size:11px;color:#A5B4FC;font-weight:700;text-transform:uppercase;">Razorpay ID</th>'
-    +'</tr></thead><tbody>'+rzpRows+'</tbody></table></div></div>':'')
-    +'</div>';
-}
-
-// ══════════════════════════════════════════════════════════════
-//  💳 RAZORPAY DASHBOARD LINK TAB
-// ══════════════════════════════════════════════════════════════
-window.buildRzpDashTab = function buildRzpDashTab(){
-  const rzpMode = localStorage.getItem('ub_rzp_mode')||'live';
-  const dashUrl = rzpMode==='live'
-    ? 'https://dashboard.razorpay.com/app/dashboard'
-    : 'https://dashboard.razorpay.com/app/dashboard';
-  const today = new Date().toISOString().slice(0,10);
-  const thisMonth = today.slice(0,7);
-  const rzpOrders = ORDERS.filter(o=>(o.payMethod==='razorpay'||o.payMethod==='phonepe')&&o.status!=='cancelled');
-  const todayRzp = rzpOrders.filter(o=>o.timestamp&&o.timestamp.includes(new Date().toLocaleDateString('en-IN')));
-  const monthRzp = rzpOrders.filter(o=>{ try{ return new Date(o.timestamp).toISOString().slice(0,7)===thisMonth; }catch(e){ return false; } });
-  const totalRzp = rzpOrders.reduce((s,o)=>s+o.total,0);
-  const verifiedRzp = rzpOrders.filter(o=>(o.advanceUtr||o.razorpayPaymentId||'').startsWith('pay_'));
-  const unverifiedRzp = rzpOrders.filter(o=>!(o.advanceUtr||o.razorpayPaymentId||'').startsWith('pay_'));
-
-  return '<div style="max-width:720px;">'
-    +'<h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">💳 Razorpay Dashboard</h2>'
-    +'<p style="font-size:12px;color:rgba(253,246,236,.38);margin-bottom:20px;">Online payment overview · Opens Razorpay in new tab</p>'
-    +'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;">'
-    +'<div class="kcard"><div class="klbl">TOTAL ONLINE COLLECTED</div><div class="kval">₹'+totalRzp.toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">'+rzpOrders.length+' transactions</div></div>'
-    +'<div class="kcard"><div class="klbl">THIS MONTH</div><div class="kval">₹'+monthRzp.reduce((s,o)=>s+o.total,0).toLocaleString('en-IN')+'</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">'+monthRzp.length+' orders</div></div>'
-    +'<div class="kcard"><div class="klbl">✅ VERIFIED PAYMENTS</div><div class="kval" style="color:#4ADE80;">'+verifiedRzp.length+'</div><div style="font-size:11px;color:rgba(74,222,128,.5);margin-top:4px;">Razorpay pay_ IDs confirmed</div></div>'
-    +(unverifiedRzp.length?'<div class="kcard"><div class="klbl">⚠️ UNVERIFIED</div><div class="kval" style="color:#FCD34D;">'+unverifiedRzp.length+'</div><div style="font-size:11px;color:rgba(252,211,77,.5);margin-top:4px;">Cross-check in Razorpay dashboard</div></div>':'')
-    +'</div>'
-    +'<div class="acard" style="text-align:center;padding:32px;">'
-    +'<div style="font-size:52px;margin-bottom:16px;">🏦</div>'
-    +'<div style="font-family:Playfair Display,serif;font-size:18px;color:#E8B96A;font-weight:700;margin-bottom:8px;">Open Razorpay Dashboard</div>'
-    +'<div style="font-size:13px;color:rgba(253,246,236,.4);margin-bottom:20px;">View settlements, disputes, transactions & analytics directly on Razorpay</div>'
-    +'<a href="'+dashUrl+'" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#312E81,#4338CA);color:#fff;text-decoration:none;padding:14px 28px;border-radius:14px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;box-shadow:0 4px 16px rgba(99,102,241,.3);">🏦 Open Razorpay Dashboard ↗</a>'
-    +'<div style="margin-top:12px;font-size:11px;color:rgba(253,246,236,.3);">Opens in new tab · Mode: '+(rzpMode==='live'?'🟢 Live':'🟡 Test')+'</div>'
-    +'</div>'
-    +'<div class="acard" style="margin-top:16px;">'
-    +'<h3 style="margin-bottom:12px;">⚡ Quick Links</h3>'
-    +'<div style="display:flex;flex-wrap:wrap;gap:10px;">'
-    +'<a href="https://dashboard.razorpay.com/app/payments" target="_blank" rel="noopener noreferrer" style="background:rgba(99,102,241,.1);color:#A5B4FC;border:1px solid rgba(99,102,241,.25);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">💰 Payments</a>'
-    +'<a href="https://dashboard.razorpay.com/app/settlements" target="_blank" rel="noopener noreferrer" style="background:rgba(74,222,128,.1);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">🏦 Settlements</a>'
-    +'<a href="https://dashboard.razorpay.com/app/refunds" target="_blank" rel="noopener noreferrer" style="background:rgba(251,191,36,.1);color:#FCD34D;border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">↩️ Refunds</a>'
-    +'<a href="https://dashboard.razorpay.com/app/analytics" target="_blank" rel="noopener noreferrer" style="background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.25);border-radius:10px;padding:10px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;text-decoration:none;">📊 Analytics</a>'
-    +'</div></div>'
-    +'</div>';
-}
-
-// ══════════════════════════════════════════════════════════════
-//  🔔 LOW STOCK BANNER in Dashboard (injected into buildDash)
-// ══════════════════════════════════════════════════════════════
-function ubLowStockBannerHtml(){
-  const stock = ubGetStock();
-  const lowItems = PRODS.filter(p=>{ const q=stock[p.id]; return q!=null && q<=(p.lowStockAlert||5); });
-  if(!lowItems.length) return '';
-  return '<div style="background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.3);border-radius:14px;padding:14px 16px;margin-bottom:20px;display:flex;gap:12px;align-items:flex-start;cursor:pointer;" onclick="switchTab(&quot;stock&quot;)">'
-    +'<span style="font-size:24px;flex-shrink:0;">⚠️</span>'
-    +'<div><div style="font-size:14px;font-weight:700;color:#F87171;margin-bottom:4px;">Low Stock Alert — '+lowItems.length+' item(s) need restocking</div>'
-    +'<div style="font-size:12px;color:rgba(253,246,236,.5);">'+lowItems.slice(0,4).map(p=>(p.emoji||'🎂')+' '+p.name+' ('+stock[p.id]+' left)').join(' · ')+(lowItems.length>4?' + '+(lowItems.length-4)+' more':'')+'</div>'
-    +'<div style="font-size:11px;color:#F87171;margin-top:6px;font-weight:700;">Tap to manage stock →</div></div></div>';
-}
-
-
 </script>
 
 <!-- ── CUSTOMER RULES & POLICY PANEL (hidden, opened from sidebar menu) ── -->
