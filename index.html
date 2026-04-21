@@ -10958,6 +10958,10 @@ function renderAdminTab(){
     });
     return;
   }
+  else if(adminTab==='reconciliation') el.innerHTML = buildReconciliationTab();
+  else if(adminTab==='stockcount') el.innerHTML = buildStockCountTab();
+  else if(adminTab==='razorpay') el.innerHTML = buildRazorpayTab();
+  else if(adminTab==='combooffer'){ el.innerHTML = buildComboOfferTab(); initComboOfferAdmin(); }
   else if(adminTab==='reports')   el.innerHTML = buildReportsTab();
   else if(adminTab==='customers') el.innerHTML = buildCustomersTab();
   else if(adminTab==='broadcast') el.innerHTML = buildBroadcastTab();
@@ -16387,6 +16391,10 @@ function _injectSidebar(){
     <div class="snl">OPERATIONS</div>
     <button class="sni" onclick="switchTab('orders')" id="ubsn-orders"><span class="ic">📋</span>Orders<span id="ubsn-obadge" class="snbadge" style="display:none;"></span></button>
     <button class="sni" onclick="switchTab('payments')" id="ubsn-payments"><span class="ic">💳</span>Payments</button>
+    <button class="sni" onclick="switchTab('reconciliation')" id="ubsn-reconciliation"><span class="ic">🧾</span>Reconciliation</button>
+    <button class="sni" onclick="switchTab('stockcount')" id="ubsn-stockcount"><span class="ic">📦</span>Stock Count</button>
+    <button class="sni" onclick="switchTab('razorpay')" id="ubsn-razorpay"><span class="ic">💰</span>Razorpay</button>
+    <button class="sni" onclick="switchTab('combooffer')" id="ubsn-combooffer"><span class="ic">🎁</span>Combo Offers</button>
     <button class="sni" onclick="switchTab('broadcast')" id="ubsn-broadcast"><span class="ic">📢</span>Broadcast</button>
     <div class="snsp"></div>
     <div class="snl">INSIGHTS</div>
@@ -17837,3 +17845,223 @@ function ubRenderPolicyPanel(){
 
 </body>
 </html>
+<script>
+/* ══════════════════════════════════════════════════════════
+   🧾  PAYMENT RECONCILIATION TAB
+   ══════════════════════════════════════════════════════════ */
+function buildReconciliationTab(){
+  var orders = (typeof ORDERS !== 'undefined') ? ORDERS : [];
+  var paidOrders = orders.filter(function(o){ return o.status !== 'cancelled'; });
+  var totalRevenue = paidOrders.reduce(function(s,o){ return s + (o.total||0); }, 0);
+  var onlineOrders = paidOrders.filter(function(o){ return o.payMode === 'online' || o.payMode === 'razorpay'; });
+  var codOrders = paidOrders.filter(function(o){ return o.payMode !== 'online' && o.payMode !== 'razorpay'; });
+  var onlineRev = onlineOrders.reduce(function(s,o){ return s + (o.total||0); }, 0);
+  var codRev = codOrders.reduce(function(s,o){ return s + (o.total||0); }, 0);
+  var now = Date.now();
+  var recent = paidOrders.filter(function(o){ return (now - new Date(o.timestamp).getTime()) < 30*24*60*60*1000; });
+  var recentRev = recent.reduce(function(s,o){ return s + (o.total||0); }, 0);
+
+  var daily = [];
+  for(var i=6; i>=0; i--){
+    var d = new Date(); d.setDate(d.getDate()-i);
+    var ds = d.toDateString();
+    var dayOrds = paidOrders.filter(function(o){ return new Date(o.timestamp).toDateString()===ds; });
+    daily.push({ label: d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric'}), rev: dayOrds.reduce(function(s,o){return s+(o.total||0);},0), count: dayOrds.length });
+  }
+  var maxD = Math.max.apply(null, daily.map(function(d){return d.rev;}))||1;
+
+  var rowsHtml = paidOrders.slice().reverse().slice(0,50).map(function(o){
+    var ts = o.timestamp ? new Date(o.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+    var pm = (o.payMode==='online'||o.payMode==='razorpay') ? '<span style="background:rgba(74,222,128,.15);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">Online</span>' : '<span style="background:rgba(251,191,36,.12);color:#FCD34D;border:1px solid rgba(251,191,36,.25);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">COD</span>';
+    var st = o.status==='delivered'?'<span style="color:#4ADE80;">✓ Delivered</span>':o.status==='confirmed'?'<span style="color:#60A5FA;">✓ Confirmed</span>':'<span style="color:#FCD34D;">Pending</span>';
+    return '<tr style="border-bottom:1px solid rgba(200,146,58,.08);"><td style="padding:9px 8px;font-size:11px;color:rgba(253,246,236,.5);">'+ts+'</td><td style="padding:9px 8px;font-size:12px;color:#F0DEC8;">'+(o.customer||o.name||'Guest')+'</td><td style="padding:9px 8px;">'+pm+'</td><td style="padding:9px 8px;font-size:11px;">'+st+'</td><td style="padding:9px 8px;font-size:13px;font-weight:700;color:#E8B96A;text-align:right;">₹'+(o.total||0).toLocaleString('en-IN')+'</td></tr>';
+  }).join('');
+
+  return '<div style="max-width:900px;"><h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">🧾 Payment Reconciliation</h2><p style="font-size:12px;color:rgba(253,246,236,.38);margin-bottom:20px;">All-time revenue breakdown, payment modes, and daily trends</p>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;">'
+      +'<div style="background:linear-gradient(135deg,rgba(200,146,58,.14),rgba(200,146,58,.07));border:1px solid rgba(200,146,58,.22);border-radius:16px;padding:18px;text-align:center;"><div style="font-size:11px;color:rgba(253,246,236,.45);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;">Total Revenue</div><div style="font-size:26px;font-weight:800;color:#E8B96A;">₹'+totalRevenue.toLocaleString('en-IN')+'</div><div style="font-size:10px;color:rgba(253,246,236,.3);margin-top:4px;">'+paidOrders.length+' orders</div></div>'
+      +'<div style="background:linear-gradient(135deg,rgba(74,222,128,.12),rgba(74,222,128,.06));border:1px solid rgba(74,222,128,.2);border-radius:16px;padding:18px;text-align:center;"><div style="font-size:11px;color:rgba(253,246,236,.45);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;">Online Payments</div><div style="font-size:26px;font-weight:800;color:#4ADE80;">₹'+onlineRev.toLocaleString('en-IN')+'</div><div style="font-size:10px;color:rgba(253,246,236,.3);margin-top:4px;">'+onlineOrders.length+' orders</div></div>'
+      +'<div style="background:linear-gradient(135deg,rgba(252,211,77,.12),rgba(252,211,77,.06));border:1px solid rgba(252,211,77,.2);border-radius:16px;padding:18px;text-align:center;"><div style="font-size:11px;color:rgba(253,246,236,.45);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;">Cash on Delivery</div><div style="font-size:26px;font-weight:800;color:#FCD34D;">₹'+codRev.toLocaleString('en-IN')+'</div><div style="font-size:10px;color:rgba(253,246,236,.3);margin-top:4px;">'+codOrders.length+' orders</div></div>'
+      +'<div style="background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(167,139,250,.06));border:1px solid rgba(167,139,250,.2);border-radius:16px;padding:18px;text-align:center;"><div style="font-size:11px;color:rgba(253,246,236,.45);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;">Last 30 Days</div><div style="font-size:26px;font-weight:800;color:#A78BFA;">₹'+recentRev.toLocaleString('en-IN')+'</div><div style="font-size:10px;color:rgba(253,246,236,.3);margin-top:4px;">'+recent.length+' orders</div></div>'
+    +'</div>'
+    +'<div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,146,58,.12);border-radius:16px;padding:20px;margin-bottom:20px;">'
+      +'<div style="font-size:13px;font-weight:700;color:#E8B96A;margin-bottom:16px;">📊 Last 7 Days Revenue</div>'
+      +'<div style="display:flex;align-items:flex-end;gap:8px;height:80px;">'
+      +daily.map(function(d){ var pct=Math.round((d.rev/maxD)*100); return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="font-size:9px;color:rgba(253,246,236,.45);">₹'+Math.round(d.rev/1000*10)/10+'k</div><div style="width:100%;background:linear-gradient(180deg,#E8B96A,#C8923A);border-radius:4px 4px 0 0;height:'+pct+'%;min-height:3px;"></div><div style="font-size:9px;color:rgba(253,246,236,.4);text-align:center;">'+d.label+'</div></div>'; }).join('')
+      +'</div></div>'
+    +'<div style="background:rgba(255,255,255,.02);border:1px solid rgba(200,146,58,.12);border-radius:16px;overflow:hidden;">'
+      +'<div style="padding:14px 18px;border-bottom:1px solid rgba(200,146,58,.12);display:flex;justify-content:space-between;align-items:center;"><div style="font-size:13px;font-weight:700;color:#E8B96A;">Recent Transactions (Last 50)</div><div style="font-size:11px;color:rgba(253,246,236,.3);">Most recent first</div></div>'
+      +'<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-family:Jost,sans-serif;"><thead><tr style="background:rgba(200,146,58,.08);"><th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.6px;color:rgba(253,246,236,.45);text-transform:uppercase;">Date</th><th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.6px;color:rgba(253,246,236,.45);text-transform:uppercase;">Customer</th><th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.6px;color:rgba(253,246,236,.45);text-transform:uppercase;">Mode</th><th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.6px;color:rgba(253,246,236,.45);text-transform:uppercase;">Status</th><th style="padding:10px 8px;text-align:right;font-size:10px;font-weight:700;letter-spacing:.6px;color:rgba(253,246,236,.45);text-transform:uppercase;">Amount</th></tr></thead><tbody>'+rowsHtml+'</tbody></table></div>'
+    +'</div></div>';
+}
+
+/* ══════════════════════════════════════════════════════════
+   📦  STOCK COUNT TAB
+   ══════════════════════════════════════════════════════════ */
+function buildStockCountTab(){
+  var prods = (typeof PRODS !== 'undefined') ? PRODS : [];
+  var cats = (typeof CATS !== 'undefined') ? CATS : [];
+  var rows = prods.map(function(p){
+    var stock = parseInt(p.stock)||0; var isLow=stock>0&&stock<=10; var isOut=p.soldOut||stock===0;
+    var badge = isOut ? '<span style="background:rgba(239,68,68,.18);color:#F87171;border:1px solid rgba(239,68,68,.3);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">Out of Stock</span>' : isLow ? '<span style="background:rgba(251,191,36,.14);color:#FCD34D;border:1px solid rgba(251,191,36,.28);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">⚠️ Low</span>' : '<span style="background:rgba(74,222,128,.12);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">✓ OK</span>';
+    var catName = (cats.find(function(c){return c.id===p.cat;})||{name:'—'}).name;
+    return '<tr style="border-bottom:1px solid rgba(200,146,58,.08);'+(isOut?'background:rgba(239,68,68,.04);':'')+'"><td style="padding:10px;"><span style="font-size:22px;">'+(p.emoji||'🧁')+'</span></td><td style="padding:10px 8px;font-size:13px;color:#F0DEC8;font-weight:600;">'+p.name+'</td><td style="padding:10px 8px;font-size:11px;color:rgba(253,246,236,.4);">'+catName+'</td><td style="padding:10px 8px;"><input type="number" min="0" value="'+stock+'" id="stk-'+p.id+'" style="width:70px;background:rgba(255,255,255,.05);border:1px solid rgba(200,146,58,.25);border-radius:8px;color:#F0DEC8;padding:5px 8px;font-family:Jost,sans-serif;font-size:13px;text-align:center;"></td><td style="padding:10px 8px;">'+badge+'</td><td style="padding:10px 8px;"><button onclick="ubSaveStock(\''+p.id+'\')" style="background:rgba(200,146,58,.12);color:#E8B96A;border:1px solid rgba(200,146,58,.25);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">Save</button></td></tr>';
+  }).join('');
+  var outCount = prods.filter(function(p){return p.soldOut||(parseInt(p.stock)||0)===0;}).length;
+  var lowCount = prods.filter(function(p){var s=parseInt(p.stock)||0;return !p.soldOut&&s>0&&s<=10;}).length;
+  return '<div style="max-width:860px;"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:10px;"><div><h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">📦 Stock Count</h2><p style="font-size:12px;color:rgba(253,246,236,.38);">Update stock levels — low/out-of-stock reflected live to customers</p></div><button onclick="ubSaveAllStock()" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:10px;padding:9px 22px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(200,146,58,.3);">💾 Save All</button></div>'
+    +'<div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">'
+      +'<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:10px 18px;display:flex;gap:10px;align-items:center;"><span style="font-size:22px;">🔴</span><div><div style="font-size:20px;font-weight:800;color:#F87171;">'+outCount+'</div><div style="font-size:10px;color:rgba(253,246,236,.4);">Out of Stock</div></div></div>'
+      +'<div style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:10px 18px;display:flex;gap:10px;align-items:center;"><span style="font-size:22px;">🟡</span><div><div style="font-size:20px;font-weight:800;color:#FCD34D;">'+lowCount+'</div><div style="font-size:10px;color:rgba(253,246,236,.4);">Low Stock (&le;10)</div></div></div>'
+      +'<div style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:12px;padding:10px 18px;display:flex;gap:10px;align-items:center;"><span style="font-size:22px;">🟢</span><div><div style="font-size:20px;font-weight:800;color:#4ADE80;">'+(prods.length-outCount-lowCount)+'</div><div style="font-size:10px;color:rgba(253,246,236,.4);">In Stock</div></div></div>'
+    +'</div>'
+    +'<div style="background:rgba(255,255,255,.02);border:1px solid rgba(200,146,58,.12);border-radius:16px;overflow:hidden;"><div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-family:Jost,sans-serif;"><thead><tr style="background:rgba(200,146,58,.08);"><th style="padding:10px;text-align:left;font-size:10px;font-weight:700;color:rgba(253,246,236,.45);text-transform:uppercase;letter-spacing:.5px;width:44px;"></th><th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:700;color:rgba(253,246,236,.45);text-transform:uppercase;letter-spacing:.5px;">Product</th><th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:700;color:rgba(253,246,236,.45);text-transform:uppercase;letter-spacing:.5px;">Category</th><th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:700;color:rgba(253,246,236,.45);text-transform:uppercase;letter-spacing:.5px;">Stock Qty</th><th style="padding:10px 8px;text-align:left;font-size:10px;font-weight:700;color:rgba(253,246,236,.45);text-transform:uppercase;letter-spacing:.5px;">Status</th><th style="padding:10px 8px;"></th></tr></thead><tbody>'+rows+'</tbody></table></div></div></div>';
+}
+
+function ubSaveStock(pid){
+  var inp=document.getElementById('stk-'+pid); if(!inp) return;
+  var qty=parseInt(inp.value)||0;
+  var prods=(typeof PRODS!=='undefined')?PRODS:[];
+  var p=prods.find(function(x){return x.id===pid;}); if(!p) return;
+  p.stock=qty; p.soldOut=qty===0;
+  if(typeof save==='function') save();
+  if(typeof renderProds==='function') renderProds();
+  if(typeof showToast==='function') showToast('📦 Stock updated: '+p.name+' → '+qty,'ok');
+}
+
+function ubSaveAllStock(){
+  var prods=(typeof PRODS!=='undefined')?PRODS:[];
+  prods.forEach(function(p){ var inp=document.getElementById('stk-'+p.id); if(inp){p.stock=parseInt(inp.value)||0;p.soldOut=p.stock===0;} });
+  if(typeof save==='function') save();
+  if(typeof renderProds==='function') renderProds();
+  if(typeof showToast==='function') showToast('📦 All stock levels saved!','ok');
+  if(typeof renderAdminTab==='function') renderAdminTab();
+}
+
+/* ══════════════════════════════════════════════════════════
+   💰  RAZORPAY DASHBOARD TAB
+   ══════════════════════════════════════════════════════════ */
+function buildRazorpayTab(){
+  var orders=(typeof ORDERS!=='undefined')?ORDERS:[];
+  var rzOrders=orders.filter(function(o){return o.payMode==='online'||o.payMode==='razorpay';});
+  var rzRevenue=rzOrders.filter(function(o){return o.status!=='cancelled';}).reduce(function(s,o){return s+(o.total||0);},0);
+  var rzPending=rzOrders.filter(function(o){return o.status==='pending';}).length;
+  var rzSettled=rzOrders.filter(function(o){return o.status==='delivered';}).length;
+  var rzRows=rzOrders.slice().reverse().slice(0,40).map(function(o){
+    var ts=o.timestamp?new Date(o.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+    var rzId=o.razorpayId||o.paymentId||'—';
+    var stColor=o.status==='delivered'?'#4ADE80':o.status==='cancelled'?'#F87171':'#FCD34D';
+    return '<tr style="border-bottom:1px solid rgba(200,146,58,.07);"><td style="padding:9px 10px;font-size:11px;color:rgba(253,246,236,.4);">'+ts+'</td><td style="padding:9px 8px;font-size:11px;color:#60A5FA;font-family:monospace;">'+rzId+'</td><td style="padding:9px 8px;font-size:12px;color:#F0DEC8;">'+(o.customer||o.name||'Guest')+'</td><td style="padding:9px 8px;font-size:11px;color:'+stColor+';font-weight:700;text-transform:capitalize;">'+o.status+'</td><td style="padding:9px 8px;font-size:13px;font-weight:800;color:#4ADE80;text-align:right;">₹'+(o.total||0).toLocaleString('en-IN')+'</td></tr>';
+  }).join('');
+  return '<div style="max-width:900px;"><h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">💰 Razorpay Dashboard</h2><p style="font-size:12px;color:rgba(253,246,236,.38);margin-bottom:20px;">Overview of all Razorpay online payments from your store</p>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;">'
+      +'<div style="background:linear-gradient(135deg,rgba(74,222,128,.14),rgba(74,222,128,.07));border:1px solid rgba(74,222,128,.22);border-radius:16px;padding:18px;text-align:center;"><div style="font-size:11px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Online Revenue</div><div style="font-size:26px;font-weight:800;color:#4ADE80;">₹'+rzRevenue.toLocaleString('en-IN')+'</div></div>'
+      +'<div style="background:linear-gradient(135deg,rgba(96,165,250,.12),rgba(96,165,250,.06));border:1px solid rgba(96,165,250,.2);border-radius:16px;padding:18px;text-align:center;"><div style="font-size:11px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Total Transactions</div><div style="font-size:26px;font-weight:800;color:#60A5FA;">'+rzOrders.length+'</div></div>'
+      +'<div style="background:linear-gradient(135deg,rgba(252,211,77,.12),rgba(252,211,77,.06));border:1px solid rgba(252,211,77,.2);border-radius:16px;padding:18px;text-align:center;"><div style="font-size:11px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Pending</div><div style="font-size:26px;font-weight:800;color:#FCD34D;">'+rzPending+'</div></div>'
+      +'<div style="background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(167,139,250,.06));border:1px solid rgba(167,139,250,.2);border-radius:16px;padding:18px;text-align:center;"><div style="font-size:11px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Settled</div><div style="font-size:26px;font-weight:800;color:#A78BFA;">'+rzSettled+'</div></div>'
+    +'</div>'
+    +'<div style="background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);border-radius:14px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px;">'
+      +'<span style="font-size:22px;">🔗</span><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#60A5FA;margin-bottom:3px;">Open Full Razorpay Dashboard</div><div style="font-size:11px;color:rgba(253,246,236,.4);">View settlements, refunds, disputes and detailed analytics on Razorpay portal</div></div>'
+      +'<a href="https://dashboard.razorpay.com" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;border:none;border-radius:10px;padding:9px 18px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;flex-shrink:0;">Open Razorpay →</a>'
+    +'</div>'
+    +'<div style="background:rgba(255,255,255,.02);border:1px solid rgba(200,146,58,.12);border-radius:16px;overflow:hidden;">'
+      +'<div style="padding:14px 18px;border-bottom:1px solid rgba(200,146,58,.12);"><span style="font-size:13px;font-weight:700;color:#E8B96A;">Recent Razorpay Transactions</span></div>'
+      +(rzRows?'<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-family:Jost,sans-serif;"><thead><tr style="background:rgba(200,146,58,.08);"><th style="padding:10px;text-align:left;font-size:10px;color:rgba(253,246,236,.45);text-transform:uppercase;letter-spacing:.5px;">Date</th><th style="padding:10px 8px;text-align:left;font-size:10px;color:rgba(253,246,236,.45);text-transform:uppercase;letter-spacing:.5px;">Payment ID</th><th style="padding:10px 8px;text-align:left;font-size:10px;color:rgba(253,246,236,.45);text-transform:uppercase;letter-spacing:.5px;">Customer</th><th style="padding:10px 8px;text-align:left;font-size:10px;color:rgba(253,246,236,.45);text-transform:uppercase;letter-spacing:.5px;">Status</th><th style="padding:10px 8px;text-align:right;font-size:10px;color:rgba(253,246,236,.45);text-transform:uppercase;letter-spacing:.5px;">Amount</th></tr></thead><tbody>'+rzRows+'</tbody></table></div>':'<div style="padding:48px;text-align:center;color:rgba(253,246,236,.25);"><div style="font-size:40px;margin-bottom:10px;">💳</div><div style="font-size:14px;">No online payments yet</div><p style="font-size:12px;margin-top:6px;opacity:.6;">Razorpay transactions appear here once customers pay online</p></div>')
+    +'</div></div>';
+}
+
+/* ══════════════════════════════════════════════════════════
+   🎁  COMBO OFFER MANAGER TAB
+   ══════════════════════════════════════════════════════════ */
+function _getComboOffers(){try{return JSON.parse(localStorage.getItem('ub_combo_offers')||'[]');}catch(e){return[];}}
+function _saveComboOffers(arr){
+  localStorage.setItem('ub_combo_offers',JSON.stringify(arr));
+  if(typeof db!=='undefined'&&db){try{db.collection('config').doc('combo_offers').set({offers:arr,updatedAt:Date.now()});}catch(e){}}
+}
+
+function buildComboOfferTab(){
+  var combos=_getComboOffers();
+  var prods=(typeof PRODS!=='undefined')?PRODS:[];
+  var prodOptions=prods.map(function(p){return '<option value="'+p.id+'">'+p.name+(p.variants&&p.variants[0]?' (₹'+p.variants[0].price+')':'')+'</option>';}).join('');
+  var cards=combos.map(function(c,i){
+    var itemsHtml=(c.items||[]).map(function(item){var p=prods.find(function(x){return x.id===item.pid;});return '<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(200,146,58,.12);border:1px solid rgba(200,146,58,.22);border-radius:20px;padding:3px 10px;font-size:11px;color:#E8B96A;margin:2px;">'+(p?'<span>'+p.emoji+'</span>':'')+'<span>'+((p?p.name:item.pid))+'</span><span style="color:rgba(253,246,236,.4);">x'+item.qty+'</span></span>';}).join('');
+    var isActive=c.active!==false;
+    var savings=c.originalPrice>c.offerPrice?Math.round(((c.originalPrice-c.offerPrice)/c.originalPrice)*100):0;
+    return '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,146,58,'+(isActive?'.22':'.1')+');border-radius:16px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden;">'
+      +'<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(200,146,58,'+(isActive?'.5':'.15')+'),transparent);"></div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">'
+        +'<div style="flex:1;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:26px;">'+(c.emoji||'🎁')+'</span><div><div style="font-family:Playfair Display,serif;font-size:16px;font-weight:700;color:#E8B96A;">'+c.name+'</div><div style="font-size:11px;color:rgba(253,246,236,.4);">'+(c.desc||'')+'</div></div></div>'
+        +'<div style="margin:8px 0;display:flex;flex-wrap:wrap;gap:4px;">'+itemsHtml+'</div>'
+        +'<div style="display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;"><div style="font-size:20px;font-weight:800;color:#4ADE80;">₹'+c.offerPrice+'</div><div style="font-size:13px;color:rgba(253,246,236,.35);text-decoration:line-through;">₹'+c.originalPrice+'</div>'+(savings?'<div style="background:rgba(74,222,128,.15);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;">'+savings+'% OFF</div>':'')+'</div>'
+        +'</div>'
+        +'<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">'
+          +'<button onclick="ubToggleCombo('+i+')" style="background:rgba('+(isActive?'239,68,68':'74,222,128')+',.1);color:'+(isActive?'#F87171':'#4ADE80')+';border:1px solid rgba('+(isActive?'239,68,68':'74,222,128')+',.25);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">'+(isActive?'⏸ Pause':'▶ Activate')+'</button>'
+          +'<button onclick="ubEditCombo('+i+')" style="background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.25);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">✏️ Edit</button>'
+          +'<button onclick="ubDeleteCombo('+i+')" style="background:rgba(239,68,68,.08);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🗑 Delete</button>'
+        +'</div>'
+      +'</div>'
+      +'<div style="margin-top:8px;display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:50%;background:'+(isActive?'#4ADE80':'rgba(253,246,236,.2)')+';'+(isActive?'box-shadow:0 0 6px #4ADE80;':'')+'"></div><span style="font-size:11px;color:rgba(253,246,236,.4);">'+(isActive?'Active — visible to customers':'Paused — hidden from customers')+'</span></div>'
+    +'</div>';
+  }).join('');
+
+  return '<div style="max-width:860px;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:10px;">'
+      +'<div><h2 style="font-family:Playfair Display,serif;font-size:22px;color:#E8B96A;margin-bottom:4px;">🎁 Combo Offer Manager</h2><p style="font-size:12px;color:rgba(253,246,236,.38);">Create bundle deals — customers see them highlighted in the store immediately</p></div>'
+      +'<button onclick="ubOpenComboModal()" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:10px;padding:9px 22px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(200,146,58,.3);">➕ New Combo</button>'
+    +'</div>'
+    +(combos.length===0?'<div style="background:rgba(255,255,255,.02);border:1px dashed rgba(200,146,58,.2);border-radius:18px;padding:48px;text-align:center;"><div style="font-size:48px;margin-bottom:12px;">🎁</div><div style="font-family:Playfair Display,serif;font-size:18px;color:rgba(253,246,236,.4);margin-bottom:8px;">No Combo Offers Yet</div><p style="font-size:13px;color:rgba(253,246,236,.3);margin-bottom:20px;">Create your first bundle deal</p><button onclick="ubOpenComboModal()" style="background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:10px;padding:9px 22px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">➕ Create First Combo</button></div>':'<div>'+cards+'</div>')
+    +'<div id="ub-combo-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px;" onclick="if(event.target===this)ubCloseComboModal()">'
+      +'<div style="background:#1A0C04;border:1px solid rgba(200,146,58,.3);border-radius:24px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.7);">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;"><h3 id="ub-combo-modal-title" style="font-family:Playfair Display,serif;font-size:20px;color:#E8B96A;">New Combo Offer</h3><button onclick="ubCloseComboModal()" style="background:rgba(255,255,255,.07);border:none;color:rgba(253,246,236,.5);width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;">✕</button></div>'
+        +'<div style="display:grid;grid-template-columns:60px 1fr;gap:10px;margin-bottom:14px;"><div><label style="display:block;font-size:10px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Icon</label><input id="cm-emoji" value="🎁" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(200,146,58,.25);border-radius:10px;color:#F0DEC8;padding:8px;font-size:22px;text-align:center;"></div><div><label style="display:block;font-size:10px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Combo Name *</label><input id="cm-name" placeholder="e.g. Birthday Bundle" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(200,146,58,.25);border-radius:10px;color:#F0DEC8;padding:9px 12px;font-family:Jost,sans-serif;font-size:14px;"></div></div>'
+        +'<div style="margin-bottom:14px;"><label style="display:block;font-size:10px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Description</label><input id="cm-desc" placeholder="e.g. 1 Cake + 6 Cupcakes + 1 Brownie Box" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(200,146,58,.25);border-radius:10px;color:#F0DEC8;padding:9px 12px;font-family:Jost,sans-serif;font-size:13px;"></div>'
+        +'<div style="margin-bottom:14px;"><label style="display:block;font-size:10px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Products in Bundle</label><div id="cm-items-list" style="margin-bottom:8px;display:flex;flex-direction:column;gap:6px;"></div><div style="display:flex;gap:8px;"><select id="cm-prod-sel" style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(200,146,58,.22);border-radius:10px;color:#F0DEC8;padding:8px 10px;font-family:Jost,sans-serif;font-size:13px;"><option value="">Select product…</option>'+prodOptions+'</select><input id="cm-prod-qty" type="number" min="1" value="1" style="width:60px;background:rgba(255,255,255,.05);border:1px solid rgba(200,146,58,.22);border-radius:10px;color:#F0DEC8;padding:8px;text-align:center;font-family:Jost,sans-serif;"><button onclick="ubAddComboItem()" style="background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.28);border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;font-size:13px;">Add</button></div></div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;"><div><label style="display:block;font-size:10px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Original Price (₹)</label><input id="cm-orig" type="number" min="0" placeholder="e.g. 800" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(200,146,58,.25);border-radius:10px;color:#F0DEC8;padding:9px 12px;font-family:Jost,sans-serif;font-size:14px;"></div><div><label style="display:block;font-size:10px;color:rgba(74,222,128,.6);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Offer Price (₹) *</label><input id="cm-offer" type="number" min="0" placeholder="e.g. 599" style="width:100%;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.3);border-radius:10px;color:#4ADE80;padding:9px 12px;font-family:Jost,sans-serif;font-size:16px;font-weight:800;"></div></div>'
+        +'<div id="cm-saving-indicator" style="display:none;text-align:center;padding:8px;color:#4ADE80;font-size:12px;">✅ Saved and pushed live to customers!</div>'
+        +'<div style="display:flex;gap:10px;"><button onclick="ubCloseComboModal()" style="flex:1;background:rgba(255,255,255,.05);color:rgba(253,246,236,.5);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:11px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button><button onclick="ubSaveCombo()" style="flex:2;background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:12px;padding:11px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(200,146,58,.3);">🎁 Save &amp; Go Live</button></div>'
+      +'</div></div>'
+  +'</div>';
+}
+
+var _cmItems=[];var _cmEditIdx=-1;
+function initComboOfferAdmin(){}
+
+function ubOpenComboModal(editIdx){
+  var modal=document.getElementById('ub-combo-modal'); if(!modal) return;
+  _cmEditIdx=(editIdx!==undefined)?editIdx:-1; _cmItems=[];
+  var title=document.getElementById('ub-combo-modal-title');
+  if(title) title.textContent=_cmEditIdx>=0?'Edit Combo Offer':'New Combo Offer';
+  if(_cmEditIdx>=0){var c=_getComboOffers()[_cmEditIdx];if(c){document.getElementById('cm-emoji').value=c.emoji||'🎁';document.getElementById('cm-name').value=c.name||'';document.getElementById('cm-desc').value=c.desc||'';document.getElementById('cm-orig').value=c.originalPrice||'';document.getElementById('cm-offer').value=c.offerPrice||'';_cmItems=(c.items||[]).map(function(x){return{pid:x.pid,qty:x.qty};});}}
+  else{document.getElementById('cm-emoji').value='🎁';document.getElementById('cm-name').value='';document.getElementById('cm-desc').value='';document.getElementById('cm-orig').value='';document.getElementById('cm-offer').value='';_cmItems=[];}
+  _ubRenderCmItems(); modal.style.display='flex'; document.body.style.overflow='hidden';
+}
+function ubCloseComboModal(){var m=document.getElementById('ub-combo-modal');if(m)m.style.display='none';document.body.style.overflow='';}
+function _ubRenderCmItems(){
+  var list=document.getElementById('cm-items-list');if(!list)return;
+  var prods=(typeof PRODS!=='undefined')?PRODS:[];
+  list.innerHTML=_cmItems.map(function(item,i){var p=prods.find(function(x){return x.id===item.pid;});return '<div style="display:flex;align-items:center;gap:8px;background:rgba(200,146,58,.08);border:1px solid rgba(200,146,58,.18);border-radius:10px;padding:7px 10px;"><span style="font-size:18px;">'+(p?p.emoji:'📦')+'</span><span style="flex:1;font-size:12px;color:#F0DEC8;">'+(p?p.name:item.pid)+'</span><span style="font-size:12px;color:rgba(253,246,236,.45);">x'+item.qty+'</span><button onclick="_cmItems.splice('+i+',1);_ubRenderCmItems();" style="background:rgba(239,68,68,.1);color:#F87171;border:none;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;">✕</button></div>';}).join('');
+}
+function ubAddComboItem(){
+  var sel=document.getElementById('cm-prod-sel');var qty=parseInt((document.getElementById('cm-prod-qty')||{}).value)||1;
+  if(!sel||!sel.value)return;
+  var existing=_cmItems.findIndex(function(x){return x.pid===sel.value;});
+  if(existing>=0){_cmItems[existing].qty+=qty;}else{_cmItems.push({pid:sel.value,qty:qty});}
+  sel.value='';_ubRenderCmItems();
+}
+function ubSaveCombo(){
+  var name=(document.getElementById('cm-name')||{}).value||'';
+  var offerPrice=parseFloat((document.getElementById('cm-offer')||{}).value)||0;
+  if(!name||!offerPrice||_cmItems.length===0){if(typeof showToast==='function')showToast('Fill Combo Name, at least 1 product, and Offer Price','err');return;}
+  var combos=_getComboOffers();
+  var entry={id:'combo_'+Date.now(),emoji:(document.getElementById('cm-emoji')||{}).value||'🎁',name:name,desc:(document.getElementById('cm-desc')||{}).value||'',items:_cmItems.slice(),originalPrice:parseFloat((document.getElementById('cm-orig')||{}).value)||offerPrice,offerPrice:offerPrice,active:true,createdAt:Date.now()};
+  if(_cmEditIdx>=0){entry.id=combos[_cmEditIdx].id||entry.id;combos[_cmEditIdx]=entry;}else{combos.push(entry);}
+  _saveComboOffers(combos);
+  var ind=document.getElementById('cm-saving-indicator');
+  if(ind){ind.style.display='block';setTimeout(function(){ubCloseComboModal();if(typeof renderAdminTab==='function')renderAdminTab();},900);}
+  else{ubCloseComboModal();if(typeof renderAdminTab==='function')renderAdminTab();}
+  if(typeof showToast==='function')showToast('🎁 Combo offer saved and live for customers!','ok');
+}
+function ubToggleCombo(i){var combos=_getComboOffers();if(!combos[i])return;combos[i].active=!combos[i].active;_saveComboOffers(combos);if(typeof renderAdminTab==='function')renderAdminTab();if(typeof showToast==='function')showToast(combos[i].active?'✅ Combo activated for customers':'⏸ Combo paused','ok');}
+function ubEditCombo(i){ubOpenComboModal(i);}
+function ubDeleteCombo(i){if(!confirm('Delete this combo offer?'))return;var combos=_getComboOffers();combos.splice(i,1);_saveComboOffers(combos);if(typeof renderAdminTab==='function')renderAdminTab();if(typeof showToast==='function')showToast('🗑 Combo deleted','ok');}
+</script>
