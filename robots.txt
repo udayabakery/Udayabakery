@@ -1,0 +1,12 @@
+# Udaya Bakery — robots.txt
+# https://udayabakery.github.io/Udayabakery/
+
+User-agent: *
+Allow: /
+
+# NOTE: Admin panel uses JavaScript modals (not URL paths), so Disallow rules
+# have no effect on it. Access is controlled by Google Sign-In auth instead.
+# Admin links in the HTML use rel="nofollow" to prevent Google from following them.
+
+# Sitemap
+Sitemap: https://udayabakery.github.io/Udayabakery/sitemap.xml
