@@ -9640,7 +9640,7 @@ function submitOrder(){
     return;
   }
 
-  if(order.payMethod === 'phonepe'){
+  if(order.payMethod === 'phonepe' || order.payMethod === 'razorpay'){
     pendingOrder = order;
     closeOrderModal();
     if(maxAdvance > 0){
