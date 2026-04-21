@@ -7085,8 +7085,9 @@ function reOrder(orderId){
   if(skipped > 0) showToast(skipped+' out-of-stock item(s) skipped','err');
   updateBadge();
   renderCartItems();
-  closeTrackModal();
-  ubCloseProfilePage();
+  // Safely close whichever modal is open
+  try{ closeTrackModal(); }catch(e){}
+  try{ ubCloseProfilePage(); }catch(e){}
   setTimeout(()=>{ openCart(); showToast('🔁 Items added to cart!','ok'); }, 300);
 }
 
@@ -9640,7 +9641,7 @@ function submitOrder(){
     return;
   }
 
-  if(order.payMethod === 'phonepe' || order.payMethod === 'razorpay'){
+  if(order.payMethod === 'phonepe'){
     pendingOrder = order;
     closeOrderModal();
     if(maxAdvance > 0){
@@ -10140,6 +10141,9 @@ async function processRazorpayFull(total){
             pendingOrder.advanceAmt    = total;
             pendingOrder.advanceMethod = 'razorpay';
             pendingOrder.payStatus     = 'paid';
+            pendingOrder.payMode       = 'razorpay';
+            pendingOrder.razorpayId    = rzpPayId;
+            pendingOrder.payMethod     = 'razorpay';
             pendingOrder.payNote       = `Full payment ₹${total} via Razorpay · ID: ${rzpPayId}`;
             const placedOrderId = pendingOrder.id;
             finalizeOrder(pendingOrder, pendingOrder.payNote);
@@ -14305,22 +14309,48 @@ function ubRenderProfileContent(){
 
   // Order history
   html+='<div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:24px;border:1.5px solid #F0E0C8;">';
-  html+='<div style="font-family:Playfair Display,serif;font-size:16px;color:#3B1F0E;font-weight:700;margin-bottom:14px;">📋 Order History ('+userOrders.length+')</div>';
+  html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">';
+  html+='<div style="font-family:Playfair Display,serif;font-size:16px;color:#3B1F0E;font-weight:700;">📋 Order History ('+userOrders.length+')</div>';
+  if(userOrders.length>0) html+='<div style="font-size:11px;color:#A0623A;">Most recent first</div>';
+  html+='</div>';
   if(userOrders.length===0){
     html+='<div style="text-align:center;padding:24px;color:#A0623A;font-size:13px;opacity:.6;"><div style="font-size:36px;margin-bottom:8px;">📭</div>No orders yet</div>';
   } else {
     userOrders.forEach(o=>{
-      html+='<div style="border:1.5px solid #F0E0C8;border-radius:12px;padding:14px;margin-bottom:10px;">';
-      html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">';
-      html+='<div><div style="font-weight:700;color:#3B1F0E;font-size:13px;">'+o.id+'</div><div style="font-size:11px;color:#A0623A;margin-top:2px;">'+o.timestamp+'</div></div>';
-      html+='<span class="mord-status-badge '+o.status+'">'+statusLabel(o.status)+'</span></div>';
-      html+='<div style="font-size:12px;color:#5C3520;margin-bottom:10px;">'+(o.items||[]).map(i=>(i.emoji||'🎂')+' '+i.name+' ×'+i.qty).join(' · ')+'</div>';
-      html+='<div style="display:flex;justify-content:space-between;align-items:center;">';
-      html+='<div style="font-weight:800;color:#3B1F0E;font-size:15px;">Rs.'+o.total+'</div>';
+      const isOnlinePay = o.payMethod==='razorpay'||o.payMethod==='phonepe'||o.payMode==='razorpay'||o.payMode==='online';
+      const payBadge = isOnlinePay
+        ? '<span style="background:rgba(74,222,128,.12);color:#16a34a;border:1px solid rgba(74,222,128,.3);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">💳 Razorpay</span>'
+        : '<span style="background:rgba(251,191,36,.1);color:#92400E;border:1px solid rgba(251,191,36,.3);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">💵 COD</span>';
+      const statusColor = o.status==="delivered"?"#16a34a":o.status==="confirmed"?"#1d4ed8":o.status==="cancelled"?"#dc2626":"#92400E";
+      const statusBg = o.status==="delivered"?"rgba(74,222,128,.1)":o.status==="confirmed"?"rgba(96,165,250,.1)":o.status==="cancelled"?"rgba(239,68,68,.1)":"rgba(251,191,36,.1)";
+      const imgHtml = (o.items||[]).map(i=>{
+        const prod = PRODS.find(p=>String(p.id)===String(i.pid));
+        const imgSrc = prod&&prod.image?prod.image:"";
+        return imgSrc
+          ? "<div style='flex-shrink:0;width:56px;height:56px;border-radius:10px;overflow:hidden;border:1.5px solid #F0E0C8;background:#FDF6EC;'><img src='"+imgSrc+"' alt='"+i.name+"' style='width:100%;height:100%;object-fit:cover;' loading='lazy' onerror=\"this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:24px;&quot;>"+(i.emoji||"🎂")+"</div>'\"></div>"
+          : "<div style='flex-shrink:0;width:56px;height:56px;border-radius:10px;border:1.5px solid #F0E0C8;background:#FDF6EC;display:flex;align-items:center;justify-content:center;font-size:26px;'>"+(i.emoji||"🎂")+"</div>";
+      }).join("");
+      html+='<div style="border:1.5px solid #F0E0C8;border-radius:14px;overflow:hidden;margin-bottom:12px;box-shadow:0 2px 8px rgba(59,31,14,.06);">';
+      // Top header bar
+      html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:linear-gradient(135deg,#FDF6EC,#F5E6CC);border-bottom:1px solid #F0E0C8;">';
+      html+='<div><div style="font-weight:800;color:#3B1F0E;font-size:12px;letter-spacing:.5px;">'+o.id+'</div>';
+      html+='<div style="font-size:10px;color:#A0623A;margin-top:1px;">'+o.timestamp+'</div></div>';
+      html+='<span style="background:'+statusBg+';color:'+statusColor+';border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;border:1px solid '+statusColor+'33;">'+statusLabel(o.status)+'</span>';
+      html+='</div>';
+      // Product images strip
+      if(imgHtml) html+='<div style="display:flex;gap:8px;padding:12px 14px;overflow-x:auto;background:#fff;-webkit-overflow-scrolling:touch;">'+imgHtml+'</div>';
+      // Items text list
+      html+='<div style="padding:'+(imgHtml?'0':'12px')+' 14px 10px;font-size:12px;color:#5C3520;line-height:1.8;">';
+      html+=(o.items||[]).map(i=>'<span style="display:inline-block;margin-right:8px;">'+(i.emoji||'🎂')+' <strong>'+i.name+'</strong>'+(i.variant?' <span style="color:#A0623A;">('+i.variant+')</span>':'')+' ×'+i.qty+'</span>').join('');
+      html+='</div>';
+      // Footer
+      html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-top:1px solid #F5EFE6;background:#FFFDF9;">';
+      html+='<div><div style="font-weight:800;color:#3B1F0E;font-size:16px;">₹'+o.total+'</div><div style="margin-top:4px;">'+payBadge+'</div></div>';
       html+='<div style="display:flex;gap:8px;">';
-      html+='<button onclick="reOrder(\"'+o.id+'\")" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🔁 Re-order</button>';
-      html+='<button onclick="ubDownloadInvoice(\"'+o.id+'\")" style="background:#FDF6EC;color:#3B1F0E;border:1.5px solid #F0E0C8;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🧾 Invoice</button>';
-      html+='</div></div></div>';
+      html+='<button onclick="reOrder(\''+o.id+'\');event.stopPropagation();" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;touch-action:manipulation;">🔁 Re-order</button>';
+      html+='<button onclick="ubDownloadInvoice(\''+o.id+'\');event.stopPropagation();" style="background:#fff;color:#3B1F0E;border:1.5px solid #C8923A;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;touch-action:manipulation;">🧾 Invoice</button>';
+      html+='</div></div>';
+      html+='</div>';
     });
   }
   html+='</div>';
@@ -14362,9 +14392,16 @@ function ubDeleteAddr(i){
 function ubDownloadInvoice(orderId){
   const o=ORDERS.find(x=>x.id===orderId);
   if(!o){showToast('Order not found','err');return;}
+  // Also try Firebase if not found locally
+  if(!o && db){
+    db.collection('orders').doc(orderId).get().then(doc=>{
+      if(doc.exists){ const fo={id:doc.id,...doc.data()}; if(!ORDERS.find(x=>x.id===fo.id)) ORDERS.unshift(fo); ubDownloadInvoice(orderId); }
+      else showToast('Order not found','err');
+    }).catch(()=>showToast('Order not found','err'));
+    return;
+  }
   const subtotal = o.total - (o.delivery||0) + (o.couponDiscount||0) + (o.pointsDiscount||0) + (o.walletDiscount||0);
-  const w = window.open('','_blank','width=680,height=820');
-  w.document.write(`<!DOCTYPE html>
+  const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -14473,9 +14510,21 @@ function ubDownloadInvoice(orderId){
   </div>
 </div>
 <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
-</body></html>`);
-  w.document.close();
-  showToast('🧾 Invoice opened — use Print to save as PDF!','ok');
+</body></html>`;
+  try{
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 1000);
+    showToast('🧾 Invoice opened — use Print to save as PDF!','ok');
+  } catch(e){
+    // Fallback: open in new tab via data URI
+    const w = window.open('','_blank');
+    if(w){ w.document.write(html); w.document.close(); }
+    showToast('🧾 Invoice opened — use Print to save as PDF!','ok');
+  }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -17857,8 +17906,9 @@ function buildReconciliationTab(){
   var orders = (typeof ORDERS !== 'undefined') ? ORDERS : [];
   var paidOrders = orders.filter(function(o){ return o.status !== 'cancelled'; });
   var totalRevenue = paidOrders.reduce(function(s,o){ return s + (o.total||0); }, 0);
-  var onlineOrders = paidOrders.filter(function(o){ return o.payMode === 'online' || o.payMode === 'razorpay'; });
-  var codOrders = paidOrders.filter(function(o){ return o.payMode !== 'online' && o.payMode !== 'razorpay'; });
+  function _isOnline(o){ return o.payMode==='online'||o.payMode==='razorpay'||o.payMethod==='razorpay'||o.payMethod==='phonepe'; }
+  var onlineOrders = paidOrders.filter(_isOnline);
+  var codOrders = paidOrders.filter(function(o){ return !_isOnline(o); });
   var onlineRev = onlineOrders.reduce(function(s,o){ return s + (o.total||0); }, 0);
   var codRev = codOrders.reduce(function(s,o){ return s + (o.total||0); }, 0);
   var now = Date.now();
@@ -17876,8 +17926,10 @@ function buildReconciliationTab(){
 
   var rowsHtml = paidOrders.slice().reverse().slice(0,50).map(function(o){
     var ts = o.timestamp ? new Date(o.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
-    var pm = (o.payMode==='online'||o.payMode==='razorpay') ? '<span style="background:rgba(74,222,128,.15);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">Online</span>' : '<span style="background:rgba(251,191,36,.12);color:#FCD34D;border:1px solid rgba(251,191,36,.25);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">COD</span>';
-    var st = o.status==='delivered'?'<span style="color:#4ADE80;">✓ Delivered</span>':o.status==='confirmed'?'<span style="color:#60A5FA;">✓ Confirmed</span>':'<span style="color:#FCD34D;">Pending</span>';
+    var isOnlinePay = (o.payMode==='online'||o.payMode==='razorpay'||o.payMethod==='razorpay'||o.payMethod==='phonepe');
+    var pm = isOnlinePay ? '<span style="background:rgba(74,222,128,.15);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">💳 Online</span>' : '<span style="background:rgba(251,191,36,.12);color:#FCD34D;border:1px solid rgba(251,191,36,.25);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;">💵 COD</span>';
+    var payVerified = isOnlinePay && (o.payStatus==='paid'||o.advancePaid||o.razorpayId);
+    var st = o.status==='delivered'?'<span style="color:#4ADE80;">✓ Delivered</span>':o.status==='confirmed'?'<span style="color:#60A5FA;">✓ Confirmed</span>':payVerified?'<span style="color:#4ADE80;">✓ Paid</span>':'<span style="color:#FCD34D;">Pending</span>';
     return '<tr style="border-bottom:1px solid rgba(200,146,58,.08);"><td style="padding:9px 8px;font-size:11px;color:rgba(253,246,236,.5);">'+ts+'</td><td style="padding:9px 8px;font-size:12px;color:#F0DEC8;">'+(o.customer||o.name||'Guest')+'</td><td style="padding:9px 8px;">'+pm+'</td><td style="padding:9px 8px;font-size:11px;">'+st+'</td><td style="padding:9px 8px;font-size:13px;font-weight:700;color:#E8B96A;text-align:right;">₹'+(o.total||0).toLocaleString('en-IN')+'</td></tr>';
   }).join('');
 
@@ -17947,13 +17999,13 @@ function ubSaveAllStock(){
    ══════════════════════════════════════════════════════════ */
 function buildRazorpayTab(){
   var orders=(typeof ORDERS!=='undefined')?ORDERS:[];
-  var rzOrders=orders.filter(function(o){return o.payMode==='online'||o.payMode==='razorpay';});
+  var rzOrders=orders.filter(function(o){return o.payMode==='online'||o.payMode==='razorpay'||o.payMethod==='razorpay'||o.payMethod==='phonepe';});
   var rzRevenue=rzOrders.filter(function(o){return o.status!=='cancelled';}).reduce(function(s,o){return s+(o.total||0);},0);
   var rzPending=rzOrders.filter(function(o){return o.status==='pending';}).length;
   var rzSettled=rzOrders.filter(function(o){return o.status==='delivered';}).length;
   var rzRows=rzOrders.slice().reverse().slice(0,40).map(function(o){
     var ts=o.timestamp?new Date(o.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
-    var rzId=o.razorpayId||o.paymentId||'—';
+    var rzId=o.razorpayId||o.advanceUtr||o.paymentId||o.utrId||'—';
     var stColor=o.status==='delivered'?'#4ADE80':o.status==='cancelled'?'#F87171':'#FCD34D';
     return '<tr style="border-bottom:1px solid rgba(200,146,58,.07);"><td style="padding:9px 10px;font-size:11px;color:rgba(253,246,236,.4);">'+ts+'</td><td style="padding:9px 8px;font-size:11px;color:#60A5FA;font-family:monospace;">'+rzId+'</td><td style="padding:9px 8px;font-size:12px;color:#F0DEC8;">'+(o.customer||o.name||'Guest')+'</td><td style="padding:9px 8px;font-size:11px;color:'+stColor+';font-weight:700;text-transform:capitalize;">'+o.status+'</td><td style="padding:9px 8px;font-size:13px;font-weight:800;color:#4ADE80;text-align:right;">₹'+(o.total||0).toLocaleString('en-IN')+'</td></tr>';
   }).join('');
