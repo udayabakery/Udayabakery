@@ -2199,9 +2199,11 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
 .atab.active{color:#E8B96A;border-bottom-color:#C8923A;background:rgba(200,146,58,.06);}
 
 /* ══ ADMIN CONTENT CARDS ══ */
-.acard{background:rgba(255,255,255,.04);border:1px solid rgba(200,146,58,.14);border-radius:18px;padding:22px;margin-bottom:18px;}
-.acard h3{font-family:Playfair Display,serif;font-size:18px;color:#E8B96A;margin-bottom:4px;}
-.acard .asub{font-size:12px;color:rgba(253,246,236,.35);margin-bottom:18px;}
+.acard{background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.02));
+  border:1px solid rgba(200,146,58,.16);border-radius:18px;padding:22px;margin-bottom:18px;
+  box-shadow:0 2px 16px rgba(0,0,0,.18);}
+.acard h3{font-family:Playfair Display,serif;font-size:18px;color:#E8B96A;margin-bottom:4px;font-weight:700;}
+.acard .asub{font-size:12px;color:rgba(253,246,236,.38);margin-bottom:18px;}
 
 /* Stat cards */
 .astats{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:20px;}
@@ -2212,8 +2214,8 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
 /* Form fields */
 .af-group{margin-bottom:16px;}
 .af-group label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(253,246,236,.45);margin-bottom:7px;}
-.af-inp{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.18);border-radius:12px;padding:12px 14px;font-family:Jost,sans-serif;font-size:14px;color:#FDF6EC;outline:none;transition:border .2s;box-sizing:border-box;}
-.af-inp:focus{border-color:#C8923A;}
+.af-inp{width:100%;background:rgba(255,255,255,.05);border:1.5px solid rgba(200,146,58,.2);border-radius:12px;padding:11px 14px;font-family:Jost,sans-serif;font-size:14px;color:#FDF6EC;outline:none;transition:border .2s,box-shadow .2s;box-sizing:border-box;}
+.af-inp:focus{border-color:#C8923A;box-shadow:0 0 0 3px rgba(200,146,58,.12);}
 .af-sel{width:100%;background:rgba(20,10,3,.9);border:1.5px solid rgba(200,146,58,.18);border-radius:12px;padding:12px 14px;font-family:Jost,sans-serif;font-size:14px;color:#FDF6EC;outline:none;box-sizing:border-box;}
 .af-ta{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.18);border-radius:12px;padding:12px 14px;font-family:Jost,sans-serif;font-size:14px;color:#FDF6EC;outline:none;height:80px;resize:vertical;box-sizing:border-box;}
 .af-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
@@ -5385,25 +5387,28 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
   <!-- DASHBOARD SCREEN (hidden until logged in) -->
   <div id="adminDashScreen" style="display:none;height:100vh;flex-direction:column;background:#0F0600;">
     
-    <!-- Top Bar — mobile-optimised -->
-    <div id="ub-topbar" style="background:linear-gradient(90deg,#1E0C02,#2A1208);border-bottom:1px solid rgba(200,146,58,.18);padding:0 12px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:6px;">
-      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;min-width:0;">
-        <div style="width:30px;height:30px;background:linear-gradient(135deg,#C8923A,#6B3A25);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">👑</div>
+    <!-- Top Bar — professional desktop + mobile -->
+    <div id="ub-topbar" style="background:linear-gradient(90deg,#160901,#231008,#1a0904);border-bottom:1px solid rgba(200,146,58,.2);padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:8px;box-shadow:0 2px 12px rgba(0,0,0,.4);">
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;min-width:0;">
+        <div style="width:36px;height:36px;background:linear-gradient(135deg,#E8B96A,#C8923A,#8B4513);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 3px 10px rgba(200,146,58,.35);">👑</div>
         <div style="min-width:0;">
-          <div style="font-family:'Playfair Display',serif;font-size:13px;color:#E8B96A;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Udaya Bakery</div>
-          <div style="font-size:8px;color:rgba(253,246,236,.3);letter-spacing:1.2px;text-transform:uppercase;">Admin</div>
+          <div style="font-family:'Playfair Display',serif;font-size:15px;color:#E8B96A;font-weight:700;white-space:nowrap;letter-spacing:.3px;">Udaya Bakery</div>
+          <div style="font-size:9px;color:rgba(253,246,236,.28);letter-spacing:1.5px;text-transform:uppercase;margin-top:1px;">Admin Dashboard</div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
-        <span id="adminWelcomeLabel" style="font-size:11px;color:rgba(253,246,236,.4);display:none;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-        <button onclick="doLogout()" style="background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:6px 10px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;">🚪<span class="ub-dsk-only">Logout</span></button>
-        <button onclick="closeAdmin()" style="background:rgba(255,255,255,.06);color:rgba(253,246,236,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0;">✕</button>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <div id="ub-clock-wrap" style="background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.15);border-radius:8px;padding:5px 10px;display:none;" class="ub-dsk-only">
+          <span id="ub-clock" style="font-family:Jost,sans-serif;font-size:12px;font-weight:700;color:rgba(200,146,58,.7);letter-spacing:.5px;"></span>
+        </div>
+        <span id="adminWelcomeLabel" style="font-size:11px;color:rgba(253,246,236,.4);display:none;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" class="ub-dsk-only"></span>
+        <button onclick="doLogout()" style="background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.18);border-radius:9px;padding:7px 12px;font-family:Jost,sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .2s;" onmouseover="this.style.background='rgba(239,68,68,.2)'" onmouseout="this.style.background='rgba(239,68,68,.1)'">🚪<span class="ub-dsk-only">Logout</span></button>
+        <button onclick="closeAdmin()" style="background:rgba(255,255,255,.05);color:rgba(253,246,236,.5);border:1px solid rgba(255,255,255,.09);border-radius:9px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0;transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(255,255,255,.05)'">✕</button>
       </div>
     </div>
     
     <!-- Tab Bar (horizontal, scrollable on mobile) -->
-    <div style="background:#180D07;border-bottom:1px solid rgba(200,146,58,.12);overflow-x:auto;flex-shrink:0;" id="adminTabBar">
-      <div style="display:flex;min-width:max-content;padding:0 12px;">
+    <div style="background:#140A03;border-bottom:1px solid rgba(200,146,58,.14);overflow-x:auto;flex-shrink:0;position:relative;" id="adminTabBar">
+      <div style="display:flex;min-width:max-content;padding:0 8px;gap:2px;">
         <button class="atab" onclick="switchTab('dashboard')" id="at-dashboard">📊 Dashboard</button>
         <button class="atab" onclick="switchTab('products')" id="at-products">📦 Products</button>
         <button class="atab" onclick="switchTab('addprod')" id="at-addprod">➕ Add Product</button>
@@ -5428,7 +5433,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
     </div>
     
     <!-- Main Content Area -->
-    <div id="adminMain" style="flex:1;overflow-y:auto;padding:20px;max-width:1100px;width:100%;margin:0 auto;box-sizing:border-box;"></div>
+    <div id="adminMain" style="flex:1;overflow-y:auto;padding:20px;width:100%;box-sizing:border-box;"></div>
   </div>
 </div>
 
@@ -11074,10 +11079,10 @@ function renderAdminTab(){
   else if(adminTab==='cakebuilder')   el.innerHTML = _safeRender(buildCakeBuilderAdminTab,'Cake Builder');
   else if(adminTab==='videos')        el.innerHTML = _safeRender(buildVideosAdminTab,'Cake Videos');
   else if(adminTab==='policies'){     el.innerHTML = _safeRender(buildPoliciesAdminTab,'Rules & Policy'); try{initPoliciesAdmin();}catch(e){} }
-  else if(adminTab==='expense')       el.innerHTML = _safeRender(buildExpenseTab,'Expenses');
-  else if(adminTab==='combo')         el.innerHTML = _safeRender(buildComboTab,'Combo Offers');
-  else if(adminTab==='reconciliation')el.innerHTML = _safeRender(buildReconciliationTab,'Reconciliation');
-  else if(adminTab==='rzpdash')       el.innerHTML = _safeRender(buildRzpDashTab,'Razorpay');
+  else if(adminTab==='expense')       el.innerHTML = _safeRender(window.buildExpenseTab||buildExpenseTab,'Expenses');
+  else if(adminTab==='combo')         el.innerHTML = _safeRender(window.buildComboTab||buildComboTab,'Combo Offers');
+  else if(adminTab==='reconciliation')el.innerHTML = _safeRender(window.buildReconciliationTab||buildReconciliationTab,'Reconciliation');
+  else if(adminTab==='rzpdash')       el.innerHTML = _safeRender(window.buildRzpDashTab||buildRzpDashTab,'Razorpay');
   else if(adminTab==='stock')         el.innerHTML = _safeRender(buildStockTab,'Stock');
   else if(adminTab==='designer'){
     el.innerHTML = _safeRender(buildDesignerTab,'Designer');
@@ -11146,34 +11151,34 @@ function buildDash(){
   </div>
 
   <!-- Stats Grid -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
-    <div style="background:linear-gradient(135deg,rgba(252,211,77,.12),rgba(252,211,77,.06));border:1px solid rgba(252,211,77,.2);border-radius:16px;padding:16px;text-align:center;">
-      <div style="font-size:28px;font-weight:800;color:#FCD34D;">${pend}</div>
-      <div style="font-size:11px;color:rgba(253,246,236,.45);margin-top:3px;font-weight:600;">⏳ Pending</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;">
+    <div style="background:linear-gradient(135deg,rgba(252,211,77,.1),rgba(252,211,77,.04));border:1px solid rgba(252,211,77,.22);border-radius:16px;padding:16px 14px;text-align:center;cursor:pointer;" onclick="switchTab('orders')">
+      <div style="font-size:30px;font-weight:800;color:#FCD34D;font-family:'Playfair Display',serif;">${todayOrders.length}</div>
+      <div style="font-size:10px;color:rgba(253,246,236,.45);margin-top:4px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Today's Orders</div>
     </div>
-    <div style="background:linear-gradient(135deg,rgba(52,211,153,.12),rgba(52,211,153,.06));border:1px solid rgba(52,211,153,.2);border-radius:16px;padding:16px;text-align:center;">
-      <div style="font-size:28px;font-weight:800;color:#34D399;">${delivered}</div>
-      <div style="font-size:11px;color:rgba(253,246,236,.45);margin-top:3px;font-weight:600;">✅ Delivered</div>
+    <div style="background:linear-gradient(135deg,rgba(200,146,58,.1),rgba(200,146,58,.04));border:1px solid rgba(200,146,58,.22);border-radius:16px;padding:16px 14px;text-align:center;cursor:pointer;" onclick="switchTab('orders')">
+      <div style="font-size:30px;font-weight:800;color:#E8B96A;font-family:'Playfair Display',serif;">₹${todayRev.toLocaleString('en-IN')}</div>
+      <div style="font-size:10px;color:rgba(253,246,236,.45);margin-top:4px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Today's Revenue</div>
     </div>
-    <div style="background:linear-gradient(135deg,rgba(200,146,58,.15),rgba(200,146,58,.07));border:1px solid rgba(200,146,58,.25);border-radius:16px;padding:16px;text-align:center;">
-      <div style="font-size:28px;font-weight:800;color:#E8B96A;">₹${rev.toLocaleString('en-IN')}</div>
-      <div style="font-size:11px;color:rgba(253,246,236,.45);margin-top:3px;font-weight:600;">💰 Total Revenue</div>
+    <div style="background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.04));border:1px solid rgba(239,68,68,.22);border-radius:16px;padding:16px 14px;text-align:center;cursor:pointer;" onclick="switchTab('orders')">
+      <div style="font-size:30px;font-weight:800;color:#F87171;font-family:'Playfair Display',serif;">${pend}</div>
+      <div style="font-size:10px;color:rgba(253,246,236,.45);margin-top:4px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">⏳ Pending</div>
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(52,211,153,.04));border:1px solid rgba(52,211,153,.22);border-radius:16px;padding:16px 14px;text-align:center;cursor:pointer;" onclick="switchTab('customers')">
+      <div style="font-size:30px;font-weight:800;color:#34D399;font-family:'Playfair Display',serif;">${[...new Set(ORDERS.map(o=>o.phone).filter(Boolean))].length}</div>
+      <div style="font-size:10px;color:rgba(253,246,236,.45);margin-top:4px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Customers</div>
     </div>
   </div>
 
-  <!-- Today's Summary -->
-  <div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,146,58,.15);border-radius:16px;padding:16px;margin-bottom:16px;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(253,246,236,.35);margin-bottom:12px;">📅 Today's Summary</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center;">
-      <div><div style="font-size:22px;font-weight:800;color:#fff;">${todayOrders.length}</div><div style="font-size:11px;color:rgba(253,246,236,.4);">Orders</div></div>
-      <div><div style="font-size:22px;font-weight:800;color:#E8B96A;">₹${todayRev.toLocaleString('en-IN')}</div><div style="font-size:11px;color:rgba(253,246,236,.4);">Revenue</div></div>
-      <div><div style="font-size:22px;font-weight:800;color:${revChange>=0?'#4ADE80':'#F87171'};">${revChange>=0?'+':''}${revChange}%</div><div style="font-size:11px;color:rgba(253,246,236,.4);">vs Yesterday</div></div>
-    </div>
-  </div>
+  <!-- Revenue Trend Bar inline with chart header -->
 
   <!-- 7-Day Revenue Chart -->
-  <div class="acard" style="margin-bottom:16px;">
-    <h3>📈 Last 7 Days Revenue</h3>
+  <div style="display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px;" class="ub-dash-2col">
+  <div class="acard" style="margin-bottom:0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <h3 style="margin-bottom:0;">📈 7-Day Revenue</h3>
+      <span style="font-size:20px;font-weight:800;color:#E8B96A;font-family:'Playfair Display',serif;">₹${days7.reduce((s,d)=>s+d.rev,0).toLocaleString('en-IN')}</span>
+    </div>
     <div style="display:flex;align-items:flex-end;gap:6px;height:80px;margin-top:14px;">
       ${days7.map(d=>`
         <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
@@ -11184,24 +11189,26 @@ function buildDash(){
     <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:rgba(253,246,236,.3);">
       <span>6 days ago</span><span>Today: <strong style="color:#E8B96A;">₹${todayRev.toLocaleString('en-IN')}</strong></span>
     </div>
-  </div>
+  </div><!-- close chart acard -->
 
-  <!-- Top Selling Products -->
-  ${topProds.length>0?`<div class="acard" style="margin-bottom:16px;">
-    <h3>🏆 Top Selling Products</h3>
-    <div class="asub">Based on all orders</div>
+  <!-- Top Selling Products (second column on desktop) -->
+  ${topProds.length>0?`<div class="acard" style="margin-bottom:0;">
+    <h3>🏆 Top Products</h3>
+    <div class="asub" style="margin-bottom:14px;">Based on all orders</div>
     ${topProds.map(([name,qty],i)=>`
     <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);">
       <div style="width:28px;height:28px;border-radius:50%;background:${i===0?'linear-gradient(135deg,#F59E0B,#D97706)':i===1?'linear-gradient(135deg,#9CA3AF,#6B7280)':'linear-gradient(135deg,#CD7C3A,#92400E)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">${i+1}</div>
       <div style="flex:1;font-size:14px;color:rgba(253,246,236,.85);font-weight:600;">${name}</div>
       <div style="font-size:13px;color:#E8B96A;font-weight:700;">${qty} sold</div>
     </div>`).join('')}
-  </div>`:''}
+  </div>`:'<div class="acard" style="margin-bottom:0;display:flex;align-items:center;justify-content:center;min-height:120px;"><div style="text-align:center;color:rgba(253,246,236,.2);"><div style="font-size:32px;margin-bottom:8px;">🏆</div><div>No data yet</div></div></div>'}
+  </div><!-- close 2col grid -->
 
-  <!-- Recent Orders -->
-  <div class="acard" style="margin-bottom:16px;">
+  <!-- Recent Orders + Quick Actions (2 col on desktop) -->
+  <div style="display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px;" class="ub-dash-2col">
+  <div class="acard" style="margin-bottom:0;">
     <h3>📋 Recent Orders</h3>
-    <div class="asub">Latest incoming orders</div>
+    <div class="asub">Latest activity</div>
     ${ORDERS.length===0 ? `<div style="text-align:center;padding:32px;color:rgba(253,246,236,.2);"><div style="font-size:42px;margin-bottom:10px;">📭</div>No orders yet</div>` :
     ORDERS.slice(0,6).map(o=>`
     <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);">
@@ -11216,28 +11223,33 @@ function buildDash(){
     ${ORDERS.length > 6 ? `<div style="text-align:center;margin-top:12px;"><button class="abtn-sec" onclick="switchTab('orders')">View All ${ORDERS.length} Orders →</button></div>` : ''}
   </div>
 
-  <!-- Quick Actions -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-    <div class="acard" style="cursor:pointer;text-align:center;" onclick="switchTab('addprod')">
-      <div style="font-size:32px;margin-bottom:8px;">➕</div>
-      <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:14px;font-weight:700;">Add Product</div>
-      <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">${PRODS.length} items currently</div>
+  <!-- Quick Actions (inside 2col grid as second panel) -->
+  <div class="acard" style="margin-bottom:0;">
+    <h3>⚡ Quick Actions</h3>
+    <div class="asub" style="margin-bottom:14px;">Shortcuts to common tasks</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div style="background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.15);border-radius:14px;padding:14px 12px;cursor:pointer;text-align:center;transition:background .2s;" onclick="switchTab('addprod')" onmouseover="this.style.background='rgba(200,146,58,.14)'" onmouseout="this.style.background='rgba(200,146,58,.07)'">
+        <div style="font-size:28px;margin-bottom:6px;">➕</div>
+        <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:13px;font-weight:700;">Add Product</div>
+        <div style="font-size:10px;color:rgba(253,246,236,.35);margin-top:3px;">${PRODS.length} items</div>
+      </div>
+      <div style="background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.15);border-radius:14px;padding:14px 12px;cursor:pointer;text-align:center;transition:background .2s;" onclick="switchTab('orders')" onmouseover="this.style.background='rgba(200,146,58,.14)'" onmouseout="this.style.background='rgba(200,146,58,.07)'">
+        <div style="font-size:28px;margin-bottom:6px;">📋</div>
+        <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:13px;font-weight:700;">All Orders</div>
+        <div style="font-size:10px;color:rgba(253,246,236,.35);margin-top:3px;">${ORDERS.length} total</div>
+      </div>
+      <div style="background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.15);border-radius:14px;padding:14px 12px;cursor:pointer;text-align:center;transition:background .2s;" onclick="switchTab('combo')" onmouseover="this.style.background='rgba(200,146,58,.14)'" onmouseout="this.style.background='rgba(200,146,58,.07)'">
+        <div style="font-size:28px;margin-bottom:6px;">🎁</div>
+        <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:13px;font-weight:700;">Combo Offers</div>
+        <div style="font-size:10px;color:rgba(253,246,236,.35);margin-top:3px;">Create bundles</div>
+      </div>
+      <div style="background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.15);border-radius:14px;padding:14px 12px;cursor:pointer;text-align:center;transition:background .2s;" onclick="switchTab('reconciliation')" onmouseover="this.style.background='rgba(200,146,58,.14)'" onmouseout="this.style.background='rgba(200,146,58,.07)'">
+        <div style="font-size:28px;margin-bottom:6px;">🧾</div>
+        <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:13px;font-weight:700;">Reconciliation</div>
+        <div style="font-size:10px;color:rgba(253,246,236,.35);margin-top:3px;">Payments this month</div>
+      </div>
     </div>
-    <div class="acard" style="cursor:pointer;text-align:center;" onclick="switchTab('orders')">
-      <div style="font-size:32px;margin-bottom:8px;">📋</div>
-      <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:14px;font-weight:700;">All Orders</div>
-      <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">${pend} pending · ${ORDERS.length} total</div>
-    </div>
-    <div class="acard" style="cursor:pointer;text-align:center;" onclick="switchTab('cats')">
-      <div style="font-size:32px;margin-bottom:8px;">🏷️</div>
-      <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:14px;font-weight:700;">Categories</div>
-      <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">${CATS.length} categories</div>
-    </div>
-    <div class="acard" style="cursor:pointer;text-align:center;" onclick="switchTab('settings')">
-      <div style="font-size:32px;margin-bottom:8px;">⚙️</div>
-      <div style="font-family:Playfair Display,serif;color:#E8B96A;font-size:14px;font-weight:700;">Settings</div>
-      <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:4px;">Hours, delivery, logo</div>
-    </div>
+  </div>
   </div>`;
 }
 function getGreeting(){ const h=new Date().getHours(); return h<12?'Morning':h<17?'Afternoon':'Evening'; }
@@ -16187,18 +16199,22 @@ window.ubCloseVideoLightbox = function(e){
   #adminDashScreen{flex-direction:row!important;}
   #ub-vsidebar{display:flex!important;}
   #ub-inner-wrap{display:flex;flex-direction:column;flex:1;overflow:hidden;min-width:0;}
-  #adminMain{padding:22px!important;}
+  #adminMain{padding:24px 28px!important;max-width:none!important;}
 }
 @media(max-width:899px){
   #ub-vsidebar{display:none!important;}
   #ub-inner-wrap{display:contents!important;}
 }
 #ub-vsidebar{
-  width:200px;min-width:200px;background:#0D0600;
+  width:220px;min-width:220px;background:#0D0600;
   border-right:1px solid rgba(200,146,58,.13);
-  flex-direction:column;overflow-y:auto;flex-shrink:0;
-  padding:10px 0 20px;display:none;
+  flex-direction:column;overflow-y:auto;overflow-x:hidden;flex-shrink:0;
+  padding:10px 0 30px;display:none;
+  scrollbar-width:thin;scrollbar-color:rgba(200,146,58,.18) transparent;
 }
+#ub-vsidebar::-webkit-scrollbar{width:3px;}
+#ub-vsidebar::-webkit-scrollbar-track{background:transparent;}
+#ub-vsidebar::-webkit-scrollbar-thumb{background:rgba(200,146,58,.2);border-radius:3px;}
 .snl{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
   color:rgba(200,146,58,.3);padding:12px 16px 4px;font-family:Jost,sans-serif;}
 .sni{display:flex;align-items:center;gap:9px;padding:9px 10px;cursor:pointer;
@@ -16272,16 +16288,19 @@ window.ubCloseVideoLightbox = function(e){
 @media(max-width:380px){.gval{font-size:15px;}}
 .glbl{font-size:9px;color:rgba(253,246,236,.32);font-weight:700;
   letter-spacing:.6px;text-transform:uppercase;margin-top:3px;}
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:16px;}
-@media(max-width:680px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
-.kcard{background:rgba(255,255,255,.04);border:1px solid rgba(200,146,58,.13);
-  border-radius:15px;padding:14px 13px;transition:border-color .2s,transform .2s;}
-.kcard:hover{border-color:rgba(200,146,58,.26);transform:translateY(-2px);}
-.klbl{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
-  color:rgba(253,246,236,.32);margin-bottom:6px;font-family:Jost,sans-serif;}
-.kval{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;
-  color:#E8B96A;line-height:1;margin-bottom:5px;}
-@media(max-width:400px){.kval{font-size:18px;}}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+@media(max-width:680px){.kpi-grid{grid-template-columns:repeat(2,1fr);gap:10px;}}
+.kcard{background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+  border:1px solid rgba(200,146,58,.15);
+  border-radius:16px;padding:16px 15px;
+  transition:border-color .2s,transform .2s,box-shadow .2s;
+  box-shadow:0 2px 12px rgba(0,0,0,.2);}
+.kcard:hover{border-color:rgba(200,146,58,.32);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.klbl{font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;
+  color:rgba(253,246,236,.35);margin-bottom:8px;font-family:Jost,sans-serif;}
+.kval{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;
+  color:#E8B96A;line-height:1;margin-bottom:6px;}
+@media(max-width:400px){.kval{font-size:20px;}}
 .ktrend{font-size:11px;font-weight:700;display:flex;align-items:center;gap:3px;}
 .ktrend.up{color:#4ADE80;}.ktrend.dn{color:#F87171;}.ktrend.nu{color:rgba(253,246,236,.35);}
 .spark{display:flex;align-items:flex-end;gap:2px;height:26px;margin-top:7px;}
@@ -16424,8 +16443,34 @@ window.ubCloseVideoLightbox = function(e){
 }
 #adminTabBar::-webkit-scrollbar{ display:none; }
 .atab{
-  padding:12px 14px !important;
+  padding:10px 13px !important;
   font-size:12px !important;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+
+/* Mobile tab scroll fade hint */
+#adminTabBar::after{
+  content:'';
+  position:sticky;
+  right:0;
+  top:0;
+  height:100%;
+  width:32px;
+  background:linear-gradient(to left, #140A03 0%, transparent 100%);
+  pointer-events:none;
+  flex-shrink:0;
+  display:block;
+}
+
+/* Dashboard KPI cards — better on desktop */
+@media(min-width:900px){
+  .kpi-grid{ grid-template-columns: repeat(4,1fr) !important; }
+  .acard{ border-radius:16px !important; }
+  .ub-dash-2col{ grid-template-columns: 1fr 1fr !important; }
+}
+@media(max-width:899px){
+  .ub-dash-2col{ grid-template-columns: 1fr !important; }
 }
 
 /* ── COMMAND PALETTE — full width on mobile ── */
@@ -16542,12 +16587,16 @@ function _injectSidebar(){
     <div class="snsp"></div>
     <button class="sni" onclick="switchTab('settings')" id="ubsn-settings"><span class="ic">⚙️</span>Settings</button>
     <div class="snsp"></div>
-    <div class="snl">MORE</div>
-    <button class="sni" onclick="switchTab('stock')" id="ubsn-stock"><span class="ic">📦</span>Stock</button>
+    <div class="snl">FINANCE</div>
     <button class="sni" onclick="switchTab('expense')" id="ubsn-expense"><span class="ic">💸</span>Expenses</button>
-    <button class="sni" onclick="switchTab('combo')" id="ubsn-combo"><span class="ic">🎁</span>Combo Offers</button>
     <button class="sni" onclick="switchTab('reconciliation')" id="ubsn-reconciliation"><span class="ic">🧾</span>Reconciliation</button>
     <button class="sni" onclick="switchTab('rzpdash')" id="ubsn-rzpdash"><span class="ic">💳</span>Razorpay</button>
+    <div class="snsp"></div>
+    <div class="snl">MARKETING</div>
+    <button class="sni" onclick="switchTab('combo')" id="ubsn-combo"><span class="ic">🎁</span>Combo Offers</button>
+    <button class="sni" onclick="switchTab('stock')" id="ubsn-stock"><span class="ic">📦</span>Stock</button>
+    <div class="snsp"></div>
+    <div class="snl">SYSTEM</div>
     <button class="sni" onclick="switchTab('policies')" id="ubsn-policies"><span class="ic">📜</span>Rules & Policy</button>
     <button class="sni" onclick="switchTab('designer')" id="ubsn-designer"><span class="ic">🎨</span>Website Designer</button>
   `;
@@ -18100,8 +18149,8 @@ function ubSaveAllStock(){
 // ══════════════════════════════════════════════════════════════
 //  💸 EXPENSE TRACKER
 // ══════════════════════════════════════════════════════════════
-function ubGetExpenses(){ return JSON.parse(localStorage.getItem('ub_expenses')||'[]'); }
-function ubSaveExpenses(e){
+window.ubGetExpenses = function ubGetExpenses(){ return JSON.parse(localStorage.getItem('ub_expenses')||'[]'); }
+window.ubSaveExpenses = function ubSaveExpenses(e){
   localStorage.setItem('ub_expenses', JSON.stringify(e));
   try{
     if(db){
@@ -18111,7 +18160,7 @@ function ubSaveExpenses(e){
   }catch(err){}
 }
 
-function buildExpenseTab(){
+window.buildExpenseTab = function buildExpenseTab(){
   const expenses = ubGetExpenses();
   const total = expenses.reduce((s,e)=>s+parseFloat(e.amount||0),0);
   const today = new Date().toISOString().slice(0,10);
@@ -18165,7 +18214,7 @@ function buildExpenseTab(){
     +'</div>';
 }
 
-function ubAddExpense(){
+window.ubAddExpense = function ubAddExpense(){
   const desc=(document.getElementById('exp_desc').value||'').trim();
   const amt=parseFloat(document.getElementById('exp_amt').value||'0');
   const cat=document.getElementById('exp_cat').value||'Other';
@@ -18175,7 +18224,7 @@ function ubAddExpense(){
   const ex=ubGetExpenses(); ex.push({desc,amount:amt,cat,date}); ubSaveExpenses(ex);
   showToast('✅ Expense added!','ok'); renderAdminTab();
 }
-function ubDeleteExpense(i){
+window.ubDeleteExpense = function ubDeleteExpense(i){
   const ex=ubGetExpenses(); ex.splice(i,1); ubSaveExpenses(ex);
   showToast('Deleted','ok'); renderAdminTab();
 }
@@ -18183,8 +18232,8 @@ function ubDeleteExpense(i){
 // ══════════════════════════════════════════════════════════════
 //  🎁 COMBO OFFERS
 // ══════════════════════════════════════════════════════════════
-function ubGetCombos(){ return JSON.parse(localStorage.getItem('ub_combos')||'[]'); }
-function ubSaveCombos(c){
+window.ubGetCombos = function ubGetCombos(){ return JSON.parse(localStorage.getItem('ub_combos')||'[]'); }
+window.ubSaveCombos = function ubSaveCombos(c){
   localStorage.setItem('ub_combos', JSON.stringify(c));
   try{
     if(db){
@@ -18194,7 +18243,7 @@ function ubSaveCombos(c){
   }catch(e){}
 }
 
-function buildComboTab(){
+window.buildComboTab = function buildComboTab(){
   const combos = ubGetCombos();
   const cards = combos.map((c,i)=>'<div class="acard" style="margin-bottom:14px;">'
     +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;">'
@@ -18261,7 +18310,7 @@ window.ubDeleteCombo = function ubDeleteCombo(i){
 // ══════════════════════════════════════════════════════════════
 //  🧾 PAYMENT RECONCILIATION
 // ══════════════════════════════════════════════════════════════
-function buildReconciliationTab(){
+window.buildReconciliationTab = function buildReconciliationTab(){
   const today = new Date().toISOString().slice(0,10);
   const thisMonth = today.slice(0,7);
   const mOrders = ORDERS.filter(o=>{ const d=new Date(o.timestamp); return d.toISOString&&d.toISOString().slice(0,7)===thisMonth && o.status!=='cancelled'; });
@@ -18315,7 +18364,7 @@ function buildReconciliationTab(){
 // ══════════════════════════════════════════════════════════════
 //  💳 RAZORPAY DASHBOARD LINK TAB
 // ══════════════════════════════════════════════════════════════
-function buildRzpDashTab(){
+window.buildRzpDashTab = function buildRzpDashTab(){
   const rzpMode = localStorage.getItem('ub_rzp_mode')||'live';
   const dashUrl = rzpMode==='live'
     ? 'https://dashboard.razorpay.com/app/dashboard'
