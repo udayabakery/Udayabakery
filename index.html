@@ -5348,30 +5348,9 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
       <div id="ubZoneMapPanel" style="display:none;margin-top:8px;background:var(--white);border:1.5px solid var(--cream-dark);border-radius:14px;overflow:hidden;">
         <div style="padding:14px 16px 10px;">
           <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Delivery Areas from Belman</div>
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:10px;">
-              <div style="width:12px;height:12px;border-radius:50%;background:#4ADE80;flex-shrink:0;"></div>
-              <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--choco);">0–3 km · Belman area</div><div style="font-size:11px;color:var(--text-mid);">Belman, Nitte, nearby villages</div></div>
-              <div style="font-size:14px;font-weight:800;color:#065F46;">FREE</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(200,146,58,.06);border:1px solid rgba(200,146,58,.2);border-radius:10px;">
-              <div style="width:12px;height:12px;border-radius:50%;background:#F59E0B;flex-shrink:0;"></div>
-              <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--choco);">3–8 km</div><div style="font-size:11px;color:var(--text-mid);">Karkala, Shirva, Shankerpura</div></div>
-              <div style="font-size:14px;font-weight:800;color:#92400E;">₹30–50</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:10px;">
-              <div style="width:12px;height:12px;border-radius:50%;background:#F87171;flex-shrink:0;"></div>
-              <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--choco);">8–15 km</div><div style="font-size:11px;color:var(--text-mid);">Udupi, Kundapur outskirts</div></div>
-              <div style="font-size:14px;font-weight:800;color:#991B1B;">₹80–120</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2);border-radius:10px;">
-              <div style="width:12px;height:12px;border-radius:50%;background:#818CF8;flex-shrink:0;"></div>
-              <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--choco);">15+ km</div><div style="font-size:11px;color:var(--text-mid);">Special delivery — contact us</div></div>
-              <div style="font-size:14px;font-weight:800;color:#3730A3;">Call Us</div>
-            </div>
-          </div>
-          <div style="margin-top:10px;font-size:12px;color:var(--text-mid);background:rgba(200,146,58,.06);border-radius:8px;padding:8px 12px;">
-            💡 Orders ₹500+ in zones 0–8 km get <strong>FREE delivery!</strong>
+          <div id="ubZonesList" style="display:flex;flex-direction:column;gap:8px;"></div>
+          <div style="margin-top:10px;font-size:12px;color:var(--text-mid);background:rgba(200,146,58,.06);border-radius:8px;padding:8px 12px;" id="ubZoneTip">
+            💡 Tap a zone to see which areas are covered
           </div>
         </div>
         <iframe src="https://maps.google.com/maps?q=13.1688428,74.8704174&z=12&output=embed" style="width:100%;height:200px;border:none;border-top:1.5px solid var(--cream-dark);" loading="lazy" title="Udaya Bakery Delivery Zone Map"></iframe>
@@ -9853,9 +9832,12 @@ function openOrderModal(prefillTime){
   if(_inRef && _myOrders.length === 0 && !appliedCoupon){
     const couponInp = document.getElementById('couponInput');
     if(couponInp){ couponInp.value = _inRef; }
-    appliedCoupon = { code: _inRef, type: 'flat', value: 50, minOrder: 0 };
-    updateTotal();
-    setTimeout(()=>showToast('🎁 Referral code ' + _inRef + ' applied — ₹50 off!', 'ok'), 400);
+    const _refDisc = (typeof ubGetReferralSettings === 'function') ? ubGetReferralSettings().newCustDisc : 50;
+    if(_refDisc > 0){
+      appliedCoupon = { code: _inRef, type: 'flat', value: _refDisc, minOrder: 0 };
+      updateTotal();
+      setTimeout(()=>showToast('🎁 Referral code ' + _inRef + ' applied — ₹' + _refDisc + ' off!', 'ok'), 400);
+    }
   }
 }
 
@@ -11289,6 +11271,12 @@ function renderAdminTab(){
       const si = document.getElementById('s_minorder');
       if(qi) qi.value = CFG.minOrder || 0;
       if(si) si.value = CFG.minOrder || 0;
+      // Render zone editor with current saved zones
+      if(typeof ubRenderZoneEditor === 'function') ubRenderZoneEditor();
+      // Load referral settings from Firestore if available
+      if(db){ db.collection('config').doc('referralSettings').get().then(doc=>{ if(doc.exists){ const d=doc.data(); localStorage.setItem('ub_referral_settings', JSON.stringify(d)); const ri=document.getElementById('ref_disc_referrer'),ni=document.getElementById('ref_disc_new'),wi=document.getElementById('ref_wa_msg'); if(ri&&d.referrerDisc!=null) ri.value=d.referrerDisc; if(ni&&d.newCustDisc!=null) ni.value=d.newCustDisc; if(wi&&d.waMsg) wi.value=d.waMsg; }}).catch(()=>{}); }
+      if(db){ db.collection('config').doc('zoneSettings').get().then(doc=>{ if(doc.exists && doc.data().zones){ localStorage.setItem('ub_zone_settings', JSON.stringify(doc.data().zones)); if(typeof ubRenderZoneEditor==='function') ubRenderZoneEditor(); }}).catch(()=>{}); }
+    }, 50);
     }, 50);
     // Async-populate MSG91 key status
     UB_SECURE.get('msg91_key').then(k => {
@@ -13496,11 +13484,38 @@ function buildSettingsTab(){
   <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:6px;">⚠️ Flash sale is stored locally — customers on other devices may not see it instantly until they reload the page.</div>
   </div>
 
-  <!-- DELIVERY ZONES -->
-  <div class="acard" style="margin-top:16px;">
-    <h3>🚚 Delivery Zones</h3>
-    <div class="asub">Current delivery fee structure — edit rates in Delivery Settings above</div>
-    <div id="delZonesGrid" style="margin-top:12px;"></div>
+  <!-- DELIVERY ZONES EDITOR -->
+  <div class="acard" style="margin-top:16px;border-left:3px solid #60C8F5;">
+    <h3>🗺️ Delivery Zones &amp; Fees</h3>
+    <div class="asub">Set up to 4 delivery zones — these appear live on the customer checkout map</div>
+    <div id="ubZoneEditorWrap" style="margin-top:14px;"></div>
+    <button class="abtn" onclick="ubSaveZoneSettings()" style="margin-top:4px;background:linear-gradient(135deg,#0369A1,#0284C7);">💾 Save Delivery Zones</button>
+    <div id="ubZoneSaveStatus" style="margin-top:8px;font-size:12px;color:rgba(253,246,236,.4);"></div>
+  </div>
+
+  <!-- REFERRAL PROGRAMME SETTINGS -->
+  <div class="acard" style="margin-top:16px;border-left:3px solid #34D399;">
+    <h3>🎁 Referral Programme</h3>
+    <div class="asub">Control the referral discount amount customers earn when they refer a friend</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;">
+      <div class="af-group">
+        <label>Referrer Discount (₹) <span style="font-size:10px;color:rgba(253,246,236,.4);">Given to the person who shared the code</span></label>
+        <input class="af-inp" type="number" id="ref_disc_referrer" min="0" placeholder="e.g. 50" value="${ubGetReferralSettings().referrerDisc}">
+      </div>
+      <div class="af-group">
+        <label>New Customer Discount (₹) <span style="font-size:10px;color:rgba(253,246,236,.4);">Given to the friend who uses the code</span></label>
+        <input class="af-inp" type="number" id="ref_disc_new" min="0" placeholder="e.g. 50" value="${ubGetReferralSettings().newCustDisc}">
+      </div>
+      <div class="af-group" style="grid-column:span 2;">
+        <label>WhatsApp Share Message <span style="font-size:10px;color:rgba(253,246,236,.4);">Use {CODE} and {LINK} as placeholders</span></label>
+        <textarea class="af-inp" id="ref_wa_msg" rows="3" style="resize:vertical;font-size:12px;">${ubGetReferralSettings().waMsg}</textarea>
+      </div>
+    </div>
+    <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.15);border-radius:10px;padding:10px 14px;font-size:12px;color:rgba(253,246,236,.55);margin-bottom:14px;">
+      💡 Enable/disable the programme by setting the discount to 0. Changes take effect immediately for all new checkouts.
+    </div>
+    <button class="abtn" onclick="ubSaveReferralSettings()" style="background:linear-gradient(135deg,#065F46,#059669);">💾 Save Referral Settings</button>
+    <div id="ubRefSaveStatus" style="margin-top:8px;font-size:12px;color:rgba(253,246,236,.4);"></div>
   </div>
 
   </div>`;
@@ -13532,6 +13547,138 @@ function ubRefreshSettingsLive(){
     dzEl.innerHTML=zh;
   }
 }
+// ═══════════════════════════════════════════
+// DELIVERY ZONE SETTINGS — admin editable
+// ═══════════════════════════════════════════
+const UB_ZONE_DEFAULTS = [
+  { label:'0–3 km · Belman area', areas:'Belman, Nitte, nearby villages', fee:'FREE', feeNum:0,  color:'#4ADE80', minOrder:0 },
+  { label:'3–8 km',               areas:'Karkala, Shirva, Shankerpura',   fee:'₹40',  feeNum:40, color:'#F59E0B', minOrder:0 },
+  { label:'8–15 km',              areas:'Udupi, Kundapur outskirts',       fee:'₹100', feeNum:100,color:'#F87171', minOrder:0 },
+  { label:'15+ km',               areas:'Special delivery — contact us',   fee:'Call', feeNum:-1, color:'#818CF8', minOrder:0 },
+];
+function ubGetZoneSettings(){
+  try{
+    const raw = localStorage.getItem('ub_zone_settings');
+    if(raw){ const z = JSON.parse(raw); if(Array.isArray(z) && z.length) return z; }
+  }catch(e){}
+  return JSON.parse(JSON.stringify(UB_ZONE_DEFAULTS));
+}
+function ubSaveZoneSettings(){
+  const rows = document.querySelectorAll('.ub-zone-row');
+  if(!rows.length){ showToast('No zone rows found','err'); return; }
+  const zones = Array.from(rows).map((row,i)=>{
+    const label   = row.querySelector('.uzr-label')?.value?.trim()   || UB_ZONE_DEFAULTS[i]?.label  || '';
+    const areas   = row.querySelector('.uzr-areas')?.value?.trim()   || '';
+    const feeRaw  = row.querySelector('.uzr-fee')?.value?.trim()     || '0';
+    const color   = row.querySelector('.uzr-color')?.value           || '#E8B96A';
+    const feeNum  = feeRaw.toLowerCase()==='free' ? 0 : feeRaw.toLowerCase()==='call' ? -1 : parseInt(feeRaw.replace(/[^0-9]/g,''))||0;
+    const fee     = feeNum===0 ? 'FREE' : feeNum===-1 ? 'Call' : '₹'+feeNum;
+    return { label, areas, fee, feeNum, color };
+  });
+  localStorage.setItem('ub_zone_settings', JSON.stringify(zones));
+  if(db) db.collection('config').doc('zoneSettings').set({zones, updatedAt: Date.now()}).catch(()=>{});
+  const st = document.getElementById('ubZoneSaveStatus');
+  if(st){ st.textContent='✅ Zones saved — customers will see the updated map instantly'; st.style.color='#4ADE80'; }
+  showToast('🗺️ Delivery zones updated!','ok');
+}
+function ubRenderZoneEditor(){
+  const wrap = document.getElementById('ubZoneEditorWrap');
+  if(!wrap) return;
+  const zones = ubGetZoneSettings();
+  const colors = ['#4ADE80','#F59E0B','#F87171','#818CF8','#60C8F5','#E8B96A'];
+  let html = '<div style="display:flex;flex-direction:column;gap:10px;">';
+  zones.forEach((z,i)=>{
+    html += `<div class="ub-zone-row" style="background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.07);border-left:3px solid ${z.color};border-radius:12px;padding:12px 14px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div class="af-group" style="margin-bottom:0;">
+          <label style="font-size:11px;">Zone Label</label>
+          <input class="af-inp uzr-label" value="${z.label}" placeholder="e.g. 0–3 km · Belman" style="font-size:13px;">
+        </div>
+        <div class="af-group" style="margin-bottom:0;">
+          <label style="font-size:11px;">Areas Covered</label>
+          <input class="af-inp uzr-areas" value="${z.areas}" placeholder="e.g. Belman, Nitte" style="font-size:13px;">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 80px;gap:8px;align-items:end;">
+        <div class="af-group" style="margin-bottom:0;">
+          <label style="font-size:11px;">Delivery Fee <span style="color:rgba(253,246,236,.35);">(type FREE, CALL, or amount like 40)</span></label>
+          <input class="af-inp uzr-fee" value="${z.feeNum===0?'FREE':z.feeNum===-1?'Call':z.feeNum}" placeholder="FREE / 40 / Call" style="font-size:13px;">
+        </div>
+        <div class="af-group" style="margin-bottom:0;">
+          <label style="font-size:11px;">Dot Color</label>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px;">
+            ${colors.map(c=>`<div onclick="this.closest('.ub-zone-row').querySelector('.uzr-color').value='${c}';this.closest('.ub-zone-row').querySelectorAll('.uzr-colordot').forEach(d=>d.style.outline='none');this.style.outline='2px solid #fff';" class="uzr-colordot" style="width:22px;height:22px;border-radius:50%;background:${c};cursor:pointer;outline:${z.color===c?'2px solid #fff':'none'};outline-offset:2px;flex-shrink:0;"></div>`).join('')}
+            <input type="hidden" class="uzr-color" value="${z.color}">
+          </div>
+        </div>
+        <button onclick="this.closest('.ub-zone-row').remove();ubCountZones();" style="background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:8px;font-size:13px;cursor:pointer;font-family:Jost,sans-serif;width:100%;margin-bottom:2px;">🗑</button>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  html += `<button onclick="ubAddZoneRow()" style="margin-top:10px;width:100%;background:rgba(200,146,58,.08);color:#E8B96A;border:1.5px dashed rgba(200,146,58,.3);border-radius:10px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:Jost,sans-serif;">➕ Add Another Zone</button>`;
+  html += `<div id="ubZoneRowCount" style="font-size:11px;color:rgba(253,246,236,.3);margin-top:6px;">${zones.length} zone(s) configured</div>`;
+  wrap.innerHTML = html;
+}
+function ubCountZones(){
+  const el = document.getElementById('ubZoneRowCount');
+  if(el) el.textContent = document.querySelectorAll('.ub-zone-row').length + ' zone(s) configured';
+}
+function ubAddZoneRow(){
+  const wrap = document.getElementById('ubZoneEditorWrap');
+  if(!wrap) return;
+  const colors = ['#4ADE80','#F59E0B','#F87171','#818CF8','#60C8F5','#E8B96A'];
+  const newRow = document.createElement('div');
+  newRow.innerHTML = `<div class="ub-zone-row" style="background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.07);border-left:3px solid #E8B96A;border-radius:12px;padding:12px 14px;margin-top:10px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+      <div class="af-group" style="margin-bottom:0;"><label style="font-size:11px;">Zone Label</label><input class="af-inp uzr-label" placeholder="e.g. 5–10 km" style="font-size:13px;"></div>
+      <div class="af-group" style="margin-bottom:0;"><label style="font-size:11px;">Areas Covered</label><input class="af-inp uzr-areas" placeholder="Town names" style="font-size:13px;"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 80px;gap:8px;align-items:end;">
+      <div class="af-group" style="margin-bottom:0;"><label style="font-size:11px;">Delivery Fee</label><input class="af-inp uzr-fee" placeholder="FREE / 40 / Call" style="font-size:13px;"></div>
+      <div class="af-group" style="margin-bottom:0;"><label style="font-size:11px;">Dot Color</label>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px;">
+          ${colors.map(c=>`<div onclick="this.closest('.ub-zone-row').querySelector('.uzr-color').value='${c}';this.closest('.ub-zone-row').querySelectorAll('.uzr-colordot').forEach(d=>d.style.outline='none');this.style.outline='2px solid #fff';" class="uzr-colordot" style="width:22px;height:22px;border-radius:50%;background:${c};cursor:pointer;outline-offset:2px;flex-shrink:0;"></div>`).join('')}
+          <input type="hidden" class="uzr-color" value="#E8B96A">
+        </div>
+      </div>
+      <button onclick="this.closest('.ub-zone-row').remove();ubCountZones();" style="background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:8px;font-size:13px;cursor:pointer;font-family:Jost,sans-serif;width:100%;margin-bottom:2px;">🗑</button>
+    </div>
+  </div>`;
+  wrap.querySelector('div').appendChild(newRow.firstElementChild);
+  ubCountZones();
+}
+// Load zone editor when settings tab opens
+const _ubOrigBuildSettings = window.buildSettingsTab;
+document.addEventListener('ubSettingsTabOpen', ()=>{ setTimeout(ubRenderZoneEditor, 80); });
+
+// ═══════════════════════════════════════════
+// REFERRAL SETTINGS — admin editable
+// ═══════════════════════════════════════════
+const UB_REF_DEFAULTS = {
+  referrerDisc: 50,
+  newCustDisc: 50,
+  waMsg: 'Hey! 🎂 Use my code *{CODE}* at Udaya Bakery and get ₹50 off your first order! {LINK}'
+};
+function ubGetReferralSettings(){
+  try{
+    const raw = localStorage.getItem('ub_referral_settings');
+    if(raw){ const r = JSON.parse(raw); if(r && r.waMsg) return r; }
+  }catch(e){}
+  return Object.assign({}, UB_REF_DEFAULTS);
+}
+function ubSaveReferralSettings(){
+  const referrerDisc = parseInt(document.getElementById('ref_disc_referrer')?.value||'50')||0;
+  const newCustDisc  = parseInt(document.getElementById('ref_disc_new')?.value||'50')||0;
+  const waMsg        = document.getElementById('ref_wa_msg')?.value?.trim() || UB_REF_DEFAULTS.waMsg;
+  const settings = { referrerDisc, newCustDisc, waMsg };
+  localStorage.setItem('ub_referral_settings', JSON.stringify(settings));
+  if(db) db.collection('config').doc('referralSettings').set({...settings, updatedAt: Date.now()}).catch(()=>{});
+  const st = document.getElementById('ubRefSaveStatus');
+  if(st){ st.textContent = '✅ Referral settings saved!'; st.style.color = '#4ADE80'; }
+  showToast('🎁 Referral settings updated!','ok');
+}
+
 let _ubFlashSaleStore = null;
 function ubGetFlashSale(){ try{const s=JSON.parse(localStorage.getItem('ub_flash_sale')||'null');if(s&&new Date(s.end)>new Date())return s;return null;}catch(e){return null;} }
 function ubSaveFlashSale(){
@@ -14961,7 +15108,9 @@ function ubCopyReferralCode(){
 }
 function ubShareReferral(){
   const code = ubGetMyReferralCode();
-  const msg = 'Hey! 🎂 Use my referral code *' + code + '* at Udaya Bakery (Belman) and we both get ₹50 off! Order fresh cakes, puffs & more here: ' + window.location.origin + window.location.pathname + '?ref=' + code;
+  const settings = (typeof ubGetReferralSettings === 'function') ? ubGetReferralSettings() : { waMsg: 'Hey! 🎂 Use my code *{CODE}* at Udaya Bakery and get ₹50 off! {LINK}' };
+  const link = window.location.origin + window.location.pathname + '?ref=' + code;
+  const msg = settings.waMsg.replace(/{CODE}/g, code).replace(/{LINK}/g, link);
   window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener,noreferrer');
 }
 // Check for referral code on page load and store it
@@ -14980,6 +15129,24 @@ function ubToggleZoneMap(){
   var open = panel.style.display === 'none' || panel.style.display === '';
   panel.style.display = open ? 'block' : 'none';
   if(arrow) arrow.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+  if(open) ubRenderZonesList();
+}
+function ubRenderZonesList(){
+  var list = document.getElementById('ubZonesList');
+  if(!list) return;
+  var zones = (typeof ubGetZoneSettings === 'function') ? ubGetZoneSettings() : [];
+  if(!zones.length) return;
+  function hexToRgb(hex){ var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return r+','+g+','+b; }
+  list.innerHTML = zones.map(function(z){
+    var rgb = z.color ? hexToRgb(z.color) : '200,146,58';
+    var feeColor = z.feeNum===0 ? '#065F46' : z.feeNum===-1 ? '#3730A3' : '#92400E';
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba('+rgb+',.06);border:1px solid rgba('+rgb+',.2);border-radius:10px;">'
+      +'<div style="width:12px;height:12px;border-radius:50%;background:'+z.color+';flex-shrink:0;"></div>'
+      +'<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--choco);">'+z.label+'</div>'
+      +(z.areas?'<div style="font-size:11px;color:var(--text-mid);">'+z.areas+'</div>':'')+'</div>'
+      +'<div style="font-size:14px;font-weight:800;color:'+feeColor+';">'+z.fee+'</div>'
+      +'</div>';
+  }).join('');
 }
 function ubTogglePref(key){
   const prefs=JSON.parse(localStorage.getItem('ub_prefs')||'{"eggless":false,"vegan":false,"nutfree":false}');
