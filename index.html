@@ -5340,6 +5340,43 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
     <div id="locDelInfo" style="display:none;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.25);border-radius:10px;padding:8px 14px;font-size:13px;margin-bottom:10px;align-items:center;gap:8px;">
       <span>🚚</span><span>Delivery fee: <strong id="locDelCharge">₹0</strong></span>
     </div>
+    <!-- DELIVERY ZONE MAP -->
+    <div id="ubZoneMapToggle" style="margin-bottom:10px;">
+      <button onclick="ubToggleZoneMap()" style="width:100%;background:rgba(200,146,58,.08);color:var(--choco);border:1.5px solid rgba(200,146,58,.25);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:Jost,sans-serif;display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;">
+        <span>🗺️ View Delivery Zones &amp; Fees</span><span id="ubZoneArrow" style="transition:transform .2s;font-size:12px;">▼</span>
+      </button>
+      <div id="ubZoneMapPanel" style="display:none;margin-top:8px;background:var(--white);border:1.5px solid var(--cream-dark);border-radius:14px;overflow:hidden;">
+        <div style="padding:14px 16px 10px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Delivery Areas from Belman</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:10px;">
+              <div style="width:12px;height:12px;border-radius:50%;background:#4ADE80;flex-shrink:0;"></div>
+              <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--choco);">0–3 km · Belman area</div><div style="font-size:11px;color:var(--text-mid);">Belman, Nitte, nearby villages</div></div>
+              <div style="font-size:14px;font-weight:800;color:#065F46;">FREE</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(200,146,58,.06);border:1px solid rgba(200,146,58,.2);border-radius:10px;">
+              <div style="width:12px;height:12px;border-radius:50%;background:#F59E0B;flex-shrink:0;"></div>
+              <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--choco);">3–8 km</div><div style="font-size:11px;color:var(--text-mid);">Karkala, Shirva, Shankerpura</div></div>
+              <div style="font-size:14px;font-weight:800;color:#92400E;">₹30–50</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:10px;">
+              <div style="width:12px;height:12px;border-radius:50%;background:#F87171;flex-shrink:0;"></div>
+              <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--choco);">8–15 km</div><div style="font-size:11px;color:var(--text-mid);">Udupi, Kundapur outskirts</div></div>
+              <div style="font-size:14px;font-weight:800;color:#991B1B;">₹80–120</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2);border-radius:10px;">
+              <div style="width:12px;height:12px;border-radius:50%;background:#818CF8;flex-shrink:0;"></div>
+              <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--choco);">15+ km</div><div style="font-size:11px;color:var(--text-mid);">Special delivery — contact us</div></div>
+              <div style="font-size:14px;font-weight:800;color:#3730A3;">Call Us</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:var(--text-mid);background:rgba(200,146,58,.06);border-radius:8px;padding:8px 12px;">
+            💡 Orders ₹500+ in zones 0–8 km get <strong>FREE delivery!</strong>
+          </div>
+        </div>
+        <iframe src="https://maps.google.com/maps?q=13.1688428,74.8704174&z=12&output=embed" style="width:100%;height:200px;border:none;border-top:1.5px solid var(--cream-dark);" loading="lazy" title="Udaya Bakery Delivery Zone Map"></iframe>
+      </div>
+    </div>
     <div class="fg"><label id="addrLabel">Delivery Address *</label><textarea id="custAddr" placeholder="Full delivery address with landmark..."></textarea>
       <!-- Saved addresses picker (Bug 6 fix) -->
       <div id="savedAddrsContainer" style="margin-top:8px;"></div>
@@ -9810,6 +9847,16 @@ function openOrderModal(prefillTime){
   }
   document.getElementById('orderModalBg').classList.add('open');
   _ubPush('order');
+  // Auto-apply referral discount if first order and referral code exists
+  const _inRef = localStorage.getItem('ub_incoming_ref');
+  const _myOrders = currentUser ? JSON.parse(localStorage.getItem('ub_user_orders_'+(currentUser.email||''))||'[]') : [];
+  if(_inRef && _myOrders.length === 0 && !appliedCoupon){
+    const couponInp = document.getElementById('couponInput');
+    if(couponInp){ couponInp.value = _inRef; }
+    appliedCoupon = { code: _inRef, type: 'flat', value: 50, minOrder: 0 };
+    updateTotal();
+    setTimeout(()=>showToast('🎁 Referral code ' + _inRef + ' applied — ₹50 off!', 'ok'), 400);
+  }
 }
 
 function updateDeliveryLabel(){
@@ -11439,17 +11486,29 @@ function getGreeting(){ const h=new Date().getHours(); return h<12?'Morning':h<1
 
 // ── PRODUCTS TAB ──
 function buildProdsTab(){
-  return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+  return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
     <div><h2 style="font-family:Playfair Display,serif;font-size:20px;color:#E8B96A;">📦 All Products</h2><p style="font-size:12px;color:rgba(253,246,236,.35);margin-top:3px;">${PRODS.length} items in catalog</p></div>
     <button class="abtn" onclick="switchTab('addprod')">➕ Add New Product</button>
   </div>
+  <!-- Bulk action bar -->
+  <div id="ubBulkBar" style="display:none;background:rgba(200,146,58,.1);border:1.5px solid rgba(200,146,58,.3);border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <span id="ubBulkCount" style="font-size:13px;font-weight:700;color:#E8B96A;flex:1;min-width:100px;">0 selected</span>
+    <button onclick="ubBulkMarkOos(true)" style="background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">⊘ Mark Sold Out</button>
+    <button onclick="ubBulkMarkOos(false)" style="background:rgba(74,222,128,.12);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">✅ Mark In Stock</button>
+    <button onclick="ubBulkDelete()" style="background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">🗑 Delete Selected</button>
+    <button onclick="ubBulkClear()" style="background:rgba(255,255,255,.05);color:rgba(253,246,236,.4);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Jost,sans-serif;">✕ Clear</button>
+  </div>
   <div style="overflow-x:auto;">
   <table class="aptable">
-    <thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Variants</th><th>Stock</th><th>Actions</th></tr></thead>
+    <thead><tr>
+      <th style="width:32px;"><input type="checkbox" id="ubSelectAll" onchange="ubToggleAllProds(this.checked)" style="width:16px;height:16px;cursor:pointer;accent-color:#C8923A;"></th>
+      <th>Image</th><th>Product</th><th>Category</th><th>Variants</th><th>Stock</th><th>Actions</th>
+    </tr></thead>
     <tbody>${PRODS.map(p=>{
       const cat = CATS.find(c=>c.id===p.cat);
       const isOos = p.inStock===false;
-      return `<tr class="${isOos?'ub-low-stock-row':''}">
+      return `<tr class="${isOos?'ub-low-stock-row':''}" id="ubpr-${p.id}">
+        <td><input type="checkbox" class="ub-prod-chk" data-pid="${p.id}" onchange="ubProdChkChange()" style="width:16px;height:16px;cursor:pointer;accent-color:#C8923A;"></td>
         <td><div style="width:46px;height:46px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:22px;">${p.image?`<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;">`:`${p.emoji}`}</div></td>
         <td><div style="font-weight:600;color:rgba(253,246,236,.87);max-width:160px;">${p.name}${p.badge?`<span style="display:inline-block;background:rgba(200,146,58,.2);color:#E8B96A;font-size:9px;padding:1px 6px;border-radius:6px;margin-left:5px;font-weight:700;">${p.badge}</span>`:''}</div><div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:2px;">₹${p.price} base</div>${isOos?'<span class="ub-low-stock-badge">⊘ Out of Stock</span>':''}</td>
         <td style="white-space:nowrap;">${cat?cat.emoji+' '+cat.name:p.cat}</td>
@@ -11469,6 +11528,56 @@ function buildProdsTab(){
       </tr>`;}).join('')}
     </tbody>
   </table></div>`;
+}
+function ubGetSelectedPids(){
+  return Array.from(document.querySelectorAll('.ub-prod-chk:checked')).map(el=>el.getAttribute('data-pid'));
+}
+function ubProdChkChange(){
+  const selected = ubGetSelectedPids();
+  const bar = document.getElementById('ubBulkBar');
+  const cnt = document.getElementById('ubBulkCount');
+  if(bar) bar.style.display = selected.length > 0 ? 'flex' : 'none';
+  if(cnt) cnt.textContent = selected.length + ' selected';
+  const all = document.getElementById('ubSelectAll');
+  if(all) all.indeterminate = selected.length > 0 && selected.length < PRODS.length;
+}
+function ubToggleAllProds(checked){
+  document.querySelectorAll('.ub-prod-chk').forEach(el=>{ el.checked = checked; });
+  ubProdChkChange();
+}
+function ubBulkClear(){
+  document.querySelectorAll('.ub-prod-chk').forEach(el=>{ el.checked = false; });
+  const all = document.getElementById('ubSelectAll');
+  if(all) all.checked = false;
+  ubProdChkChange();
+}
+async function ubBulkMarkOos(oos){
+  const pids = ubGetSelectedPids();
+  if(!pids.length){ showToast('Select at least one product first','err'); return; }
+  let saved = 0;
+  for(const pid of pids){
+    const p = PRODS.find(x=>String(x.id)===String(pid));
+    if(!p) continue;
+    p.inStock = !oos;
+    if(db){
+      try{ await db.collection('products').doc(String(pid)).set({inStock: p.inStock},{merge:true}); saved++; }catch(e){}
+    }
+  }
+  save(); renderProds(); renderAdminTab();
+  showToast((oos ? '⊘ ' : '✅ ') + pids.length + ' products marked ' + (oos?'Sold Out':'In Stock'), oos?'err':'ok');
+}
+function ubBulkDelete(){
+  const pids = ubGetSelectedPids();
+  if(!pids.length){ showToast('Select at least one product first','err'); return; }
+  ubConfirmDialog('Delete ' + pids.length + ' selected product(s)? This cannot be undone.', async ()=>{
+    for(const pid of pids){
+      const idx = PRODS.findIndex(x=>String(x.id)===String(pid));
+      if(idx > -1) PRODS.splice(idx,1);
+      if(db){ try{ await db.collection('products').doc(String(pid)).delete(); }catch(e){} }
+    }
+    save(); renderProds(); renderAdminTab();
+    showToast('🗑 ' + pids.length + ' products deleted','ok');
+  });
 }
 
 function ubToggleStock(id){
@@ -14806,7 +14915,71 @@ function ubRenderProfileContent(){
   }
   html += '</div>';
 
+  // ── REFERRAL SYSTEM ──
+  const _refCode = ubGetMyReferralCode();
+  const _refCount = ubGetMyReferralCount();
+  const _refLink = window.location.origin + window.location.pathname + '?ref=' + _refCode;
+  html += '<div style="background:linear-gradient(135deg,rgba(200,146,58,.15),rgba(200,146,58,.05));border:1.5px solid rgba(200,146,58,.3);border-radius:16px;padding:20px;margin-bottom:16px;">';
+  html += '<div style="font-family:Playfair Display,serif;font-size:16px;color:#3B1F0E;font-weight:700;margin-bottom:4px;">🎁 Refer & Earn</div>';
+  html += '<div style="font-size:12px;color:#5C3520;margin-bottom:14px;line-height:1.6;">Share your link — when a friend places their first order, <strong>you both get ₹50 off</strong> your next order!</div>';
+  html += '<div style="background:#FDF6EC;border:1.5px dashed rgba(200,146,58,.4);border-radius:12px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;">';
+  html += '<div><div style="font-size:10px;color:#A0623A;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;">Your Referral Code</div>';
+  html += '<div style="font-family:monospace;font-size:22px;font-weight:800;color:#3B1F0E;letter-spacing:3px;">' + _refCode + '</div></div>';
+  html += '<button onclick="ubCopyReferralCode()" style="background:linear-gradient(135deg,#C8923A,#9A5C1A);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;white-space:nowrap;">📋 Copy Code</button>';
+  html += '</div>';
+  html += '<button onclick="ubShareReferral()" style="width:100%;background:rgba(37,211,102,.12);color:#065F46;border:1.5px solid rgba(37,211,102,.35);border-radius:10px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;">💬 Share via WhatsApp</button>';
+  html += '<div style="margin-top:10px;font-size:12px;color:#A0623A;text-align:center;">' + _refCount + ' friend' + (_refCount!==1?'s':'') + ' referred · ₹' + (_refCount*50) + ' earned so far</div>';
+  html += '</div>';
+
   el.innerHTML=html;
+}
+function ubGetMyReferralCode(){
+  if(!currentUser) return 'BAKERY50';
+  let code = localStorage.getItem('ub_ref_code_' + (currentUser.email||''));
+  if(!code){
+    const base = ((currentUser.name||'BAKE').replace(/[^a-zA-Z]/g,'').toUpperCase().slice(0,4)||'BAKE');
+    const num = Math.floor(1000 + Math.random()*9000);
+    code = base + num;
+    localStorage.setItem('ub_ref_code_' + (currentUser.email||''), code);
+    if(db && currentUser.email){
+      db.collection('referrals').doc(currentUser.email).set({code, email:currentUser.email, name:currentUser.name||'', createdAt:Date.now()}, {merge:true}).catch(()=>{});
+    }
+  }
+  return code;
+}
+function ubGetMyReferralCount(){
+  return parseInt(localStorage.getItem('ub_ref_count_' + (currentUser&&currentUser.email||''))||'0');
+}
+function ubCopyReferralCode(){
+  const code = ubGetMyReferralCode();
+  const msg = 'Hey! 🎂 Use my referral code *' + code + '* at Udaya Bakery (Belman) and get ₹50 off your first order! Order here: ' + window.location.origin + window.location.pathname + '?ref=' + code;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(code).then(()=>showToast('✅ Referral code copied!','ok')).catch(()=>showToast('Code: '+code,'ok'));
+  } else {
+    showToast('Code: ' + code, 'ok');
+  }
+}
+function ubShareReferral(){
+  const code = ubGetMyReferralCode();
+  const msg = 'Hey! 🎂 Use my referral code *' + code + '* at Udaya Bakery (Belman) and we both get ₹50 off! Order fresh cakes, puffs & more here: ' + window.location.origin + window.location.pathname + '?ref=' + code;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener,noreferrer');
+}
+// Check for referral code on page load and store it
+(function ubCheckReferral(){
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if(ref && ref.length >= 5){
+    localStorage.setItem('ub_incoming_ref', ref.toUpperCase());
+    showToast('🎁 Referral code applied! You\'ll get ₹50 off your first order.', 'ok');
+  }
+})();
+function ubToggleZoneMap(){
+  var panel = document.getElementById('ubZoneMapPanel');
+  var arrow = document.getElementById('ubZoneArrow');
+  if(!panel) return;
+  var open = panel.style.display === 'none' || panel.style.display === '';
+  panel.style.display = open ? 'block' : 'none';
+  if(arrow) arrow.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
 }
 function ubTogglePref(key){
   const prefs=JSON.parse(localStorage.getItem('ub_prefs')||'{"eggless":false,"vegan":false,"nutfree":false}');
