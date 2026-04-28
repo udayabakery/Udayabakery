@@ -58,7 +58,18 @@ html{scroll-behavior:smooth;}
 body{-webkit-overflow-scrolling:touch;}
 
 /* Product grid */
-.product-grid{will-change:auto;}
+/* ── PERFORMANCE: product image skeleton prevents layout shift ── */
+.pimg-wrap{contain:layout style paint;aspect-ratio:1/1;background:#1a0e06;}
+.pimg-wrap img{width:100%;height:100%;object-fit:cover;will-change:auto;}
+.product-card{contain:layout style;}
+/* content-visibility: auto skips rendering off-screen cards entirely */
+@supports (content-visibility: auto) {
+  .product-card { content-visibility: auto; contain-intrinsic-size: 0 420px; }
+}
+/* Passive scroll — stop scroll jank from event listeners */
+* { touch-action: pan-y; }
+.pimg-wrap, .btn-add, .ub-wish-btn { touch-action: manipulation; }
+
 
 
 /* Category cards: paint containment */
@@ -9235,10 +9246,8 @@ function renderProds(){
     }
   }
   let list = selCat === 'all' ? [...PRODS] : PRODS.filter(p=>p.cat===selCat);
-  // Apply cake sub-category filter if active
   if(selSubcat) list = list.filter(p=>p.subcat===selSubcat);
 
-  // Feature 12: Filter out seasonal items outside their active window
   const todayISO = new Date().toISOString().split('T')[0];
   list = list.filter(p=>{
     if(!p.seasonStart && !p.seasonEnd) return true;
@@ -9247,7 +9256,6 @@ function renderProds(){
     return afterStart && beforeEnd;
   });
 
-  // Apply search filter
   if(searchQuery.trim()){
     list = list.map(p=>({p, score:_ubCachedScore(p, searchQuery)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).map(x=>x.p);
     document.getElementById('searchResultsBar').classList.add('visible');
@@ -9257,9 +9265,7 @@ function renderProds(){
     document.getElementById('searchResultsBar').classList.remove('visible');
     const _isKnTitle = currentLang === 'kn';
     const catObj = CATS.find(c=>c.id===selCat);
-    const catNameDisplay = catObj
-      ? (_isKnTitle ? (catObj.nameKn || getCatNameKn(catObj.name)) : catObj.name)
-      : '';
+    const catNameDisplay = catObj ? (_isKnTitle ? (catObj.nameKn || getCatNameKn(catObj.name)) : catObj.name) : '';
     document.getElementById('productsTitle').innerHTML = selCat==='all'
       ? (_isKnTitle ? 'ನಮ್ಮ <em>ರುಚಿಕರ</em> ಉತ್ಪನ್ನಗಳು' : 'Our <em>Delicious</em> Products')
       : `${catNameDisplay} <em>— ${_isKnTitle ? 'ತಾಜಾ & ರುಚಿಕರ' : 'Fresh & Delicious'}</em>`;
@@ -9274,61 +9280,75 @@ function renderProds(){
     }
     return;
   }
-  requestAnimationFrame(()=>{
-  grid.innerHTML = list.map(p=>{
+
+  // ── OPTIMISED RENDER: build cards as DocumentFragment in chunks ──
+  // Disconnect old IntersectionObserver if any
+  if(window._ubImgObserver){ window._ubImgObserver.disconnect(); }
+
+  // Build all card HTML at once but use data-src instead of src for images
+  const _isKn = currentLang === 'kn';
+  const fragment = document.createDocumentFragment();
+  const tmpDiv = document.createElement('div');
+
+  list.forEach(p => {
     const cat = CATS.find(c=>c.id===p.cat);
-    // During search, prefer the matched flavour's image so the card visually matches what was searched
-    let _cardMatchedFlavourName = null;
     let _cardBaseImg = p.image || ((p.flavours && p.flavours.length && p.flavours[0]?.image) ? p.flavours[0].image : '');
+    let _cardMatchedFlavourName = null;
     if(searchQuery && p.flavours && p.flavours.length > 0){
       const _qLow = searchQuery.toLowerCase().trim();
       const _mfi = p.flavours.findIndex(f => f.name && f.name.toLowerCase().includes(_qLow));
       if(_mfi >= 0 && p.flavours[_mfi].image){ _cardBaseImg = p.flavours[_mfi].image; _cardMatchedFlavourName = p.flavours[_mfi].name; }
     }
-    const imgH = _cardBaseImg ? `<img src="${_cardBaseImg}" alt="${p.name}" loading="lazy" decoding="async" style="cursor:pointer;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;object-position:center;background:#1a0e06;" onload="this.closest('.pimg-wrap').classList.add('img-loaded','has-img')" onerror="this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');var _e=_w.querySelector('.pimg-emoji-fb');if(_e)_e.style.display='flex';}"><div class="pimg-emoji pimg-emoji-fb" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:76px;">${p.emoji}</div>` : `<div class="pimg-emoji">${p.emoji}</div>`;
-    const _isKn = currentLang === 'kn';
-
-    // ── SMART LANGUAGE DISPLAY ──
-    // Uses helper: shows saved nameKn, or auto-translates, or falls back to English
     const pDisplayName = ubGetProductName(p, currentLang);
     const pDisplayDesc = ubGetProductDesc(p, currentLang);
-
-    // Category label also in correct language
-    const catDisplayName = cat
-      ? (_isKn ? (cat.nameKn || getCatNameKn(cat.name)) : cat.name)
-      : (p.cat || '');
-
+    const catDisplayName = cat ? (_isKn ? (cat.nameKn || getCatNameKn(cat.name)) : cat.name) : (p.cat || '');
     const pname = searchQuery ? highlight(pDisplayName, searchQuery) : pDisplayName;
     const hasFlavours = p.flavours && p.flavours.length > 0;
-    const flvLabel = hasFlavours ? `<div class="flv-img-label" id="fl-${p.id}"></div>` : '';
+    const _pOos = p.inStock===false;
+
     if(hasFlavours){
-      const list = [...p.flavours];
+      const flist = [...p.flavours];
       if(p.defaultFlavour){
-        const already = list.findIndex(f=>f.name.toLowerCase()===p.defaultFlavour.toLowerCase());
-        if(already === -1) list.unshift({name:p.defaultFlavour,extras:{},extra:0});
-        else if(already > 0){ const [d]=list.splice(already,1); list.unshift(d); }
+        const already = flist.findIndex(f=>f.name.toLowerCase()===p.defaultFlavour.toLowerCase());
+        if(already === -1) flist.unshift({name:p.defaultFlavour,extras:{},extra:0});
+        else if(already > 0){ const [d]=flist.splice(already,1); flist.unshift(d); }
       }
-      p._displayFlavours = list;
+      p._displayFlavours = flist;
     }
     const cardFlvList = p._displayFlavours || p.flavours || [];
+
+    // Use data-src for lazy loading — real src is set by IntersectionObserver
+    const imgH = _cardBaseImg
+      ? `<img data-src="${_cardBaseImg}" alt="${p.name}" style="cursor:pointer;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;object-position:center;background:#1a0e06;display:block;" onload="this.closest('.pimg-wrap').classList.add('img-loaded','has-img')" onerror="this.style.display='none';var _w=this.closest('.pimg-wrap');if(_w){_w.classList.add('img-loaded');var _e=_w.querySelector('.pimg-emoji-fb');if(_e)_e.style.display='flex';}"><div class="pimg-emoji pimg-emoji-fb" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:76px;">${p.emoji}</div>`
+      : `<div class="pimg-emoji">${p.emoji}</div>`;
+
+    // Flavour overlays — also data-src
     const flvOverlays = hasFlavours ? cardFlvList.map((f,i)=>{
       if(!f.image) return '';
       const isDefault = i === 0;
-      return `<img class="flv-img-overlay${isDefault?' default-flv':''}" id="fi-${p.id}-${i}" src="${f.image}" alt="${f.name}" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;object-position:center;background:#1a0e06;" onerror="this.style.opacity='0'">`;
+      return `<img class="flv-img-overlay${isDefault?' default-flv':''}" id="fi-${p.id}-${i}" data-src="${f.image}" alt="${f.name}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;object-position:center;background:#1a0e06;" onerror="this.style.opacity='0'">`;
     }).join('') : '';
+    const flvLabel = hasFlavours ? `<div class="flv-img-label" id="fl-${p.id}"></div>` : '';
+
     const flavourHtml = hasFlavours ? `
       <div class="varlabel" style="margin-top:6px;">${_isKn ? 'ಫ್ಲೇವರ್ ಆಯ್ಕೆ ಮಾಡಿ:' : 'Select Flavour:'}</div>
       <div class="vchips" id="pf-${p.id}">${cardFlvList.map((f,i)=>`<span class="vc ${i===0?'sel':''}" onclick="selFlv('${p.id}',${i})" style="background:${i===0?'var(--gold)':''};color:${i===0?'#fff':''}">${f.name}${f.extra>0?` +₹${f.extra}`:''}</span>`).join('')}</div>` : '';
-    const _pOos = p.inStock===false;
-    return `<div class="product-card" id="pc-${p.id}" style="${_pOos?'opacity:.5;pointer-events:none;':''}">
+
+    const priceHtml = (()=>{
+      const dfl=(p._displayFlavours&&p._displayFlavours[0]?.variants?.length)?p._displayFlavours[0].variants:p.variants;
+      const dv=dfl[0]; if(!dv) return '';
+      const _fs=ubGetFlashSale(); const _op=dv.price;
+      const _dp=_fs?Math.round(_op*(1-_fs.pct/100)):_op;
+      return _fs?`<span style="text-decoration:line-through;opacity:.5;font-size:12px;">₹${_op}</span> <span style="color:#EF4444;font-weight:800;">₹${_dp}</span> <small>/ ${dv.label}</small>`:`₹${_op} <small>/ ${dv.label}</small>`;
+    })();
+
+    tmpDiv.innerHTML = `<div class="product-card" id="pc-${p.id}" style="${_pOos?'opacity:.5;pointer-events:none;':''}">
       ${_pOos?`<div style="position:absolute;top:9px;left:9px;z-index:6;background:#EF4444;color:#fff;font-size:9px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;">${_isKn?'ಸ್ಟಾಕ್ ಇಲ್ಲ':'Out of Stock'}</div>`:''}
       <button class="ub-wish-btn ${ubIsWished(p.id)?'loved':''}" onclick="ubToggleWish(${p.id});event.stopPropagation();" title="Save to Wishlist">${ubIsWished(p.id)?'❤️':'🤍'}</button>
       <div class="pimg-wrap" data-pid="${p.id}" data-flav="${_cardMatchedFlavourName ? (_cardMatchedFlavourName+'').replace(/"/g,'&quot;') : ''}" style="cursor:pointer;">${imgH}${flvOverlays}${flvLabel}${p.badge?`<span class="pbadge">${p.badge}</span>`:''}${p.leadDays>0?`<span style="position:absolute;bottom:8px;left:8px;z-index:6;background:rgba(0,0,0,.6);color:#FCD34D;font-size:9px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.4px;backdrop-filter:blur(4px);">⏳ ${p.leadDays}d pre-order</span>`:''}</div>
       <div class="pbody">
         <div class="pcat">${catDisplayName}</div>
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
-          <div class="pname" style="flex:1;">${pname}</div>
-        </div>
+        <div class="pname">${pname}</div>
         <div class="ub-stars" id="pstars-${p.id}">${ubGetStarsHtml(p.id)}</div>
         <div class="pdesc">${pDisplayDesc}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
@@ -9336,52 +9356,76 @@ function renderProds(){
           ${hasFlavours?`<span style="font-size:11px;background:rgba(200,146,58,.12);color:var(--gold);padding:3px 8px;border-radius:20px;">${p.flavours.length} ${_isKn?'ಫ್ಲೇವರ್‌ಗಳು':'flavours'}</span>`:''}
         </div>
         <div class="pfoot">
-          <div class="pprice" id="pp-${p.id}">${(()=>{const dfl=(p._displayFlavours&&p._displayFlavours[0]?.variants?.length)?p._displayFlavours[0].variants:p.variants;const dv=dfl[0];if(!dv)return '';const _fs=ubGetFlashSale();const _op=dv.price;const _dp=_fs?Math.round(_op*(1-_fs.pct/100)):_op;return _fs?`<span style="text-decoration:line-through;opacity:.5;font-size:12px;">₹${_op}</span> <span style="color:#EF4444;font-weight:800;">₹${_dp}</span> <small>/ ${dv.label}</small>`:`₹${_op} <small>/ ${dv.label}</small>`})()}</div>
+          <div class="pprice" id="pp-${p.id}">${priceHtml}</div>
           <div style="display:flex;align-items:center;gap:6px;">
             <button class="btn-add ub-card-add" data-pid="${p.id}" data-flav="${_cardMatchedFlavourName ? (_cardMatchedFlavourName+'').replace(/"/g,'&quot;') : ''}">${_isKn ? '+ ಸೇರಿಸಿ' : '+ Add'}</button>
-            <button onclick="ubShareProduct('${p.id}');event.stopPropagation();" title="Share on WhatsApp" style="background:rgba(37,211,102,.12);color:#25D366;border:1.5px solid rgba(37,211,102,.3);border-radius:10px;width:36px;height:36px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;touch-action:manipulation;padding:0;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="20" height="20" fill="#25D366"><path d="M16 3C9.373 3 4 8.373 4 15c0 2.385.664 4.61 1.81 6.51L4 29l7.67-1.787A12.94 12.94 0 0016 28c6.627 0 12-5.373 12-12S22.627 3 16 3zm0 2c5.523 0 10 4.477 10 10s-4.477 10-10 10a10 10 0 01-4.934-1.3L10.5 23.4l.23.062-5.18 1.207 1.24-4.97-.18-.28A9.96 9.96 0 016 15c0-5.523 4.477-10 10-10zm-3.16 5.01c-.22 0-.57.082-.87.41-.3.327-1.13 1.104-1.13 2.69 0 1.584 1.157 3.116 1.317 3.331.16.215 2.24 3.617 5.537 4.928 2.738 1.08 3.298.866 3.893.812.594-.054 1.916-.784 2.185-1.54.27-.756.27-1.404.188-1.54-.08-.134-.296-.215-.62-.377-.324-.162-1.916-.946-2.213-1.053-.296-.107-.51-.162-.726.162-.215.323-.836 1.053-1.025 1.269-.189.215-.378.242-.702.08-.323-.162-1.367-.504-2.603-1.608-.963-.858-1.612-1.918-1.8-2.24-.188-.323-.02-.498.142-.659.146-.145.323-.378.485-.567.162-.188.215-.323.323-.538.108-.215.054-.404-.027-.566-.08-.162-.71-1.757-.98-2.4-.256-.62-.518-.527-.71-.535l-.603-.01z"/></svg></button>
+            <button onclick="ubShareProduct('${p.id}');event.stopPropagation();" title="Share" style="background:rgba(37,211,102,.12);color:#25D366;border:1.5px solid rgba(37,211,102,.3);border-radius:10px;width:36px;height:36px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;touch-action:manipulation;padding:0;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="20" height="20" fill="#25D366"><path d="M16 3C9.373 3 4 8.373 4 15c0 2.385.664 4.61 1.81 6.51L4 29l7.67-1.787A12.94 12.94 0 0016 28c6.627 0 12-5.373 12-12S22.627 3 16 3zm0 2c5.523 0 10 4.477 10 10s-4.477 10-10 10a10 10 0 01-4.934-1.3L10.5 23.4l.23.062-5.18 1.207 1.24-4.97-.18-.28A9.96 9.96 0 016 15c0-5.523 4.477-10 10-10zm-3.16 5.01c-.22 0-.57.082-.87.41-.3.327-1.13 1.104-1.13 2.69 0 1.584 1.157 3.116 1.317 3.331.16.215 2.24 3.617 5.537 4.928 2.738 1.08 3.298.866 3.893.812.594-.054 1.916-.784 2.185-1.54.27-.756.27-1.404.188-1.54-.08-.134-.296-.215-.62-.377-.324-.162-1.916-.946-2.213-1.053-.296-.107-.51-.162-.726.162-.215.323-.836 1.053-1.025 1.269-.189.215-.378.242-.702.08-.323-.162-1.367-.504-2.603-1.608-.963-.858-1.612-1.918-1.8-2.24-.188-.323-.02-.498.142-.659.146-.145.323-.378.485-.567.162-.188.215-.323.323-.538.108-.215.054-.404-.027-.566-.08-.162-.71-1.757-.98-2.4-.256-.62-.518-.527-.71-.535l-.603-.01z"/></svg></button>
           </div>
         </div>
       </div>
     </div>`;
-  }).join('');
-  // Mark image wraps that have images (hides skeleton shimmer)
-  grid.querySelectorAll('.pimg-wrap img').forEach(img=>{
-    if(img.complete) img.closest('.pimg-wrap')?.classList.add('img-loaded');
-    else img.addEventListener('load',()=>img.closest('.pimg-wrap')?.classList.add('img-loaded'),{once:true});
+    fragment.appendChild(tmpDiv.firstElementChild);
   });
-  // ── Wire + Add buttons and image clicks using data-attributes (avoids broken nested template literals) ──
-  grid.querySelectorAll('.ub-card-add').forEach(function(btn){
-    btn.addEventListener('click', function(e){
+
+  // Single DOM write — swap entire grid content at once
+  grid.innerHTML = '';
+  grid.appendChild(fragment);
+
+  // ── IntersectionObserver: load images only when card enters viewport ──
+  window._ubImgObserver = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if(!entry.isIntersecting) return;
+      const card = entry.target;
+      // Load main product image
+      card.querySelectorAll('img[data-src]').forEach(img => {
+        img.src = img.getAttribute('data-src');
+        img.removeAttribute('data-src');
+      });
+      obs.unobserve(card);
+    });
+  }, { rootMargin: '200px 0px', threshold: 0 });
+
+  grid.querySelectorAll('.product-card').forEach(card => {
+    window._ubImgObserver.observe(card);
+  });
+
+  // ── Wire event listeners via delegation (single listener, not per-card) ──
+  // Remove previous delegated listeners
+  const oldGrid = grid.cloneNode(false);
+  if(grid._delegated){
+    grid.removeEventListener('click', grid._delegatedHandler);
+  }
+  grid._delegatedHandler = function(e){
+    // Add button
+    const addBtn = e.target.closest('.ub-card-add');
+    if(addBtn){
       e.stopPropagation();
-      var pid = btn.getAttribute('data-pid');
-      var flav = btn.getAttribute('data-flav') || null;
-      if(flav === '') flav = null;
+      const pid = addBtn.getAttribute('data-pid');
+      const flav = addBtn.getAttribute('data-flav') || null;
       _ubSearchBeforeModal = searchQuery;
       openQAModal(pid);
       if(flav){
         setTimeout(function(){
-          var prod = PRODS.find(function(x){ return String(x.id) === String(pid); });
+          const prod = PRODS.find(x=>String(x.id)===String(pid));
           if(!prod) return;
-          var dl = prod._displayFlavours || prod.flavours || [];
-          var fi = dl.findIndex(function(f){ return f.name && f.name.toLowerCase() === flav.toLowerCase(); });
-          if(fi >= 0){
-            qaPickF(fi);
-            document.querySelectorAll('#qaFlavours .qa-chip').forEach(function(c,i){ c.classList.toggle('sel', i === fi); });
-          }
+          const dl = prod._displayFlavours || prod.flavours || [];
+          const fi = dl.findIndex(f=>f.name && f.name.toLowerCase()===flav.toLowerCase());
+          if(fi >= 0){ qaPickF(fi); document.querySelectorAll('#qaFlavours .qa-chip').forEach((c,i)=>c.classList.toggle('sel',i===fi)); }
         }, 200);
       }
-    });
-  });
-  grid.querySelectorAll('.pimg-wrap[data-pid]').forEach(function(wrap){
-    wrap.addEventListener('click', function(){
-      var pid = wrap.getAttribute('data-pid');
-      var flav = wrap.getAttribute('data-flav') || null;
-      if(flav === '') flav = null;
-      selectSearchResult(pid, flav);
-    });
-  });
-  });
+      return;
+    }
+    // Image wrap click
+    const wrap = e.target.closest('.pimg-wrap[data-pid]');
+    if(wrap && !e.target.closest('.ub-wish-btn')){
+      const pid = wrap.getAttribute('data-pid');
+      const flav = wrap.getAttribute('data-flav') || null;
+      selectSearchResult(pid, flav || null);
+      return;
+    }
+  };
+  grid._delegated = true;
+  grid.addEventListener('click', grid._delegatedHandler);
 }
 
 // Debounced renderProds — Firebase real-time updates won't spam re-render
