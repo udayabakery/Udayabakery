@@ -165,6 +165,10 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed;}
 }
 
 /* ══ ADMIN: SOLD-OUT TOGGLE in product table ══ */
+/* Mobile product table fixes */
+.aptable{width:100%;border-collapse:collapse;min-width:560px;}
+.aptable td,.aptable th{vertical-align:middle;}
+.abtn-edit,.abtn-del{min-width:44px!important;min-height:44px!important;display:inline-flex!important;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .ub-sold-toggle{
   position:relative;display:inline-flex;align-items:center;
   width:38px;height:22px;cursor:pointer;flex-shrink:0;
@@ -4954,6 +4958,9 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
   </div>
 </section>
 
+<!-- SUBSCRIPTION PLANS — rendered dynamically by JS -->
+<div id="ub-sub-section" style="display:none;"></div>
+
 <!-- FAQ -->
 <section id="faq">
   <div class="container">
@@ -5496,6 +5503,7 @@ nav, #hero { animation: pageEntrance .6s cubic-bezier(.22,1,.36,1) both !importa
         <button class="atab" onclick="switchTab('stockcount')" id="at-stockcount">📦 Stock Count</button>
         <button class="atab" onclick="switchTab('razorpay')" id="at-razorpay">💰 Razorpay</button>
         <button class="atab" onclick="switchTab('combooffer')" id="at-combooffer" style="background:linear-gradient(135deg,rgba(74,222,128,.2),rgba(74,222,128,.08));border-color:rgba(74,222,128,.4)!important;color:#4ADE80;">🎁 Combo Offers</button>
+        <button class="atab" onclick="switchTab('subscriptions')" id="at-subscriptions" style="background:linear-gradient(135deg,rgba(139,92,246,.25),rgba(139,92,246,.08));border-color:rgba(139,92,246,.4)!important;color:#A78BFA;">🔄 Subscriptions</button>
       </div>
     </div>
     
@@ -5836,6 +5844,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
       startBrandingListener();
       ubStartConfigListener();
       ubStartPaymentSettingsListener();
+      ubStartZoneSettingsListener();
+      ubStartReferralSettingsListener();
       ubStartComboListener();
       ubStartVideosListener();
     } else {
@@ -6081,6 +6091,8 @@ document.addEventListener('visibilitychange', ()=>{
     if(!_catUnsubscribe) startProductListener(); // also reconnects category listener
     ubStartConfigListener(); // re-attach config listener if dropped
     ubStartPaymentSettingsListener(); // re-attach payment settings listener
+    ubStartZoneSettingsListener();
+    ubStartReferralSettingsListener();
     if(!_comboUnsubscribe) ubStartComboListener();
   }
 });
@@ -6234,6 +6246,40 @@ async function loadOrdersFromDB(){
     const snap = await db.collection('orders').orderBy('createdAt','desc').limit(200).get();
     if(!snap.empty){ ORDERS = snap.docs.map(d=>({id:d.id,...d.data()})); }
   } catch(e){}
+}
+
+// ── ZONE SETTINGS REAL-TIME LISTENER — fires on ALL customer devices when admin saves ──
+let _zoneSettingsUnsubscribe = null;
+function ubStartZoneSettingsListener(){
+  if(!db || _zoneSettingsUnsubscribe) return;
+  _zoneSettingsUnsubscribe = db.collection('config').doc('zoneSettings').onSnapshot(doc=>{
+    if(!doc.exists || !doc.data().zones) return;
+    const zones = doc.data().zones;
+    localStorage.setItem('ub_zone_settings', JSON.stringify(zones));
+    // If zone map panel is open, re-render it immediately
+    const panel = document.getElementById('ubZoneMapPanel');
+    if(panel && panel.style.display !== 'none') ubRenderZonesList();
+    // If admin zone editor is open, refresh it too
+    if(typeof ubRenderZoneEditor === 'function' && document.getElementById('ubZoneEditorWrap')) ubRenderZoneEditor();
+  }, e=>{ _zoneSettingsUnsubscribe=null; setTimeout(ubStartZoneSettingsListener, 5000); });
+}
+
+// ── REFERRAL SETTINGS REAL-TIME LISTENER — fires on ALL customer devices when admin saves ──
+let _referralSettingsUnsubscribe = null;
+function ubStartReferralSettingsListener(){
+  if(!db || _referralSettingsUnsubscribe) return;
+  _referralSettingsUnsubscribe = db.collection('config').doc('referralSettings').onSnapshot(doc=>{
+    if(!doc.exists) return;
+    const d = doc.data();
+    localStorage.setItem('ub_referral_settings', JSON.stringify(d));
+    // Update admin inputs if settings tab is open
+    const ri=document.getElementById('ref_disc_referrer');
+    const ni=document.getElementById('ref_disc_new');
+    const wi=document.getElementById('ref_wa_msg');
+    if(ri && d.referrerDisc!=null) ri.value = d.referrerDisc;
+    if(ni && d.newCustDisc!=null)  ni.value = d.newCustDisc;
+    if(wi && d.waMsg)               wi.value = d.waMsg;
+  }, e=>{ _referralSettingsUnsubscribe=null; setTimeout(ubStartReferralSettingsListener, 5000); });
 }
 
 // ── PAYMENT SETTINGS LISTENER — loads Razorpay key from Firestore on ALL devices ──
@@ -11343,6 +11389,7 @@ function renderAdminTab(){
   else if(adminTab==='cakebuilder'){ try{ el.innerHTML = buildCakeBuilderAdminTab(); }catch(e){ console.error('[cakebuilder]',e); el.innerHTML='<div style="padding:32px;text-align:center;"><div style="color:#F87171;">⚠️ '+e.message+'</div><button onclick="renderAdminTab()" style="margin-top:12px;background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:8px;padding:7px 16px;font-family:Jost,sans-serif;font-size:12px;cursor:pointer;">🔄 Retry</button></div>'; } }
   else if(adminTab==='videos'){ try{ el.innerHTML = buildVideosAdminTab(); }catch(e){ console.error('[videos]',e); el.innerHTML='<div style="padding:32px;text-align:center;"><div style="color:#F87171;">⚠️ '+e.message+'</div><button onclick="renderAdminTab()" style="margin-top:12px;background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:8px;padding:7px 16px;font-family:Jost,sans-serif;font-size:12px;cursor:pointer;">🔄 Retry</button></div>'; } }
   else if(adminTab==='policies'){ try{ el.innerHTML = buildPoliciesAdminTab(); initPoliciesAdmin(); }catch(e){ console.error('[Tab policies]',e); el.innerHTML='<div style="padding:32px;text-align:center;"><div style="color:#F87171;font-size:13px;">⚠️ Error: '+e.message+'</div><button onclick="renderAdminTab()" style="margin-top:12px;background:rgba(200,146,58,.15);color:#E8B96A;border:1px solid rgba(200,146,58,.3);border-radius:8px;padding:7px 16px;font-family:Jost,sans-serif;font-size:12px;cursor:pointer;">🔄 Retry</button></div>'; } }
+  else if(adminTab==='subscriptions'){ try{ el.innerHTML = buildSubscriptionsAdminTab(); }catch(e){ console.error('[subscriptions]',e); el.innerHTML='<div style="padding:32px;text-align:center;"><div style="color:#F87171;">⚠️ '+e.message+'</div></div>'; } }
   else if(adminTab==='designer'){
     try {
       el.innerHTML = buildDesignerTab();
@@ -11552,9 +11599,11 @@ function buildProdsTab(){
           </label>
           <div style="font-size:9px;color:${isOos?'#F87171':'#4ADE80'};text-align:center;margin-top:3px;font-weight:700;">${isOos?'SOLD OUT':'IN STOCK'}</div>
         </td>
-        <td style="white-space:nowrap;display:flex;gap:5px;align-items:center;">
-          <button class="abtn-edit" onclick="startEdit(${p.id})" style="padding:6px 10px;">✏️</button>
-          <button class="abtn-del" onclick="delProd(${p.id})" style="padding:6px 10px;">🗑</button>
+        <td style="white-space:nowrap;">
+          <div style="display:flex;gap:5px;align-items:center;">
+            <button class="abtn-edit" onclick="startEdit(${p.id})" style="padding:8px 12px;min-width:44px;min-height:44px;font-size:16px;touch-action:manipulation;">✏️</button>
+            <button class="abtn-del" onclick="delProd(${p.id})" style="padding:8px 12px;min-width:44px;min-height:44px;font-size:16px;touch-action:manipulation;">🗑</button>
+          </div>
         </td>
       </tr>`;}).join('')}
     </tbody>
@@ -19190,7 +19239,295 @@ function buildComboOfferTab(){
   +'</div>';
 }
 
-var _cmItems=[];var _cmEditIdx=-1;
+var _ubSubEditId=null;
+
+/* ════════════════════════════════════════════════
+   🔄 SUBSCRIPTION SYSTEM — Admin builds plans,
+   customers subscribe, changes go live in real-time
+════════════════════════════════════════════════ */
+
+function _getSubPlans(){
+  try{ return JSON.parse(localStorage.getItem('ub_sub_plans')||'[]'); }catch(e){ return []; }
+}
+function _saveSubPlans(plans){
+  localStorage.setItem('ub_sub_plans', JSON.stringify(plans));
+  // Sync to Firebase so ALL customers see instantly
+  if(typeof db!=='undefined'&&db){
+    db.collection('settings').doc('subscription_plans').set({plans:plans,updatedAt:Date.now()})
+      .catch(function(e){ console.warn('Sub plan sync failed:',e); });
+  }
+}
+function _getUserSubs(){
+  try{ return JSON.parse(localStorage.getItem('ub_user_subs')||'[]'); }catch(e){ return []; }
+}
+function _saveUserSubs(subs){
+  localStorage.setItem('ub_user_subs', JSON.stringify(subs));
+}
+
+/* ── ADMIN: Build the subscriptions tab ── */
+function buildSubscriptionsAdminTab(){
+  var plans = _getSubPlans();
+  var allSubs = _getAllUserSubscriptions();
+
+  var planCards = plans.map(function(plan, i){
+    var items = (plan.items||[]).map(function(item){
+      return '<span style="background:rgba(139,92,246,.12);color:#C4B5FD;border:1px solid rgba(139,92,246,.2);border-radius:6px;padding:2px 8px;font-size:11px;margin:2px;display:inline-block;">'+item.name+' x'+item.qty+'</span>';
+    }).join('');
+    var activeSubs = allSubs.filter(function(s){ return s.planId===plan.id&&s.active; }).length;
+    return '<div class="acard" style="margin-bottom:14px;border-left:3px solid rgba(139,92,246,.5);">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">'
+        +'<div style="flex:1;min-width:0;">'
+          +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">'
+            +'<span style="font-size:22px;">'+plan.emoji+'</span>'
+            +'<span style="font-family:Playfair Display,serif;font-size:16px;color:#E8B96A;font-weight:700;">'+plan.name+'</span>'
+            +'<span style="background:rgba(139,92,246,.2);color:#A78BFA;border:1px solid rgba(139,92,246,.3);border-radius:12px;padding:2px 10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;">'+plan.frequency+'</span>'
+            +(plan.active?'<span style="background:rgba(74,222,128,.15);color:#4ADE80;border:1px solid rgba(74,222,128,.3);border-radius:10px;padding:2px 8px;font-size:9px;font-weight:800;">LIVE</span>':'<span style="background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:2px 8px;font-size:9px;font-weight:800;">PAUSED</span>')
+          +'</div>'
+          +'<div style="font-size:12px;color:rgba(253,246,236,.45);margin-bottom:8px;">'+plan.desc+'</div>'
+          +'<div style="margin-bottom:8px;">'+items+'</div>'
+          +'<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">'
+            +'<div><span style="font-family:Cormorant Garamond,serif;font-size:22px;font-weight:700;color:#4ADE80;">₹'+plan.price+'</span><span style="font-size:11px;color:rgba(253,246,236,.35);margin-left:4px;">per '+plan.frequency.replace('ly','')+'</span></div>'
+            +(plan.originalPrice&&plan.originalPrice>plan.price?'<span style="font-size:12px;text-decoration:line-through;color:rgba(253,246,236,.3);">₹'+plan.originalPrice+'</span><span style="background:rgba(74,222,128,.12);color:#4ADE80;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:700;">Save ₹'+(plan.originalPrice-plan.price)+'</span>':'')
+          +'</div>'
+        +'</div>'
+        +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;">'
+          +'<div style="text-align:center;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);border-radius:10px;padding:8px 14px;">'
+            +'<div style="font-size:20px;font-weight:800;color:#C4B5FD;">'+activeSubs+'</div>'
+            +'<div style="font-size:9px;color:rgba(253,246,236,.35);letter-spacing:.5px;text-transform:uppercase;">Active Subs</div>'
+          +'</div>'
+          +'<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">'
+            +'<button onclick="ubSubToggle(\''+plan.id+'\')" style="background:rgba(255,255,255,.06);color:rgba(253,246,236,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;min-height:40px;touch-action:manipulation;">'+(plan.active?'⏸ Pause':'▶️ Activate')+'</button>'
+            +'<button onclick="ubSubEdit(\''+plan.id+'\')" style="background:rgba(200,146,58,.1);color:#E8B96A;border:1px solid rgba(200,146,58,.2);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;min-height:40px;touch-action:manipulation;">✏️ Edit</button>'
+            +'<button onclick="ubSubDelete(\''+plan.id+'\')" style="background:rgba(239,68,68,.08);color:#F87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;min-height:40px;touch-action:manipulation;">🗑</button>'
+          +'</div>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+
+  var subRows = allSubs.length===0?'<tr><td colspan="5" style="text-align:center;padding:24px;color:rgba(253,246,236,.3);font-size:13px;">No subscriptions yet</td></tr>':
+    allSubs.map(function(s){
+      var plan = plans.find(function(p){return p.id===s.planId;});
+      return '<tr>'
+        +'<td style="padding:10px 8px;font-size:13px;color:#F0DEC8;font-weight:600;">'+(s.customerName||s.phone||'Customer')+'</td>'
+        +'<td style="padding:10px 8px;font-size:12px;color:rgba(253,246,236,.55);">'+(s.phone||'—')+'</td>'
+        +'<td style="padding:10px 8px;font-size:12px;color:#C4B5FD;">'+(plan?plan.name:'Unknown Plan')+'</td>'
+        +'<td style="padding:10px 8px;"><span style="background:rgba('+(s.active?'74,222,128':'239,68,68')+',.12);color:'+(s.active?'#4ADE80':'#F87171')+';border:1px solid rgba('+(s.active?'74,222,128':'239,68,68')+',.25);border-radius:8px;padding:2px 8px;font-size:10px;font-weight:800;">'+(s.active?'ACTIVE':'CANCELLED')+'</span></td>'
+        +'<td style="padding:10px 8px;font-size:11px;color:rgba(253,246,236,.35);">'+new Date(s.createdAt).toLocaleDateString('en-IN')+'</td>'
+      +'</tr>';
+    }).join('');
+
+  return '<div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">'
+      +'<div><h2 style="font-family:Playfair Display,serif;font-size:20px;color:#E8B96A;margin:0;">🔄 Subscription Plans</h2><p style="font-size:12px;color:rgba(253,246,236,.35);margin-top:3px;">'+plans.length+' plans · '+allSubs.filter(function(s){return s.active;}).length+' active subscribers</p></div>'
+      +'<button onclick="ubSubOpenModal()" style="background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;border:none;border-radius:12px;padding:11px 20px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(124,58,237,.35);min-height:44px;touch-action:manipulation;">➕ New Plan</button>'
+    +'</div>'
+
+    +(plans.length===0?'<div style="background:rgba(139,92,246,.06);border:1px dashed rgba(139,92,246,.25);border-radius:18px;padding:48px;text-align:center;"><div style="font-size:48px;margin-bottom:12px;">🔄</div><div style="font-family:Playfair Display,serif;font-size:18px;color:rgba(253,246,236,.4);margin-bottom:8px;">No Subscription Plans Yet</div><p style="font-size:13px;color:rgba(253,246,236,.3);margin-bottom:20px;">Create weekly or monthly plans that customers can subscribe to</p><button onclick="ubSubOpenModal()" style="background:rgba(139,92,246,.15);color:#A78BFA;border:1px solid rgba(139,92,246,.3);border-radius:10px;padding:9px 22px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;">➕ Create First Plan</button></div>':planCards)
+
+    +(allSubs.length>0?'<div class="acard" style="margin-top:8px;"><h3 style="margin-bottom:12px;">👥 All Subscribers</h3><div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-family:Jost,sans-serif;"><thead><tr style="background:rgba(200,146,58,.07);"><th style="padding:8px;text-align:left;font-size:10px;font-weight:700;color:rgba(253,246,236,.4);text-transform:uppercase;letter-spacing:.5px;">Name</th><th style="padding:8px;text-align:left;font-size:10px;font-weight:700;color:rgba(253,246,236,.4);text-transform:uppercase;letter-spacing:.5px;">Phone</th><th style="padding:8px;text-align:left;font-size:10px;font-weight:700;color:rgba(253,246,236,.4);text-transform:uppercase;letter-spacing:.5px;">Plan</th><th style="padding:8px;text-align:left;font-size:10px;font-weight:700;color:rgba(253,246,236,.4);text-transform:uppercase;letter-spacing:.5px;">Status</th><th style="padding:8px;text-align:left;font-size:10px;font-weight:700;color:rgba(253,246,236,.4);text-transform:uppercase;letter-spacing:.5px;">Joined</th></tr></thead><tbody>'+subRows+'</tbody></table></div></div>':'')
+
+    /* ── MODAL ── */
+    +'<div id="ub-sub-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);align-items:flex-end;justify-content:center;padding:0;" onclick="if(event.target===this)ubSubCloseModal()">'
+      +'<div style="background:#1A0C04;border:1px solid rgba(139,92,246,.3);border-radius:24px 24px 0 0;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;padding:24px 20px 36px;box-shadow:0 -16px 60px rgba(0,0,0,.7);-webkit-overflow-scrolling:touch;">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">'
+          +'<h3 id="ub-sub-modal-title" style="font-family:Playfair Display,serif;font-size:19px;color:#A78BFA;">New Subscription Plan</h3>'
+          +'<button onclick="ubSubCloseModal()" style="background:rgba(255,255,255,.07);border:none;color:rgba(253,246,236,.5);width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;min-width:36px;touch-action:manipulation;">✕</button>'
+        +'</div>'
+        +'<div style="display:grid;grid-template-columns:64px 1fr;gap:10px;margin-bottom:14px;">'
+          +'<div><label style="display:block;font-size:10px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Icon</label><input id="sm-emoji" value="📦" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(139,92,246,.25);border-radius:10px;color:#F0DEC8;padding:8px;font-size:22px;text-align:center;"></div>'
+          +'<div><label style="display:block;font-size:10px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Plan Name *</label><input id="sm-name" placeholder="e.g. Daily Bread Box, Cake Week" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(139,92,246,.25);border-radius:10px;color:#F0DEC8;padding:9px 12px;font-family:Jost,sans-serif;"></div>'
+        +'</div>'
+        +'<div style="margin-bottom:14px;"><label style="display:block;font-size:10px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Description</label><input id="sm-desc" placeholder="What the customer gets each delivery" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(139,92,246,.25);border-radius:10px;color:#F0DEC8;padding:9px 12px;font-family:Jost,sans-serif;"></div>'
+        +'<div style="margin-bottom:14px;"><label style="display:block;font-size:10px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Frequency *</label><div style="display:flex;gap:8px;">'
+          +'<label style="flex:1;cursor:pointer;"><input type="radio" name="sm-freq" value="Weekly" style="display:none;" id="sm-weekly"><div id="sm-weekly-lbl" style="background:rgba(255,255,255,.04);border:2px solid rgba(139,92,246,.25);border-radius:10px;padding:10px;text-align:center;font-family:Jost,sans-serif;font-size:13px;font-weight:700;color:rgba(253,246,236,.55);transition:all .2s;min-height:44px;display:flex;align-items:center;justify-content:center;">📅 Weekly</div></label>'
+          +'<label style="flex:1;cursor:pointer;"><input type="radio" name="sm-freq" value="Monthly" style="display:none;" id="sm-monthly"><div id="sm-monthly-lbl" style="background:rgba(255,255,255,.04);border:2px solid rgba(139,92,246,.25);border-radius:10px;padding:10px;text-align:center;font-family:Jost,sans-serif;font-size:13px;font-weight:700;color:rgba(253,246,236,.55);transition:all .2s;min-height:44px;display:flex;align-items:center;justify-content:center;">🗓️ Monthly</div></label>'
+        +'</div></div>'
+        +'<div style="margin-bottom:14px;"><label style="display:block;font-size:10px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Products in Plan</label><div id="sm-items-list" style="margin-bottom:8px;display:flex;flex-direction:column;gap:6px;"></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="sm-prod-sel" style="flex:1;min-width:140px;background:rgba(255,255,255,.05);border:1px solid rgba(139,92,246,.22);border-radius:10px;color:#F0DEC8;padding:9px 10px;font-family:Jost,sans-serif;"><option value="">Select product...</option>'+(typeof PRODS!=='undefined'?PRODS.map(function(p){return '<option value="'+p.id+'">'+p.emoji+' '+p.name+'</option>';}).join(''):'')+'</select><input id="sm-prod-qty" type="number" min="1" value="1" style="width:64px;background:rgba(255,255,255,.05);border:1px solid rgba(139,92,246,.22);border-radius:10px;color:#F0DEC8;padding:9px;text-align:center;font-family:Jost,sans-serif;"><button onclick="ubSubAddItem()" style="background:rgba(139,92,246,.15);color:#A78BFA;border:1px solid rgba(139,92,246,.28);border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;min-height:44px;touch-action:manipulation;">Add</button></div></div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;">'
+          +'<div><label style="display:block;font-size:10px;color:rgba(253,246,236,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Original Price (₹)</label><input id="sm-orig" type="number" min="0" placeholder="e.g. 1200" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(139,92,246,.25);border-radius:10px;color:#F0DEC8;padding:9px 12px;font-family:Jost,sans-serif;"></div>'
+          +'<div><label style="display:block;font-size:10px;color:rgba(74,222,128,.6);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Subscription Price (₹) *</label><input id="sm-price" type="number" min="0" placeholder="e.g. 999" style="width:100%;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.3);border-radius:10px;color:#4ADE80;padding:9px 12px;font-family:Jost,sans-serif;font-size:16px;font-weight:800;"></div>'
+        +'</div>'
+        +'<div style="display:flex;gap:10px;">'
+          +'<button onclick="ubSubCloseModal()" style="flex:1;background:rgba(255,255,255,.05);color:rgba(253,246,236,.5);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:13px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;min-height:48px;touch-action:manipulation;">Cancel</button>'
+          +'<button onclick="ubSubSave()" style="flex:2;background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;border:none;border-radius:12px;padding:13px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(124,58,237,.35);min-height:48px;touch-action:manipulation;">🔄 Save & Go Live</button>'
+        +'</div>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+}
+
+function _getAllUserSubscriptions(){
+  try{ return JSON.parse(localStorage.getItem('ub_all_user_subs')||'[]'); }catch(e){ return []; }
+}
+function _saveAllUserSubscriptions(subs){
+  localStorage.setItem('ub_all_user_subs', JSON.stringify(subs));
+  if(typeof db!=='undefined'&&db){
+    db.collection('settings').doc('user_subscriptions').set({subs:subs,updatedAt:Date.now()}).catch(function(e){});
+  }
+}
+
+var _smItems=[];
+function ubSubOpenModal(editId){
+  _ubSubEditId = editId||null; _smItems=[];
+  var modal = document.getElementById('ub-sub-modal'); if(!modal) return;
+  var title = document.getElementById('ub-sub-modal-title');
+  // Reset
+  ['sm-emoji','sm-name','sm-desc','sm-orig','sm-price'].forEach(function(id){ var el=document.getElementById(id); if(el)el.value=''; });
+  document.getElementById('sm-emoji').value='📦';
+  // Frequency radio styling
+  document.querySelectorAll('[name="sm-freq"]').forEach(function(r){ r.checked=false; });
+  _ubSubFreqUpdate('');
+  document.getElementById('sm-items-list').innerHTML='';
+
+  if(editId){
+    var plans=_getSubPlans(); var plan=plans.find(function(p){return p.id===editId;});
+    if(plan){
+      title.textContent='Edit Plan';
+      document.getElementById('sm-emoji').value=plan.emoji||'📦';
+      document.getElementById('sm-name').value=plan.name||'';
+      document.getElementById('sm-desc').value=plan.desc||'';
+      document.getElementById('sm-orig').value=plan.originalPrice||'';
+      document.getElementById('sm-price').value=plan.price||'';
+      _smItems=(plan.items||[]).slice();
+      var radio=document.querySelector('[name="sm-freq"][value="'+plan.frequency+'"]');
+      if(radio){ radio.checked=true; _ubSubFreqUpdate(plan.frequency); }
+    }
+  } else { title.textContent='New Subscription Plan'; }
+  _ubRenderSmItems();
+  modal.style.display='flex'; document.body.style.overflow='hidden';
+  // Wire up radio click
+  document.querySelectorAll('[name="sm-freq"]').forEach(function(r){
+    r.addEventListener('change',function(){ _ubSubFreqUpdate(r.value); });
+  });
+}
+function _ubSubFreqUpdate(val){
+  var wLbl=document.getElementById('sm-weekly-lbl'), mLbl=document.getElementById('sm-monthly-lbl');
+  if(!wLbl||!mLbl) return;
+  var act='background:rgba(139,92,246,.2);border:2px solid rgba(139,92,246,.6);border-radius:10px;padding:10px;text-align:center;font-family:Jost,sans-serif;font-size:13px;font-weight:700;color:#A78BFA;min-height:44px;display:flex;align-items:center;justify-content:center;';
+  var inact='background:rgba(255,255,255,.04);border:2px solid rgba(139,92,246,.25);border-radius:10px;padding:10px;text-align:center;font-family:Jost,sans-serif;font-size:13px;font-weight:700;color:rgba(253,246,236,.55);min-height:44px;display:flex;align-items:center;justify-content:center;';
+  wLbl.style.cssText=val==='Weekly'?act:inact;
+  mLbl.style.cssText=val==='Monthly'?act:inact;
+}
+function ubSubCloseModal(){ var m=document.getElementById('ub-sub-modal'); if(m)m.style.display='none'; document.body.style.overflow=''; }
+function _ubRenderSmItems(){
+  var list=document.getElementById('sm-items-list'); if(!list) return;
+  var prods=(typeof PRODS!=='undefined')?PRODS:[];
+  list.innerHTML=_smItems.map(function(item,i){
+    var p=prods.find(function(x){return String(x.id)===String(item.id);});
+    return '<div style="display:flex;align-items:center;gap:8px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);border-radius:10px;padding:8px 12px;"><span style="font-size:18px;">'+(p?p.emoji:'📦')+'</span><span style="flex:1;font-size:13px;color:#F0DEC8;">'+(p?p.name:item.name||item.id)+'</span><span style="font-size:12px;color:rgba(253,246,236,.45);">×'+item.qty+'</span><button onclick="_smItems.splice('+i+',1);_ubRenderSmItems();" style="background:rgba(239,68,68,.1);color:#F87171;border:none;border-radius:6px;padding:5px 9px;font-size:12px;cursor:pointer;min-width:32px;min-height:32px;touch-action:manipulation;">✕</button></div>';
+  }).join('');
+}
+function ubSubAddItem(){
+  var sel=document.getElementById('sm-prod-sel'); var qty=parseInt((document.getElementById('sm-prod-qty')||{}).value)||1;
+  if(!sel||!sel.value) return;
+  var prods=(typeof PRODS!=='undefined')?PRODS:[];
+  var prod=prods.find(function(p){return String(p.id)===sel.value;});
+  var existing=_smItems.findIndex(function(x){return String(x.id)===sel.value;});
+  if(existing>=0){ _smItems[existing].qty+=qty; }
+  else { _smItems.push({id:sel.value, name:prod?prod.name:sel.value, qty:qty}); }
+  sel.value=''; _ubRenderSmItems();
+}
+function ubSubSave(){
+  var name=(document.getElementById('sm-name')||{}).value||'';
+  var price=parseFloat((document.getElementById('sm-price')||{}).value)||0;
+  var freqEl=document.querySelector('[name="sm-freq"]:checked');
+  var freq=freqEl?freqEl.value:'';
+  if(!name||!price||!freq||_smItems.length===0){
+    if(typeof showToast==='function') showToast('Fill Plan Name, frequency, at least 1 product, and price','err'); return;
+  }
+  var plans=_getSubPlans();
+  var entry={id:_ubSubEditId||('sub_'+Date.now()),emoji:(document.getElementById('sm-emoji')||{}).value||'📦',name:name,desc:(document.getElementById('sm-desc')||{}).value||'',frequency:freq,items:_smItems.slice(),originalPrice:parseFloat((document.getElementById('sm-orig')||{}).value)||price,price:price,active:true,createdAt:Date.now()};
+  if(_ubSubEditId){ var idx=plans.findIndex(function(p){return p.id===_ubSubEditId;}); if(idx>=0) plans[idx]=entry; else plans.push(entry); }
+  else { plans.push(entry); }
+  _saveSubPlans(plans);
+  ubSubCloseModal();
+  if(typeof renderAdminTab==='function') renderAdminTab();
+  if(typeof showToast==='function') showToast('🔄 Subscription plan saved and live for customers!','ok');
+}
+function ubSubToggle(id){ var plans=_getSubPlans(); var plan=plans.find(function(p){return p.id===id;}); if(!plan) return; plan.active=!plan.active; _saveSubPlans(plans); if(typeof renderAdminTab==='function') renderAdminTab(); if(typeof showToast==='function') showToast(plan.active?'✅ Plan is now LIVE':'⏸ Plan paused','ok'); }
+function ubSubEdit(id){ ubSubOpenModal(id); }
+function ubSubDelete(id){ if(!confirm('Delete this subscription plan? Active subscribers will not be affected.')) return; var plans=_getSubPlans(); var idx=plans.findIndex(function(p){return p.id===id;}); if(idx>=0) plans.splice(idx,1); _saveSubPlans(plans); if(typeof renderAdminTab==='function') renderAdminTab(); if(typeof showToast==='function') showToast('🗑 Plan deleted','ok'); }
+
+/* ── CUSTOMER: Subscribe action ── */
+function ubCustomerSubscribe(planId){
+  var plans=_getSubPlans(); var plan=plans.find(function(p){return p.id===planId;}); if(!plan) return;
+  // Collect customer info
+  var phone = prompt('Enter your phone number to subscribe:');
+  if(!phone||phone.trim().length<6){ showToast&&showToast('Please enter a valid phone number','err'); return; }
+  var name = prompt('Your name:');
+  var subs=_getAllUserSubscriptions();
+  var existing=subs.find(function(s){return s.planId===planId&&s.phone===phone.trim()&&s.active;});
+  if(existing){ showToast&&showToast('You are already subscribed to this plan!','err'); return; }
+  subs.push({id:'usub_'+Date.now(),planId:planId,phone:phone.trim(),customerName:name||'',active:true,createdAt:Date.now()});
+  _saveAllUserSubscriptions(subs);
+  showToast&&showToast('🔄 Subscribed to '+plan.name+'! We will contact you for delivery details.','ok');
+  ubRenderSubSection();
+}
+
+/* ── CUSTOMER: Render subscription plans section ── */
+function ubRenderSubSection(){
+  var container=document.getElementById('ub-sub-section'); if(!container) return;
+  var plans=_getSubPlans().filter(function(p){return p.active;});
+  if(plans.length===0){ container.style.display='none'; return; }
+  container.style.display='block';
+
+  var cards = plans.map(function(plan){
+    var saveBadge=plan.originalPrice&&plan.originalPrice>plan.price?'<div style="background:linear-gradient(135deg,#4ADE80,#16A34A);color:#fff;border-radius:10px;padding:3px 10px;font-size:11px;font-weight:800;display:inline-block;margin-bottom:8px;">Save ₹'+(plan.originalPrice-plan.price)+' per '+plan.frequency.replace('ly','')+'!</div>':'';
+    var items=plan.items.map(function(item){return '<span style="background:rgba(139,92,246,.1);color:#7C3AED;border:1px solid rgba(139,92,246,.2);border-radius:6px;padding:2px 8px;font-size:11px;margin:2px;display:inline-block;">'+item.name+' ×'+item.qty+'</span>';}).join('');
+    return '<div style="background:var(--white);border-radius:20px;padding:20px;border:2px solid rgba(139,92,246,.18);box-shadow:0 4px 20px rgba(139,92,246,.08);position:relative;overflow:hidden;">'
+      +'<div style="position:absolute;top:0;right:0;background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(139,92,246,.05));width:80px;height:80px;border-radius:0 0 0 80px;"></div>'
+      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'
+        +'<div style="font-size:32px;">'+plan.emoji+'</div>'
+        +'<div><div style="font-family:Playfair Display,serif;font-size:17px;font-weight:700;color:var(--choco);">'+plan.name+'</div>'
+        +'<div style="background:rgba(139,92,246,.1);color:#7C3AED;border-radius:8px;padding:2px 8px;font-size:10px;font-weight:800;text-transform:uppercase;display:inline-block;margin-top:2px;">'+plan.frequency+'</div></div>'
+      +'</div>'
+      +(plan.desc?'<div style="font-size:13px;color:var(--text-mid);margin-bottom:10px;line-height:1.5;">'+plan.desc+'</div>':'')
+      +'<div style="margin-bottom:12px;">'+items+'</div>'
+      +saveBadge
+      +'<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">'
+        +'<div>'+(plan.originalPrice&&plan.originalPrice>plan.price?'<span style="font-size:13px;text-decoration:line-through;color:var(--text-mid);opacity:.5;margin-right:6px;">₹'+plan.originalPrice+'</span>':'')+'<span style="font-family:Cormorant Garamond,serif;font-size:26px;font-weight:700;color:#7C3AED;">₹'+plan.price+'</span><span style="font-size:12px;color:var(--text-mid);margin-left:4px;">/ '+plan.frequency.replace('ly','')+'</span></div>'
+        +'<button onclick="ubCustomerSubscribe(\''+plan.id+'\')" style="background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;border:none;border-radius:12px;padding:11px 20px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(124,58,237,.3);min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;">🔄 Subscribe Now</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+
+  container.innerHTML = '<section style="padding:60px 0;background:linear-gradient(160deg,var(--cream) 0%,rgba(139,92,246,.04) 100%);position:relative;">'
+    +'<div style="max-width:1100px;margin:0 auto;padding:0 16px;">'
+    +'<div style="text-align:center;margin-bottom:36px;">'
+      +'<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:50px;padding:6px 18px;margin-bottom:14px;"><span style="font-size:14px;">🔄</span><span style="font-family:Jost,sans-serif;font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#7C3AED;">Weekly & Monthly Plans</span></div>'
+      +'<h2 style="font-family:Cormorant Garamond,Playfair Display,serif;font-size:clamp(26px,5vw,42px);font-weight:700;color:var(--choco);line-height:1.2;margin-bottom:10px;">Never Run Out of <em style="color:#7C3AED;font-style:italic;">Your Favourites</em></h2>'
+      +'<p style="font-size:14px;color:var(--text-mid);max-width:480px;margin:0 auto;line-height:1.7;">Subscribe to regular deliveries and save. We deliver fresh to your door on schedule.</p>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">'
+    +cards
+    +'</div>'
+    +'</div>'
+  +'</section>';
+}
+
+// Load subscription plans from Firebase on startup (so customers see admin updates in real-time)
+function ubLoadSubPlansFromFirebase(){
+  if(typeof db==='undefined'||!db) return;
+  db.collection('settings').doc('subscription_plans').onSnapshot(function(doc){
+    if(doc.exists){
+      var data=doc.data();
+      if(data&&data.plans){ localStorage.setItem('ub_sub_plans',JSON.stringify(data.plans)); ubRenderSubSection(); }
+    }
+  }, function(e){ console.warn('Sub plans sync:', e); });
+  db.collection('settings').doc('user_subscriptions').onSnapshot(function(doc){
+    if(doc.exists){
+      var data=doc.data();
+      if(data&&data.subs){ localStorage.setItem('ub_all_user_subs',JSON.stringify(data.subs)); }
+    }
+  }, function(e){});
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  ubRenderSubSection();
+  ubLoadSubPlansFromFirebase();
+});
+
 function initComboOfferAdmin(){}
 
 function ubOpenComboModal(editIdx){
