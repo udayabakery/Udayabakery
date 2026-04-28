@@ -11277,7 +11277,6 @@ function renderAdminTab(){
       if(db){ db.collection('config').doc('referralSettings').get().then(doc=>{ if(doc.exists){ const d=doc.data(); localStorage.setItem('ub_referral_settings', JSON.stringify(d)); const ri=document.getElementById('ref_disc_referrer'),ni=document.getElementById('ref_disc_new'),wi=document.getElementById('ref_wa_msg'); if(ri&&d.referrerDisc!=null) ri.value=d.referrerDisc; if(ni&&d.newCustDisc!=null) ni.value=d.newCustDisc; if(wi&&d.waMsg) wi.value=d.waMsg; }}).catch(()=>{}); }
       if(db){ db.collection('config').doc('zoneSettings').get().then(doc=>{ if(doc.exists && doc.data().zones){ localStorage.setItem('ub_zone_settings', JSON.stringify(doc.data().zones)); if(typeof ubRenderZoneEditor==='function') ubRenderZoneEditor(); }}).catch(()=>{}); }
     }, 50);
-    }, 50);
     // Async-populate MSG91 key status
     UB_SECURE.get('msg91_key').then(k => {
       const fallback = localStorage.getItem('ub_msg91_key') || '';
@@ -11479,7 +11478,7 @@ function buildProdsTab(){
     <button class="abtn" onclick="switchTab('addprod')">➕ Add New Product</button>
   </div>
   <!-- Bulk action bar -->
-  <div id="ubBulkBar" style="display:none;background:rgba(200,146,58,.1);border:1.5px solid rgba(200,146,58,.3);border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+  <div id="ubBulkBar" style="display:none;background:rgba(200,146,58,.1);border:1.5px solid rgba(200,146,58,.3);border-radius:12px;padding:10px 14px;margin-bottom:12px;align-items:center;gap:10px;flex-wrap:wrap;">
     <span id="ubBulkCount" style="font-size:13px;font-weight:700;color:#E8B96A;flex:1;min-width:100px;">0 selected</span>
     <button onclick="ubBulkMarkOos(true)" style="background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">⊘ Mark Sold Out</button>
     <button onclick="ubBulkMarkOos(false)" style="background:rgba(74,222,128,.12);color:#4ADE80;border:1px solid rgba(74,222,128,.25);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;">✅ Mark In Stock</button>
@@ -13107,6 +13106,24 @@ function resetOrders(){
 // (duplicate buildOrdersTab removed)
 
 // ── SETTINGS TAB ──
+// These must be defined BEFORE buildSettingsTab so template literals can call them safely
+if(typeof ubGetReferralSettings === 'undefined'){
+  window.ubGetReferralSettings = function(){
+    try{ const raw=localStorage.getItem('ub_referral_settings'); if(raw){const r=JSON.parse(raw);if(r&&r.waMsg)return r;} }catch(e){}
+    return { referrerDisc:50, newCustDisc:50, waMsg:'Hey! 🎂 Use my code *{CODE}* at Udaya Bakery and get ₹50 off your first order! {LINK}' };
+  };
+}
+if(typeof ubGetZoneSettings === 'undefined'){
+  window.ubGetZoneSettings = function(){
+    try{ const raw=localStorage.getItem('ub_zone_settings'); if(raw){const z=JSON.parse(raw);if(Array.isArray(z)&&z.length)return z;} }catch(e){}
+    return [
+      {label:'0–3 km · Belman area',areas:'Belman, Nitte, nearby villages',fee:'FREE',feeNum:0,color:'#4ADE80'},
+      {label:'3–8 km',areas:'Karkala, Shirva, Shankerpura',fee:'₹40',feeNum:40,color:'#F59E0B'},
+      {label:'8–15 km',areas:'Udupi, Kundapur outskirts',fee:'₹100',feeNum:100,color:'#F87171'},
+      {label:'15+ km',areas:'Special delivery — contact us',fee:'Call',feeNum:-1,color:'#818CF8'},
+    ];
+  };
+}
 function buildSettingsTab(){
   const logoSrc = localStorage.getItem('ub_logo') || '';
   return `<h2 style="font-family:Playfair Display,serif;font-size:20px;color:#E8B96A;margin-bottom:16px;">⚙️ Settings</h2>
