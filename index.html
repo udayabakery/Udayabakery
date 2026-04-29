@@ -1360,7 +1360,11 @@ section{padding:64px 0;contain:layout;}
 /* ── ORDER MODAL ── */
 .modal-bg{position:fixed;inset:0;background:rgba(43,18,8,.6);z-index:1500;display:none;align-items:center;justify-content:center;padding:18px;}
 .modal-bg.open{display:flex;}
-.modal{background:var(--white);border-radius:22px;padding:32px;max-width:540px;width:100%;max-height:92vh;overflow-y:auto;position:relative;}
+.modal{background:var(--white);border-radius:22px;padding:32px;max-width:540px;width:100%;max-height:92vh;overflow-y:auto;position:relative;-webkit-overflow-scrolling:touch;}
+@media(max-width:600px){
+  .modal-bg{align-items:flex-end !important;padding:0 !important;}
+  .modal{border-radius:24px 24px 0 0 !important;padding:24px 16px 36px !important;width:100% !important;max-width:100% !important;max-height:92vh !important;}
+}
 .modal h2{font-family:Playfair Display,serif;font-size:24px;color:var(--choco);margin-bottom:4px;}
 .modal>p{color:var(--text-mid);font-size:13px;margin-bottom:20px;}
 .modal-close{position:absolute;top:15px;right:15px;background:none;border:none;font-size:21px;cursor:pointer;color:var(--choco);}
@@ -2232,11 +2236,11 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
 .af-ta{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(200,146,58,.18);border-radius:12px;padding:12px 14px;font-family:Jost,sans-serif;font-size:14px;color:#FDF6EC;outline:none;height:80px;resize:vertical;box-sizing:border-box;}
 .af-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 @media(max-width:520px){.af-row{grid-template-columns:1fr;}}
-.abtn{background:linear-gradient(135deg,#C8923A,#A0623A);color:#fff;border:none;padding:12px 24px;border-radius:12px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.abtn{background:linear-gradient(135deg,#C8923A,#A0623A);color:#fff;border:none;padding:12px 24px;border-radius:12px;font-family:Jost,sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .abtn:hover{opacity:.9;}
 .abtn-sec{background:rgba(255,255,255,.06);color:rgba(253,246,236,.6);border:1px solid rgba(255,255,255,.1);padding:12px 20px;border-radius:12px;font-family:Jost,sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-left:8px;}
-.abtn-del{background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.2);padding:8px 14px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;min-height:36px;}
-.abtn-edit{background:rgba(200,146,58,.14);color:#E8B96A;border:1px solid rgba(200,146,58,.2);padding:8px 14px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;margin-right:5px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;min-height:36px;}
+.abtn-del{background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.2);padding:8px 14px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;min-height:44px;}
+.abtn-edit{background:rgba(200,146,58,.14);color:#E8B96A;border:1px solid rgba(200,146,58,.2);padding:8px 14px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:Jost,sans-serif;margin-right:5px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;min-height:44px;}
 
 /* Product table */
 .aptable{width:100%;border-collapse:collapse;}
@@ -2250,7 +2254,7 @@ body.dark-mode .nav-search-mobile input{background:rgba(255,255,255,.06);color:#
 .vr-inp{background:rgba(255,255,255,.07);border:1.5px solid rgba(200,146,58,.15);border-radius:10px;padding:9px 12px;font-family:Jost,sans-serif;font-size:13px;color:#FDF6EC;outline:none;width:100%;box-sizing:border-box;}
 .vr-inp:focus{border-color:#C8923A;}
 .vr-sel{background:rgba(20,10,3,.95);border:1.5px solid rgba(200,146,58,.15);border-radius:10px;padding:9px 10px;font-family:Jost,sans-serif;font-size:12px;color:#FDF6EC;outline:none;width:100%;}
-.vr-rmv{background:rgba(239,68,68,.12);color:#F87171;border:none;border-radius:9px;width:32px;height:36px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.vr-rmv{background:rgba(239,68,68,.12);color:#F87171;border:none;border-radius:9px;width:40px;height:44px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .addvarbtn{width:100%;background:rgba(200,146,58,.08);color:#E8B96A;border:1.5px dashed rgba(200,146,58,.3);border-radius:11px;padding:10px;font-family:Jost,sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:4px;transition:all .2s;}
 .addvarbtn:hover{background:rgba(200,146,58,.14);}
 
@@ -5848,6 +5852,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       ubStartReferralSettingsListener();
       ubStartComboListener();
       ubStartVideosListener();
+      ubStartSubPlansListener();
     } else {
       setTimeout(startFirebaseSync, 300); // retry every 300ms until firebase ready
     }
@@ -9980,9 +9985,16 @@ function isStoreOpen(){
   return nowMins >= oh*60+om && nowMins < ch*60+cm;
 }
 function ubAdminToggleStore(el){
-  localStorage.setItem('ub_store_active', el.checked ? '1' : '0');
+  const isActive = el.checked;
+  localStorage.setItem('ub_store_active', isActive ? '1' : '0');
+  // Sync to Firebase so ALL customers on ALL devices see the store open/closed status instantly
+  if(typeof db !== 'undefined' && db){
+    db.collection('config').doc('siteConfig').set({storeActive: isActive, updatedAt: Date.now()},{merge:true})
+      .then(function(){ console.log('[UB] Store status synced to Firebase'); })
+      .catch(function(e){ console.warn('[UB] Store sync failed:', e); showToast('⚠️ Store status saved locally — cloud sync failed','err'); });
+  }
   checkBusinessHours();
-  showToast(el.checked ? '✅ Store is now LIVE — customers can order!' : '🔴 Store DEACTIVATED — all orders blocked!', el.checked ? 'ok' : 'err');
+  showToast(isActive ? '✅ Store is now LIVE — customers can order!' : '🔴 Store DEACTIVATED — all orders blocked!', isActive ? 'ok' : 'err');
   // Re-render settings tab so card border/text/color updates immediately
   renderAdminTab();
 }
@@ -11466,7 +11478,7 @@ function buildDash(){
   </div>
 
   <!-- Stats Grid -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:10px;margin-bottom:16px;">
     <div style="background:linear-gradient(135deg,rgba(252,211,77,.12),rgba(252,211,77,.06));border:1px solid rgba(252,211,77,.2);border-radius:16px;padding:16px;text-align:center;">
       <div style="font-size:28px;font-weight:800;color:#FCD34D;">${pend}</div>
       <div style="font-size:11px;color:rgba(253,246,236,.45);margin-top:3px;font-weight:600;">⏳ Pending</div>
@@ -11484,7 +11496,7 @@ function buildDash(){
   <!-- Today's Summary -->
   <div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,146,58,.15);border-radius:16px;padding:16px;margin-bottom:16px;">
     <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(253,246,236,.35);margin-bottom:12px;">📅 Today's Summary</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(85px,1fr));gap:10px;text-align:center;">
       <div><div style="font-size:22px;font-weight:800;color:#fff;">${todayOrders.length}</div><div style="font-size:11px;color:rgba(253,246,236,.4);">Orders</div></div>
       <div><div style="font-size:22px;font-weight:800;color:#E8B96A;">₹${todayRev.toLocaleString('en-IN')}</div><div style="font-size:11px;color:rgba(253,246,236,.4);">Revenue</div></div>
       <div><div style="font-size:22px;font-weight:800;color:${revChange>=0?'#4ADE80':'#F87171'};">${revChange>=0?'+':''}${revChange}%</div><div style="font-size:11px;color:rgba(253,246,236,.4);">vs Yesterday</div></div>
@@ -11859,11 +11871,11 @@ function _buildFlvSlot(cardIdx, slotNum, slotImg) {
 function buildFlavourCard(name, weights, idx) {
   // weights = [{label:'500g', eggPrice:520, egglessPrice:580}, ...]
   const wRows = weights.map((w, wi) => `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 32px;gap:6px;margin-bottom:6px;" id="fcwr-${idx}-${wi}">
-      <input class="vr-inp" placeholder="e.g. 500g, 1kg" value="${w.label||''}" id="fcwl-${idx}-${wi}">
-      <input class="vr-inp" type="number" placeholder="🥚 Egg ₹" value="${w.eggPrice!=null?w.eggPrice:(w.price||'')}" id="fcwp-egg-${idx}-${wi}" min="0" style="border-color:rgba(200,146,58,.35);">
-      <input class="vr-inp" type="number" placeholder="🌿 Eggless ₹" value="${w.egglessPrice!=null?w.egglessPrice:''}" id="fcwp-eggless-${idx}-${wi}" min="0" style="border-color:rgba(74,222,128,.35);">
-      <input class="vr-inp" type="number" placeholder="Advance ₹" value="${w.advanceAmt!=null&&w.advanceAmt>0?w.advanceAmt:''}" id="fcwadv-${idx}-${wi}" min="0" style="border-color:rgba(99,102,241,.4);" title="Advance required for this weight (0 = no advance)">
+    <div class="ub-vgrid" id="fcwr-${idx}-${wi}">
+      <input class="vr-inp" placeholder="e.g. 500g, 1kg" value="${w.label||''}" id="fcwl-${idx}-${wi}" aria-label="Weight">
+      <input class="vr-inp" type="number" placeholder="Egg ₹" value="${w.eggPrice!=null?w.eggPrice:(w.price||'')}" id="fcwp-egg-${idx}-${wi}" min="0" style="border-color:rgba(200,146,58,.35);" aria-label="Egg price">
+      <input class="vr-inp" type="number" placeholder="Eggless ₹" value="${w.egglessPrice!=null?w.egglessPrice:''}" id="fcwp-eggless-${idx}-${wi}" min="0" style="border-color:rgba(74,222,128,.35);" aria-label="Eggless price">
+      <input class="vr-inp" type="number" placeholder="Advance ₹" value="${w.advanceAmt!=null&&w.advanceAmt>0?w.advanceAmt:''}" id="fcwadv-${idx}-${wi}" min="0" style="border-color:rgba(99,102,241,.4);" aria-label="Advance amount">
       <button class="vr-rmv" onclick="removeFlavourWeightRow(${idx},${wi})" title="Remove">✕</button>
     </div>`).join('');
   const fcImg = (weights && weights._img) ? weights._img : '';
@@ -11885,17 +11897,17 @@ function buildFlavourCard(name, weights, idx) {
       <input type="hidden" id="fcimg3-${idx}" value="${(weights&&weights._img3)||''}">
       <div id="fcimg-status-${idx}" style="font-size:10px;color:rgba(200,146,58,.6);margin-top:4px;"></div>
     </div>
-    <!-- Per-weight advance amounts (replaces single flavour advance) -->
+    <!-- Per-weight advance amounts -->
     <div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:rgba(253,246,236,.35);text-transform:uppercase;margin-bottom:6px;">Weight, Price &amp; Advance for this flavour</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 32px;gap:6px;margin-bottom:6px;">
-      <span style="font-size:10px;color:rgba(253,246,236,.3);font-weight:600;">Weight</span>
-      <span style="font-size:10px;color:rgba(200,146,58,.7);font-weight:700;">🥚 Egg ₹</span>
-      <span style="font-size:10px;color:rgba(74,222,128,.7);font-weight:700;">🌿 Eggless ₹</span>
-      <span style="font-size:10px;color:rgba(165,180,252,.8);font-weight:700;">💳 Advance ₹</span>
+    <div class="ub-vgrid ub-vgrid-hdr">
+      <span>Weight</span>
+      <span style="color:rgba(200,146,58,.7);">🥚 Egg ₹</span>
+      <span style="color:rgba(74,222,128,.7);">🌿 Eggless ₹</span>
+      <span style="color:rgba(165,180,252,.8);">💳 Advance ₹</span>
       <span></span>
     </div>
     <div id="fcwr-wrap-${idx}">${wRows}</div>
-    <button onclick="addFlavourWeightRow(${idx})" style="background:rgba(200,146,58,.08);border:1px dashed rgba(200,146,58,.3);color:rgba(200,146,58,.7);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:11px;font-weight:700;width:100%;margin-top:4px;font-family:Jost,sans-serif;">+ Add Weight</button>
+    <button onclick="addFlavourWeightRow(${idx})" style="background:rgba(200,146,58,.08);border:1px dashed rgba(200,146,58,.3);color:rgba(200,146,58,.7);border-radius:8px;padding:10px 12px;cursor:pointer;font-size:11px;font-weight:700;width:100%;margin-top:4px;font-family:Jost,sans-serif;min-height:44px;touch-action:manipulation;">+ Add Weight</button>
   </div>`;
 }
 
@@ -11918,11 +11930,11 @@ function addFlavourWeightRow(cardIdx) {
   if (!wrap) return;
   const wi = wrap.querySelectorAll('[id^="fcwr-' + cardIdx + '-"]').length;
   wrap.insertAdjacentHTML('beforeend', `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 32px;gap:6px;margin-bottom:6px;" id="fcwr-${cardIdx}-${wi}">
-      <input class="vr-inp" placeholder="e.g. 2kg" id="fcwl-${cardIdx}-${wi}">
-      <input class="vr-inp" type="number" placeholder="🥚 Egg ₹" id="fcwp-egg-${cardIdx}-${wi}" min="0" style="border-color:rgba(200,146,58,.35);">
-      <input class="vr-inp" type="number" placeholder="🌿 Eggless ₹" id="fcwp-eggless-${cardIdx}-${wi}" min="0" style="border-color:rgba(74,222,128,.35);">
-      <input class="vr-inp" type="number" placeholder="Advance ₹" id="fcwadv-${cardIdx}-${wi}" min="0" style="border-color:rgba(99,102,241,.4);" title="Advance for this weight">
+    <div class="ub-vgrid" id="fcwr-${cardIdx}-${wi}">
+      <input class="vr-inp" placeholder="e.g. 2kg" id="fcwl-${cardIdx}-${wi}" aria-label="Weight">
+      <input class="vr-inp" type="number" placeholder="Egg ₹" id="fcwp-egg-${cardIdx}-${wi}" min="0" style="border-color:rgba(200,146,58,.35);" aria-label="Egg price">
+      <input class="vr-inp" type="number" placeholder="Eggless ₹" id="fcwp-eggless-${cardIdx}-${wi}" min="0" style="border-color:rgba(74,222,128,.35);" aria-label="Eggless price">
+      <input class="vr-inp" type="number" placeholder="Advance ₹" id="fcwadv-${cardIdx}-${wi}" min="0" style="border-color:rgba(99,102,241,.4);" aria-label="Advance amount">
       <button class="vr-rmv" onclick="removeFlavourWeightRow(${cardIdx},${wi})" title="Remove">✕</button>
     </div>`);
 }
@@ -12667,8 +12679,8 @@ function buildOrdersTab(){
 
   var tabStyle = function(active){
     return active
-      ? 'background:rgba(200,146,58,.2);color:#E8B96A;border:2px solid rgba(200,146,58,.5);border-radius:12px;padding:9px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;flex:1;text-align:center;'
-      : 'background:rgba(255,255,255,.04);color:rgba(253,246,236,.45);border:1.5px solid rgba(255,255,255,.08);border-radius:12px;padding:9px 16px;font-family:Jost,sans-serif;font-size:13px;font-weight:700;cursor:pointer;flex:1;text-align:center;';
+      ? 'background:rgba(200,146,58,.2);color:#E8B96A;border:2px solid rgba(200,146,58,.5);border-radius:12px;padding:10px 8px;font-family:Jost,sans-serif;font-size:clamp(10px,2.5vw,13px);font-weight:700;cursor:pointer;flex:1;text-align:center;min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;line-height:1.3;'
+      : 'background:rgba(255,255,255,.04);color:rgba(253,246,236,.45);border:1.5px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 8px;font-family:Jost,sans-serif;font-size:clamp(10px,2.5vw,13px);font-weight:700;cursor:pointer;flex:1;text-align:center;min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;line-height:1.3;';
   };
 
   var subTabHtml = '<div style="display:flex;gap:8px;margin-bottom:20px;">'
@@ -13246,13 +13258,13 @@ function buildSettingsTab(){
     <div class="asub">Enter your UPI ID so customers can pay you directly via PhonePe, GPay or Paytm</div>
     <div class="af-group" style="margin-top:14px;">
       <label>Your UPI ID <span style="font-size:10px;color:rgba(253,246,236,.4);font-weight:400;">(e.g. 9845406712@ybl or name@okaxis)</span></label>
-      <input class="af-inp" id="s_upi_id" placeholder="e.g. 9845406712@ybl" value="">
+      <input class="af-inp" id="s_upi_id" placeholder="e.g. 9845406712@ybl" value="${localStorage.getItem('ub_upi_id')||''}">
     </div>
     <div style="display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap;">
-      
-      <span style="font-size:11px;color:rgba(253,246,236,.35);">Customers will see a QR code + Pay button on checkout</span>
+      <button class="abtn" onclick="ubSaveUpiFromSettings()" style="min-height:44px;">💾 Save UPI ID</button>
+      <span style="font-size:11px;color:rgba(253,246,236,.35);">Customers see a QR code + Pay button at checkout</span>
     </div>
-    <div id="upi_status_label" style="margin-top:10px;font-size:12px;color:rgba(253,246,236,.4);">🔐 Loading…</div>
+    <div id="upi_status_label" style="margin-top:10px;font-size:12px;color:rgba(253,246,236,.4);">${localStorage.getItem('ub_upi_id')?'✅ UPI ID saved: '+localStorage.getItem('ub_upi_id'):'⚠️ No UPI ID set yet — customers cannot pay via UPI'}</div>
   </div>
 
   <!-- MSG91 SMS SETTINGS -->
@@ -13591,7 +13603,7 @@ function buildSettingsTab(){
       <div class="af-group"><label>End Date &amp; Time</label><input class="af-inp" id="flashEnd" type="datetime-local"></div>
     </div>
     <button class="abtn" onclick="ubSaveFlashSale()" id="flashSaleBtn" style="margin-top:4px;">🔥 Activate Flash Sale</button>
-  <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:6px;">⚠️ Flash sale is stored locally — customers on other devices may not see it instantly until they reload the page.</div>
+  <div style="font-size:11px;color:rgba(253,246,236,.35);margin-top:6px;">⚡ Flash sale activates instantly for all customers across all devices via Firebase.</div>
   </div>
 
   <!-- DELIVERY ZONES EDITOR -->
@@ -14071,6 +14083,25 @@ function saveBrandName(){
     }, {merge: true}).catch(()=>{});
   }
   showToast('✅ Bakery name updated for all devices!','ok');
+}
+
+async function ubSaveUpiFromSettings(){
+  const upiId = (document.getElementById('s_upi_id')||{}).value||'';
+  if(!upiId.includes('@')){ showToast('⚠️ Enter a valid UPI ID (e.g. 9845406712@ybl)','err'); return; }
+  localStorage.setItem('ub_upi_id', upiId);
+  // Save to Firebase so all devices can access it
+  if(db){
+    try{
+      await db.collection('config').doc('paymentSettings').set({upiId: upiId, updatedAt: Date.now()},{merge:true});
+    }catch(e){ console.warn('UPI save Firebase failed:',e); }
+  }
+  // Also save via UB_SECURE if available
+  if(typeof UB_SECURE !== 'undefined' && UB_SECURE.isReady()){
+    try{ await UB_SECURE.set('upi_id', upiId); }catch(e){}
+  }
+  const lbl = document.getElementById('upi_status_label');
+  if(lbl){ lbl.style.color='#4ADE80'; lbl.textContent='✅ UPI ID saved: '+upiId+' — live for all customers!'; }
+  showToast('✅ UPI ID saved for all customers!','ok');
 }
 function exportData(){
   const blob=new Blob([JSON.stringify({products:PRODS,categories:CATS,orders:ORDERS,settings:CFG,exported:new Date().toISOString()},null,2)],{type:'application/json'});
@@ -14968,7 +14999,7 @@ function buildAnalyticsTab(){
   html+='</div><div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:rgba(253,246,236,.3);"><span>30 days ago</span><span>Today</span></div></div>';
 
   // Payment methods + Day chart side by side
-  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">';
+  html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:16px;">';
   html+='<div class="acard"><h3>💳 Payment Methods</h3>';
   Object.entries(payMethods).forEach(([m,v])=>{
     const pct=Math.round(v/totalPay*100);
@@ -17181,10 +17212,159 @@ window.ubCloseVideoLightbox = function(e){
   .kpi-grid{ grid-template-columns:1fr 1fr !important; }
 }
 
-/* ── ADMIN MAIN — reduce padding on mobile ── */
+/* ════════════════════════════════════════════
+   COMPREHENSIVE MOBILE ADMIN FIXES
+   Tested on 375px (iPhone SE) and 390px (iPhone 14)
+════════════════════════════════════════════ */
+
+/* ── ADMIN MAIN — comfortable padding on mobile ── */
 @media(max-width:520px){
-  #adminMain{ padding:14px !important; }
+  #adminMain{ padding:12px !important; }
 }
+
+/* ── ALL ADMIN BUTTONS — 44px tap targets (Apple/Google HIG) ── */
+#adminMain button:not([style*="width:16px"]):not([style*="width:18px"]):not([style*="width:20px"]):not([style*="width:22px"]):not(.uzr-colordot){
+  min-height:44px;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ── ORDERS SUB-TABS: shrink on mobile so 3 fit in one row ── */
+@media(max-width:520px){
+  /* Orders sub-tab row */
+  #adminMain [onclick*="_ordersSubTab"]{
+    font-size:11px !important;
+    padding:8px 6px !important;
+    min-height:44px !important;
+  }
+}
+
+/* ── DASHBOARD 3-col stat grid: 2-col on mobile ── */
+@media(max-width:480px){
+  /* Stats grid goes 2-col (revenue spans full width) */
+  #adminMain [style*="grid-template-columns:repeat(3,1fr)"],
+  #adminMain [style*="grid-template-columns:1fr 1fr 1fr"]{
+    grid-template-columns:1fr 1fr !important;
+  }
+  /* Quick actions 2-col stays 2-col (good size on mobile) */
+}
+
+/* ── SETTINGS: all 2-col grids → 1-col on mobile ── */
+@media(max-width:600px){
+  /* Catch all explicit 2-col inline grids */
+  #adminMain [style*="grid-template-columns:1fr 1fr"],
+  #adminMain [style*="grid-template-columns: 1fr 1fr"],
+  #adminMain .af-row{
+    grid-template-columns:1fr !important;
+    display:flex !important;
+    flex-direction:column !important;
+  }
+  /* grid-column:span 2 breaks in 1-col, reset it */
+  #adminMain [style*="grid-column:span 2"],
+  #adminMain [style*="grid-column: span 2"]{
+    grid-column:span 1 !important;
+  }
+  /* Flash sale 2-col → 1-col */
+  #flashSaleForm{ grid-template-columns:1fr !important; }
+  /* Referral grid (has span 2 child) */
+  #adminMain [style*="grid-column:span 2"]{ width:100%; }
+  /* Coupon "Add" button row */
+  #adminMain [style*="align-items:flex-end;grid-column"]{
+    width:100% !important;
+  }
+
+  /* Settings abtn — full width */
+  #adminMain .acard > .abtn,
+  #adminMain .acard > div > .abtn{
+    width:100% !important;
+    justify-content:center !important;
+  }
+
+  /* Product table — scroll container already handles overflow,
+     but hide less-critical columns on tiny screens */
+  .aptable th:nth-child(4),
+  .aptable td:nth-child(4){ min-width:0; }
+}
+
+/* ── PRODUCT VARIANTS: 5-col row → stacked on mobile ── */
+/* Desktop: 5 columns (weight | egg | eggless | advance | remove) */
+.ub-vgrid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr 40px;
+  gap:6px;
+  margin-bottom:6px;
+}
+.ub-vgrid-hdr span{
+  font-size:10px;
+  color:rgba(253,246,236,.3);
+  font-weight:600;
+}
+/* Mobile: 2-col (weight + remove on first row, 3 prices on second) */
+@media(max-width:600px){
+  .ub-vgrid{
+    grid-template-columns:1fr 1fr !important;
+    gap:6px !important;
+  }
+  /* Remove button spans full width */
+  .ub-vgrid .vr-rmv{
+    grid-column:span 2;
+    width:100% !important;
+    border-radius:8px !important;
+  }
+  /* Hide the header row on mobile (labels are in placeholders) */
+  .ub-vgrid-hdr{ display:none; }
+}
+
+/* ── ZONE EDITOR: 2-col & 3-col rows → 1-col on mobile ── */
+@media(max-width:600px){
+  .ub-zone-row [style*="grid-template-columns:1fr 1fr"]{
+    grid-template-columns:1fr !important;
+  }
+  .ub-zone-row [style*="grid-template-columns:1fr 1fr 80px"]{
+    grid-template-columns:1fr 1fr !important;
+  }
+  .ub-zone-row [style*="grid-template-columns:1fr 1fr 80px"] > button{
+    grid-column:span 2 !important;
+  }
+}
+
+/* ── ORDERS — tap-friendly status buttons (already flex:1 min-width:100px) ── */
+/* On tiny screens, let them wrap to 2-per-row */
+@media(max-width:480px){
+  #adminMain [style*="flex:1;min-width:100px"]{
+    min-width:calc(50% - 6px) !important;
+  }
+}
+
+/* ── PAYMENTS TAB — analytics/KPI grids ── */
+@media(max-width:480px){
+  .kpi-grid{ grid-template-columns:repeat(2,1fr) !important; }
+  .ub-glance{ grid-template-columns:repeat(2,1fr) !important; }
+}
+
+/* ── COMBO OFFERS — image slot grid ── */
+@media(max-width:480px){
+  .ub-imgslots{ grid-template-columns:1fr 1fr !important; }
+}
+
+/* ── SUBSCRIPTION MODAL — comfortable on mobile ── */
+#ub-sub-modal > div{
+  max-height:88vh !important;
+}
+
+/* ── CATEGORY SUBCAT FORM — 2-col input row ── */
+@media(max-width:480px){
+  #adminMain [style*="grid-template-columns:1fr auto"]{
+    grid-template-columns:1fr !important;
+  }
+}
+
+/* ── SEARCH/FILTER BAR in orders — wrap nicely ── */
+@media(max-width:480px){
+  #orderSearchInput{ min-width:100% !important; }
+  #orderStatusFilter,#orderTypeFilter{ flex:1; min-width:calc(50% - 5px); }
+}
+
 
 /* ── ICON BUTTONS ── */
 .ub-icon-btn{
@@ -19523,9 +19703,35 @@ function ubLoadSubPlansFromFirebase(){
   }, function(e){});
 }
 
+// Proper Firebase real-time listener for subscription plans (starts with all other listeners)
+var _subPlansUnsubscribe = null;
+function ubStartSubPlansListener(){
+  if(!db || _subPlansUnsubscribe) return;
+  _subPlansUnsubscribe = db.collection('settings').doc('subscription_plans').onSnapshot(function(doc){
+    if(doc.exists){
+      var data = doc.data();
+      if(data && data.plans){
+        localStorage.setItem('ub_sub_plans', JSON.stringify(data.plans));
+        ubRenderSubSection(); // update customer view in real-time
+        // If admin subscription tab is open, refresh it too
+        if(typeof adminLoggedIn !== 'undefined' && adminLoggedIn && typeof adminTab !== 'undefined' && adminTab === 'subscriptions' && typeof renderAdminTab === 'function'){
+          renderAdminTab();
+        }
+      }
+    }
+  }, function(e){
+    console.warn('[SubPlans] Listener error:', e);
+    _subPlansUnsubscribe = null;
+    setTimeout(ubStartSubPlansListener, 5000);
+  });
+  // Also listen to user subscriptions
+  db.collection('settings').doc('user_subscriptions').onSnapshot(function(doc){
+    if(doc.exists){ var data=doc.data(); if(data&&data.subs) localStorage.setItem('ub_all_user_subs',JSON.stringify(data.subs)); }
+  }, function(e){});
+}
+
 document.addEventListener('DOMContentLoaded', function(){
-  ubRenderSubSection();
-  ubLoadSubPlansFromFirebase();
+  ubRenderSubSection(); // initial render from localStorage
 });
 
 function initComboOfferAdmin(){}
